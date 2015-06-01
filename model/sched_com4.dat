@@ -1,0 +1,79 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: QZ61P8
+ * Creation Date: 10.07.2014 at 08:59:12
+ *********************************************/
+
+/*
+simple model with two channels and 10 timeslots:
+	cellular with 1-3 chunks thorughput	cost 2 (per chunk)
+	WiFi with 0 to 5 chunks throuthput	cost 0	; only available from timeslot 3 to 8 (gaussian curve on throughput)
+	
+four applications
+	1. VoIP : requires 	1 chunk per timeslot continously max/minTimeBetweenChunks=1, hard restrictions, big importance
+	2. User Request: 	4 chunks starttime 2, deadline 5, mid importance
+	3. Bufferable Stream: 10 chunks, deadline 7, maxTimeBetween chunks=2,  mid importance
+	4. Background download: 8 chunks with size 2, low importance
+*/
+ 
+nChannels = 3;
+nRequests = 4;
+nInterfaceTypes = 2;
+nTime = 21;
+
+//channel model
+availBW = //[Channels, Time] = ...;
+	[	[2, 2, 1, 2, 2, 1, 1, 1, 3, 2, 2, 2, 1, 2, 2, 1, 1, 1, 3, 2, 2] //cellular	//avail = 18
+	 	[0, 0, 3, 4, 5, 4, 3, 1, 0, 0 ,0, 0, 3, 4, 5, 4, 3, 1, 0, 0 ,0]	//11p		//avail = 22
+		[0, 0, 0, 0 ,0, 0, 0 ,0, 0, 1 ,2, 3, 5, 8, 3, 1, 0, 0, 0, 0 ,0] //11p
+	]; //IRS
+channel_cost = //[Channels] = 
+	[5, 2, 1];				//static cost per channel (change later to more realistic model)
+channel_lcy =
+	[3, 2, 2];
+channel_jit =
+	[7, 4, 4];	
+
+ChannelType= //[Channels] = ...;				//each channel has a specific type; e.g. WiFi, LTE..
+	[1, 2, 2];		//first interface is cellular, second is 11p
+nClientInterfaces = //[InterfaceTypes]
+	[1, 1];		//one interface for cellular, one for 11p(G5B)
+
+//request
+//VoIP, user Request, bufferable, downlaod
+//chunksize = 	[1, 1, 2, 2];// [Requests]
+nChunks = 		[21, 4, 20, 28];//[Requests]		//25
+deadline= 		[25, 5, 7, 10];//[Requests] 
+prefStartTime = [0, 2, 0, 0];//[Requests]
+minTimeBetweenChunks = [1, 0, 1, 0];//[Requests]	//0 says not relevant/no maximum transfer rate
+stretch_max = [1, 1, 4, 1]; //maximum of chunks in above specified time frame
+maxTimeBetweenChunks = [1, 1000, 4, 1000];//[Requests]  //1000 says not relevant / no minimum transfer rate
+compress_min = [1, 1, 1, 1]; //minimum of chunks in above specified time frame
+latency = [1, 7, 10, 10];	
+jitter = [2, 10, 10, 10];
+//minimize vio_lcy with: 	lcy small value is good
+// channel_lcy > req_lcy + vio_lcy
+
+importance = [
+	[10, 5, 6, 1]	//deadline
+	[1,  1, 1, 1]	//start time
+	[20, 1, 1, 1]	//throughput lower bound
+	[200, 1, 8, 1]	//throughput upper bound
+	[5,  7, 3, 2]	//unsched
+	[8 , 3, 0, 0]	//latency
+	[6,  0, 0, 0]	//jitter
+]; //[ImportanceTypes, Requests]
+/* //constants
+ int impDeadline = 1;
+ int impPrefStart = 2;
+ int minTimeChunks = 3;
+ int maxTimeChunks = 4;
+ int unscheduled = 5;
+ int latency = 6
+ int jitter = 7
+ */
+
+//user profiles
+userImportance = [5, 5, 3, 2]; //[Requests]
+userWTP = 2; //willingness to pay SCALE???
+ 
