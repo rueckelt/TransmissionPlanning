@@ -1,3 +1,5 @@
+import ilog.opl.IloOplModel;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -13,21 +15,40 @@ public class TrafficGenerator {
 	private PrintWriter pw;
 	
 	
-	public TrafficGenerator(){
-		addTraffic();
+	public TrafficGenerator(int duration, int requests){
+		addTraffic(duration,requests);
 	}
 	
-	private void addTraffic(){
-		flows.add(Flow.IPCall(18, 90));
-		flows.add(Flow.Update(250));
-		addBrowsing(2, 150);
+	private void addTraffic(int duration, int requests){
+		Random r=new Random();
+		r.setSeed(System.nanoTime());
+		int tmp=duration/requests;
+		for(int i=0;i<requests;i++){
+			System.out.println("addTraffic i:req "+i+":"+requests);
+			if(i%10==0){			//0		VoIP
+				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+30+i*tmp)); 	//todo
+			}else if(i%10>3){		//4..10		Browsing
+				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(30+Math.sqrt(duration))));
+			}else if(i%10>2){		//3		Download
+				flows.add(Flow.Update(duration/2));
+			}else{					//Stream
+				flows.add(Flow.BufferableStream(i*tmp, tmp*5));
+			}
+		}
 	}
 	
-	private void addBrowsing(int startTime, int endTime){
+	/**
+	 * 
+	 * @param startTime
+	 * @param endTime
+	 * @param requests	if < 1, then calculate number of requests automatically
+	 */
+	private void addBrowsing(int startTime, int endTime, int requests){
 		int duration = endTime-startTime;
-		int max_request_size = 15;
-		int requests = 2*duration/max_request_size;
-		
+		int max_request_size = 40;
+		if(requests<1){
+			requests = 2*duration/max_request_size;
+		}		
 		
 		Random rnd = new Random();
 		rnd.setSeed(System.nanoTime());
@@ -111,7 +132,7 @@ public class TrafficGenerator {
 			
 			impDeadline+=flow.getImpDeadline();
 			impStartTime+=flow.getImpStartTime();
-			impThroughputMax+=flow.getImpThrouthputMax();
+			impThroughputMax+=flow.getImpThroughputMax();
 			impThroughputMin+=flow.getImpThroughputMin();
 			impUnscheduled+=flow.getImpUnsched();
 			impLatency+=flow.getImpLatency();
@@ -126,7 +147,6 @@ public class TrafficGenerator {
 		content=content.replace("[windowMax]", windowMax);
 		content=content.replace("[throughputMax]", throughputMax);
 		content=content.replace("[windowMin]", windowMin);
-		content=content.replace("[throughputMax]", throughputMax);
 		content=content.replace("[throughputMin]", throughputMin);
 		content=content.replace("[reqLatency]", reqLatency);
 		content=content.replace("[reqJitter]", reqJitter);
@@ -156,5 +176,66 @@ public class TrafficGenerator {
 			e.printStackTrace();
 		}
 	}
+
+	public void setTrafficData(IloOplModel model) {
+		//initialize arrays
+		int[] chunks = new int[flows.size()];
+		int[] deadline = new int[flows.size()];
+		int[] startTime = new int[flows.size()];
+		int[] windowMax = new int[flows.size()];
+		int[] throughputMax = new int[flows.size()];
+		int[] windowMin = new int[flows.size()];
+		int[] throughputMin = new int[flows.size()];
+		int[] reqLatency = new int[flows.size()];
+		int[] reqJitter = new int[flows.size()];
+		
+		int[][] importance = new int[7][flows.size()];
+
+		int[] impUser = new int[flows.size()];
+		//nRequests does not change..does it?
+		
+		
+		//set values of arrays
+		int i=0;
+		for(Flow flow:flows){
+			chunks[i]		=flow.getChunks();
+			deadline[i]		=flow.getDeadline();
+			startTime[i]	=flow.getStartTime();
+			windowMax[i]	=flow.getWindowMax();
+			throughputMax[i]=flow.getChunksMax();
+			windowMin[i]	=flow.getWindowMin();
+			throughputMin[i]=flow.getChunksMin();
+			reqLatency[i]	=flow.getReqLatency();
+			reqJitter[i]	=flow.getReqJitter();
+			
+			importance[0][i]	=	flow.getImpDeadline();
+			importance[1][i]	=	flow.getImpStartTime();
+			importance[2][i]	=	flow.getImpThroughputMin();
+			importance[3][i]	=	flow.getImpThroughputMax();
+			importance[4][i]	=	flow.getImpUnsched();
+			importance[5][i]	=	flow.getImpLatency();
+			importance[6][i]	=	flow.getImpJitter();
+			
+			impUser[i]		=		flow.getImpUser();
+			
+			i++;
+		}
+		
+		//set values in Model
+		ModelAccess.set(model, "nChunks", chunks);
+		ModelAccess.set(model, "deadline", deadline);
+		ModelAccess.set(model, "prefStartTime", startTime);
+		ModelAccess.set(model, "minTimeBetweenChunks", windowMax);
+		ModelAccess.set(model, "stretch_max", throughputMax);
+		ModelAccess.set(model, "maxTimeBetweenChunks", windowMin);
+		ModelAccess.set(model, "compress_min", throughputMin);
+		ModelAccess.set(model, "latency", reqLatency);
+		ModelAccess.set(model, "jitter", reqJitter);
+		
+		ModelAccess.set(model, "importance", importance);
+		ModelAccess.set(model, "userImportance", impUser);
+		
+	}
+	
 	
 }

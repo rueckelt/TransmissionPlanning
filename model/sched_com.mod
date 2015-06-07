@@ -174,13 +174,13 @@ dvar int+ vioStretch[Requests, Time];
 dvar int+ vioCompress[Requests, Time];
 
 
-dexpr int vioLcy = sum(r in Requests, t in Time, c in Channels) (
+dexpr int vioLcy[r in Requests] = sum(t in Time, c in Channels) (
 						allocatedChunks[r, t, c]*importance[IMP_LCY, r]*			//for allocated chunks
 						(channel_lcy[c]-latency[r])*(channel_lcy[c]-latency[r])*	//latency violation square
 						( (channel_lcy[c]-latency[r]) >=0)							//sum only if positive
 						);
 
-dexpr int vioJit = sum(r in Requests, t in Time, c in Channels) (					//similar to latency model
+dexpr int vioJit[r in Requests] = sum(t in Time, c in Channels) (					//similar to latency model
 						allocatedChunks[r,t,c]*importance[IMP_JIT, r]*
 						(channel_jit[c]-jitter[r])*(channel_jit[c]-jitter[r])*
 						( (channel_jit[c]-jitter[r]) >=0)
@@ -191,7 +191,6 @@ dexpr int vioJit = sum(r in Requests, t in Time, c in Channels) (					//similar 
 dexpr int st_vio[r in Requests] = 
 	sum(c in Channels, t in Time)(
 		importance[IMP_STARTTIME, r]*	//importance
-		userImportance[r]*
 		(1<=(prefStartTime[r]-t))*		//Start time is violated
 		((prefStartTime[r]-t)*(prefStartTime[r]-t))*		//strength of violation (quadratic)
 		allocatedBW[r, t, c]			//linear weight on BW of violation
@@ -199,8 +198,7 @@ dexpr int st_vio[r in Requests] =
 //deadline violation
 dexpr int	dl_vio[r in Requests] = 
 	sum(c in Channels, t in Time)(
-		importance[IMP_STARTTIME, r]*		//request specific importance
-		userImportance[r]*
+		importance[IMP_DEADLINE, r]*		//request specific importance
 		(1<=(t-deadline[r]))* 				//is violated
 		((t-deadline[r])*(t-deadline[r]))*	//quadratic characteristic of punishment concerning violation time
 		allocatedBW[r, t, c]				//linear factor of punishment concerning bandwidth during violation
@@ -211,12 +209,12 @@ dexpr int	dl_vio[r in Requests] =
 //		nChunks[r] - sum(t in Time, c in Channels)(allocatedChunks[r, t, c]);	//should be zero for all r in Requests	
 dexpr int non_allo_vio[r in Requests] = 
 		userImportance[r]*
-		importance[IMP_UNSCHED, r]*importance[IMP_STARTTIME, r]*
-		(non_allocated[r] * importance[IMP_DEADLINE, r]);	
+		importance[IMP_UNSCHED, r]*
+		non_allocated[r];	
 
 
 //Throughput violation		
-dexpr int vioThroughput = sum(t in Time, r in Requests) ((vioStretch[ r, t]*importance[IMP_STRETCH,  r])
+dexpr int vioThroughput[r in Requests] = sum(t in Time) ((vioStretch[ r, t]*importance[IMP_STRETCH,  r])
 														+(vioCompress[r, t]*importance[IMP_COMPRESS, r]));  
 
 
@@ -225,10 +223,11 @@ dvar int closed_gaps[Requests, Time, Channels] in 0..1;
 dexpr int cost_switch = sum(r in Requests, t in 1..nTime-1, c in Channels)(
 				closed_gaps[r, t, c]!=closed_gaps[r, t+1, c]
 			);
-dexpr int cost_violation = sum(r in Requests)(st_vio[r]+dl_vio[r]+non_allo_vio[r]);
+			
+dexpr int cost_violation = sum(r in Requests)((st_vio[r]+dl_vio[r]+non_allo_vio[r]+vioThroughput[r]+vioLcy[r]+vioJit[r])*userImportance[r]);
 dexpr int cost_ch = sum(r in Requests, t in Time, c in Channels)(allocatedBW[r, t, c]*channel_cost[c]);
 
-dexpr int cost_total = cost_violation+cost_ch+cost_switch+vioThroughput+vioLcy+vioJit;
+dexpr int cost_total = cost_violation+cost_ch+cost_switch;
 
 
 
@@ -272,14 +271,6 @@ subject to{
 		 <= nClientInterfaces[it]
 	);	///sum of used interfaces must be smaller/equal than available interfaces						
 	
-	/********************************************************************/
-	//Latency and Jitter
-
-	//channel_lcy > req_lcy + vio_lcy
-
-	/********************************************************************/
-	//stretch and compress => firm conditions at the moment, no trade-off => should be combined with importance!
-	//=> TODO:  include in cost function!!!!
 	
 		//first, calculate cummulated chunks
 	forall(r in Requests)( //first timeslot is 0+first
@@ -289,7 +280,7 @@ subject to{
 		cummulatedChunks[r, t] == cummulatedChunks[r, t-1]+sum(c in Channels)allocatedChunks[r, t, c]
 	);
 		
-		//stretch
+	//stretch
 	forall(r in Requests, t1 in Time)(
 		(t1==minTimeBetweenChunks[r])<=(cummulatedChunks[r, t1]<=stretch_max[r]+vioStretch[r, t1])
 		//for first timeslot: the number of commulated chunks for a request in t1 must be less than the minimum

@@ -22,7 +22,7 @@ public class Flow {
 	private int impStartTime=0;
 	private int impThroughputMin=0;
 	private int impThrouthputMax=0;
-	private int impUnsched=1;
+	private int impUnsched=5;
 	private int impLatency=0;
 	private int impJitter=0;
 	
@@ -150,7 +150,7 @@ public class Flow {
 	}
 
 
-	public int getImpThrouthputMax() {
+	public int getImpThroughputMax() {
 		return impThrouthputMax;
 	}
 
@@ -221,7 +221,7 @@ public class Flow {
 		IPCall.setImpThrouthputMax(10000);	//cannot deliver more than 5 --> blocking high priority
 		IPCall.setImpStartTime(10);			//data not existent before call --> high prio
 		
-		IPCall.setImpUnsched(7);		//lower priority for unscheduled than for deadline violation
+		IPCall.setImpUnsched(8);		//lower priority for unscheduled than for deadline violation
 		IPCall.setImpJitter(7);			//jitter and latency are important
 		IPCall.setImpLatency(8);
 		
@@ -245,7 +245,7 @@ public class Flow {
 		
 		stream.setImpStartTime(2);			//later start time is ok 	
 		
-		stream.setImpUnsched(5);			//unscheduled chunks are ok for long streams and short scheduling duration
+		stream.setImpUnsched(6);			//unscheduled chunks are ok for long streams and short scheduling duration
 		
 		stream.setImpUser(7);
 		
@@ -271,7 +271,7 @@ public class Flow {
 	public static Flow Update(int chunks){
 		Flow update = new Flow();
 		update.setChunks(chunks);
-		update.setImpUnsched(3);			//chunks should be scheduled with low priority
+		update.setImpUnsched(4);			//chunks should be scheduled with low priority
 		
 		update.setImpUser(2);
 		return update;
