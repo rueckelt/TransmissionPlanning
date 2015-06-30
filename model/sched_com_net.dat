@@ -5,26 +5,27 @@
  *********************************************/
 
 
-nChannels = 1;
+nChannels = 2;
 nTime = 50;
 nInterfaceTypes = 2;
 nRequests = [nRequests];
 
-//channel model: generated Sun Jun 07 12:14:50 CEST 2015
+//channel model: generated Tue Jun 30 10:28:14 CEST 2015
 availBW = //[Channels, Time]  
 [
-	[31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31]
+	[32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 29, 44, 44, 44, 44, 44, 44, 29, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ];
 	
 channel_cost = //[Channels] 
-	[10];				//static cost per channel (change later to more realistic model)
+	[10, 3];				//static cost per channel (change later to more realistic model)
 channel_lcy =
-	[8];
+	[8, 2];
 channel_jit =
-	[6];	
+	[6, 8];	
 
 ChannelType= //[Channels] 				//each channel has a specific type; e.g. WiFi, LTE..
-	[2];		
+	[2, 1];		
 nClientInterfaces = //[InterfaceTypes]
 	[1, 1];		//one interface for cellular, one for 11p(G5B)
 

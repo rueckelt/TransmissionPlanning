@@ -1,7 +1,10 @@
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex;
+import ilog.cplex.IloCplex.BooleanParam;
+import ilog.opl.IloCustomOplDataSource;
+import ilog.opl.IloOplDataElements;
+import ilog.opl.IloOplDataHandler;
 import ilog.opl.IloOplDataSource;
-import ilog.opl.IloOplElement;
 import ilog.opl.IloOplErrorHandler;
 import ilog.opl.IloOplFactory;
 import ilog.opl.IloOplModel;
@@ -12,8 +15,7 @@ import ilog.opl.IloOplSettings;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Vector;
+import java.util.HashMap;
 
 /**
  * Execute IBM CPLEX model
@@ -25,6 +27,9 @@ import java.util.Vector;
 
 public class ModelExecutor {
 
+	private final boolean PRESOLVE = true;
+	private final int scale = 1000000; // ms
+	
 	IloOplFactory oplF;
 	IloOplErrorHandler errHandler;
 	IloOplModelSource modelSource;
@@ -34,21 +39,24 @@ public class ModelExecutor {
 	IloOplModel opl_model;
 	IloOplSettings settings;
 	IloOplModelDefinition definition;
+	IloOplDataElements dataElements;
+	
+	IloCustomOplDataSource dataSource;
+	IloOplDataHandler dataHandler;
 		
 	String[] log_scenario = {"nTime", "nChannels", "nRequests"};
 	
-	String[] logparam = {"allocatedChunks","non_allocated","cost_total", 
-						"cost_violation", "dl_vio", "st_vio",
+	String[] logparam = {"allocatedChunks","non_allocated",
+							"dl_vio", "st_vio",
 							"vioThroughput", "non_allo_vio", "nChunks", 
 							"prefStartTime", "deadline", "availBW"};
-	int[] dim = {3, 1, 0, 
-				0, 1, 1,
+	int[] dim = {3, 1,  
+				 1, 1,
 				1, 1, 1,
 				1, 1, 2};
 	
-	long executionTime=0;
-	long genTime =0;
-	private boolean firstInit=true;
+	long time =0;
+	HashMap<String, Integer> timeMap; 
 
 	
 	public ModelExecutor(String model){
@@ -58,37 +66,52 @@ public class ModelExecutor {
 		
 //		Create model
 		errHandler = oplF.createOplErrorHandler(System.out);
+
 		settings = oplF.createOplSettings(errHandler);
+
+		
 		modelSource = oplF.createOplModelSource(model);
 		definition = oplF.createOplModelDefinition(modelSource, settings);
 		try {
 			
 			cplex = oplF.createCplex();
+			cplex.setParam(IloCplex.BooleanParam.PreInd, PRESOLVE);
 		} catch (IloException e) {
 			System.out.println("ERROR_INIT");
 			e.printStackTrace();
 		}
 		opl_model = oplF.createOplModel(definition, cplex);
-
+	
 	}
 	
 	public IloOplModel getModel(){
 		return opl_model;
 	}
 	
-	public long getExecutionTimeNs(){
-		return executionTime;
+	public void initializeData(String datasource_file){
+	//	load data
+		timeMap = new HashMap<String, Integer>();
+	
+		time=System.nanoTime();
+		IloOplDataSource dataSource = oplF.createOplDataSource(datasource_file);
+		opl_model = oplF.createOplModel(definition, cplex);
+		opl_model.addDataSource(dataSource);
+		time = System.nanoTime()-time;
+		timeMap.put("create_model", (int) (time/1000000));
+		System.out.println("create_model: "+time/1000000);
+		
+		
+		
+	//	generate
+		time=System.nanoTime();
+		opl_model.generate();
+	
+		time = System.nanoTime()-time;
 	}
 	
-	public void initializeData(String datasource_file){
-		IloOplDataSource dataSource = oplF.createOplDataSource(datasource_file);
-//		load data
-		opl_model.addDataSource(dataSource);
-//		generate
-		genTime=System.nanoTime();
-		opl_model.generate();			//must this be after new data arrived??????
-		genTime=System.nanoTime()-genTime;
-		System.out.println("#### GEN TIME [ns] ##### "+genTime);
+	public void setData(NetworkGenerator ng, TrafficGenerator tg){
+//		ng.setNetworkData(opl_model, oplF);
+//		tg.setTrafficData(opl_model, oplF);
 	}
 	
 		
@@ -98,66 +121,63 @@ public class ModelExecutor {
 	 * @param dataSource
 	 * @return
 	 */
-	public boolean execute(String datasource_file) {
-//		opl_model.end();
-		//################ this data input does not work! ################
+	public boolean execute(String datasource_file, String logfile) {
 //		load data
+		timeMap = new HashMap<String, Integer>();
+
+		time=System.nanoTime();
 		IloOplDataSource dataSource = oplF.createOplDataSource(datasource_file);
+		opl_model = oplF.createOplModel(definition, cplex);
 		opl_model.addDataSource(dataSource);
+		time = System.nanoTime()-time;
+		timeMap.put("create_model", (int) (time/1000000));
+		System.out.println("create_model: "+time/1000000);
+		
 //		generate
-		genTime=System.nanoTime();
+		time=System.nanoTime();
 		opl_model.generate();
-		genTime=System.nanoTime()-genTime;
-		System.out.println("#### GEN TIME [ns] ##### "+genTime);
-		//################################################################
+
+		time = System.nanoTime()-time;
+
+		dataElements = opl_model.makeDataElements();
+		
+		
+		timeMap.put("generate_model", (int) (time/1000000));
+		System.out.println("generate_model: "+time/1000000);
+		
 //		solve
 		boolean feasible = false;
 		try {
-			long nano = System.nanoTime();	
+			time = System.nanoTime();	
 			feasible = cplex.solve();
-			nano = System.nanoTime()-nano;
-			System.out.println("######### solver time: "+nano/1000+" µs");
-
-//			if(feasible){
-//				opl_model.postProcess();				
-//			} else{
-////				ParameterSet ps= new ParameterSet(IloCplex__ParameterSet = new IloCplex__ParameterSet(cplex.()));
-////				opl.getSolutionGetter().
-//				System.out.println("NOT_FEASIBLE");
-//
-//			}
-//			System.out.println("**********************************************STATUS:\n"+cplex.getStatus());
-
-//			System.out.println("VALUE: "+cplex.getObjValue());
-
+			time = System.nanoTime()-time;
+			timeMap.put("duration_to_solve_model_us", (int) (time/1000000));
+			System.out.println("duration_to_solve_model_us: "+time/1000000);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println("ERROR_EXEC");
 			e.printStackTrace();
 		}
-		dataSource.end();
+		log(logfile);
+//		dataSource.end();
+//		opl_model.end();
 		return feasible;
 	}
-	
-	/**
-	 * used to print selected output to console
-	 */
-	public void printOutput(){
-
-		System.out.println("cost_ch:\n"+ModelAccess.getValue(opl_model, "cost_total"));
-		System.out.println("cost_ch:\n"+ModelAccess.getValue(opl_model, "cost_ch"));
-		System.out.println("dl_vio:\n"+Arrays.toString(ModelAccess.getArray(opl_model, "dl_vio")));
-		System.out.println("importance:\n"+Arrays.deepToString(ModelAccess.getArray2(opl_model, "importance")));
-		System.out.println("allocatedChunks:\n"+Arrays.deepToString(ModelAccess.getArray3(opl_model, "allocatedBW")).replaceAll("],", "]\n"));
-		System.out.println("unsched:\n"+Arrays.toString(ModelAccess.getArray(opl_model, "non_allocated")));
-	}
-
 	
 	/**
 	 * logging for evaluation
 	 */
 	public void log(String filename){
-		String log="% t_n_i\n% execution time\n"+executionTime+"\n";
+		//log timing
+		String log="% t_n_i\n% time:\n";
+		for(String s:timeMap.keySet()){
+			log+=s+" = "+timeMap.get(s)+";\n";
+		}
+		//log violation
+		try {
+			System.out.println("OBJECTIVE=" +cplex.getObjValue());
+		} catch (IloException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		PrintWriter pw=null;
 		try {
@@ -167,24 +187,76 @@ public class ModelExecutor {
 			e.printStackTrace();
 		}
 		
-		String path= "t_n_i_";
+//		String path= "t_n_i_";
 		for(int i =0;i<logparam.length;i++){
 			log+="% "+logparam[i]+"\n";
 			
 			switch(dim[i]){
-			case 0:		log+=ModelAccess.getValue(opl_model, logparam[i])+"\n";break;
+/*/			case 0:		log+=ModelAccess.getValue(opl_model, logparam[i])+"\n";break;
 			case 1:		log+=Arrays.toString(ModelAccess.getArray(opl_model, logparam[i])).replace("[", "").replace("]", "")+"\n";break;
 			case 2:		//log+=Arrays.deepToString(ModelAccess.getArray2(opl_model, logparam[i])).replace("[", "").replace("],", ";]\n").replace("]", "")+"\n";
 			log+=Arrays.deepToString(ModelAccess.getArray2(opl_model, logparam[i])).replace("[", "").replace("],", ";]\n").replace("]", "")+"\n";
 			break;
 			case 3: 	//log+=Arrays.deepToString(ModelAccess.getArray3(opl_model, logparam[i])).replace("[", "").replace("],", ";\n").replace("]", "")+"\n";break;
 				log+=Arrays.deepToString(ModelAccess.getArray3(opl_model, logparam[i])).replace("],", "]\n")+"\n";break;
+*/
+			case 0:		log+=logValue(logparam[i],ModelAccess.getValue(opl_model, logparam[i])); break;
+			case 1: 	log+=logDim1(logparam[i],ModelAccess.getArray(opl_model, logparam[i])); break;
+			case 2: 	log+=logDim2(logparam[i],ModelAccess.getArray2(opl_model, logparam[i])); break;
+			case 3: 	log+=logDim3(logparam[i],ModelAccess.getArray3(opl_model, logparam[i])); break;
 			}
 		}
 		
 		pw.println(log);
 		pw.flush();
 		
+	}
+	
+	public void testLog(){
+		int[] d1={1,2,3};
+		int[][] d2 = {d1, d1, d1, d1};
+		int[][][] d3 = {d2, d2, d2};
+		
+		System.out.println(logValue("a", 5));
+		System.out.println(logDim1("b", d1));
+		System.out.println(logDim2("c", d2));
+		System.out.println(logDim3("d", d3));
+	}
+	
+	/**
+	 * Log outputs for matlab input
+	 * @param name
+	 * @param value
+	 * @return
+	 */
+	private String logValue(String name, int value){
+		 return name+" = "+value+";\n";
+	}
+	private String logDim1(String name, int[] value){
+		return name+" = "+Arrays.toString(value)+";\n";
+	}
+	private String logDim2(String name, int[][] value){
+		String s = name +" = [";
+		for (int i = 0; i < value.length; i++) {
+			if(i>0){
+				s+="; ";
+			}
+			for (int j = 0; j < value[0].length; j++) {
+				if(j>0){
+					s+=", ";
+				}
+				s+=value[i][j];
+			}
+		}
+		return s+"];\n";
+	}
+	private String logDim3(String name, int[][][] value){
+		String s="";
+		for (int i = 0; i < value.length; i++) {
+			String name2=name+"(:,:,"+(i+1)+")";
+			s+=logDim2(name2, value[i]);
+		}
+		return s;
 	}
 
 

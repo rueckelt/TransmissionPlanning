@@ -1,5 +1,3 @@
-import java.io.File;
-import java.lang.management.GarbageCollectorMXBean;
 
 
 public class main {
@@ -14,9 +12,17 @@ public class main {
 	
 	
 	public static void main(String[] args) {
+		
+		int t=2;
+		int r=4;
+		int n=3;
+		int rep=2;
 
-		EvaluationScenarioCreator eval = new EvaluationScenarioCreator();
+		EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,r,n,rep);
 		eval.evaluate();
+
+//		String model = "sched_com.mod";
+//		new ModelExecutor(model).testLog();
 		
 	}
 }

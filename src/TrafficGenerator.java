@@ -1,3 +1,4 @@
+import ilog.opl.IloOplFactory;
 import ilog.opl.IloOplModel;
 
 import java.io.File;
@@ -24,15 +25,18 @@ public class TrafficGenerator {
 		r.setSeed(System.nanoTime());
 		int tmp=duration/requests;
 		for(int i=0;i<requests;i++){
-			System.out.println("addTraffic i:req "+i+":"+requests);
-			if(i%10==0){			//0		VoIP
+			if(i%5==0){			//0		VoIP
 				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+30+i*tmp)); 	//todo
-			}else if(i%10>3){		//4..10		Browsing
+				System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
+			}else if(i%5==1 || i%5==4){		//4..10		Browsing
 				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(30+Math.sqrt(duration))));
-			}else if(i%10>2){		//3		Download
+				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
+			}else if(i%5==2){		//3		Download
 				flows.add(Flow.Update(duration/2));
+				System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
 			}else{					//Stream
 				flows.add(Flow.BufferableStream(i*tmp, tmp*5));
+				System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
 			}
 		}
 	}
@@ -165,19 +169,19 @@ public class TrafficGenerator {
 
 		content= content.replace("[trafficGenTime]", new Date().toString());
 		
-		System.out.println(content);
 		//write file
 		try {
 			pw = new PrintWriter(dest);
 			pw.println(content);
 			pw.flush();
+			pw.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void setTrafficData(IloOplModel model) {
+	public void setTrafficData(IloOplModel model, IloOplFactory fac) {
 		//initialize arrays
 		int[] chunks = new int[flows.size()];
 		int[] deadline = new int[flows.size()];
@@ -222,18 +226,18 @@ public class TrafficGenerator {
 		}
 		
 		//set values in Model
-		ModelAccess.set(model, "nChunks", chunks);
-		ModelAccess.set(model, "deadline", deadline);
-		ModelAccess.set(model, "prefStartTime", startTime);
-		ModelAccess.set(model, "minTimeBetweenChunks", windowMax);
-		ModelAccess.set(model, "stretch_max", throughputMax);
-		ModelAccess.set(model, "maxTimeBetweenChunks", windowMin);
-		ModelAccess.set(model, "compress_min", throughputMin);
-		ModelAccess.set(model, "latency", reqLatency);
-		ModelAccess.set(model, "jitter", reqJitter);
+		ModelAccess.set(fac, model, "nChunks", chunks);
+		ModelAccess.set(fac, model, "deadline", deadline);
+		ModelAccess.set(fac, model, "prefStartTime", startTime);
+		ModelAccess.set(fac, model, "minTimeBetweenChunks", windowMax);
+		ModelAccess.set(fac, model, "stretch_max", throughputMax);
+		ModelAccess.set(fac, model, "maxTimeBetweenChunks", windowMin);
+		ModelAccess.set(fac, model, "compress_min", throughputMin);
+		ModelAccess.set(fac, model, "latency", reqLatency);
+		ModelAccess.set(fac, model, "jitter", reqJitter);
 		
-		ModelAccess.set(model, "importance", importance);
-		ModelAccess.set(model, "userImportance", impUser);
+		ModelAccess.set(fac, model, "importance", importance);
+		ModelAccess.set(fac, model, "userImportance", impUser);
 		
 	}
 	

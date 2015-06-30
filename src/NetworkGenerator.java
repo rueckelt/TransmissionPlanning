@@ -1,3 +1,4 @@
+import ilog.opl.IloOplFactory;
 import ilog.opl.IloOplModel;
 
 import java.io.File;
@@ -143,13 +144,14 @@ public class NetworkGenerator {
 			PrintWriter pw = new PrintWriter(dest);
 			pw.println(content);
 			pw.flush();
+			pw.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void setNetworkData(IloOplModel model) {
+	public void setNetworkData(IloOplModel model, IloOplFactory fac) {
 		//init arrays
 		int n=networks.size();	//networks
 		int time=getNofTimeSlots();	//time slots
@@ -170,7 +172,6 @@ public class NetworkGenerator {
 					availBW[i][t]=0;
 				}
 			}
-			System.out.println("availBW mod:\n"+Arrays.deepToString(availBW));
 			type[i]=net.getType();
 			cost[i]=net.getCost();
 			latency[i]=net.getLatency();
@@ -180,12 +181,12 @@ public class NetworkGenerator {
 		}
 		
 		//set data
-		ModelAccess.set(model, "availBW", availBW);
-		ModelAccess.set(model, "channel_cost", cost);
-		ModelAccess.set(model, "channel_lcy", latency);
-		ModelAccess.set(model, "channel_jit", jitter);
-		ModelAccess.set(model, "ChannelType", type);
-		ModelAccess.set(model, "nInterfaceTypes", getNofInterfaceTypes());
+		ModelAccess.set(fac, model, "availBW", availBW);
+		ModelAccess.set(fac, model, "channel_cost", cost);
+		ModelAccess.set(fac, model, "channel_lcy", latency);
+		ModelAccess.set(fac, model, "channel_jit", jitter);
+		ModelAccess.set(fac, model, "ChannelType", type);
+		ModelAccess.set(fac, model, "nInterfaceTypes", getNofInterfaceTypes());
 		
 	}
 	
