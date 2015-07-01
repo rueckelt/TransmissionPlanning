@@ -13,12 +13,17 @@ public class main {
 	
 	public static void main(String[] args) {
 		
-		int t=2;
-		int r=4;
-		int n=3;
-		int rep=2;
+		int t=3;
+		int n=5;
+		int i=5;
+		int rep=100;
 
-		EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,r,n,rep);
+//		int t = Integer.parseInt(args[0]);
+//		int n = Integer.parseInt(args[1]);
+//		int i = Integer.parseInt(args[2]);
+//		int rep = Integer.parseInt(args[3]);
+		
+		EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,i,rep);
 		eval.evaluate();
 
 //		String model = "sched_com.mod";

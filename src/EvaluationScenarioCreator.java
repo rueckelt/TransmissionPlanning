@@ -5,7 +5,7 @@ import java.io.File;
 
 public class EvaluationScenarioCreator {
 	
-	public EvaluationScenarioCreator(int time, int apps, int nets, int repetitions){
+	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions){
 		REPETITIONS=repetitions;
 		MAX_TIME=time;
 		MAX_APPS=apps;
@@ -50,7 +50,7 @@ public class EvaluationScenarioCreator {
 		//(i) time
 		for(int t=0;t<MAX_TIME;t++){
 			//(ii) number of networks
-			for(int net=0;net<MAX_TIME;net++){	
+			for(int net=0;net<MAX_NETS;net++){	
 				int time = 25*pow(2,t);
 				int nets = pow(2,net);
 				
@@ -62,7 +62,7 @@ public class EvaluationScenarioCreator {
 
 					//repetitions of optimization
 					for(int rep=0; rep<REPETITIONS;rep++){
-						String path=folder+"rep_"+String.format("%04d", rep)+File.separator;
+						String path=folder+"rep_"+ rep+File.separator;
 						new File(path).mkdirs();
 						
 //						if(!sameData || first){
@@ -75,7 +75,8 @@ public class EvaluationScenarioCreator {
 //						}
 						tg.writeOutput(DATADIR+dataset_net, path+dataset_gen);			//write the file
 						
-						String logfile=path+"log";
+						String logfile=path+"log.m";
+//						String logfile=path+"log+"+t+"_"+net+"_"+req+"_"+rep+".m";
 //						if(first){
 //							me.initializeData(path+dataset_gen);
 //							first=false;
