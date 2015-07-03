@@ -13,9 +13,9 @@ public class main {
 	
 	public static void main(String[] args) {
 		
-		int t=3;
-		int n=5;
-		int i=5;
+		int t=4;
+		int n=3;
+		int i=3;
 		int rep=100;
 
 //		int t = Integer.parseInt(args[0]);
