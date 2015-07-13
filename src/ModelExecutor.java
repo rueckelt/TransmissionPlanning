@@ -132,7 +132,7 @@ public class ModelExecutor {
 		time = System.nanoTime()-time;
 		timeMap.put("create_model", (int) (time/1000000));
 		System.out.println("create_model: "+time/1000000);
-		
+		System.out.println("USE: "+datasource_file);
 //		generate
 		time=System.nanoTime();
 		opl_model.generate();
@@ -209,6 +209,7 @@ public class ModelExecutor {
 		
 		pw.println(log);
 		pw.flush();
+		pw.close();
 		
 	}
 	

@@ -27,7 +27,6 @@ public class EvaluationScenarioCreator {
 	final static String dataset_dyn = "sched_com_dyn.dat";
 	final static String dataset_net = "sched_com_net.dat";
 	final static String dataset_gen = "sched_com_gen.dat";
-	
 
 	private ModelExecutor me;
 	
@@ -58,34 +57,36 @@ public class EvaluationScenarioCreator {
 				for(int req=0;req<MAX_APPS;req++){
 					int reqs = pow(2,req);
 					String folder = LOG+t+"_"+net+"_"+req+File.separator;
-					new File(folder).mkdirs();
+					//new File(folder).mkdirs();
 
 					//repetitions of optimization
 					for(int rep=0; rep<REPETITIONS;rep++){
 						String path=folder+"rep_"+ rep+File.separator;
-						new File(path).mkdirs();
-						
-//						if(!sameData || first){
-							ng=new NetworkGenerator(nets, time);	//add network input data
-//						}
-						ng.writeOutput(DATADIR+dataset_dyn, DATADIR+dataset_net);		//write the file
-						
-//						if(!sameData || first){
-							tg = new TrafficGenerator(time, reqs);		//add application traffic input data
-//						}
-						tg.writeOutput(DATADIR+dataset_net, path+dataset_gen);			//write the file
-						
-						String logfile=path+"log.m";
-//						String logfile=path+"log+"+t+"_"+net+"_"+req+"_"+rep+".m";
-//						if(first){
-//							me.initializeData(path+dataset_gen);
-//							first=false;
-//						}else{
-//							me.setData(ng, tg);
-//						}
-						
-						me.execute(path+dataset_gen, logfile);
-
+						//skip if folder exists
+						if(!new File(path).exists()){
+							new File(path).mkdirs();
+							
+	//						if(!sameData || first){
+								ng=new NetworkGenerator(nets, time);	//add network input data
+	//						}
+							ng.writeOutput(DATADIR+dataset_dyn, DATADIR+dataset_net);		//write the file
+							
+	//						if(!sameData || first){
+								tg = new TrafficGenerator(time, reqs);		//add application traffic input data
+	//						}
+							tg.writeOutput(DATADIR+dataset_net, path+dataset_gen);			//write the file
+							
+							String logfile=path+"log.m";
+	//						String logfile=path+"log+"+t+"_"+net+"_"+req+"_"+rep+".m";
+	//						if(first){
+	//							me.initializeData(path+dataset_gen);
+	//							first=false;
+	//						}else{
+	//							me.setData(ng, tg);
+	//						}
+							
+							me.execute(path+dataset_gen, logfile);
+						}
 					}
 					
 				}
