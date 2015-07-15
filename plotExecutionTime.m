@@ -19,7 +19,7 @@ for t=1:t_max
         hold on;
       %  axis([1 2^(n_max-1) 0 20000]);
         boxplot(values, nets);
-        ylim([ymin,ymax])
+  %      ylim([ymin,ymax])
         xlabel('number of networks');
         ylabel('solve duration in s');
         title(['Solve duration over number of networks, time slots = ' num2str(t1) ', applications = ' num2str(i1)]);
@@ -47,7 +47,7 @@ for t=1:t_max
         hold on;
         %axis([1 2^(i_max-1) 0 20000]);
         boxplot(values, apps);
-        ylim([ymin,ymax])
+      %  ylim([ymin,ymax])
         xlabel('number of applications');
         ylabel('solve duration in s');
         title(['Solve duration over number of applications, time slots = ' num2str(t1) ', networks = ' num2str(n1)]);
@@ -75,7 +75,7 @@ for i=1:i_max
         hold on;
         %axis([1 2^(i_max-1) 0 20000]);
         boxplot(values, ts);
-        ylim([ymin,ymax])
+     %   ylim([ymin,ymax])
         xlabel('number of time slots');
         ylabel('solve duration in s');
         title(['Solve duration over number of time slots, applications = ' num2str(i1) ', networks = ' num2str(n1)]);

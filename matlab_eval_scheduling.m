@@ -2,23 +2,23 @@
 
 read_log=1;
 %read out logfiles
-if read_log
-    clearvars -except read_log
-else
-    clearvars -except time read_log
-end
+% if read_log
+%     clearvars -except read_log
+% else
+%     clearvars -except gen_time solve_time read_log
+% end
    
-t_max=1;
-n_max=1;
-i_max=1;
+t_max=3;
+n_max=5;
+i_max=5;
 rep_max=100;
 
-in_folder = 'logs_save';% 'logs_time';
-out_folder = 'graphs_save';
+in_folder = 'logs';% 'logs_time';
+out_folder = 'graphs_large';
 
 tic
 if read_log
-    time = readValuesFromFiles(in_folder, t_max, n_max, i_max, rep_max);
+  %  [gen_time solve_time] = readValuesFromFiles(in_folder, t_max, n_max, i_max, rep_max);
 %     time = zeros(t_max, n_max, i_max, rep_max);
 %     for t = 0:t_max-1
 %         for n = 0:n_max-1
@@ -47,13 +47,14 @@ if read_log
 end
 toc
 
+save results gen_time solve_time t_max n_max i_max rep_max
 
 %draw boxplots
 mkdir(out_folder);
 ymin = 0;
-ymax = 11;
+ymax = 40;
 
-
+time=solve_time;
 plotExecutionTime(out_folder, time, ymin,ymax, t_max, n_max, i_max)
 
 % %vary networks
@@ -140,8 +141,7 @@ plotExecutionTime(out_folder, time, ymin,ymax, t_max, n_max, i_max)
 % end
 
 
-clearvars -except time
-
+clearvars -except gen_time solve_time
 
 
 
