@@ -25,8 +25,20 @@ public class NetworkGenerator {
 	private Vector<Network> networks = new Vector<Network>();
 	private String content;
 	
+	public NetworkGenerator(){
+		
+	}
+	
 	public NetworkGenerator(int nofNetworks, int time){
 		addNetworks(nofNetworks, time);
+	}
+	
+	public Vector<Network> getNetworks(){
+		return networks;
+	}
+	
+	public void addNetwork(Network network){
+		networks.add(network);
 	}
 	
 	private void addNetworks(int nofNetworks, int time){

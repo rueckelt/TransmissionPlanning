@@ -12,14 +12,14 @@ public class EvaluationScenarioCreator {
 		MAX_NETS=nets;
 	}
 	
-	private boolean sameData = false;
+	private boolean log_overwrite = true;
 	private final int REPETITIONS;
 	private final int MAX_TIME;
 	private final int MAX_APPS;
 	private final int MAX_NETS;
 	
 	final static String DATADIR = "model"+File.separator;	
-	final static String LOG = "logs"+File.separator;	
+	final static String LOG = "logs2"+File.separator;	
 	final static String model = "sched_com.mod";
 //	final static String model = "split_sched_com.mod";
 	final static String dataset1 = "sched_com4.dat";
@@ -36,14 +36,9 @@ public class EvaluationScenarioCreator {
 
 	
 	public void evaluate(){
-		
-		//model sizes
-//	for(int i=0;i<modelSizes.length;i++){
-//		int s = modelSizes[i];
-//		int s=modelSize;
+
 		//read model		
 		me = new ModelExecutor(DATADIR+model);
-		boolean first=true;	
 		
 		//data sizes of..
 		//(i) time
@@ -62,30 +57,24 @@ public class EvaluationScenarioCreator {
 					//repetitions of optimization
 					for(int rep=0; rep<REPETITIONS;rep++){
 						String path=folder+"rep_"+ rep+File.separator;
-						//skip if folder exists
-						if(!new File(path).exists()){
+//						//skip if folder exists
+						if(!new File(path).exists() || log_overwrite){
 							new File(path).mkdirs();
-							
-	//						if(!sameData || first){
-								ng=new NetworkGenerator(nets, time);	//add network input data
-	//						}
+
+							ng=new NetworkGenerator(nets, time);	//add network input data
 							ng.writeOutput(DATADIR+dataset_dyn, DATADIR+dataset_net);		//write the file
 							
-	//						if(!sameData || first){
-								tg = new TrafficGenerator(time, reqs);		//add application traffic input data
-	//						}
+							tg = new TrafficGenerator(time, reqs);		//add application traffic input data
 							tg.writeOutput(DATADIR+dataset_net, path+dataset_gen);			//write the file
-							
+
 							String logfile=path+"log.m";
-	//						String logfile=path+"log+"+t+"_"+net+"_"+req+"_"+rep+".m";
-	//						if(first){
-	//							me.initializeData(path+dataset_gen);
-	//							first=false;
-	//						}else{
-	//							me.setData(ng, tg);
-	//						}
-							
+
 							me.execute(path+dataset_gen, logfile);
+							
+							CostFunction cf = //new CostFunction(ng, tg);
+											new TestCostFunction(ng, tg, me.getModel());
+							int cost = cf.costTotal(me.getSchedule_f_t_n());
+							System.out.println("COST_FUNCTION: "+cost);
 						}
 					}
 					

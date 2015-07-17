@@ -13,19 +13,17 @@ public class main {
 	
 	public static void main(String[] args) {
 		
-		int t=5;
-		int n=5;
-		int i=5;
-		int rep=100;
-
-//		int t = Integer.parseInt(args[0]);
-//		int n = Integer.parseInt(args[1]);
-//		int i = Integer.parseInt(args[2]);
-//		int rep = Integer.parseInt(args[3]);
+//		TestCostFunction tcf = new TestCostFunction();
+//		tcf.runTests();
+		
+		int t=4;
+		int n=4;
+		int i=4;
+		int rep=1;
 		
 		EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,i,rep);
 		eval.evaluate();
-
+		 
 //		String model = "sched_com.mod";
 //		new ModelExecutor(model).testLog();
 		

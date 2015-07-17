@@ -28,7 +28,6 @@ import java.util.HashMap;
 public class ModelExecutor {
 
 	private final boolean PRESOLVE = true;
-	private final int scale = 1000000; // ms
 	
 	IloOplFactory oplF;
 	IloOplErrorHandler errHandler;
@@ -47,11 +46,13 @@ public class ModelExecutor {
 	String[] log_scenario = {"nTime", "nChannels", "nRequests"};
 	
 	String[] logparam = {"allocatedChunks","non_allocated",
-							"dl_vio", "st_vio",
+							"dl_vio", "st_vio","vioLcy", "vioJit",
+							"st_vio","dl_vio","cost_switch","cost_ch",
 							"vioThroughput", "non_allo_vio", "nChunks", 
 							"prefStartTime", "deadline", "availBW"};
 	int[] dim = {3, 1,  
-				 1, 1,
+				 1, 1,1,1,
+				 1,1,0,0,
 				1, 1, 1,
 				1, 1, 2};
 	
@@ -108,13 +109,7 @@ public class ModelExecutor {
 	
 		time = System.nanoTime()-time;
 	}
-	
-	public void setData(NetworkGenerator ng, TrafficGenerator tg){
-//		ng.setNetworkData(opl_model, oplF);
-//		tg.setTrafficData(opl_model, oplF);
-	}
-	
-		
+
 	
 	/**
 	 * used
@@ -162,6 +157,10 @@ public class ModelExecutor {
 		return feasible;
 	}
 	
+	public int[][][] getSchedule_f_t_n(){
+		return ModelAccess.getArray3(opl_model, "allocatedChunks");
+	}
+	
 	/**
 	 * logging for evaluation
 	 */
@@ -175,7 +174,6 @@ public class ModelExecutor {
 		try {
 			System.out.println("OBJECTIVE=" +cplex.getObjValue());
 		} catch (IloException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -183,7 +181,6 @@ public class ModelExecutor {
 		try {
 			pw = new PrintWriter(filename);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -192,14 +189,7 @@ public class ModelExecutor {
 			log+="% "+logparam[i]+"\n";
 			
 			switch(dim[i]){
-/*/			case 0:		log+=ModelAccess.getValue(opl_model, logparam[i])+"\n";break;
-			case 1:		log+=Arrays.toString(ModelAccess.getArray(opl_model, logparam[i])).replace("[", "").replace("]", "")+"\n";break;
-			case 2:		//log+=Arrays.deepToString(ModelAccess.getArray2(opl_model, logparam[i])).replace("[", "").replace("],", ";]\n").replace("]", "")+"\n";
-			log+=Arrays.deepToString(ModelAccess.getArray2(opl_model, logparam[i])).replace("[", "").replace("],", ";]\n").replace("]", "")+"\n";
-			break;
-			case 3: 	//log+=Arrays.deepToString(ModelAccess.getArray3(opl_model, logparam[i])).replace("[", "").replace("],", ";\n").replace("]", "")+"\n";break;
-				log+=Arrays.deepToString(ModelAccess.getArray3(opl_model, logparam[i])).replace("],", "]\n")+"\n";break;
-*/
+
 			case 0:		log+=logValue(logparam[i],ModelAccess.getValue(opl_model, logparam[i])); break;
 			case 1: 	log+=logDim1(logparam[i],ModelAccess.getArray(opl_model, logparam[i])); break;
 			case 2: 	log+=logDim2(logparam[i],ModelAccess.getArray2(opl_model, logparam[i])); break;

@@ -15,9 +15,19 @@ public class TrafficGenerator {
 	private Vector<Flow> flows = new Vector<Flow>();
 	private PrintWriter pw;
 	
-	
+	public TrafficGenerator(){
+		
+	}
 	public TrafficGenerator(int duration, int requests){
 		addTraffic(duration,requests);
+	}
+	
+	public Vector<Flow> getFlows(){
+		return flows;
+	}
+	
+	public void addFlow(Flow flow){
+		flows.add(flow);
 	}
 	
 	private void addTraffic(int duration, int requests){
