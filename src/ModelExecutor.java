@@ -49,7 +49,7 @@ public class ModelExecutor {
 							"dl_vio", "st_vio","vioLcy", "vioJit",
 							"st_vio","dl_vio","cost_switch","cost_ch",
 							"vioThroughput", "non_allo_vio", "nChunks", 
-							"prefStartTime", "deadline", "availBW"};
+							"prefStartTime", "deadline", "availChunkBuckets"};
 	int[] dim = {3, 1,  
 				 1, 1,1,1,
 				 1,1,0,0,

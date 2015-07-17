@@ -5,37 +5,37 @@
  *********************************************/
 
 
-nChannels = [nChannels];
+nNetworks = [nChannels];
 nTime = [nTime];
 nInterfaceTypes = [interfaceTypes];
-nRequests = [nRequests];
+nFlows = [nRequests];
 
 //channel model: generated [networkGenTime]
-availBW = //[Channels, Time]  
+availChunkBuckets = //[Networks, Time]  
 [
 [availBW]
 ];
 	
-channel_cost = //[Channels] 
+network_cost = //[Networks] 
 	[[cost]];				//static cost per channel (change later to more realistic model)
-channel_lcy =
+network_lcy =
 	[[latency]];
-channel_jit =
+network_jit =
 	[[jitter]];	
 
-ChannelType= //[Channels] 				//each channel has a specific type; e.g. WiFi, LTE..
+network_type= //[Networks] 				//each channel has a specific type; e.g. WiFi, LTE..
 	[[type]];		
 nClientInterfaces = //[InterfaceTypes]
 	[[clientInterfaces]];		//one interface for cellular, one for 11p(G5B)
 
 //requests: generated [trafficGenTime]
-nChunks = 				[[chunks]];		//[Requests]		//25
-deadline= 				[[deadline]];		//[Requests] 
-prefStartTime = 		[[startTime]];		//[Requests]
-minTimeBetweenChunks = 	[[windowMax]];		//[Requests]	//0 says not relevant/no maximum transfer rate
-stretch_max = 			[[throughputMax]]; 		//maximum of chunks in above specified time frame
-maxTimeBetweenChunks = 	[[windowMin]];		//[Requests]  //1000 says not relevant / no minimum transfer rate
-compress_min = 			[[throughputMin]]; 		//minimum of chunks in above specified time frame
+nChunks = 				[[chunks]];		//[Flows]		//25
+deadline= 				[[deadline]];		//[Flows] 
+prefStartTime = 		[[startTime]];		//[Flows]
+tpMaxWindow = 			[[windowMax]];		//[Flows]	//0 says not relevant/no maximum transfer rate
+tpMaxChunks = 			[[throughputMax]]; 		//maximum of chunks in above specified time frame
+tpMinWindow = 			[[windowMin]];		//[Flows]  //1000 says not relevant / no minimum transfer rate
+tpMinChunks = 			[[throughputMin]]; 		//minimum of chunks in above specified time frame
 latency = 				[[reqLatency]];	
 jitter = 				[[reqJitter]];
 
@@ -47,7 +47,7 @@ importance = [
 	[[impUnscheduled]],	//unsched
 	[[impLatency]],	//latency
 	[[impJitter]]	//jitter
-]; //[ImportanceTypes, Requests]
+]; //[ImportanceTypes, Flows]
 /* //constants
  int impDeadline = 1;
  int impPrefStart = 2;
@@ -59,6 +59,6 @@ importance = [
  */
 
 //user profiles
-userImportance = [[impUser]]; //[Requests]
+userImportance = [[impUser]]; //[Flows]
 userWTP = 2; //willingness to pay
  

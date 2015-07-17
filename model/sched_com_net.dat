@@ -5,37 +5,37 @@
  *********************************************/
 
 
-nChannels = 1;
+nNetworks = 1;
 nTime = 25;
 nInterfaceTypes = 2;
-nRequests = [nRequests];
+nFlows = [nRequests];
 
-//channel model: generated Fri Jul 17 13:32:12 CEST 2015
-availBW = //[Channels, Time]  
+//channel model: generated Fri Jul 17 14:45:26 CEST 2015
+availChunkBuckets = //[Networks, Time]  
 [
-	[32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32]
+	[23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23]
 ];
 	
-channel_cost = //[Channels] 
+network_cost = //[Networks] 
 	[10];				//static cost per channel (change later to more realistic model)
-channel_lcy =
+network_lcy =
 	[8];
-channel_jit =
+network_jit =
 	[6];	
 
-ChannelType= //[Channels] 				//each channel has a specific type; e.g. WiFi, LTE..
+network_type= //[Networks] 				//each channel has a specific type; e.g. WiFi, LTE..
 	[2];		
 nClientInterfaces = //[InterfaceTypes]
 	[1, 1];		//one interface for cellular, one for 11p(G5B)
 
 //requests: generated [trafficGenTime]
-nChunks = 				[[chunks]];		//[Requests]		//25
-deadline= 				[[deadline]];		//[Requests] 
-prefStartTime = 		[[startTime]];		//[Requests]
-minTimeBetweenChunks = 	[[windowMax]];		//[Requests]	//0 says not relevant/no maximum transfer rate
-stretch_max = 			[[throughputMax]]; 		//maximum of chunks in above specified time frame
-maxTimeBetweenChunks = 	[[windowMin]];		//[Requests]  //1000 says not relevant / no minimum transfer rate
-compress_min = 			[[throughputMin]]; 		//minimum of chunks in above specified time frame
+nChunks = 				[[chunks]];		//[Flows]		//25
+deadline= 				[[deadline]];		//[Flows] 
+prefStartTime = 		[[startTime]];		//[Flows]
+tpMaxWindow = 			[[windowMax]];		//[Flows]	//0 says not relevant/no maximum transfer rate
+tpMaxChunks = 			[[throughputMax]]; 		//maximum of chunks in above specified time frame
+tpMinWindow = 			[[windowMin]];		//[Flows]  //1000 says not relevant / no minimum transfer rate
+tpMinChunks = 			[[throughputMin]]; 		//minimum of chunks in above specified time frame
 latency = 				[[reqLatency]];	
 jitter = 				[[reqJitter]];
 
@@ -47,7 +47,7 @@ importance = [
 	[[impUnscheduled]],	//unsched
 	[[impLatency]],	//latency
 	[[impJitter]]	//jitter
-]; //[ImportanceTypes, Requests]
+]; //[ImportanceTypes, Flows]
 /* //constants
  int impDeadline = 1;
  int impPrefStart = 2;
@@ -59,6 +59,6 @@ importance = [
  */
 
 //user profiles
-userImportance = [[impUser]]; //[Requests]
+userImportance = [[impUser]]; //[Flows]
 userWTP = 2; //willingness to pay
  

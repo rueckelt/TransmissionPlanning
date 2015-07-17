@@ -1,0 +1,37 @@
+
+//changed in sched_com.mod and sched_com_dyn.dat
+
+Old						new
+
+nChannels				nNetworks
+nRequests				nFlows
+
+//ranges
+Channels				Networks
+Requests				Flows
+
+c 						n
+r						f
+
+channel_cost			network_cost
+channel_lcy				network_lcy
+channel_jit				network_jit
+ChannelType				network_type
+
+
+//Throughput model
+minTimeBetweenChunks	tpMaxWindow
+stretch_max				tpMaxChunks
+
+maxTimeBetweenChunks	tpMinWindow
+compress_min			tpMinChunks
+
+vioStretch				vioTpMax
+vioCompress				vioTpMin
+IMP_STRETCH				IMP_TP_MAX
+IMP_COMPRESS			IMP_TP_MIN
+
+
+allocatedBW				allocatedChunks
+availBW					availChunkBuckets
+
