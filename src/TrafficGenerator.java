@@ -4,22 +4,42 @@ import ilog.opl.IloOplModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
 
 
-public class TrafficGenerator {
-	
+public class TrafficGenerator implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8184271622466363691L;
+	public static final String TG_NAME = "TrafficGenerator";
 	private Vector<Flow> flows = new Vector<Flow>();
-	private PrintWriter pw;
 	
 	public TrafficGenerator(){
 		
 	}
 	public TrafficGenerator(int duration, int requests){
 		addTraffic(duration,requests);
+	}
+	
+	public static TrafficGenerator loadTrafficGenerator(String path){
+		TrafficGenerator tg=null;
+		try{
+			tg= (TrafficGenerator) PersistentStore.loadObject(path+TG_NAME);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return tg;
+	}
+	
+	//write this object to file
+	public void writeObject(String dest){
+		PersistentStore.storeObject(dest+TG_NAME, this);
 	}
 	
 	public Vector<Flow> getFlows(){
@@ -36,17 +56,17 @@ public class TrafficGenerator {
 		int tmp=duration/requests;
 		for(int i=0;i<requests;i++){
 			if(i%5==0){			//0		VoIP
-				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+30+i*tmp)); 	//todo
-				System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
+				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+20+i*tmp)); 	//todo
+//				System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
 			}else if(i%5==1 || i%5==4){		//4..10		Browsing
-				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(30+Math.sqrt(duration))));
-				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
+				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
+//				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
 			}else if(i%5==2){		//3		Download
 				flows.add(Flow.Update(duration/2));
-				System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
+//				System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
 			}else{					//Stream
 				flows.add(Flow.BufferableStream(i*tmp, tmp*5));
-				System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
+//				System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
 			}
 		}
 	}
@@ -76,6 +96,7 @@ public class TrafficGenerator {
 	
 
 	public void writeOutput(String source, String dest){
+				
 		//read source
 		String content="";
 		try {
@@ -181,7 +202,7 @@ public class TrafficGenerator {
 		
 		//write file
 		try {
-			pw = new PrintWriter(dest);
+			PrintWriter pw = new PrintWriter(dest);
 			pw.println(content);
 			pw.flush();
 			pw.close();

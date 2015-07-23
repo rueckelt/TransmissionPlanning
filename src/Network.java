@@ -1,4 +1,4 @@
-import java.util.Random;
+import java.io.Serializable;
 import java.util.Vector;
 
 /**
@@ -10,8 +10,12 @@ import java.util.Vector;
  */
 
 
-public class Network {
+public class Network implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3878823537551412162L;
 	private int meanChunks=0;	
 	private int type =1;		//1 = wifi; 2=cellular; ..?
 	private int latency = 0;

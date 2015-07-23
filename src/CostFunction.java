@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 
 public class CostFunction {
 	
@@ -48,8 +50,9 @@ public class CostFunction {
 			for(int n = 0; n<networks; n++){
 				Network net = ng.getNetworks().get(n);
 				for (int t = 0; t < timeslots; t++) {
-					if(net.getLatency()>flow.getReqLatency()){
-						vioJit[f]+= Math.pow(net.getJitter()-flow.getReqJitter(),2)*schedule[f][t][n]*flow.getImpJitter();
+					if(net.getJitter()>flow.getReqJitter()){
+						vioJit[f]+= Math.pow(net.getJitter()-flow.getReqJitter(),2)
+								*schedule[f][t][n]*flow.getImpJitter();
 					}
 				}
 			}
@@ -162,38 +165,76 @@ public class CostFunction {
 		int timeslots = cummulated_f_t[0].length;
 		
 		int[] vioTp = new int[flows];
+		int[][] vioTpMax = vioTpMax(cummulated_f_t);
+		int[][] vioTpMin = vioTpMin(cummulated_f_t);
 		for(int f = 0; f<flows; f++){
-			Flow flow = tg.getFlows().get(f);
-			//throughput window violations check
-			//maximum throughput
-			int t0=0;
-			System.out.println("wmax="+flow.getWindowMax());
-			for(int t=flow.getWindowMax(); t<timeslots; t++){
-				int tp = cummulated_f_t[f][t]-cummulated_f_t[f][t0];	//get chunks in window
-				if(tp>flow.getChunksMax()){				//if there are too much
-					int tmp=flow.getChunksMin()-tp*flow.getImpThroughputMax()*flow.getImpUser();
-					System.out.println("max: f, t0, t, tp, tmp:"+f+", "+t0+", "+t+", "+tp+", "+tmp);
-					vioTp[f] +=tp-flow.getChunksMax()*flow.getImpThroughputMax();
-				}
-				t0++;
-			}
-			//minimum throughput
-			t0=0;
-			System.out.println("wmin="+flow.getWindowMin());
-			for(int t=flow.getWindowMin(); t<timeslots; t++){
-				int tp =  cummulated_f_t[f][t]- cummulated_f_t[f][t0];	//get chunks in window
-				if(tp<flow.getChunksMin()){				//if there are too much
-					int tmp=flow.getChunksMin()-tp*flow.getImpThroughputMax()*flow.getImpUser();
-					System.out.println("min: f, t0, t, tp, tmp:"+f+", "+t0+", "+t+", "+tp+", "+tmp);
-					vioTp[f] +=flow.getChunksMin()-tp*flow.getImpThroughputMax()*flow.getImpUser();
-				}
-				t0++;
+			for(int t=0; t<timeslots; t++){
+				vioTp[f]=	vioTpMax[f][t]*tg.getFlows().get(f).getImpThroughputMax()+
+							vioTpMin[f][t]*tg.getFlows().get(f).getImpThroughputMin();
 			}
 		}
 		check(vioTp, "vioThroughput");
 		return vioTp;
 	}
 	
+	/**
+	 * todo: first case --> nothing to subtract!
+	 * @param cummulated_f_t
+	 * @return
+	 */
+	public int[][] vioTpMax(int[][] cummulated_f_t){
+		int flows = cummulated_f_t.length;
+		int timeslots = cummulated_f_t[0].length;
+		
+		int[][] vioTpMax = new int[flows][timeslots];
+		for(int f = 0; f<flows; f++){
+			Flow flow = tg.getFlows().get(f);
+			//throughput window violations check
+			//maximum throughput
+			int t0=0;
+			int subtract = 0;
+			for(int t=flow.getWindowMax()-1; t<timeslots; t++){
+				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){
+					
+					int tp = cummulated_f_t[f][t]-subtract;	//get chunks in window
+					if(tp>flow.getChunksMax()){				//if there are too much
+						int vio=tp-flow.getChunksMax();
+						vioTpMax[f][t] +=vio;
+					}
+				}
+				subtract=cummulated_f_t[f][t0];			//first step: nothing to subtract; then cummulated[t0]
+				t0++;
+			}
+		}
+		check(vioTpMax, "vioTpMax");
+		return vioTpMax;
+	}
+	
+	public int[][] vioTpMin(int[][] cummulated_f_t){
+		int flows = cummulated_f_t.length;
+		int timeslots = cummulated_f_t[0].length;
+		int[][] vioTpMin = new int[flows][timeslots];
+		for(int f = 0; f<flows; f++){
+			Flow flow = tg.getFlows().get(f);
+			//minimum throughput
+			//search only within window between startTime and deadline
+			int t0=0;
+			int subtract = 0;
+			for(int t=flow.getWindowMin()-1; t<timeslots; t++){
+				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){
+					int tp =  cummulated_f_t[f][t]- subtract;	//get chunks in window
+					if(tp<flow.getChunksMin()){				//if there are too much
+						int vio=flow.getChunksMin()-tp;
+						vioTpMin[f][t] +=vio;
+					}
+				}
+				subtract=cummulated_f_t[f][t0];			//first step: nothing to subtract; then cummulated[t0]
+				t0++;
+			}
+		}
+		check(vioTpMin, "vioTpMin");
+		return vioTpMin;
+	}
 	
 	
 	////////////////////// COST FUNCTIONS /////////////////////
@@ -245,20 +286,23 @@ public class CostFunction {
 		
 		//switches	: is counted for each connection / no gain from complete shift in model
 		int cost_switches=0;
-		int current_net = -1;
 		for(int f = 0; f<flows; f++){
+			int current_net = -1;
 			for(int t=0; t<timeslots; t++){
 				for(int n = 0; n<networks; n++){
 					if(schedule[f][t][n]>0 && current_net!=n ){
 						//do not count first use
 						if(current_net>=0){
-							cost_switches++;
+							cost_switches+=2;	
+								//in optimization, switches are counted per network. Here switches instances are counted.
+								//because always two networks are influenced from a switch, we add 2
 						}
 						current_net=n;
 					}
 				}
 			}
 		}
+		cost_switches*=ng.getHysteresis();
 		check(cost_switches, "cost_switch");
 		return cost_switches;
 	}

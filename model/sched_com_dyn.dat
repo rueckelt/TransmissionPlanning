@@ -26,19 +26,20 @@ network_jit =
 network_type= //[Networks] 				//each channel has a specific type; e.g. WiFi, LTE..
 	[[type]];		
 nClientInterfaces = //[InterfaceTypes]
-	[[clientInterfaces]];		//one interface for cellular, one for 11p(G5B)
+	[[clientInterfaces]];	
 
 //requests: generated [trafficGenTime]
-nChunks = 				[[chunks]];		//[Flows]		//25
+nChunks = 				[[chunks]];		//[Flows]		
 deadline= 				[[deadline]];		//[Flows] 
 prefStartTime = 		[[startTime]];		//[Flows]
-tpMaxWindow = 			[[windowMax]];		//[Flows]	//0 says not relevant/no maximum transfer rate
+tpMaxWindow = 			[[windowMax]];		//[Flows]	//0 says not relevant/no maximum transfer rate; upper throughput limit
 tpMaxChunks = 			[[throughputMax]]; 		//maximum of chunks in above specified time frame
 tpMinWindow = 			[[windowMin]];		//[Flows]  //1000 says not relevant / no minimum transfer rate
-tpMinChunks = 			[[throughputMin]]; 		//minimum of chunks in above specified time frame
+tpMinChunks = 			[[throughputMin]]; 		//minimum of chunks in above specified time frame; lower throughput limit
 latency = 				[[reqLatency]];	
 jitter = 				[[reqJitter]];
 
+hysteresis = [hysteresis];
 importance = [
 	[[impDeadline]],	//deadline
 	[[impStartTime]],	//start time
@@ -48,15 +49,6 @@ importance = [
 	[[impLatency]],	//latency
 	[[impJitter]]	//jitter
 ]; //[ImportanceTypes, Flows]
-/* //constants
- int impDeadline = 1;
- int impPrefStart = 2;
- int minTimeChunks = 3;
- int maxTimeChunks = 4;
- int unscheduled = 5;
- int latency = 6
- int jitter = 7
- */
 
 //user profiles
 userImportance = [[impUser]]; //[Flows]

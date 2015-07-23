@@ -13,7 +13,9 @@ public class ModelAccess {
 	public static int getValue(IloOplModel opl_model, String name){
 		try{
 			IloOplElement el= opl_model.getElement(name);
-			return el.asInt();
+//			int i = el.asIntMap().get(0);
+			int i= el.asInt();
+			return i;
 		}catch(Exception e){
 			e.printStackTrace();
 		}

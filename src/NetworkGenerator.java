@@ -4,8 +4,7 @@ import ilog.opl.IloOplModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.net.InterfaceAddress;
-import java.util.Arrays;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
@@ -19,19 +18,40 @@ import java.util.Vector;
  */
 
 
-public class NetworkGenerator {
+public class NetworkGenerator implements Serializable {
 	
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4527605239252256091L;
+	public static final String NG_NAME = "NetworkGenerator";
 	private Vector<Network> networks = new Vector<Network>();
-	private String content;
 	
 	public NetworkGenerator(){
-		
 	}
 	
 	public NetworkGenerator(int nofNetworks, int time){
 		addNetworks(nofNetworks, time);
 	}
+	
+	public static NetworkGenerator loadNetworkGenerator(String path){
+		NetworkGenerator ng=null;
+		try{
+			ng= (NetworkGenerator) PersistentStore.loadObject(path+NG_NAME);
+			System.out.println("NG: load \""+path+NG_NAME+"\"");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return ng;
+	}
+	
+	//write this object to file
+	public void writeObject(String dest){
+		PersistentStore.storeObject(dest+NG_NAME, this);
+	}
+	
+	
+	private int hysteresis = 100;
 	
 	public Vector<Network> getNetworks(){
 		return networks;
@@ -78,7 +98,10 @@ public class NetworkGenerator {
 		return slots;
 	}
 	
+
 	public void writeOutput(String source, String dest){
+
+		String content="";
 		//read source
 		try {
 			content = new Scanner(new File(source)).useDelimiter("\\Z").next();
@@ -95,7 +118,7 @@ public class NetworkGenerator {
 		content=content.replace("[nChannels]", ""+networks.size());
 		content=content.replace("[nTime]", ""+size);
 		content=content.replace("[interfaceTypes]", ""+interfaceTypes);
-		
+		content=content.replace("[hysteresis]", ""+hysteresis);
 		
 		//one interface of each type
 		boolean first=true;
@@ -202,7 +225,12 @@ public class NetworkGenerator {
 		
 	}
 	
+	public void setHysteresis(int value){
+		hysteresis = value;
+	}	
 	
-	
+	public int getHysteresis(){
+		return hysteresis;
+	}
 	
 }

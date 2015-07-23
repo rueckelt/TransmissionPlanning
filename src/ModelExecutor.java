@@ -46,15 +46,17 @@ public class ModelExecutor {
 	String[] log_scenario = {"nTime", "nChannels", "nRequests"};
 	
 	String[] logparam = {"allocatedChunks","non_allocated",
-							"dl_vio", "st_vio","vioLcy", "vioJit",
+							"dl_vio", "st_vio","vioLcy", "vioJit","vioTpMax","vioTpMin",
 							"st_vio","dl_vio","cost_switch","cost_ch",
 							"vioThroughput", "non_allo_vio", "nChunks", 
-							"prefStartTime", "deadline", "availChunkBuckets"};
+							"prefStartTime", "deadline", "availChunkBuckets",
+							"closed_gaps"};
 	int[] dim = {3, 1,  
-				 1, 1,1,1,
+				 1, 1,1,1,2,2,
 				 1,1,0,0,
 				1, 1, 1,
-				1, 1, 2};
+				1, 1, 2,
+				3};
 	
 	long time =0;
 	HashMap<String, Integer> timeMap; 
@@ -99,7 +101,7 @@ public class ModelExecutor {
 		opl_model.addDataSource(dataSource);
 		time = System.nanoTime()-time;
 		timeMap.put("create_model", (int) (time/1000000));
-		System.out.println("create_model: "+time/1000000);
+//		System.out.println("create_model: "+time/1000000);
 		
 		
 		
@@ -126,8 +128,8 @@ public class ModelExecutor {
 		opl_model.addDataSource(dataSource);
 		time = System.nanoTime()-time;
 		timeMap.put("create_model", (int) (time/1000000));
-		System.out.println("create_model: "+time/1000000);
-		System.out.println("USE: "+datasource_file);
+//		System.out.println("create_model: "+time/1000000);
+		System.out.println("USE DATASOURCE: "+datasource_file);
 //		generate
 		time=System.nanoTime();
 		opl_model.generate();
@@ -138,7 +140,7 @@ public class ModelExecutor {
 		
 		
 		timeMap.put("generate_model", (int) (time/1000000));
-		System.out.println("generate_model: "+time/1000000);
+//		System.out.println("generate_model: "+time/1000000);
 		
 //		solve
 		boolean feasible = false;
@@ -147,7 +149,7 @@ public class ModelExecutor {
 			feasible = cplex.solve();
 			time = System.nanoTime()-time;
 			timeMap.put("duration_to_solve_model_us", (int) (time/1000000));
-			System.out.println("duration_to_solve_model_us: "+time/1000000);
+//			System.out.println("duration_to_solve_model_us: "+time/1000000);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -171,11 +173,11 @@ public class ModelExecutor {
 			log+=s+" = "+timeMap.get(s)+";\n";
 		}
 		//log violation
-		try {
-			System.out.println("OBJECTIVE=" +cplex.getObjValue());
-		} catch (IloException e1) {
-			e1.printStackTrace();
-		}
+//		try {
+//			System.out.println("OBJECTIVE=" +cplex.getObjValue());
+//		} catch (IloException e1) {
+//			e1.printStackTrace();
+//		}
 		
 		PrintWriter pw=null;
 		try {

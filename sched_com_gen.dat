@@ -1,0 +1,64 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: QZ61P8
+ * Creation Date: 10.07.2014 at 08:59:12
+ *********************************************/
+
+
+nChannels = 1;
+nTime = 5;
+nInterfaceTypes = 1;
+nRequests = 1;
+
+//channel model: generated Thu Jul 16 13:59:55 CEST 2015
+availBW = //[Channels, Time]  
+[
+	[2, 2, 2, 2, 2]
+];
+	
+channel_cost = //[Channels] 
+	[2];				//static cost per channel (change later to more realistic model)
+channel_lcy =
+	[2];
+channel_jit =
+	[2];	
+
+ChannelType= //[Channels] 				//each channel has a specific type; e.g. WiFi, LTE..
+	[1];		
+nClientInterfaces = //[InterfaceTypes]
+	[1];		//one interface for cellular, one for 11p(G5B)
+
+//requests: generated Thu Jul 16 13:59:55 CEST 2015
+nChunks = 				[10];		//[Requests]		//25
+deadline= 				[100000];		//[Requests] 
+prefStartTime = 		[0];		//[Requests]
+minTimeBetweenChunks = 	[1];		//[Requests]	//0 says not relevant/no maximum transfer rate
+stretch_max = 			[2]; 		//maximum of chunks in above specified time frame
+maxTimeBetweenChunks = 	[1];		//[Requests]  //1000 says not relevant / no minimum transfer rate
+compress_min = 			[2]; 		//minimum of chunks in above specified time frame
+latency = 				[1];	
+jitter = 				[1];
+
+importance = [
+	[0],	//deadline
+	[0],	//start time
+	[100],	//throughput lower bound
+	[100],	//throughput upper bound
+	[5],	//unsched
+	[1],	//latency
+	[1]	//jitter
+]; //[ImportanceTypes, Requests]
+/* //constants
+ int impDeadline = 1;
+ int impPrefStart = 2;
+ int minTimeChunks = 3;
+ int maxTimeChunks = 4;
+ int unscheduled = 5;
+ int latency = 6
+ int jitter = 7
+ */
+
+//user profiles
+userImportance = [1]; //[Requests]
+userWTP = 2; //willingness to pay
+ 

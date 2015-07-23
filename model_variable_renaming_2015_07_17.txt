@@ -1,5 +1,6 @@
 
 //changed in sched_com.mod and sched_com_dyn.dat
+//and logparam ModelExecutor
 
 Old						new
 

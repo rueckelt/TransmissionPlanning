@@ -1,16 +1,22 @@
+import java.io.Serializable;
 
-public class Flow {
+
+public class Flow implements Serializable{
 	
 	//default flow = now special requirements, no chunks
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5197541708853992326L;
 	private int chunks=0;
 	private int deadline=100000;
 	private int startTime=0;
 	
-	//at least n chunks in t time slots
+	//at least n chunks in t time slots ### lower throughput limit
 	private int windowMin=100000;
 	private int chunksMin=0;
-	//at most n chunks in t time slots (data is not prduced faster/ slow transmitter)
+	//at most n chunks in t time slots (data is not prduced faster/ slow transmitter) ## upper throughput limit
 	private int windowMax=1;
 	private int chunksMax=100000;
 	

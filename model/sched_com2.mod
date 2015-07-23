@@ -154,6 +154,7 @@ int tpMinChunks[Flows] = ...;
 int latency[Flows] = ...;
 int jitter[Flows] = ...;
 	//weights/importance
+int hysteresis = ...;	
 int importance[ImportanceTypes, Flows] = ...; 
 
 //user profiles
@@ -221,7 +222,7 @@ dexpr int vioThroughput[f in Flows] = sum(t in Time) ((vioTpMax[ f, t]*importanc
 dvar int closed_gaps[Flows, Time, Networks] in 0..1;
 dexpr int cost_switch = sum(f in Flows, t in 1..nTime-1, n in Networks)(
 				closed_gaps[f, t, n]!=closed_gaps[f, t+1, n]
-			);
+			)*hysteresis;
 			
 dexpr int cost_violation = sum(f in Flows)((st_vio[f]+dl_vio[f]+non_allo_vio[f]+vioThroughput[f]+vioLcy[f]+vioJit[f])*userImportance[f]);
 dexpr int cost_ch = sum(f in Flows, t in Time, n in Networks)(allocatedChunks[f, t, n]*network_cost[n]);
@@ -281,20 +282,23 @@ subject to{
 		
 	//upper throughput limit
 	forall(f in Flows, t1 in Time)(
-		(t1==tpMaxWindow[f])<=(cummulatedChunks[f, t1]<=tpMaxChunks[f]+vioTpMax[f, t1])
+		(t1>=prefStartTime[f]+tpMaxWindow[f])*(t1<=deadline[f])*(t1==tpMaxWindow[f])<=(cummulatedChunks[f, t1]<=tpMaxChunks[f]+vioTpMax[f, t1])
 		//for first timeslot: the number of commulated chunks for a request in t1 must be less than the minimum
 	);
+	
+	//time span equal to window and within startTime/Deadline limits ===implies==> number of chunks in window less or equal to max+vio
 	forall(f in Flows, t0 in Time, t1 in Time)(
-		(t1-t0==tpMaxWindow[f])<=(cummulatedChunks[f, t1]-cummulatedChunks[f, t0]<=tpMaxChunks[f]+vioTpMax[f, t1])
+		(t0>=prefStartTime[f])*(t1<=deadline[f])*(t1-t0==tpMaxWindow[f])<=(cummulatedChunks[f, t1]-cummulatedChunks[f, t0]<=tpMaxChunks[f]+vioTpMax[f, t1])
 		//in a certain timespan, there must be less than tpMaxChunks chunks
 	);
 	
 	//lower throughput limit
 	forall(f in Flows, t1 in Time)(
-		(t1==tpMinWindow[f])<=(cummulatedChunks[f, t1]>=tpMinChunks[f]-vioTpMin[f, t1])
+		(t1>=prefStartTime[f]+tpMinWindow[f])*(t1<=deadline[f])*(t1==tpMinWindow[f])<=(cummulatedChunks[f, t1]>=tpMinChunks[f]-vioTpMin[f, t1])
 	);
+	//time span equal to window and within startTime/Deadline limits ===implies==> number of chunks in window more or equal to min-vio
 	forall(f in Flows, t0 in Time, t1 in Time)(
-		(t1-t0==tpMinWindow[f])<=(cummulatedChunks[f, t1]-cummulatedChunks[f, t0]>=tpMinChunks[f]-vioTpMin[f,t1] )
+		(t0>=prefStartTime[f])*(t1<=deadline[f])*(t1-t0==tpMinWindow[f])<=(cummulatedChunks[f, t1]-cummulatedChunks[f, t0]>=tpMinChunks[f]-vioTpMin[f,t1] )
 		//in a certain timespan, there must be at least tpMinChunks chunks
 	);
 
