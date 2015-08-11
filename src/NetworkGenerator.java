@@ -45,6 +45,10 @@ public class NetworkGenerator implements Serializable {
 		return ng;
 	}
 	
+	public int getTimeslots(){
+		return networks.get(0).getSlots();
+	}
+	
 	//write this object to file
 	public void writeObject(String dest){
 		PersistentStore.storeObject(dest+NG_NAME, this);
@@ -78,14 +82,23 @@ public class NetworkGenerator implements Serializable {
 	}
 	
 	
-	private int getNofInterfaceTypes(){
-		int interfaceTypes=0;
+	public int getNofInterfaceTypes(){
+		int interfaceTypes=0;	
 		for(Network network: networks){
 			if(network.getType()>interfaceTypes){
 				interfaceTypes = network.getType();
 			}
 		}
-		return interfaceTypes;
+		return interfaceTypes+1;	//to address Interface with ID 3, we need 4 array elements, therefore +1
+	}
+	
+	public int[] getNofInterfacesByType(){
+		int[] intByType= new int[getNofInterfaceTypes()];
+		
+		for(Network network: networks){
+			intByType[network.getType()]++;
+		}
+		return intByType;
 	}
 	
 	private int getNofTimeSlots(){

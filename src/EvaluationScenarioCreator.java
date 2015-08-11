@@ -8,31 +8,20 @@ public class EvaluationScenarioCreator {
 	private final boolean TEST_COST_FUNCTION = true;
 	private boolean LOG_OVERWRITE = true;
 	private boolean RECALC= false;
+	private final String LOG;
 	
-	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions){
+	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
 		REPETITIONS=repetitions;
 		MAX_TIME=time;
 		MAX_APPS=apps;
 		MAX_NETS=nets;
+		LOG=logpath+File.separator;
 	}
 	
 	private final int REPETITIONS;
 	private final int MAX_TIME;
 	private final int MAX_APPS;
 	private final int MAX_NETS;
-	
-	final static String DATADIR = "model"+File.separator;	
-	final static String LOG = "logs2"+File.separator;	
-	final static String model = "sched_com2.mod";
-//	final static String model = "split_sched_com.mod";
-	final static String dataset1 = "sched_com4.dat";
-	
-	final static String dataset_dyn = "sched_com_dyn.dat";
-	final static String dataset_net = "sched_com_net.dat";
-	final static String dataset_gen = "sched_com_gen.dat";
-
-	private ModelExecutor me;
-	
 	
 	private NetworkGenerator ng;
 	private TrafficGenerator tg;
@@ -41,7 +30,7 @@ public class EvaluationScenarioCreator {
 	public void evaluate(){
 
 		//read model		
-		me = new ModelExecutor(DATADIR+model);
+//		me = new ModelExecutor(DATADIR+model);
 		
 		//data sizes of..
 		//(i) time
@@ -78,10 +67,8 @@ public class EvaluationScenarioCreator {
 
 			if(!recalc){
 				ng=new NetworkGenerator(nets, time);	//add network input data
-				ng.writeOutput(DATADIR+dataset_dyn, DATADIR+dataset_net);		//write the file for ILP
 				ng.writeObject(path);
 				tg = new TrafficGenerator(time, flows);		//add application traffic input data
-				tg.writeOutput(DATADIR+dataset_net, path+dataset_gen);			//write the file for ILP
 				tg.writeObject(path); 
 			}else{
 				System.out.println(path);
@@ -89,21 +76,25 @@ public class EvaluationScenarioCreator {
 				tg=TrafficGenerator.loadTrafficGenerator(path);
 			}
 			String logfile=path+"log.m";
+			
+			Scheduler optimization = new OptimizationScheduler(ng, tg);
+			optimization.calculateInstance(logfile);
+			
 
-			me.execute(path+dataset_gen, logfile);
-			
-			CostFunction cf;
-			
-			if(ng!=null && tg!=null){
-				if(TEST_COST_FUNCTION){
-					cf = new TestCostFunction(ng, tg, me.getModel());
-				}else{
-					cf = new CostFunction(ng, tg);
-				}
-				int cost = cf.costTotal(me.getSchedule_f_t_n());
-			}else{
-				System.err.println("################## TG OR NG IS NULL ###################");
-			}
+//			me.execute(path+dataset_gen, logfile);
+//			
+//			CostFunction cf;
+//			
+//			if(ng!=null && tg!=null){
+//				if(TEST_COST_FUNCTION){
+//					cf = new TestCostFunction(ng, tg, me.getModel());
+//				}else{
+//					cf = new CostFunction(ng, tg);
+//				}
+//				int cost = cf.costTotal(me.getSchedule_f_t_n());
+//			}else{
+//				System.err.println("################## TG OR NG IS NULL ###################");
+//			}
 		}
 	}
 

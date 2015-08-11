@@ -49,6 +49,10 @@ public class Network implements Serializable{
 		}
 	}
 	
+	public Vector<Integer> getCapacity(){
+		return capacity;
+	}
+	
 	public int getSlots(){
 		return capacity.size();
 	}

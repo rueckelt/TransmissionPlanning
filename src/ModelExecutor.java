@@ -146,11 +146,15 @@ public class ModelExecutor {
 	 * logging for evaluation
 	 */
 	public void log(String filename){
+		LogMatlabFormat logger= new LogMatlabFormat();
 		//log timing
 		String log="% t_n_i\n% time:\n";
+		logger.comment(log);
 		for(String s:timeMap.keySet()){
-			log+=s+" = "+timeMap.get(s)+";\n";
+			logger.log(s, timeMap.get(s));
+//			log+=s+" = "+timeMap.get(s)+";\n";
 		}
+		
 		//log violation
 //		try {
 //			System.out.println("OBJECTIVE=" +cplex.getObjValue());
@@ -158,12 +162,12 @@ public class ModelExecutor {
 //			e1.printStackTrace();
 //		}
 		
-		PrintWriter pw=null;
-		try {
-			pw = new PrintWriter(filename);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+//		PrintWriter pw=null;
+//		try {
+//			pw = new PrintWriter(filename);
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
 		
 //		String path= "t_n_i_";
 		for(int i =0;i<logparam.length;i++){
@@ -171,65 +175,71 @@ public class ModelExecutor {
 			
 			switch(dim[i]){
 
-			case 0:		log+=logValue(logparam[i],ModelAccess.getValue(opl_model, logparam[i])); break;
-			case 1: 	log+=logDim1(logparam[i],ModelAccess.getArray(opl_model, logparam[i])); break;
-			case 2: 	log+=logDim2(logparam[i],ModelAccess.getArray2(opl_model, logparam[i])); break;
-			case 3: 	log+=logDim3(logparam[i],ModelAccess.getArray3(opl_model, logparam[i])); break;
+			case 0:		logger.log(logparam[i],ModelAccess.getValue(opl_model, logparam[i])); break;
+			case 1: 	logger.log(logparam[i],ModelAccess.getArray(opl_model, logparam[i])); break;
+			case 2: 	logger.log(logparam[i],ModelAccess.getArray2(opl_model, logparam[i])); break;
+			case 3: 	logger.log(logparam[i],ModelAccess.getArray3(opl_model, logparam[i])); break;
+			//
+//			case 0:		log+=logValue(logparam[i],ModelAccess.getValue(opl_model, logparam[i])); break;
+//			case 1: 	log+=logDim1(logparam[i],ModelAccess.getArray(opl_model, logparam[i])); break;
+//			case 2: 	log+=logDim2(logparam[i],ModelAccess.getArray2(opl_model, logparam[i])); break;
+//			case 3: 	log+=logDim3(logparam[i],ModelAccess.getArray3(opl_model, logparam[i])); break;
 			}
 		}
-		
-		pw.println(log);
-		pw.flush();
-		pw.close();
+//
+//		pw.println(log);
+//		pw.flush();
+//		pw.close();
+		logger.writeLog(filename);
 		
 	}
 	
-	public void testLog(){
-		int[] d1={1,2,3};
-		int[][] d2 = {d1, d1, d1, d1};
-		int[][][] d3 = {d2, d2, d2};
-		
-		System.out.println(logValue("a", 5));
-		System.out.println(logDim1("b", d1));
-		System.out.println(logDim2("c", d2));
-		System.out.println(logDim3("d", d3));
-	}
+//	public void testLog(){
+//		int[] d1={1,2,3};
+//		int[][] d2 = {d1, d1, d1, d1};
+//		int[][][] d3 = {d2, d2, d2};
+//		
+//		System.out.println(logValue("a", 5));
+//		System.out.println(logDim1("b", d1));
+//		System.out.println(logDim2("c", d2));
+//		System.out.println(logDim3("d", d3));
+//	}
 	
-	/**
-	 * Log outputs for matlab input
-	 * @param name
-	 * @param value
-	 * @return
-	 */
-	private String logValue(String name, int value){
-		 return name+" = "+value+";\n";
-	}
-	private String logDim1(String name, int[] value){
-		return name+" = "+Arrays.toString(value)+";\n";
-	}
-	private String logDim2(String name, int[][] value){
-		String s = name +" = [";
-		for (int i = 0; i < value.length; i++) {
-			if(i>0){
-				s+="; ";
-			}
-			for (int j = 0; j < value[0].length; j++) {
-				if(j>0){
-					s+=", ";
-				}
-				s+=value[i][j];
-			}
-		}
-		return s+"];\n";
-	}
-	private String logDim3(String name, int[][][] value){
-		String s="";
-		for (int i = 0; i < value.length; i++) {
-			String name2=name+"(:,:,"+(i+1)+")";
-			s+=logDim2(name2, value[i]);
-		}
-		return s;
-	}
+//	/**
+//	 * Log outputs for matlab input
+//	 * @param name
+//	 * @param value
+//	 * @return
+//	 */
+//	private String logValue(String name, int value){
+//		 return name+" = "+value+";\n";
+//	}
+//	private String logDim1(String name, int[] value){
+//		return name+" = "+Arrays.toString(value)+";\n";
+//	}
+//	private String logDim2(String name, int[][] value){
+//		String s = name +" = [";
+//		for (int i = 0; i < value.length; i++) {
+//			if(i>0){
+//				s+="; ";
+//			}
+//			for (int j = 0; j < value[0].length; j++) {
+//				if(j>0){
+//					s+=", ";
+//				}
+//				s+=value[i][j];
+//			}
+//		}
+//		return s+"];\n";
+//	}
+//	private String logDim3(String name, int[][][] value){
+//		String s="";
+//		for (int i = 0; i < value.length; i++) {
+//			String name2=name+"(:,:,"+(i+1)+")";
+//			s+=logDim2(name2, value[i]);
+//		}
+//		return s;
+//	}
 
 
 }

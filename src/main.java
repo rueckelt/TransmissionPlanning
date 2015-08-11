@@ -1,4 +1,3 @@
-import java.io.File;
 
 
 
@@ -18,21 +17,22 @@ public class main {
 //		TestCostFunction tcf = new TestCostFunction();
 //		tcf.runTests();
 		
-		int t=3;
-		int n=3;
-		int i=4;
-		int rep=3;
+		int t=1;
+		int n=2;
+		int i=2;
+		int rep=2;
+		String logpath= "logs3";
 		
-		EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,i,rep);
+		EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,i,rep,logpath);
 
 //		eval.calculateInstance_t_n_i(0, 0, 0, 0, "logs2"+File.separator, false, true);
 		eval.evaluate();
 //		
-		String instance_path = "logs2\\0_0_0\\rep_0\\";
-		TrafficGenerator tg = TrafficGenerator.loadTrafficGenerator(instance_path);
-		System.out.println(tg.getFlows().get(0).getChunks());
-		NetworkGenerator ng = NetworkGenerator.loadNetworkGenerator(instance_path);
-		System.out.println(ng.getHysteresis());
+//		String instance_path = "logs2\\0_0_0\\rep_0\\";
+//		TrafficGenerator tg = TrafficGenerator.loadTrafficGenerator(instance_path);
+//		System.out.println(tg.getFlows().get(0).getChunks());
+//		NetworkGenerator ng = NetworkGenerator.loadNetworkGenerator(instance_path);
+//		System.out.println(ng.getHysteresis());
 		
 		 
 //		String model = "sched_com.mod";
