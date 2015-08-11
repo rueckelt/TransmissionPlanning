@@ -78,10 +78,10 @@ public class EvaluationScenarioCreator {
 
 			if(!recalc){
 				ng=new NetworkGenerator(nets, time);	//add network input data
-				ng.writeOutput(DATADIR+dataset_dyn, DATADIR+dataset_net);		//write the file
+				ng.writeOutput(DATADIR+dataset_dyn, DATADIR+dataset_net);		//write the file for ILP
 				ng.writeObject(path);
 				tg = new TrafficGenerator(time, flows);		//add application traffic input data
-				tg.writeOutput(DATADIR+dataset_net, path+dataset_gen);			//write the file
+				tg.writeOutput(DATADIR+dataset_net, path+dataset_gen);			//write the file for ILP
 				tg.writeObject(path); 
 			}else{
 				System.out.println(path);

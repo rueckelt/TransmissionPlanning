@@ -91,28 +91,7 @@ public class ModelExecutor {
 		return opl_model;
 	}
 	
-	public void initializeData(String datasource_file){
-	//	load data
-		timeMap = new HashMap<String, Integer>();
-	
-		time=System.nanoTime();
-		IloOplDataSource dataSource = oplF.createOplDataSource(datasource_file);
-		opl_model = oplF.createOplModel(definition, cplex);
-		opl_model.addDataSource(dataSource);
-		time = System.nanoTime()-time;
-		timeMap.put("create_model", (int) (time/1000000));
-//		System.out.println("create_model: "+time/1000000);
 		
-		
-		
-	//	generate
-		time=System.nanoTime();
-		opl_model.generate();
-	
-		time = System.nanoTime()-time;
-	}
-
-	
 	/**
 	 * used
 	 * @param dataSource

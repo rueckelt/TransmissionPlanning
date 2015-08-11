@@ -120,7 +120,7 @@ public class CostFunction {
 	 * @param schedule[f][t][n]
 	 * @return cummulated chunks for flows and timeslots
 	 */
-	public int[][] cummulated_f_t(int[][][] schedule){
+	private int[][] cummulated_f_t(int[][][] schedule){
 		int flows = schedule.length;
 		int timeslots = schedule[0].length;
 		int networks = schedule[0][0].length;
@@ -312,13 +312,13 @@ public class CostFunction {
 	}
 	
 	//this is only dummy for overwriting in generalization and should be left empty
-	public void check(int value, String variable){
+	private void check(int value, String variable){
 		
 	}
-	public void check(int[] value, String variable){
+	private void check(int[] value, String variable){
 		
 	}
-	public void check(int[][] value, String variable){
+	private void check(int[][] value, String variable){
 		
 	}
 }
