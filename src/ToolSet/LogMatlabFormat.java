@@ -1,30 +1,55 @@
+package ToolSet;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class LogMatlabFormat {
-	String log="";
+
+	private String log;
+	private List<String> logged_variables;
+	
+	
+	public LogMatlabFormat(){
+		initLog();
+	}
 	
 	
 	/**
 	 * Log outputs for matlab input
+	 * 
+	 * Writes to log if variable does not exist yet. Would lead to (redundant) matlab overwrite elsewise
+	 * 
 	 * @param name
 	 * @param value
 	 * @return
 	 */
 	
 	public void log(String name, int value){
-		log+=logValue(name, value);
+		if(!logged_variables.contains(name)){
+			log+=logValue(name, value);
+		}
 	}	
 	public void log(String name, int[] value){
-		log+=logValue(name, value);
+		if(!logged_variables.contains(name)){
+			log+=logValue(name, value);
+		}
 	}	
 	public void log(String name, int[][] value){
-		log+=logValue(name, value);
+		if(!logged_variables.contains(name)){
+			log+=logValue(name, value);
+		}
 	}	
 	public void log(String name, int[][][] value){
-		log+=logValue(name, value);
+		if(!logged_variables.contains(name)){
+			log+=logValue(name, value);
+		}
 	}
 	public void comment(String comment){
 		log+="\n% "+comment.replaceAll("\n", "\n% ")+"\n";
@@ -32,11 +57,23 @@ public class LogMatlabFormat {
 		
 	public void writeLog(String filename){
 		PrintWriter pw=null;
+		//check/create path
+		String path = filename.substring(0, filename.lastIndexOf(File.separator));
+		System.out.println(path);
+		if(!new File(path).exists()){
+			new File(path).mkdirs();
+		}
+		
+		//write log file
 		try {
 			pw = new PrintWriter(filename);
 			pw.println(log);
 			pw.flush();
 			pw.close();
+			
+			//clean log
+			initLog();
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -71,6 +108,16 @@ public class LogMatlabFormat {
 			s+=logValue(name2, value[i]);
 		}
 		return s;
+	}
+	
+	private void initLog(){
+		logged_variables = new LinkedList<String>();
+		log="";
+		
+		//start with date
+		Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String date = formatter.format(Calendar.getInstance().getTime());
+		comment(date);
 	}
 
 }

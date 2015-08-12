@@ -1,5 +1,14 @@
+package schedulers;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
+
+import schedulingIOModel.CostFunction;
+import schedulingIOModel.Flow;
+import schedulingIOModel.Network;
+import schedulingIOModel.NetworkGenerator;
+import schedulingIOModel.TrafficGenerator;
+import ToolSet.LogMatlabFormat;
 
 
 public abstract class Scheduler {
@@ -11,16 +20,18 @@ public abstract class Scheduler {
 	
 	protected NetworkGenerator ng; 
 	protected TrafficGenerator tg;
+	protected LogMatlabFormat logger;
 	
 	private CostFunction cf;
 	private long runtime =0;
 	private int[][][] schedule_f_t_n;
 	
+	
 	public Scheduler(NetworkGenerator ng, TrafficGenerator tg){
 		this.ng=ng;
 		this.tg=tg;
-		this.cf=new CostFunction(ng, tg);
 		schedule_f_t_n=getEmptySchedule();
+		logger = new LogMatlabFormat();
 	}
 	
 
@@ -62,18 +73,38 @@ public abstract class Scheduler {
 	 * @param logfile
 	 */
 	public void calculateInstance(String logfile){
+		
 		int[][][] schedule_temp;
+		
+		//
 		startTimer();
 		schedule_temp = calculateInstance_internal(logfile);
-		stopTimer();
+		long duration = stopTimer();
 		
 		if(verificationOfConstraints(schedule_temp)){
 			schedule_f_t_n=schedule_temp;
+			
+			logger.comment(logfile);
+			logger.log("scheduling_duration_ms", (int)(duration/1000000));
+			
+			logger.comment("schedule");
+			logger.log("schedule_f_t_n", schedule_temp);
+			
+			
+			//add cost function results to log file
+			logger.comment("cost function results");
+			cf=new CostFunction(ng, tg, logger);
+			cf.calculate(schedule_temp);	//writes log
+			
+			//finish logging and write to file
+			logger.writeLog(logfile);
+			
+
 		}else{
 			System.err.println("Scheduler: calculated schedule violates constraints: "+logfile);
 		}
-//TODO		log();
 	}
+	
 	
 	/**
 	 * 
@@ -144,8 +175,10 @@ public abstract class Scheduler {
 		runtime=System.nanoTime();
 	}
 	
-	private void stopTimer(){
-		runtime=System.nanoTime()-runtime;
+	private long stopTimer(){
+		long my_runtime=System.nanoTime()-runtime;
+		runtime=0;
+		return my_runtime;
 	}
 	
 }

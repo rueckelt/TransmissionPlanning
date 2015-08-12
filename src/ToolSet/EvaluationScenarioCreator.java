@@ -1,11 +1,17 @@
+package ToolSet;
 import ilog.opl.IloOplModel;
 
 import java.io.File;
 
+import schedulers.OptimizationScheduler;
+import schedulers.Scheduler;
+import schedulingIOModel.NetworkGenerator;
+import schedulingIOModel.TrafficGenerator;
+
 
 public class EvaluationScenarioCreator {
 	
-	private final boolean TEST_COST_FUNCTION = true;
+//	private final boolean TEST_COST_FUNCTION = true;		//currently not used: see line 100ff
 	private boolean LOG_OVERWRITE = true;
 	private boolean RECALC= false;
 	private final String LOG;
@@ -13,14 +19,14 @@ public class EvaluationScenarioCreator {
 	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
 		REPETITIONS=repetitions;
 		MAX_TIME=time;
-		MAX_APPS=apps;
+		MAX_FLOWS=apps;
 		MAX_NETS=nets;
 		LOG=logpath+File.separator;
 	}
 	
 	private final int REPETITIONS;
 	private final int MAX_TIME;
-	private final int MAX_APPS;
+	private final int MAX_FLOWS;
 	private final int MAX_NETS;
 	
 	private NetworkGenerator ng;
@@ -32,13 +38,22 @@ public class EvaluationScenarioCreator {
 		//read model		
 //		me = new ModelExecutor(DATADIR+model);
 		
+		//write scenario parameters log
+		LogMatlabFormat logger = new LogMatlabFormat();
+		logger.comment(LOG);
+		logger.log("max_time", MAX_TIME);
+		logger.log("max_flows", MAX_FLOWS);
+		logger.log("max_nets", MAX_NETS);
+		logger.log("max_rep", REPETITIONS);
+		logger.writeLog(LOG+"parameters.log");
+		
 		//data sizes of..
 		//(i) time
 		for(int t=0;t<MAX_TIME;t++){
 			//(ii) number of networks
 			for(int net=0;net<MAX_NETS;net++){	
 				//(iii) number of flows/requests
-				for(int req=0;req<MAX_APPS;req++){
+				for(int req=0;req<MAX_FLOWS;req++){
 					//repetitions of optimization
 					for(int rep=0; rep<REPETITIONS;rep++){
 						calculateInstance_t_n_i(t, net, req, rep, LOG, LOG_OVERWRITE, RECALC);

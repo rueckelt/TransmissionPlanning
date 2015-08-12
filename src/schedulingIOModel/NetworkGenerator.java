@@ -1,3 +1,4 @@
+package schedulingIOModel;
 import ilog.opl.IloOplFactory;
 import ilog.opl.IloOplModel;
 
@@ -9,6 +10,9 @@ import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
+
+import ToolSet.PersistentStore;
+import optimization.ModelAccess;
 
 /**
  * Firstly creates Network objects defining capacity to each time slot

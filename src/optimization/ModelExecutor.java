@@ -1,3 +1,4 @@
+package optimization;
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex;
 import ilog.cplex.IloCplex.BooleanParam;
@@ -16,6 +17,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import ToolSet.LogMatlabFormat;
 
 /**
  * Execute IBM CPLEX model

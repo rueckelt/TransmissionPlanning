@@ -1,6 +1,9 @@
+package schedulingIOModel;
 import ilog.opl.IloOplModel;
 
 import java.util.Arrays;
+
+import optimization.ModelAccess;
 
 
 public class TestCostFunction extends CostFunction {

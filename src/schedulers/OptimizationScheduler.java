@@ -1,4 +1,9 @@
+package schedulers;
 import java.io.File;
+
+import optimization.ModelExecutor;
+import schedulingIOModel.NetworkGenerator;
+import schedulingIOModel.TrafficGenerator;
 
 
 public class OptimizationScheduler extends Scheduler {
@@ -22,7 +27,8 @@ public class OptimizationScheduler extends Scheduler {
 
 	@Override
 	protected int[][][] calculateInstance_internal(String logfile) {
-		String dataset_path = logfile+"__"+dataset_gen;
+		String path = logfile.substring(0, logfile.lastIndexOf(File.separator)+1);	//+1 to keep file separator
+		String dataset_path = path+dataset_gen;
 		ng.writeOutput(DATADIR+dataset_dyn, DATADIR+dataset_net);		//write the file for ILP
 		tg.writeOutput(DATADIR+dataset_net, dataset_path);			//write the file for ILP
 		

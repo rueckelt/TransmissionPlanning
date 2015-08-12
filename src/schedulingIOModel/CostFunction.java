@@ -1,14 +1,32 @@
-import java.util.Arrays;
+package schedulingIOModel;
+import ToolSet.LogMatlabFormat;
 
+
+/***
+ * 
+ * @author Tobias Rueckelt
+ * 
+ * Cost function reimplements the cost function of the optimization model
+ * It shall be used to compare quality different approaches
+ * Low values are good
+ *
+ */
 
 public class CostFunction {
 	
 	private NetworkGenerator ng;
 	private TrafficGenerator tg;
+	LogMatlabFormat logger = null;
 	
 	public CostFunction(NetworkGenerator ng, TrafficGenerator tg){
 		this.ng=ng;
 		this.tg=tg;
+	}
+	
+	public CostFunction(NetworkGenerator ng, TrafficGenerator tg, LogMatlabFormat logger){
+		this.ng=ng;
+		this.tg=tg;
+		this.logger=logger;
 	}
 	
 	///////////////////// VIOLATIONS /////////////////////
@@ -36,6 +54,9 @@ public class CostFunction {
 			}
 		}
 		check(vioLcy,"vioLcy");
+		if(logger!=null){
+			logger.log("vioLcy", vioLcy);
+		}
 		return vioLcy;
 	}
 	
@@ -58,6 +79,9 @@ public class CostFunction {
 			}
 		}
 		check(vioJit, "vioJit");
+		if(logger!=null){
+			logger.log("vioJit", vioJit);
+		}
 		return vioJit;
 	}
 	
@@ -85,6 +109,9 @@ public class CostFunction {
 			}
 		}
 		check(vioSt, "st_vio");
+		if(logger!=null){
+			logger.log("vioSt", vioSt);
+		}
 		return vioSt;
 	}
 	
@@ -112,6 +139,9 @@ public class CostFunction {
 			}
 		}
 		check(vioDl, "dl_vio");
+		if(logger!=null){
+			logger.log("vioDl", vioDl);
+		}
 		return vioDl;
 	}
 	
@@ -157,6 +187,9 @@ public class CostFunction {
 			}
 		}
 		check(vioNon, "non_allo_vio");
+		if(logger!=null){
+			logger.log("vioNon", vioNon);
+		}
 		return vioNon;
 	}
 	
@@ -174,6 +207,9 @@ public class CostFunction {
 			}
 		}
 		check(vioTp, "vioThroughput");
+		if(logger!=null){
+			logger.log("vioTp", vioTp);
+		}
 		return vioTp;
 	}
 	
@@ -207,6 +243,9 @@ public class CostFunction {
 			}
 		}
 		check(vioTpMax, "vioTpMax");
+		if(logger!=null){
+			logger.log("vioTpMax", vioTpMax);
+		}
 		return vioTpMax;
 	}
 	
@@ -233,6 +272,9 @@ public class CostFunction {
 			}
 		}
 		check(vioTpMin, "vioTpMin");
+		if(logger!=null){
+			logger.log("vioTpMin", vioTpMin);
+		}
 		return vioTpMin;
 	}
 	
@@ -259,6 +301,9 @@ public class CostFunction {
 			}
 		}
 		check(costMon,"cost_ch");
+		if(logger!=null){
+			logger.log("cost_ch", costMon);
+		}
 		return costMon;
 	}
 	
@@ -276,6 +321,9 @@ public class CostFunction {
 						) * flow.getImpUser();
 		}
 		check(cost_vio, "cost_violation");
+		if(logger!=null){
+			logger.log("cost_vio", cost_vio);
+		}
 		return cost_vio;
 	}
 	
@@ -304,14 +352,21 @@ public class CostFunction {
 		}
 		cost_switches*=ng.getHysteresis();
 		check(cost_switches, "cost_switch");
+		if(logger!=null){
+			logger.log("cost_switches", cost_switches);
+		}
 		return cost_switches;
 	}
 	
 	public int costTotal(int[][][] schedule){
-		return costViolation(schedule)+costSwitches(schedule)+costMon(schedule);
+		int costTotal = costViolation(schedule)+costSwitches(schedule)+costMon(schedule);
+		if(logger!=null){
+			logger.log("costTotal", costTotal);
+		}
+		return costTotal;
 	}
 	
-	//this is only dummy for overwriting in generalization and should be left empty
+	//this is only dummy for overwriting in extending test classes and should be left empty
 	private void check(int value, String variable){
 		
 	}
@@ -320,5 +375,13 @@ public class CostFunction {
 	}
 	private void check(int[][] value, String variable){
 		
+	}
+
+	/**
+	 * calculates total cost without feedback; if written to log
+	 * @param schedule
+	 */
+	public void calculate(int[][][] schedule) {
+		costTotal(schedule);		
 	}
 }

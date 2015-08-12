@@ -1,3 +1,7 @@
+import java.io.File;
+
+import ToolSet.EvaluationScenarioCreator;
+
 
 
 
@@ -21,7 +25,7 @@ public class main {
 		int n=2;
 		int i=2;
 		int rep=2;
-		String logpath= "logs3";
+		String logpath= "my_logs"+File.separator+"test1";
 		
 		EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,i,rep,logpath);
 
