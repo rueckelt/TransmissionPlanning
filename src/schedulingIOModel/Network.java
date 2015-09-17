@@ -2,7 +2,7 @@ package schedulingIOModel;
 import java.io.Serializable;
 import java.util.Vector;
 
-import ToolSet.RndInt;
+import toolSet.RndInt;
 
 /**
  * 

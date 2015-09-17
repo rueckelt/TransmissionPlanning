@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import schedulingIOModel.TestCostFunction;
-import ToolSet.LogMatlabFormat;
+import toolSet.LogMatlabFormat;
 
 /**
  * Execute IBM CPLEX model

@@ -1,7 +1,7 @@
 package schedulingIOModel;
 import java.io.Serializable;
 
-import ToolSet.RndInt;
+import toolSet.RndInt;
 
 
 public class Flow implements Serializable{

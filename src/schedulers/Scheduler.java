@@ -7,7 +7,7 @@ import schedulingIOModel.Flow;
 import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
 import schedulingIOModel.TrafficGenerator;
-import ToolSet.LogMatlabFormat;
+import toolSet.LogMatlabFormat;
 
 
 public abstract class Scheduler {
