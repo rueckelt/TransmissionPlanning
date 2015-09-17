@@ -1,92 +1,150 @@
 package schedulers;
 import java.util.Collections;
-import java.util.Random;
 import java.util.Vector;
 
+import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
-import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
 import schedulingIOModel.TrafficGenerator;
 
 
 public class RandomScheduler extends Scheduler{
 	
+
+	@Override
+	public String getType() {
+		return "random";
+	}
 	
 	/**
+	 * 
+	 * Selects a network randomly and keeps it as long as any data can be scheduled to it
+	 * 
 	 * Behavior:
 	 * 
-	 * 1. shuffle flows and networks
-	 * 2. randomize time slot scheduling order
+	 * 1. Take random flow and 
+	 * 		1.1 calculate average maximum throughput for flow = chunks to schedule in each time slot
+	 * 		1.2 Start allocating at flow start time; till flow deadline or all chunks allocated
+	 * 			- select random network
+	 * 			- if bucket available for time slot: allocate max(bucket size, flow_TP_max)
+	 * 			- go to next time step; 
+	 * 		
 	 * 
 	 * schedule_f_t_n
 	 */
 
-	public RandomScheduler(NetworkGenerator ng, TrafficGenerator tg) {
+	public RandomScheduler(NetworkGenerator ng, TrafficGenerator tg, int runs) {
 		super(ng, tg);
+		RUNS = runs;
 	}
+	
+	private final int RUNS;
 
+	private int run_counter = 0;
+	private long sum_duration=0;
+	private long sum_cost=0;
+	
+	/**
+	 * runs instance multiple (RUNS) times
+	 */
 	@Override
-	protected int[][][] calculateInstance_internal(String logfile) {
-		int[][][] schedule = getEmptySchedule();
-		Vector<Flow> flows = tg.getFlows();
-		Vector<Network> networks = ng.getNetworks();
+	public void calculateInstance(String path){
+		for(run_counter=RUNS-1; run_counter>= 0; run_counter--){
+			super.calculateInstance(path);
+			//System.out.println("calc_run "+run_counter);
+		}
+	}
+	
+	/**
+	 * log only once and calculate mean values for execution duration and schedule quality
+	 */
+	@Override
+	protected void logInstance(String path, long duration) {
+		sum_duration+=duration;
+		int cost = new CostFunction(ng, tg).costTotal(getSchedule());
+		sum_cost+=(long)cost;
+				System.out.println(cost);
 		
+		//write log if all runs finished
+		if(run_counter<=0){
+			
+		//write log file for schedule including solve duration, schedule, cost function 
+		logger.comment(getLogfileName(path));
+		logger.log("scheduling_duration_us", (int)(sum_duration/(RUNS*1000)));
+
+		logger.comment("schedule");
+		logger.log("schedule_f_t_n", getSchedule());
+		
+		//add cost function results to log file
+		logger.comment("cost function results");
+		logger.log("costTotal", (int)(sum_cost/RUNS));
+		
+		//finish logging and write to file
+		logger.writeLog(getLogfileName(path));
+		}
+		
+	}
+	
+	@Override
+	protected void calculateInstance_internal(String logfile) {
 //		1. shuffle flows
 		Vector<Integer> flowOrder= new Vector<Integer>();
-		for(int f=0; f<ng.getTimeslots(); f++){
+		for(int f=0; f<tg.getFlows().size(); f++){
 			flowOrder.add(f);
 		}
+		Collections.shuffle(flowOrder);
 		
-		for(int f=0; f<ng.getTimeslots(); f++){
-			//select random flow
+//		2. shuffle networks
+		Vector<Integer> netOrder= new Vector<Integer>();
+		for(int n=0; n<ng.getNetworks().size(); n++){
+			netOrder.add(n);
+		}	//shuffeling is done later
+		
+		//for each flow
+		for(int f=0; f<tg.getFlows().size(); f++){
+			//select next of randomized flows
 			int f0= flowOrder.get(f);
-			Flow flow = flows.get(f0);
-			Random rd = new Random();
-			
+			Flow flow = tg.getFlows().get(f0);
+			//get flow parameters
 			int flowSt= flow.getStartTime();
 			int flowDl= flow.getDeadline();
+			int flowTpMax = (int) Math.floor(flow.getChunksMax()/flow.getWindowMax());
 			
-			//select random network
-			int n0= rd.nextInt(ng.getNetworks().size());
-			ng.getNetworks().get(n0);
-			
-			
-			
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		/*/create sorted vector with time slots which can be shuffeled later
-		Vector<Integer> timeSlotOrder= new Vector<Integer>();
-		Vector<Vector<Integer>> flowTimeSlotOrder = new Vector<Vector<Integer>>();
-		for(int t=0; t<ng.getTimeslots(); t++){
-			timeSlotOrder.add(t);
-		}
-		
-//		2. randomize time slot scheduling order
-		for(int f= 0; f<tg.getFlows().size(); f++){
-			Collections.shuffle(timeSlotOrder);
-			flowTimeSlotOrder.add((Vector<Integer>) timeSlotOrder.clone());
-		}
-				
-		//############ START OF ALGORITHM #############
-		for(int t=0; t<ng.getTimeslots(); t++){
-			for(Flow flow: flows){
-				
+			//allocate chunks
+			int nonAlloChunks = flow.getChunks();
+
+			for(int t=flowSt; t<flowDl && nonAlloChunks>0; t++){	//stop if all chunks allocated or deadline reached
+				//shuffle networks for each flow individually
+				Collections.shuffle(netOrder);
+				int n=0;	
+				int steps=0;	//number of networks for which current allocation failed
+				int allocated=0;	//is zero if previous allocation not successful (e.g. no network resources free)
+				//next step if allocation possible or after nof_net^2 steps 
+				while(allocated<1 && steps<(ng.getNetworks().size())){	//stop next allocation if all networks have been tried
+
+					int n0=netOrder.get(n);		//get network id from randomized vector
+					//allocate chunks
+					if(flowTpMax>nonAlloChunks){
+						allocated=allocate(f0, t, n0, nonAlloChunks);		//do not allocate more chunks than required
+					}else{
+						allocated=allocate(f0, t, n0, flowTpMax);	//allocate as much as possible
+					}
+					nonAlloChunks-=allocated;	//remove chunks from allocated
+					
+					
+					if(allocated<1){	//if allocation failed, select new network for next step
+						n=(n+1)%ng.getNetworks().size();	//select next of randomized networks
+						steps++;									//count number of networks for which allocation failed
+					}else{
+						steps=0; //keep network, reset counter
+					}
+					
+				}
 			}
-		}	
-		*/
-		return schedule;
+			
+		}
 	}
+
 	
 
 }

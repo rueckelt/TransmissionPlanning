@@ -1,33 +1,34 @@
-function [ gen_time solve_time ] = readValuesFromFiles( in_folder, t_max, n_max, i_max, rep_max )
+function [ duration_us, cost] = readValuesFromFiles( in_folder, t_max, n_max, f_max, rep_max, scheduler_logs )
 %READVALUESFROMFILES Summary of this function goes here
 %   Detailed explanation goes here
-    gen_time = zeros(t_max, n_max, i_max, rep_max);
-    solve_time = zeros(t_max, n_max, i_max, rep_max);
-    for t = 0:t_max-1
-        for n = 0:n_max-1
-           for i=0:i_max-1
-               for rep=0:rep_max-1
-                   in_path = [in_folder '\' num2str(t) '_' num2str(n) '_' num2str(i) '\rep_' num2str(rep) '\']
-                   addpath(in_path);
-                   fname = [in_path 'log.m'];
-                   if exist(fname, 'file') == 2
-                       run(fname);
-                       if exist('duration_to_solve_model_us', 'var')
-                          % duration_gen = generate_model + duration_to_solve_model_us;
-                           %collect time data of all log files
-                            gen_time(t+1,n+1,i+1,rep+1)=generate_model;
-                            solve_time(t+1,n+1,i+1,rep+1)=duration_to_solve_model_us;
-                       end
-                       
-                   end 
-                   rmpath(in_path);
-
-                  % time(rep+1)=duration;
-                   clearvars -except gen_time solve_time t n i rep t_max n_max i_max rep_max in_folder out_folder
-               end
-           end 
+    [nof_schedulers, len] =size(scheduler_logs)  %length is unused
+    
+    duration_us = zeros(nof_schedulers, f_max, t_max, n_max,rep_max);
+    cost = zeros(nof_schedulers, f_max, t_max, n_max,rep_max);
+    duration_us(1,1,1,1,1)
+    for s=1:nof_schedulers
+        for f=1:f_max
+            for t = 1:t_max
+                for n = 1:n_max
+                   for rep=1:rep_max
+                       in_path = [in_folder '\' num2str(f-1) '_' num2str(t-1) '_' num2str(n-1) '\rep_' num2str(rep-1) '\'];
+                       addpath(in_path);    %make path accessible
+                       %optimization
+                       sched=scheduler_logs(s,:);
+                       fname = [in_path strtrim(sched)]  %array starts at index 1
+                       if exist(fname, 'file') == 2 %does exist
+                           run(fname);  %run script to get values
+                           %store values to matrix[scheduler, flow,
+                           %timeslot, network, repetition]
+                           duration_us(s,f,t,n,rep)  =   scheduling_duration_us;  
+                           cost(s,f,t,n,rep)         =   costTotal;
+                       end 
+                       rmpath(in_path);
+                       clearvars -except duration_us cost t n f s rep t_max n_max f_max rep_max scheduler_logs nof_schedulers in_folder out_folder
+                   end
+               end 
+            end
         end
-    end
-
+     end
 end
 

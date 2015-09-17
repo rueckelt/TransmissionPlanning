@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import schedulingIOModel.TestCostFunction;
 import ToolSet.LogMatlabFormat;
 
 /**
@@ -135,7 +136,10 @@ public class ModelExecutor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log(logfile);
+
+		
+//		Logging for the Model executor; not used anymore
+//		log(logfile+"opti_log.m");
 //		dataSource.end();
 //		opl_model.end();
 		return feasible;
@@ -146,33 +150,25 @@ public class ModelExecutor {
 	}
 	
 	/**
-	 * logging for evaluation
+	 * logging for evaluation, not used currently; using external (but equal) costFunction 
 	 */
 	public void log(String filename){
+		System.out.println("FILENAME: "+filename);
 		LogMatlabFormat logger= new LogMatlabFormat();
 		//log timing
 		String log="% t_n_i\n% time:\n";
 		logger.comment(log);
 		for(String s:timeMap.keySet()){
 			logger.log(s, timeMap.get(s));
-//			log+=s+" = "+timeMap.get(s)+";\n";
 		}
 		
 		//log violation
-//		try {
-//			System.out.println("OBJECTIVE=" +cplex.getObjValue());
-//		} catch (IloException e1) {
-//			e1.printStackTrace();
-//		}
+		try {
+			logger.log("OBJECTIVE=" , (int)cplex.getObjValue());
+		} catch (IloException e1) {
+			e1.printStackTrace();
+		}
 		
-//		PrintWriter pw=null;
-//		try {
-//			pw = new PrintWriter(filename);
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
-		
-//		String path= "t_n_i_";
 		for(int i =0;i<logparam.length;i++){
 			log+="% "+logparam[i]+"\n";
 			

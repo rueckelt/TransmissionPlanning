@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
+
+import schedulers.Scheduler;
 
 
 public class LogMatlabFormat {
@@ -34,25 +37,42 @@ public class LogMatlabFormat {
 	public void log(String name, int value){
 		if(!logged_variables.contains(name)){
 			log+=logValue(name, value);
+			logged_variables.add(name);
 		}
 	}	
 	public void log(String name, int[] value){
 		if(!logged_variables.contains(name)){
 			log+=logValue(name, value);
+			logged_variables.add(name);
 		}
 	}	
 	public void log(String name, int[][] value){
 		if(!logged_variables.contains(name)){
 			log+=logValue(name, value);
+			logged_variables.add(name);
 		}
 	}	
 	public void log(String name, int[][][] value){
 		if(!logged_variables.contains(name)){
 			log+=logValue(name, value);
+			logged_variables.add(name);
 		}
 	}
 	public void comment(String comment){
 		log+="\n% "+comment.replaceAll("\n", "\n% ")+"\n";
+	}
+	
+	public void logSchedulers(Vector<Scheduler> schedulers){
+		int i=0;
+		log+="\nscheduler_logs= char(";
+		for(Scheduler scheduler:schedulers){
+			if(i>0) {	//no leading comma at first of list
+				log+=",";
+			}
+			log+="'"+scheduler.getLogfileName("")+"'";
+			i++;
+		}
+		log+=");\n";
 	}
 		
 	public void writeLog(String filename){

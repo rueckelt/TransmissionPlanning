@@ -1,6 +1,8 @@
 package schedulingIOModel;
 import java.io.Serializable;
 
+import ToolSet.RndInt;
+
 
 public class Flow implements Serializable{
 	
@@ -209,14 +211,14 @@ public class Flow implements Serializable{
 
 	public static Flow IPCall(int startTime, int deadline){
 		Flow IPCall = new Flow();
-		int chunks_per_slot = 5;
+		int chunks_per_slot = 5 + RndInt.get(-1, 1);
 		
 		IPCall.setStartTime(startTime);
 		IPCall.setDeadline(deadline);
 		IPCall.setChunks((deadline-startTime)*chunks_per_slot);
 		
 		IPCall.setWindowMin(1);
-		IPCall.setChunksMin(5);
+		IPCall.setChunksMin(5 + RndInt.get(-1, 0));
 		IPCall.setImpThroughputMin(10);		//should deliver all 5 --> high priority (10? more? what should be max?)
 		IPCall.setImpDeadline(10); 			// call is over after deadline --> high prio
 		
@@ -224,52 +226,52 @@ public class Flow implements Serializable{
 		IPCall.setReqLatency(2);			//low latency, low jitter
 		
 		IPCall.setWindowMax(1);
-		IPCall.setChunksMax(5);
+		IPCall.setChunksMax(5 + RndInt.get(0, 1));
 		IPCall.setImpThrouthputMax(10000);	//cannot deliver more than 5 --> blocking high priority
 		IPCall.setImpStartTime(10);			//data not existent before call --> high prio
 		
-		IPCall.setImpUnsched(8);		//lower priority for unscheduled than for deadline violation
-		IPCall.setImpJitter(7);			//jitter and latency are important
-		IPCall.setImpLatency(8);
+		IPCall.setImpUnsched(8 + RndInt.get(-1, 1));		//lower priority for unscheduled than for deadline violation
+		IPCall.setImpJitter(7 + RndInt.get(-1, 2));			//jitter and latency are important
+		IPCall.setImpLatency(8 + RndInt.get(-2, 1));
 		
-		IPCall.setImpUser(7);
+		IPCall.setImpUser(7 + RndInt.get(-1, 2));
 		
 		return IPCall;
 	}
 	public static Flow BufferableStream(int startTime, int length){
 		Flow stream = new Flow();
-		int chunks_per_slot=15;
+		int chunks_per_slot=15 + RndInt.get(-5, 5);
 		
 		stream.setStartTime(startTime);
 		stream.setDeadline(startTime+length);
-		stream.setChunks(length*chunks_per_slot);
+		stream.setChunks((length+ RndInt.get(-3, 3))*chunks_per_slot);
 		
 		//relaxed window
-		stream.setWindowMin(15);
+		stream.setWindowMin(15+ RndInt.get(-5, 5));
 		stream.setChunksMin(15*chunks_per_slot);
-		stream.setImpThroughputMin(5);		// soft minimum throughput limit; allowed to be bursty (large window)
-		stream.setImpDeadline(7); 			
+		stream.setImpThroughputMin(5+ RndInt.get(-1, 1));		// soft minimum throughput limit; allowed to be bursty (large window)
+		stream.setImpDeadline(7+ RndInt.get(-2, 2)); 			
 		
-		stream.setImpStartTime(2);			//later start time is ok 	
+		stream.setImpStartTime(2+ RndInt.get(-1, 4));			//later start time is ok 	
 		
-		stream.setImpUnsched(6);			//unscheduled chunks are ok for long streams and short scheduling duration
+		stream.setImpUnsched(6+ RndInt.get(-1, 1));			//unscheduled chunks are ok for long streams and short scheduling duration
 		
-		stream.setImpUser(7);
+		stream.setImpUser(7+ RndInt.get(-3, 2));
 		
 		return stream;
 	}
 	
 	public static Flow UserRequest(int startTime, int chunks){
 		Flow userRequest = new Flow();
-		int deadline = startTime + chunks/30;	//early deadline, depends on request size
+		int deadline = startTime + chunks/(30+ RndInt.get(-5, 5));	//early deadline, depends on request size
 		
 		userRequest.setStartTime(startTime);
 		userRequest.setDeadline(deadline);
 		userRequest.setChunks(chunks);	
 		
-		userRequest.setImpUnsched(15);			//all chunks must be scheduled		
-		userRequest.setImpUser(7);
-		userRequest.setImpDeadline(8);
+		userRequest.setImpUnsched(15+ RndInt.get(-3, 3));			//all chunks must be scheduled		
+		userRequest.setImpUser(7+ RndInt.get(-1, 3));
+		userRequest.setImpDeadline(8+ RndInt.get(-1, 1));
 		
 		return userRequest;
 	}
@@ -277,10 +279,10 @@ public class Flow implements Serializable{
 	
 	public static Flow Update(int chunks){
 		Flow update = new Flow();
-		update.setChunks(chunks);
-		update.setImpUnsched(4);			//chunks should be scheduled with low priority
+		update.setChunks(chunks+ RndInt.get(0, 20));
+		update.setImpUnsched(4+ RndInt.get(-2, 1));			//chunks should be scheduled with low priority
 		
-		update.setImpUser(2);
+		update.setImpUser(2+ RndInt.get(-1, 1));
 		return update;
 	}
 	

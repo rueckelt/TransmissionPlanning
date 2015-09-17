@@ -16,7 +16,7 @@ public class CostFunction {
 	
 	private NetworkGenerator ng;
 	private TrafficGenerator tg;
-	LogMatlabFormat logger = null;
+	protected LogMatlabFormat logger = null;
 	
 	public CostFunction(NetworkGenerator ng, TrafficGenerator tg){
 		this.ng=ng;
@@ -29,8 +29,37 @@ public class CostFunction {
 		this.logger=logger;
 	}
 	
-	///////////////////// VIOLATIONS /////////////////////
+	///////////////// MATCH FUNCTIONS ////////////////
+	/**
+	 * latency match of net to flow; 0 for match; else strength of violation
+	 * @param flow
+	 * @param net
+	 * @return latency match according to cost function
+	 */
+	public static int latencyMatch(Flow flow, Network net){
+		if(net.getLatency()>flow.getReqLatency()){
+			return (int) (Math.pow(net.getLatency()-flow.getReqLatency(),2)*flow.getImpLatency());
+		}else{
+			return 0;
+		}
+	}
+	/**
+	 * jitter match of net to flow; 0 for match; else strength of violation
+	 * @param flow
+	 * @param net
+	 * @return jitter match according to cost function
+	 */
+	public static int jitterMatch(Flow flow, Network net){
+		if(net.getJitter()>flow.getReqJitter()){
+			return (int) (Math.pow(net.getJitter()-flow.getReqJitter(),2)*flow.getImpJitter());
+		}else{
+			return 0;
+		}
+	}
 
+	
+
+	///////////////////// VIOLATIONS /////////////////////
 	/**
 	 * 
 	 * @param schedule[f][t][n]
@@ -46,10 +75,9 @@ public class CostFunction {
 			Flow flow = tg.getFlows().get(f);
 			for(int n = 0; n<networks; n++){
 				Network net = ng.getNetworks().get(n);
+				int latencyMatch = latencyMatch(flow, net);
 				for (int t = 0; t < timeslots; t++) {
-					if(net.getLatency()>flow.getReqLatency()){
-						vioLcy[f]+= Math.pow(net.getLatency()-flow.getReqLatency(),2)*schedule[f][t][n]*flow.getImpLatency();
-					}
+					vioLcy[f]+= latencyMatch*schedule[f][t][n];
 				}
 			}
 		}
@@ -59,6 +87,7 @@ public class CostFunction {
 		}
 		return vioLcy;
 	}
+
 	
 	public int[] vioJit(int[][][] schedule){
 		int flows = schedule.length;
@@ -70,11 +99,9 @@ public class CostFunction {
 			Flow flow = tg.getFlows().get(f);
 			for(int n = 0; n<networks; n++){
 				Network net = ng.getNetworks().get(n);
+				int jitterMatch = jitterMatch(flow, net);
 				for (int t = 0; t < timeslots; t++) {
-					if(net.getJitter()>flow.getReqJitter()){
-						vioJit[f]+= Math.pow(net.getJitter()-flow.getReqJitter(),2)
-								*schedule[f][t][n]*flow.getImpJitter();
-					}
+					vioJit[f]+= jitterMatch*schedule[f][t][n];
 				}
 			}
 		}
@@ -84,6 +111,7 @@ public class CostFunction {
 		}
 		return vioJit;
 	}
+	
 	
 	/**
 	 * 

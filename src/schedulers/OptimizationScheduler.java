@@ -3,39 +3,57 @@ import java.io.File;
 
 import optimization.ModelExecutor;
 import schedulingIOModel.NetworkGenerator;
+import schedulingIOModel.TestCostFunction;
 import schedulingIOModel.TrafficGenerator;
 
 
 public class OptimizationScheduler extends Scheduler {
 
 	
-	final static String DATADIR = "model"+File.separator;	
-	final static String LOG = "logs2"+File.separator;	
-	final static String model = "sched_com2.mod";
+	final static String MODELDIR = "model"+File.separator;	
+	final static String model = "sched_com.mod";
 //	final static String model = "split_sched_com.mod";
 	final static String dataset1 = "sched_com4.dat";
 	
-	final static String dataset_dyn = "sched_com_dyn.dat";
-	final static String dataset_net = "sched_com_net.dat";
-	final static String dataset_gen = "sched_com_gen.dat";
+	final static String dataset_dyn = "sched_com_dyn.dat";		//with place holders for flows and networks
+	final static String dataset_net = "sched_com_net.dat";		//is created: with place holders for flows only
+	final static String dataset_gen = "sched_com_gen.dat";		//is created: without place holders
 	
-	
+	private boolean testCF=false;
+
+	@Override
+	public String getType() {
+		return "optimization";
+	}
 	
 	public OptimizationScheduler(NetworkGenerator ng, TrafficGenerator tg) {
 		super(ng, tg);
 	}
 
 	@Override
-	protected int[][][] calculateInstance_internal(String logfile) {
-		String path = logfile.substring(0, logfile.lastIndexOf(File.separator)+1);	//+1 to keep file separator
-		String dataset_path = path+dataset_gen;
-		ng.writeOutput(DATADIR+dataset_dyn, DATADIR+dataset_net);		//write the file for ILP
-		tg.writeOutput(DATADIR+dataset_net, dataset_path);			//write the file for ILP
+	protected void calculateInstance_internal(String logpath) {
+		String dataset_path = logpath+dataset_gen;
+		System.out.println(logpath);
+		System.out.println(MODELDIR+dataset_dyn);
+		ng.writeOutput(MODELDIR+dataset_dyn, MODELDIR+dataset_net);		//write the file for ILP
+		tg.writeOutput(MODELDIR+dataset_net, dataset_path);			//write the file for ILP
 		
-		ModelExecutor me = new ModelExecutor(DATADIR+model);
-		me.execute(dataset_path, logfile);
+		ModelExecutor me = new ModelExecutor(MODELDIR+model);
+		me.execute(dataset_path, logpath);
 		
-		return me.getSchedule_f_t_n();
+		//does not use the "allocate" function, but set schedule from optimization directly
+		setTempSchedule(me.getSchedule_f_t_n());
+		
+		if(testCF){
+			TestCostFunction cf = new TestCostFunction(ng, tg, me.getModel());
+			cf.costTotal(getSchedule());
+		}
+	}
+	
+	public void testCostFunction(NetworkGenerator ng, TrafficGenerator tg){
+		this.ng=ng;
+		this.tg=tg;
+		this.testCF=true;
 	}
 
 }

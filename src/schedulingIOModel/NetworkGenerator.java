@@ -41,8 +41,12 @@ public class NetworkGenerator implements Serializable {
 	public static NetworkGenerator loadNetworkGenerator(String path){
 		NetworkGenerator ng=null;
 		try{
-			ng= (NetworkGenerator) PersistentStore.loadObject(path+NG_NAME);
-			System.out.println("NG: load \""+path+NG_NAME+"\"");
+			if(new File(path+NG_NAME).exists()){
+				ng= (NetworkGenerator) PersistentStore.loadObject(path+NG_NAME);
+//				System.out.println("NG: load \""+path+NG_NAME+"\"");
+			}else{
+				System.err.println("Loading "+path+NG_NAME+" failed!");
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -67,6 +71,11 @@ public class NetworkGenerator implements Serializable {
 	
 	public void addNetwork(Network network){
 		networks.add(network);
+		//align number of time slots of all networks
+		int size = getNofTimeSlots();
+		for (Network net : networks) {
+			net.setSlots(size);
+		}
 	}
 	
 	private void addNetworks(int nofNetworks, int time){
@@ -76,11 +85,11 @@ public class NetworkGenerator implements Serializable {
 		//initialize automatically
 		for (int i=0; i<nofNetworks;i++){
 			if(i%10==0){
-				networks.add(Network.getCellular(time, 20+r.nextInt(20)));	//cellular available all the time; consant rate (bad model)
+				addNetwork(Network.getCellular(time, 20+r.nextInt(20)));	//cellular available all the time; consant rate (bad model)
 			}else{
 				int duration = 10+r.nextInt((int)Math.round(Math.sqrt(time))); //availablity at least 10 slots + extra (depends on sqrt of time)
 				int delay = r.nextInt(time-duration);
-				networks.add(Network.getWiFi(duration, 30 + r.nextInt(50), delay));
+				addNetwork(Network.getWiFi(duration, 30 + r.nextInt(50), delay));
 			}
 		}
 	}
@@ -162,8 +171,6 @@ public class NetworkGenerator implements Serializable {
 		
 		first = true;
 		for (Network network : networks) {
-			//set size
-			network.setSlots(size);
 			//list separators: omit before first list element
 			if(first){
 				first = false;

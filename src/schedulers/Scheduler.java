@@ -1,5 +1,4 @@
 package schedulers;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -22,9 +21,10 @@ public abstract class Scheduler {
 	protected TrafficGenerator tg;
 	protected LogMatlabFormat logger;
 	
-	private CostFunction cf;
+	protected CostFunction cf;
 	private long runtime =0;
-	private int[][][] schedule_f_t_n;
+	private int[][][] schedule_f_t_n;			//holds verified schedules only
+	private int[][][] schedule_f_t_n_temp;		//may be used during calculation of a schedule
 	
 	
 	public Scheduler(NetworkGenerator ng, TrafficGenerator tg){
@@ -41,11 +41,18 @@ public abstract class Scheduler {
 	 * @param tg
 	 * @param logfile path
 	 * 
-	 * calculates the schedule and stores it in internal variable schedule_f_t_n
+	 * calculates the schedule and stores it in internal variable schedule_f_t_n_temp
 	 */
-	protected abstract int[][][] calculateInstance_internal(String logfile);
+	protected abstract void calculateInstance_internal(String logfile);
+	
+	public abstract String getType();
+	
+	public String getLogfileName(String logpath){
+		return logpath+getType()+"_log.m";
+	}
 	
 	protected int[][][] getEmptySchedule(){
+		if(tg==null || ng==null) return null;
 		return new int[tg.getFlows().size()][ng.getNetworks().get(0).getSlots()][ng.getNetworks().size()];
 	}
 	
@@ -64,6 +71,7 @@ public abstract class Scheduler {
 	public long getRuntimeNs(){
 		return runtime;
 	}
+
 	
 	/**
 	 * Method called from outside to start calculation of schedule
@@ -72,40 +80,49 @@ public abstract class Scheduler {
 	 * @param tg
 	 * @param logfile
 	 */
-	public void calculateInstance(String logfile){
-		
-		int[][][] schedule_temp;
-		
-		//
+	public void calculateInstance(String path){
+		initTempSchedule();
 		startTimer();
-		schedule_temp = calculateInstance_internal(logfile);
+		calculateInstance_internal(path);	//result is stored to schedule_f_t_n_temp
 		long duration = stopTimer();
 		
-		if(verificationOfConstraints(schedule_temp)){
-			schedule_f_t_n=schedule_temp;
+		//check if schedule holds required constraints
+		if(verificationOfConstraints(schedule_f_t_n_temp)){
+			schedule_f_t_n=schedule_f_t_n_temp;	//store to schedule_f_t_n if constraints hold
 			
-			logger.comment(logfile);
-			logger.log("scheduling_duration_ms", (int)(duration/1000000));
+			logInstance(path, duration);
 			
-			logger.comment("schedule");
-			logger.log("schedule_f_t_n", schedule_temp);
-			
-			
-			//add cost function results to log file
-			logger.comment("cost function results");
-			cf=new CostFunction(ng, tg, logger);
-			cf.calculate(schedule_temp);	//writes log
-			
-			//finish logging and write to file
-			logger.writeLog(logfile);
-			
-
 		}else{
-			System.err.println("Scheduler: calculated schedule violates constraints: "+logfile);
+			System.err.println(getType()+" Scheduler: calculated schedule violates constraints: "+path);
 		}
+	}
+
+
+	/**
+	 * evaluate cost of schedule_f_t_n and log results
+	 * @param path
+	 * @param duration
+	 */
+	protected void logInstance(String path, long duration) {
+		//write log file for schedule including solve duration, schedule, cost function 
+		logger.comment(getLogfileName(path));
+		logger.log("scheduling_duration_us", (int)(duration/1000));
+		
+		logger.comment("schedule");
+		logger.log("schedule_f_t_n", schedule_f_t_n_temp);
+		
+		
+		//add cost function results to log file
+		logger.comment("cost function results");
+		cf=new CostFunction(ng, tg, logger);
+		cf.calculate(schedule_f_t_n_temp);	//writes log
+		
+		//finish logging and write to file
+		logger.writeLog(getLogfileName(path));
 	}
 	
 	
+
 	/**
 	 * 
 		1. Do not overuse resources
@@ -181,4 +198,68 @@ public abstract class Scheduler {
 		return my_runtime;
 	}
 	
+	//#################### Allocation Support ###############
+	
+	protected void initTempSchedule(){
+		schedule_f_t_n_temp=getEmptySchedule();
+	}
+	
+	protected int[][][] getTempSchedule(){
+		return schedule_f_t_n_temp;
+	}
+	protected void setTempSchedule(int[][][] schedule){
+		schedule_f_t_n_temp=schedule;
+	}
+	
+	/**
+	 * 
+	 * @param flow ID
+	 * @param time slot
+	 * @param network ID
+	 * @param chunks to allocate
+	 * @return number of allocated chunks
+	 */
+	protected int allocate(int flow, int time, int network, int chunks){
+		if(!boundsValid(flow, time, network))return 0;
+		//calculate remaining capacity of network in this slot
+		int remaining_net_cap=getRemainingNetCap(network, time);
+		if(chunks>remaining_net_cap){
+			schedule_f_t_n_temp[flow][time][network]+=remaining_net_cap;
+			return remaining_net_cap;
+		}else{
+			schedule_f_t_n_temp[flow][time][network]+=chunks;
+			return chunks;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param network ID
+	 * @param time slot
+	 * @return remaining capacity of network in this time slot in currently calculated schedule
+	 */
+	protected int getRemainingNetCap(int network,int time){
+		if(!boundsValid(0,time,network))return 0;
+		
+		int remaining_net_cap =ng.getNetworks().get(network).getCapacity().get(time);;		
+		for(int f = 0; f<tg.getFlows().size();f++){
+			remaining_net_cap-=schedule_f_t_n_temp[f][time][network];
+		}
+		return remaining_net_cap;
+	}
+	
+	/**
+	 * checks if values for flow index, time slot index and network index are in bounds
+	 * @param f
+	 * @param t
+	 * @param n
+	 * @return
+	 */
+	protected boolean boundsValid(int f, int t, int n){
+		if(f<tg.getFlows().size() && t<ng.getTimeslots() && n<ng.getNetworks().size()){
+			return true;
+		}else{
+			return false;
+		}
+	}
 }
