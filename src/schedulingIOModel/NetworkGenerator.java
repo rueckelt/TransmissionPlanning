@@ -35,7 +35,7 @@ public class NetworkGenerator implements Serializable {
 	}
 	
 	public NetworkGenerator(int nofNetworks, int time){
-		addNetworks(nofNetworks, time);
+		addTestNetworks(nofNetworks, time);
 	}
 	
 	public static NetworkGenerator loadNetworkGenerator(String path){
@@ -43,7 +43,7 @@ public class NetworkGenerator implements Serializable {
 		try{
 			if(new File(path+NG_NAME).exists()){
 				ng= (NetworkGenerator) PersistentStore.loadObject(path+NG_NAME);
-//				System.out.println("NG: load \""+path+NG_NAME+"\"");
+				//System.out.println("NG: load \""+path+NG_NAME+"\"");
 			}else{
 				System.err.println("Loading "+path+NG_NAME+" failed!");
 			}
@@ -78,16 +78,16 @@ public class NetworkGenerator implements Serializable {
 		}
 	}
 	
-	private void addNetworks(int nofNetworks, int time){
+	private void addTestNetworks(int nofNetworks, int time){
 		Random r = new Random();
 		r.setSeed(System.nanoTime());
 		
 		//initialize automatically
 		for (int i=0; i<nofNetworks;i++){
 			if(i%10==0){
-				addNetwork(Network.getCellular(time, 20+r.nextInt(20)));	//cellular available all the time; consant rate (bad model)
+				addNetwork(Network.getCellular(time, 20+r.nextInt(20)));		//cellular available all the time; consant rate (bad model)
 			}else{
-				int duration = 10+r.nextInt((int)Math.round(Math.sqrt(time))); //availablity at least 10 slots + extra (depends on sqrt of time)
+				int duration = 10+r.nextInt((int)Math.round(Math.sqrt(time))); 	//availablity at least 10 slots + extra (depends on sqrt of time)
 				int delay = r.nextInt(time-duration);
 				addNetwork(Network.getWiFi(duration, 30 + r.nextInt(50), delay));
 			}
@@ -96,9 +96,9 @@ public class NetworkGenerator implements Serializable {
 	
 	
 	public int getNofInterfaceTypes(){
-		int interfaceTypes=0;	
-		for(Network network: networks){
-			if(network.getType()>interfaceTypes){
+		int interfaceTypes = 0;	
+		for(Network network : networks){
+			if(network.getType() > interfaceTypes){
 				interfaceTypes = network.getType();
 			}
 		}

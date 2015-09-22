@@ -28,7 +28,7 @@ public class TrafficGenerator implements Serializable{
 		
 	}
 	public TrafficGenerator(int duration, int requests){
-		addTraffic(duration,requests);
+		addTestTraffic(duration,requests);
 	}
 	
 	public static TrafficGenerator loadTrafficGenerator(String path){
@@ -54,23 +54,23 @@ public class TrafficGenerator implements Serializable{
 		flows.add(flow);
 	}
 	
-	private void addTraffic(int duration, int requests){
+	private void addTestTraffic(int duration, int requests){
 		Random r=new Random();
 		r.setSeed(System.nanoTime());
 		int tmp=duration/requests;
 		for(int i=0;i<requests;i++){
 			if(i%5==0){			//0		VoIP
 				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+20+i*tmp)); 	//todo
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
+				//System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
 			}else if(i%5==1 || i%5==4){		//4..10		Browsing
 				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
+				//				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
 			}else if(i%5==2){		//3		Download
 				flows.add(Flow.Update(duration/2));
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
+				//System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
 			}else{					//Stream
 				flows.add(Flow.BufferableStream(i*tmp, tmp*5));
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
+				//System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
 			}
 		}
 	}

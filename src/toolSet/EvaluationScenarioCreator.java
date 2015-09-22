@@ -14,7 +14,7 @@ import schedulingIOModel.TrafficGenerator;
 
 public class EvaluationScenarioCreator {
 	
-	private boolean LOG_OVERWRITE = false;				//overwrites last simulation including network generator and traffic generator	
+	private boolean LOG_OVERWRITE = true;				//overwrites last simulation including network generator and traffic generator	
 	private boolean RECALC= false;						//recalculates results, loading network and traffic generators from previous run
 	private final boolean TEST_COST_FUNCTION = false;	//tests cost function implemented in java, comparing all results to optimization output
 
@@ -118,15 +118,15 @@ public class EvaluationScenarioCreator {
 			System.out.println(recalc);
 			if(!recalc){
 				System.out.println("Creating Networks and Flows..");
-				ng=new NetworkGenerator(nets, time);	//add network input data
+				ng = new NetworkGenerator(nets, time);		//add network input data
 				ng.writeObject(path);
 				tg = new TrafficGenerator(time, flows);		//add application traffic input data
 				tg.writeObject(path); 
 			}else{
 				System.out.println("Loading stored Networks and Flows..");
 				System.out.println(path);
-				ng=NetworkGenerator.loadNetworkGenerator(path);
-				tg=TrafficGenerator.loadTrafficGenerator(path);
+				ng = NetworkGenerator.loadNetworkGenerator(path);
+				tg = TrafficGenerator.loadTrafficGenerator(path);
 			}
 			
 
