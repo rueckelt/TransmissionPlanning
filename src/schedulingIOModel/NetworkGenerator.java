@@ -21,7 +21,6 @@ import toolSet.PersistentStore;
  *
  */
 
-
 public class NetworkGenerator implements Serializable {
 	
 	/**
@@ -30,6 +29,8 @@ public class NetworkGenerator implements Serializable {
 	private static final long serialVersionUID = -4527605239252256091L;
 	public static final String NG_NAME = "NetworkGenerator";
 	private Vector<Network> networks = new Vector<Network>();
+	
+	private int hysteresis = 100;
 	
 	public NetworkGenerator(){
 	}
@@ -62,9 +63,6 @@ public class NetworkGenerator implements Serializable {
 		PersistentStore.storeObject(dest+NG_NAME, this);
 	}
 	
-	
-	private int hysteresis = 100;
-	
 	public Vector<Network> getNetworks(){
 		return networks;
 	}
@@ -78,16 +76,26 @@ public class NetworkGenerator implements Serializable {
 		}
 	}
 	
-	private void addTestNetworks(int nofNetworks, int time){
+	//time in welchem "Format"?
+	private void addNetworks(int nOfNetworks, int time) {
+		
+		for(int i = 0; i < nOfNetworks; ++i) {
+			//TODO
+		}
+	}
+	
+	private void addTestNetworks(int nofNetworks, int time) {
 		Random r = new Random();
 		r.setSeed(System.nanoTime());
 		
 		//initialize automatically
 		for (int i=0; i<nofNetworks;i++){
 			if(i%10==0){
-				addNetwork(Network.getCellular(time, 20+r.nextInt(20)));		//cellular available all the time; consant rate (bad model)
+				//cellular available all the time; consant rate (bad model)
+				addNetwork(Network.getCellular(time, 20+r.nextInt(20)));
 			}else{
-				int duration = 10+r.nextInt((int)Math.round(Math.sqrt(time))); 	//availablity at least 10 slots + extra (depends on sqrt of time)
+				//availablity at least 10 slots + extra (depends on sqrt of time)
+				int duration = 10+r.nextInt((int)Math.round(Math.sqrt(time)));
 				int delay = r.nextInt(time-duration);
 				addNetwork(Network.getWiFi(duration, 30 + r.nextInt(50), delay));
 			}

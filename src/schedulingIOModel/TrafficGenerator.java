@@ -13,6 +13,7 @@ import java.util.Vector;
 
 import optimization.ModelAccess;
 import toolSet.PersistentStore;
+import schedulingIOModel.Flow.FlowType;
 
 
 public class TrafficGenerator implements Serializable{
@@ -52,6 +53,14 @@ public class TrafficGenerator implements Serializable{
 	
 	public void addFlow(Flow flow){
 		flows.add(flow);
+	}
+	
+	//duration in timeslots!
+	private void addTraffic(int duration, int requests){
+		
+		for(int i = 0; i < requests; ++i){
+			//TODO generate traffic
+		}
 	}
 	
 	private void addTestTraffic(int duration, int requests){
@@ -109,7 +118,6 @@ public class TrafficGenerator implements Serializable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 				
 		//build arrays
 		String chunks="";

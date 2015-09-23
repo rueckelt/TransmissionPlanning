@@ -12,6 +12,12 @@ public class Flow implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 5197541708853992326L;
+	
+	public enum FlowType{
+		NONE, IPCALL, BUFFERABLESTREAM, USERREQUEST, UPDATE
+	}
+	
+	private FlowType flowType = FlowType.NONE;
 	private int chunks=0;
 	private int deadline=100000;
 	private int startTime=0;
@@ -37,181 +43,155 @@ public class Flow implements Serializable{
 	
 	private int impUser=1;
 
-
-
 	public int getChunks() {
 		return chunks;
 	}
-
 
 	public void setChunks(int chunks) {
 		this.chunks = chunks;
 	}
 
-
 	public int getDeadline() {
 		return deadline;
 	}
-
 
 	public void setDeadline(int deadline) {
 		this.deadline = deadline;
 	}
 
-
 	public int getStartTime() {
 		return startTime;
 	}
-
 
 	public void setStartTime(int startTime) {
 		this.startTime = startTime;
 	}
 
-
 	public int getWindowMin() {
 		return windowMin;
 	}
-
 
 	public void setWindowMin(int windowMin) {
 		this.windowMin = windowMin;
 	}
 
-
 	public int getChunksMin() {
 		return chunksMin;
 	}
-
 
 	public void setChunksMin(int chunksMin) {
 		this.chunksMin = chunksMin;
 	}
 
-
 	public int getWindowMax() {
 		return windowMax;
 	}
-
 
 	public void setWindowMax(int windowMax) {
 		this.windowMax = windowMax;
 	}
 
-
 	public int getChunksMax() {
 		return chunksMax;
 	}
-
 
 	public void setChunksMax(int chunksMax) {
 		this.chunksMax = chunksMax;
 	}
 
-
 	public int getReqLatency() {
 		return reqLatency;
 	}
-
 
 	public void setReqLatency(int reqLatency) {
 		this.reqLatency = reqLatency;
 	}
 
-
 	public int getReqJitter() {
 		return reqJitter;
 	}
-
 
 	public void setReqJitter(int reqJitter) {
 		this.reqJitter = reqJitter;
 	}
 
-
 	public int getImpDeadline() {
 		return impDeadline;
 	}
-
 
 	public void setImpDeadline(int impDeadline) {
 		this.impDeadline = impDeadline;
 	}
 
-
 	public int getImpStartTime() {
 		return impStartTime;
 	}
-
 
 	public void setImpStartTime(int impStartTime) {
 		this.impStartTime = impStartTime;
 	}
 
-
 	public int getImpThroughputMin() {
 		return impThroughputMin;
 	}
-
 
 	public void setImpThroughputMin(int impThroughputMin) {
 		this.impThroughputMin = impThroughputMin;
 	}
 
-
 	public int getImpThroughputMax() {
 		return impThrouthputMax;
 	}
-
 
 	public void setImpThrouthputMax(int impThrouthputMax) {
 		this.impThrouthputMax = impThrouthputMax;
 	}
 
-
 	public int getImpUnsched() {
 		return impUnsched;
 	}
-
 
 	public void setImpUnsched(int impUnsched) {
 		this.impUnsched = impUnsched;
 	}
 
-
 	public int getImpLatency() {
 		return impLatency;
 	}
-
 
 	public void setImpLatency(int impLatency) {
 		this.impLatency = impLatency;
 	}
 
-
 	public int getImpJitter() {
 		return impJitter;
 	}
-
 
 	public void setImpJitter(int impJitter) {
 		this.impJitter = impJitter;
 	}
 	
-	
 	public int getImpUser() {
 		return impUser;
 	}
 
-
 	public void setImpUser(int impUser) {
 		this.impUser = impUser;
 	}
-
+	
+	public FlowType getFlowType(){
+		return this.flowType;
+	}
+	
+	public void setFlowType(FlowType flowType){
+		this.flowType = flowType;
+	}
 
 	public static Flow IPCall(int startTime, int deadline){
 		Flow IPCall = new Flow();
 		int chunks_per_slot = 5 + RndInt.get(-1, 1);
+		
+		IPCall.setFlowType(FlowType.IPCALL);
 		
 		IPCall.setStartTime(startTime);
 		IPCall.setDeadline(deadline);
@@ -238,9 +218,12 @@ public class Flow implements Serializable{
 		
 		return IPCall;
 	}
+	
 	public static Flow BufferableStream(int startTime, int length){
 		Flow stream = new Flow();
 		int chunks_per_slot=15 + RndInt.get(-5, 5);
+		
+		stream.setFlowType(FlowType.BUFFERABLESTREAM);
 		
 		stream.setStartTime(startTime);
 		stream.setDeadline(startTime+length);
@@ -265,6 +248,8 @@ public class Flow implements Serializable{
 		Flow userRequest = new Flow();
 		int deadline = startTime + chunks/(30+ RndInt.get(-5, 5));	//early deadline, depends on request size
 		
+		userRequest.setFlowType(FlowType.USERREQUEST);
+		
 		userRequest.setStartTime(startTime);
 		userRequest.setDeadline(deadline);
 		userRequest.setChunks(chunks);	
@@ -276,17 +261,15 @@ public class Flow implements Serializable{
 		return userRequest;
 	}
 	
-	
 	public static Flow Update(int chunks){
 		Flow update = new Flow();
+		
+		update.setFlowType(FlowType.UPDATE);
+		
 		update.setChunks(chunks+ RndInt.get(0, 20));
 		update.setImpUnsched(4+ RndInt.get(-2, 1));			//chunks should be scheduled with low priority
 		
 		update.setImpUser(2+ RndInt.get(-1, 1));
 		return update;
-	}
-	
-	
-	
-		
+	}	
 }

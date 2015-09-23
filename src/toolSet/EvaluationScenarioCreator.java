@@ -106,7 +106,6 @@ public class EvaluationScenarioCreator {
 		
 	}
 	
-	
 	public void calculateInstance(int time, int nets, int flows, int rep, String folder, boolean overwrite, boolean recalc) {
 		NetworkGenerator ng;
 		TrafficGenerator tg;

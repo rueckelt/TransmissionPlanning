@@ -8,10 +8,7 @@ import toolSet.RndInt;
  * 
  * @author Tobias Rückelt
  * 
- * 
- *
  */
-
 
 public class Network implements Serializable{
 	
@@ -19,8 +16,15 @@ public class Network implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 3878823537551412162L;
-	private int meanChunks=0;	
+	
+	public enum NetworkType {
+		NONE , WIFI , CELLULAR
+	}
+	
+	private NetworkType networkType = NetworkType.WIFI;
 	private int type =1;		//1 = wifi; 2=cellular; ..?
+	
+	private int meanChunks=0;
 	private int latency = 0;
 	private int jitter = 0;
 	private int cost = 0;
@@ -137,28 +141,35 @@ public class Network implements Serializable{
 	public void setCost(int cost) {
 		this.cost = cost;
 	}
+	
+	public NetworkType getNetworkType(){
+		return this.networkType;
+	}
+	
+	public void setNetworkType(NetworkType type){
+		this.networkType = type;
+	}
 
-	public static Network getWiFi(int slots, int meanChunks, int delay){
-		Network wifi = new Network(slots*1/2, meanChunks);
+	public static Network getWiFi(int slots, int throughput, int startTime){
+		Network wifi = new Network(slots*1/2, throughput);
 		wifi.addRampUp(slots/4);
 		wifi.addRampDown(slots/4);
-		wifi.delay(delay + RndInt.get(-1, 1));
+		wifi.delay(startTime + RndInt.get(-1, 1));
 		wifi.setType(1);
+		wifi.setNetworkType(NetworkType.WIFI);
 		wifi.setCost(3 + RndInt.get(-1, 1));
 		wifi.setJitter(8 + RndInt.get(-1, 1));
 		wifi.setLatency(2 + RndInt.get(-1, 2));
 		return wifi;
 	}
-	
-	public static Network getCellular(int slots, int meanChunks){
-		Network cell = new Network(slots, meanChunks);
+
+	public static Network getCellular(int slots, int throughput){
+		Network cell = new Network(slots, throughput);
 		cell.setType(2);
+		cell.setNetworkType(NetworkType.CELLULAR);
 		cell.setCost(10  + RndInt.get(-3, 3));
 		cell.setJitter(6 + RndInt.get(-2, 2));
 		cell.setLatency(8 + RndInt.get(-2, 2));
 		return cell;
 	}
-	
-	
-	
 }
