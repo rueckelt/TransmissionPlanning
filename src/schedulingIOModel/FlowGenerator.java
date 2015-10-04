@@ -16,26 +16,26 @@ import toolSet.PersistentStore;
 import schedulingIOModel.Flow.FlowType;
 
 
-public class TrafficGenerator implements Serializable{
+public class FlowGenerator implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8184271622466363691L;
-	public static final String TG_NAME = "TrafficGenerator";
+	public static final String TG_NAME = "FlowGenerator";
 	private Vector<Flow> flows = new Vector<Flow>();
 	
-	public TrafficGenerator(){
+	public FlowGenerator(){
 		
 	}
-	public TrafficGenerator(int duration, int requests){
+	public FlowGenerator(int duration, int requests){
 		addTestTraffic(duration,requests);
 	}
 	
-	public static TrafficGenerator loadTrafficGenerator(String path){
-		TrafficGenerator tg=null;
+	public static FlowGenerator loadTrafficGenerator(String path){
+		FlowGenerator tg=null;
 		try{
-			tg= (TrafficGenerator) PersistentStore.loadObject(path+TG_NAME);
+			tg= (FlowGenerator) PersistentStore.loadObject(path+TG_NAME);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

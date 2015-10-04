@@ -76,14 +76,6 @@ public class NetworkGenerator implements Serializable {
 		}
 	}
 	
-	//time in welchem "Format"?
-	private void addNetworks(int nOfNetworks, int time) {
-		
-		for(int i = 0; i < nOfNetworks; ++i) {
-			//TODO
-		}
-	}
-	
 	private void addTestNetworks(int nofNetworks, int time) {
 		Random r = new Random();
 		r.setSeed(System.nanoTime());
@@ -132,7 +124,6 @@ public class NetworkGenerator implements Serializable {
 		return slots;
 	}
 	
-
 	public void writeOutput(String source, String dest){
 
 		String content="";

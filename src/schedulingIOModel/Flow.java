@@ -14,10 +14,10 @@ public class Flow implements Serializable{
 	private static final long serialVersionUID = 5197541708853992326L;
 	
 	public enum FlowType{
-		NONE, IPCALL, BUFFERABLESTREAM, USERREQUEST, UPDATE
+		IPCALL, BUFFERABLESTREAM, USERREQUEST, UPDATE
 	}
 	
-	private FlowType flowType = FlowType.NONE;
+	private FlowType flowType;
 	private int chunks=0;
 	private int deadline=100000;
 	private int startTime=0;
@@ -187,6 +187,7 @@ public class Flow implements Serializable{
 		this.flowType = flowType;
 	}
 
+	
 	public static Flow IPCall(int startTime, int deadline){
 		Flow IPCall = new Flow();
 		int chunks_per_slot = 5 + RndInt.get(-1, 1);

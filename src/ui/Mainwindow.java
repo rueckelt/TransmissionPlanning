@@ -4,7 +4,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import schedulingIOModel.Flow;
+import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
+import schedulingIOModel.Network.NetworkType;
+import schedulingIOModel.NetworkGenerator;
 
 import javax.swing.JLabel;
 import java.awt.GridLayout;
@@ -39,15 +43,15 @@ public class Mainwindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtLogPath;
-	private Vector<ApplicationPanel> applications;
-	private Vector<NetworkPanel> networks;
+	private Vector<ApplicationPanel> applicationPanels;
+	private Vector<NetworkPanel> networkPanels;
 
 	/**
 	 * Create the frame.
 	 */
 	public Mainwindow() {
-		applications = new Vector<ApplicationPanel>();
-		networks = new Vector<NetworkPanel>();
+		applicationPanels = new Vector<ApplicationPanel>();
+		networkPanels = new Vector<NetworkPanel>();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1002, 606);
@@ -81,7 +85,7 @@ public class Mainwindow extends JFrame {
 		spinnerTime.setModel(new SpinnerNumberModel(1, 1, 100, 1));
 		contentPane.add(spinnerTime);
 
-		JLabel lblNetworks = new JLabel("Number of networks");
+		JLabel lblNetworks = new JLabel("Number of networkPanels");
 		contentPane.add(lblNetworks);
 
 		final JSpinner spinnerNetworks = new JSpinner();
@@ -115,16 +119,51 @@ public class Mainwindow extends JFrame {
 		btnGenerateModels.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent ae) {
-				int time = (int) spinnerTime.getValue();
-				int nets = (int) spinnerNetworks.getValue();
-				int apps = (int) spinnerApplications.getValue();
-				int rep = (int) spinnerRepetitions.getValue();
-				String logpath = txtLogPath.getText();
+				/*
+				 * int time = (int) spinnerTime.getValue(); int nets = (int)
+				 * spinnerNetworks.getValue(); int apps = (int)
+				 * spinnerApplications.getValue(); int rep = (int)
+				 * spinnerRepetitions.getValue(); String logpath =
+				 * txtLogPath.getText();
+				 * 
+				 * EvaluationScenarioCreator eval = new
+				 * EvaluationScenarioCreator(time, nets, apps, rep, logpath);
+				 * eval.evaluateAll();
+				 */
 
-				EvaluationScenarioCreator eval = new EvaluationScenarioCreator(time, nets, apps, rep, logpath);
-				eval.evaluateAll();
+				NetworkGenerator networkGenerator = new NetworkGenerator();
+				for (NetworkPanel networkPanel : networkPanels) {
+					Network network = networkPanel.getNetwork();
+					if (network != null) {
+						networkGenerator.addNetwork(network);
+					} else {
+						try {
+							throw new Exception();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					System.out.println(">>> Added network to network generator");
+				}
+
+				FlowGenerator flowGenerator = new FlowGenerator();
+				for (ApplicationPanel applicationPanel : applicationPanels) {
+					Flow flow = applicationPanel.getFlow();
+					if(flow != null)
+					{
+						flowGenerator.addFlow(flow);
+					} else {
+						try {
+							throw new Exception();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					System.out.println(">>> Added application flow to flow generator");
+				}
 			}
-
 		});
 
 		JButton btnAddApplication = new JButton("Add application");
@@ -134,14 +173,14 @@ public class Mainwindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				ApplicationPanel app = new ApplicationPanel();
-				applications.addElement(app);
+				applicationPanels.addElement(app);
 				contentPane.add(app);
 				contentPane.validate();
 				contentPane.repaint();
 			}
 
 		});
-		
+
 		JButton btnAddNetwork = new JButton("Add network");
 		contentPane.add(btnAddNetwork);
 		btnAddNetwork.addActionListener(new ActionListener() {
@@ -149,12 +188,12 @@ public class Mainwindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				NetworkPanel network = new NetworkPanel();
-				networks.addElement(network);
+				networkPanels.addElement(network);
 				contentPane.add(network);
 				contentPane.validate();
 				contentPane.repaint();
 			}
-			
+
 		});
 
 		JMenu mnEdit = new JMenu("Edit");
@@ -171,7 +210,7 @@ public class Mainwindow extends JFrame {
 				spinnerApplications.setValue(1);
 				spinnerRepetitions.setValue(1);
 				txtLogPath.setText("my_logs" + File.separator + "t0");
-				applications.clear();
+				applicationPanels.clear();
 			}
 		});
 	}

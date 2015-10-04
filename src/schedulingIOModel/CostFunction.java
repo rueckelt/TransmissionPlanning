@@ -15,15 +15,15 @@ import toolSet.LogMatlabFormat;
 public class CostFunction {
 	
 	private NetworkGenerator ng;
-	private TrafficGenerator tg;
+	private FlowGenerator tg;
 	protected LogMatlabFormat logger = null;
 	
-	public CostFunction(NetworkGenerator ng, TrafficGenerator tg){
+	public CostFunction(NetworkGenerator ng, FlowGenerator tg){
 		this.ng=ng;
 		this.tg=tg;
 	}
 	
-	public CostFunction(NetworkGenerator ng, TrafficGenerator tg, LogMatlabFormat logger){
+	public CostFunction(NetworkGenerator ng, FlowGenerator tg, LogMatlabFormat logger){
 		this.ng=ng;
 		this.tg=tg;
 		this.logger=logger;

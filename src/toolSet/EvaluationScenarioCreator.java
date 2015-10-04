@@ -9,7 +9,7 @@ import schedulers.Scheduler;
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.NetworkGenerator;
 import schedulingIOModel.TestCostFunction;
-import schedulingIOModel.TrafficGenerator;
+import schedulingIOModel.FlowGenerator;
 
 
 public class EvaluationScenarioCreator {
@@ -41,7 +41,7 @@ public class EvaluationScenarioCreator {
 	 * @param tg
 	 * @return list of schedulers
 	 */
-	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, TrafficGenerator tg){
+	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
 		//schedulers.add(new OptimizationScheduler(ng, tg));
 		schedulers.add(new RandomScheduler(ng, tg, 500));	//500 random runs of this scheduler. Returns average duration and cost
@@ -107,8 +107,8 @@ public class EvaluationScenarioCreator {
 	}
 	
 	public void calculateInstance(int time, int nets, int flows, int rep, String folder, boolean overwrite, boolean recalc) {
-		NetworkGenerator ng;
-		TrafficGenerator tg;
+		NetworkGenerator networkGenerator;
+		FlowGenerator flowGenerator;
 		
 		String path=folder+"rep_"+ rep+File.separator;
 		//skip if folder exists
@@ -117,27 +117,27 @@ public class EvaluationScenarioCreator {
 			System.out.println(recalc);
 			if(!recalc){
 				System.out.println("Creating Networks and Flows..");
-				ng = new NetworkGenerator(nets, time);		//add network input data
-				ng.writeObject(path);
-				tg = new TrafficGenerator(time, flows);		//add application traffic input data
-				tg.writeObject(path); 
+				networkGenerator = new NetworkGenerator(nets, time);		//add network input data
+				networkGenerator.writeObject(path);
+				flowGenerator = new FlowGenerator(time, flows);		//add application traffic input data
+				flowGenerator.writeObject(path); 
 			}else{
 				System.out.println("Loading stored Networks and Flows..");
 				System.out.println(path);
-				ng = NetworkGenerator.loadNetworkGenerator(path);
-				tg = TrafficGenerator.loadTrafficGenerator(path);
+				networkGenerator = NetworkGenerator.loadNetworkGenerator(path);
+				flowGenerator = FlowGenerator.loadTrafficGenerator(path);
 			}
 			
 
 			if(TEST_COST_FUNCTION){
 //				run optimization and compare results to results of the cost function
-				OptimizationScheduler sched = new OptimizationScheduler(ng, tg);
-				sched.testCostFunction(ng, tg);
+				OptimizationScheduler sched = new OptimizationScheduler(networkGenerator, flowGenerator);
+				sched.testCostFunction(networkGenerator, flowGenerator);
 				sched.calculateInstance(path);
 			}else{
 				//default case:
 				//run instance for each scheduler which is created in method "initSchedulers(ng,tg)" above
-				for(Scheduler scheduler: initSchedulers(ng, tg)){
+				for(Scheduler scheduler: initSchedulers(networkGenerator, flowGenerator)){
 					scheduler.calculateInstance(path);
 				}
 			}

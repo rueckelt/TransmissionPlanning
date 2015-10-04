@@ -18,7 +18,7 @@ public class Network implements Serializable{
 	private static final long serialVersionUID = 3878823537551412162L;
 	
 	public enum NetworkType {
-		NONE , WIFI , CELLULAR
+		WIFI , CELLULAR
 	}
 	
 	private NetworkType networkType = NetworkType.WIFI;

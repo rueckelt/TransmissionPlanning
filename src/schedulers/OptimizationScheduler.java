@@ -4,7 +4,7 @@ import java.io.File;
 import optimization.ModelExecutor;
 import schedulingIOModel.NetworkGenerator;
 import schedulingIOModel.TestCostFunction;
-import schedulingIOModel.TrafficGenerator;
+import schedulingIOModel.FlowGenerator;
 
 
 public class OptimizationScheduler extends Scheduler {
@@ -26,7 +26,7 @@ public class OptimizationScheduler extends Scheduler {
 		return "optimization";
 	}
 	
-	public OptimizationScheduler(NetworkGenerator ng, TrafficGenerator tg) {
+	public OptimizationScheduler(NetworkGenerator ng, FlowGenerator tg) {
 		super(ng, tg);
 	}
 
@@ -50,7 +50,7 @@ public class OptimizationScheduler extends Scheduler {
 		}
 	}
 	
-	public void testCostFunction(NetworkGenerator ng, TrafficGenerator tg){
+	public void testCostFunction(NetworkGenerator ng, FlowGenerator tg){
 		this.ng=ng;
 		this.tg=tg;
 		this.testCF=true;
