@@ -150,6 +150,13 @@ public class Network implements Serializable{
 		this.networkType = type;
 	}
 
+	/**
+	 * 
+	 * @param slots
+	 * @param throughput
+	 * @param startTime in time slots
+	 * @return
+	 */
 	public static Network getWiFi(int slots, int throughput, int startTime){
 		Network wifi = new Network(slots*1/2, throughput);
 		wifi.addRampUp(slots/4);
@@ -163,6 +170,12 @@ public class Network implements Serializable{
 		return wifi;
 	}
 
+	/**
+	 * 
+	 * @param slots
+	 * @param throughput
+	 * @return
+	 */
 	public static Network getCellular(int slots, int throughput){
 		Network cell = new Network(slots, throughput);
 		cell.setType(2);

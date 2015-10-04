@@ -13,7 +13,6 @@ import javax.swing.SpinnerNumberModel;
 import java.awt.Font;
 
 import schedulingIOModel.Flow;
-import schedulingIOModel.Flow.FlowType;
 
 public class ApplicationPanel extends JPanel {
 
@@ -63,7 +62,7 @@ public class ApplicationPanel extends JPanel {
 		gbc_comboBoxApplicationType.gridy = 1;
 		add(applicationTypeComboBox, gbc_comboBoxApplicationType);
 
-		durationLabel = new JLabel("Duration");
+		durationLabel = new JLabel("Duration [s]");
 		GridBagConstraints gbc_labelDuration = new GridBagConstraints();
 		gbc_labelDuration.insets = new Insets(0, 0, 5, 5);
 		gbc_labelDuration.gridx = 0;
@@ -78,7 +77,7 @@ public class ApplicationPanel extends JPanel {
 		gbc_spinnerDuration.gridy = 2;
 		add(durationSpinner, gbc_spinnerDuration);
 
-		startTimeLabel = new JLabel("Start time");
+		startTimeLabel = new JLabel("Start time [s]");
 		GridBagConstraints gbc_labelStartTime = new GridBagConstraints();
 		gbc_labelStartTime.insets = new Insets(0, 0, 0, 5);
 		gbc_labelStartTime.gridx = 0;
@@ -93,18 +92,34 @@ public class ApplicationPanel extends JPanel {
 		add(startTimeSpinner, gbc_spinnerStartTime);
 	}
 
+	/**
+	 * 
+	 * @return start time in time slots
+	 */
 	public int getStartTime() {
-		return (int) startTimeSpinner.getValue();
+		return (int) startTimeSpinner.getValue() * 10;
 	}
 
+	/**
+	 * 
+	 * @return duration in time slots
+	 */
 	public int getDuration() {
-		return (int) durationSpinner.getValue();
+		return (int) durationSpinner.getValue() * 10;
 	}
 
+	/**
+	 * 
+	 * @return type of flow
+	 */
 	public FlowType getFlowType() {
 		return applicationTypeComboBox.getModel().getElementAt(applicationTypeComboBox.getSelectedIndex());
 	}
 
+	/**
+	 * 
+	 * @return flow object created from user entries
+	 */
 	public Flow getFlow() {
 		FlowType type = getFlowType();
 
@@ -112,17 +127,15 @@ public class ApplicationPanel extends JPanel {
 		case IPCALL:
 			return Flow.IPCall(getStartTime(), getStartTime() + getDuration());
 		case BUFFERABLESTREAM:
-			// TODO set length
 			return Flow.BufferableStream(getStartTime(), getDuration());
 		case USERREQUEST:
-			// TODO set chunks
-			return Flow.UserRequest(getStartTime(), 30);
+			// TODO set chunks = 15 * duration in slots?
+			return Flow.UserRequest(getStartTime(), getDuration() * 15);
 		case UPDATE:
-			// TODO set chunks
-			return Flow.Update(100);
+			// TODO set chunks = 15 * duration in slots?
+			return Flow.Update(getDuration() * 15);
 		}
 
 		return null;
 	}
-
 }

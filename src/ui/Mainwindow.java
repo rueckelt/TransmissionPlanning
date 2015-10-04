@@ -7,18 +7,14 @@ import javax.swing.border.EmptyBorder;
 import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
-import schedulingIOModel.Network.NetworkType;
 import schedulingIOModel.NetworkGenerator;
 
 import javax.swing.JLabel;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Vector;
 
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JMenuBar;
@@ -26,14 +22,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 
 import toolSet.EvaluationScenarioCreator;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 
 import ui.ApplicationPanel;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.FlowLayout;
+import javax.swing.JScrollPane;
 
 public class Mainwindow extends JFrame {
 
@@ -45,6 +39,10 @@ public class Mainwindow extends JFrame {
 	private JTextField txtLogPath;
 	private Vector<ApplicationPanel> applicationPanels;
 	private Vector<NetworkPanel> networkPanels;
+	private JScrollPane networksScrollPane;
+	private JPanel networksPanel;
+	private JPanel applicationsPanel;
+	private JScrollPane applicationsScrollPane;
 
 	/**
 	 * Create the frame.
@@ -76,60 +74,78 @@ public class Mainwindow extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(2, 2, 2, 2));
 		setContentPane(contentPane);
-		contentPane.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-
-		JLabel lblTime = new JLabel("Time");
-		contentPane.add(lblTime);
-
-		final JSpinner spinnerTime = new JSpinner();
-		spinnerTime.setModel(new SpinnerNumberModel(1, 1, 100, 1));
-		contentPane.add(spinnerTime);
-
-		JLabel lblNetworks = new JLabel("Number of networkPanels");
-		contentPane.add(lblNetworks);
-
-		final JSpinner spinnerNetworks = new JSpinner();
-		spinnerNetworks.setModel(new SpinnerNumberModel(1, 1, 100, 1));
-		contentPane.add(spinnerNetworks);
-
-		JLabel lblApplications = new JLabel("Applications");
-		contentPane.add(lblApplications);
-
-		final JSpinner spinnerApplications = new JSpinner();
-		spinnerApplications.setModel(new SpinnerNumberModel(1, 1, 100, 1));
-		contentPane.add(spinnerApplications);
-
-		JLabel lblRepetitions = new JLabel("Repetitions");
-		contentPane.add(lblRepetitions);
-
-		final JSpinner spinnerRepetitions = new JSpinner();
-		spinnerRepetitions.setModel(new SpinnerNumberModel(1, 1, 100, 1));
-		contentPane.add(spinnerRepetitions);
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 23, 0, 0 };
+		gbl_contentPane.columnWeights = new double[] { 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		contentPane.setLayout(gbl_contentPane);
 
 		JLabel lblLogPath = new JLabel("Log path");
-		contentPane.add(lblLogPath);
+		GridBagConstraints gbc_lblLogPath = new GridBagConstraints();
+		gbc_lblLogPath.insets = new Insets(0, 0, 5, 5);
+		gbc_lblLogPath.gridx = 0;
+		gbc_lblLogPath.gridy = 0;
+		contentPane.add(lblLogPath, gbc_lblLogPath);
 
 		txtLogPath = new JTextField();
 		txtLogPath.setText("my_logs");
-		contentPane.add(txtLogPath);
+		GridBagConstraints gbc_txtLogPath = new GridBagConstraints();
+		gbc_txtLogPath.insets = new Insets(0, 0, 5, 5);
+		gbc_txtLogPath.gridx = 1;
+		gbc_txtLogPath.gridy = 0;
+		contentPane.add(txtLogPath, gbc_txtLogPath);
 		txtLogPath.setColumns(10);
 
+		JButton btnAddNetwork = new JButton("Add network");
+		GridBagConstraints gbc_btnAddNetwork = new GridBagConstraints();
+		gbc_btnAddNetwork.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAddNetwork.gridx = 2;
+		gbc_btnAddNetwork.gridy = 0;
+		contentPane.add(btnAddNetwork, gbc_btnAddNetwork);
+		btnAddNetwork.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				NetworkPanel network = new NetworkPanel();
+				networkPanels.addElement(network);
+				networksPanel.add(network);
+				networksPanel.validate();
+				networksPanel.repaint();
+				networksScrollPane.updateUI();
+			}
+
+		});
+
+		JButton btnAddApplication = new JButton("Add application");
+		GridBagConstraints gbc_btnAddApplication = new GridBagConstraints();
+		gbc_btnAddApplication.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAddApplication.gridx = 3;
+		gbc_btnAddApplication.gridy = 0;
+		contentPane.add(btnAddApplication, gbc_btnAddApplication);
+		btnAddApplication.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				ApplicationPanel app = new ApplicationPanel();
+				applicationPanels.addElement(app);
+				applicationsPanel.add(app);
+				applicationsPanel.validate();
+				applicationsPanel.repaint();
+				applicationsPanel.updateUI();
+			}
+
+		});
+
 		JButton btnGenerateModels = new JButton("Generate Models");
-		contentPane.add(btnGenerateModels);
+		GridBagConstraints gbc_btnGenerateModels = new GridBagConstraints();
+		gbc_btnGenerateModels.insets = new Insets(0, 0, 5, 0);
+		gbc_btnGenerateModels.gridx = 5;
+		gbc_btnGenerateModels.gridy = 0;
+		contentPane.add(btnGenerateModels, gbc_btnGenerateModels);
 		btnGenerateModels.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent ae) {
-				/*
-				 * int time = (int) spinnerTime.getValue(); int nets = (int)
-				 * spinnerNetworks.getValue(); int apps = (int)
-				 * spinnerApplications.getValue(); int rep = (int)
-				 * spinnerRepetitions.getValue(); String logpath =
-				 * txtLogPath.getText();
-				 * 
-				 * EvaluationScenarioCreator eval = new
-				 * EvaluationScenarioCreator(time, nets, apps, rep, logpath);
-				 * eval.evaluateAll();
-				 */
 
 				NetworkGenerator networkGenerator = new NetworkGenerator();
 				for (NetworkPanel networkPanel : networkPanels) {
@@ -150,8 +166,7 @@ public class Mainwindow extends JFrame {
 				FlowGenerator flowGenerator = new FlowGenerator();
 				for (ApplicationPanel applicationPanel : applicationPanels) {
 					Flow flow = applicationPanel.getFlow();
-					if(flow != null)
-					{
+					if (flow != null) {
 						flowGenerator.addFlow(flow);
 					} else {
 						try {
@@ -163,38 +178,37 @@ public class Mainwindow extends JFrame {
 					}
 					System.out.println(">>> Added application flow to flow generator");
 				}
+
+				EvaluationScenarioCreator eval = new EvaluationScenarioCreator(networkGenerator, flowGenerator,
+						txtLogPath.getText());
+				eval.evaluateAll();
 			}
 		});
 
-		JButton btnAddApplication = new JButton("Add application");
-		contentPane.add(btnAddApplication);
-		btnAddApplication.addActionListener(new ActionListener() {
+		networksScrollPane = new JScrollPane();
+		GridBagConstraints gbc_networksScrollPane = new GridBagConstraints();
+		gbc_networksScrollPane.gridwidth = 3;
+		gbc_networksScrollPane.insets = new Insets(0, 0, 0, 5);
+		gbc_networksScrollPane.fill = GridBagConstraints.BOTH;
+		gbc_networksScrollPane.gridx = 0;
+		gbc_networksScrollPane.gridy = 1;
+		contentPane.add(networksScrollPane, gbc_networksScrollPane);
 
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				ApplicationPanel app = new ApplicationPanel();
-				applicationPanels.addElement(app);
-				contentPane.add(app);
-				contentPane.validate();
-				contentPane.repaint();
-			}
+		networksPanel = new JPanel();
+		networksPanel.setLayout(new BoxLayout(networksPanel, BoxLayout.Y_AXIS));
+		networksScrollPane.setViewportView(networksPanel);
 
-		});
+		applicationsScrollPane = new JScrollPane();
+		GridBagConstraints gbc_applicationsScrollPane = new GridBagConstraints();
+		gbc_applicationsScrollPane.gridwidth = 3;
+		gbc_applicationsScrollPane.fill = GridBagConstraints.BOTH;
+		gbc_applicationsScrollPane.gridx = 3;
+		gbc_applicationsScrollPane.gridy = 1;
+		contentPane.add(applicationsScrollPane, gbc_applicationsScrollPane);
 
-		JButton btnAddNetwork = new JButton("Add network");
-		contentPane.add(btnAddNetwork);
-		btnAddNetwork.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				NetworkPanel network = new NetworkPanel();
-				networkPanels.addElement(network);
-				contentPane.add(network);
-				contentPane.validate();
-				contentPane.repaint();
-			}
-
-		});
+		applicationsPanel = new JPanel();
+		applicationsScrollPane.setViewportView(applicationsPanel);
+		applicationsPanel.setLayout(new BoxLayout(applicationsPanel, BoxLayout.Y_AXIS));
 
 		JMenu mnEdit = new JMenu("Edit");
 		menuBar.add(mnEdit);
@@ -205,12 +219,11 @@ public class Mainwindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				spinnerTime.setValue(1);
-				spinnerNetworks.setValue(1);
-				spinnerApplications.setValue(1);
-				spinnerRepetitions.setValue(1);
-				txtLogPath.setText("my_logs" + File.separator + "t0");
-				applicationPanels.clear();
+				txtLogPath.setText("my_logs");
+				networksPanel.removeAll();
+				networksPanel.updateUI();
+				applicationsPanel.removeAll();
+				applicationsPanel.updateUI();
 			}
 		});
 	}

@@ -6,9 +6,7 @@ import schedulers.OptimizationScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
-import schedulingIOModel.CostFunction;
 import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.TestCostFunction;
 import schedulingIOModel.FlowGenerator;
 
 
@@ -34,6 +32,18 @@ public class EvaluationScenarioCreator {
 		
 		//evaluate();
 	}
+	
+	public EvaluationScenarioCreator(NetworkGenerator ng, FlowGenerator fg, String logpath){
+		//TODO refactoring
+		REPETITIONS = 0;
+		MAX_TIME = 120;
+		MAX_FLOWS = fg.getFlows().size();
+		MAX_NETS = ng.getNetworks().size();
+		LOG = logpath+File.separator;
+		for(Scheduler scheduler: initSchedulers(ng, fg)){
+			scheduler.calculateInstance(LOG);
+		}
+	}
 
 	/**
 	 * get list of all schedulers which shall calculate a schedule
@@ -45,7 +55,7 @@ public class EvaluationScenarioCreator {
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
 		//schedulers.add(new OptimizationScheduler(ng, tg));
 		schedulers.add(new RandomScheduler(ng, tg, 500));	//500 random runs of this scheduler. Returns average duration and cost
-		schedulers.add(new PriorityScheduler(ng, tg));
+		schedulers.add(new OptimizationScheduler(ng, tg));
 		return schedulers;
 	}
 	

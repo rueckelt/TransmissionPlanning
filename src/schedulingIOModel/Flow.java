@@ -220,15 +220,15 @@ public class Flow implements Serializable{
 		return IPCall;
 	}
 	
-	public static Flow BufferableStream(int startTime, int length){
+	public static Flow BufferableStream(int startTime, int duration){
 		Flow stream = new Flow();
 		int chunks_per_slot=15 + RndInt.get(-5, 5);
 		
 		stream.setFlowType(FlowType.BUFFERABLESTREAM);
 		
 		stream.setStartTime(startTime);
-		stream.setDeadline(startTime+length);
-		stream.setChunks((length+ RndInt.get(-3, 3))*chunks_per_slot);
+		stream.setDeadline(startTime+duration);
+		stream.setChunks((duration+ RndInt.get(-3, 3))*chunks_per_slot);
 		
 		//relaxed window
 		stream.setWindowMin(15+ RndInt.get(-5, 5));

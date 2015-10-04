@@ -13,7 +13,6 @@ import java.util.Vector;
 
 import optimization.ModelAccess;
 import toolSet.PersistentStore;
-import schedulingIOModel.Flow.FlowType;
 
 
 public class FlowGenerator implements Serializable{
@@ -108,6 +107,7 @@ public class FlowGenerator implements Serializable{
 	}
 	
 
+	@SuppressWarnings("resource")
 	public void writeOutput(String source, String dest){
 				
 		//read source

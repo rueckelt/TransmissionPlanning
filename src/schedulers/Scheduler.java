@@ -37,8 +37,6 @@ public abstract class Scheduler {
 
 	/**
 	 * 
-	 * @param ng
-	 * @param tg
 	 * @param logfile path
 	 * 
 	 * calculates the schedule and stores it in internal variable schedule_f_t_n_temp
