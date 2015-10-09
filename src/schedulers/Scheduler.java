@@ -28,12 +28,22 @@ public abstract class Scheduler {
 	
 	
 	public Scheduler(NetworkGenerator ng, TrafficGenerator tg){
+		boundFlowDeadlines(tg, ng);
 		this.ng=ng;
 		this.tg=tg;
 		schedule_f_t_n=getEmptySchedule();
 		logger = new LogMatlabFormat();
+		cf=new CostFunction(ng, tg, logger);
 	}
 	
+	//set limit for Deadlines of flows to scheduling length
+	private void boundFlowDeadlines(TrafficGenerator tg, NetworkGenerator ng) {
+		for(Flow f: tg.getFlows()){
+			if(!(f.getDeadline()<ng.getTimeslots())){
+				f.setDeadline(ng.getTimeslots()-1);
+			}
+		}
+	}
 
 	/**
 	 * 
@@ -97,7 +107,6 @@ public abstract class Scheduler {
 		}
 	}
 
-
 	/**
 	 * evaluate cost of schedule_f_t_n and log results
 	 * @param path
@@ -117,6 +126,8 @@ public abstract class Scheduler {
 		cf=new CostFunction(ng, tg, logger);
 		cf.calculate(schedule_f_t_n_temp);	//writes log
 		
+		logger.comment(showSchedule(schedule_f_t_n_temp));
+		
 		//finish logging and write to file
 		logger.writeLog(getLogfileName(path));
 	}
@@ -125,9 +136,10 @@ public abstract class Scheduler {
 
 	/**
 	 * 
-		1. Do not overuse resources
-		2. Do not exceed available number of Link Interfaces
+		1. Do not overuse resources (network capacity limit)
+		2. Do not exceed available number of Link Interfaces (interface limit)
 		3. Do not allow parallel channel use for same flow
+		4. Do not exceed upper throughput limit
 		
 	 * @return true if constraints hold
 	 */
@@ -156,7 +168,7 @@ public abstract class Scheduler {
 				}
 				//check overuse of resources (1)
 				if(network_use>networks.get(n).getCapacity().get(t)){
-					System.err.println("Net use error: "+network_use+ " > "+networks.get(n).getCapacity().get(t));
+					System.err.println("Net use error: "+network_use+ " > "+networks.get(n).getCapacity().get(t)+", network "+n+" time "+t);
 					return false;	//violation if used capacity of network in this time slot is larger than available capacity in this time slot
 				}
 			}
@@ -181,6 +193,24 @@ public abstract class Scheduler {
 							return false;	//violation if flow scheduled to a second network
 						}
 					}
+				}
+			}
+		}
+		//do not exceed upper throughput limit (4)
+		for(int f=0;f<flows.size();f++){
+			Flow flow = tg.getFlows().get(f);
+			int winSize = flow.getWindowMax();
+			int chunksMax = flow.getChunksMax();
+			for(int t=0;t<(ng.getTimeslots()-winSize); t++){
+				int chunkSum=0;	//sum of chunks in this window
+				for(int tw=t;tw<t+winSize;tw++){
+					for(int n=0; n<ng.getNetworks().size();n++){
+						chunkSum+=schedule_f_t_n[f][tw][n];
+					}
+				}
+				if(chunkSum>chunksMax){
+					System.err.println("Upper throughput limit exceeded for flow: "+f +" in time window " + t+" to " + t+winSize +" by "+ (chunkSum-chunksMax));
+					return false;	//violation of upper tp limit
 				}
 			}
 		}
@@ -221,15 +251,36 @@ public abstract class Scheduler {
 	 */
 	protected int allocate(int flow, int time, int network, int chunks){
 		if(!boundsValid(flow, time, network))return 0;
+
 		//calculate remaining capacity of network in this slot
 		int remaining_net_cap=getRemainingNetCap(network, time);
+		int s[][][]=schedule_f_t_n_temp;
+		int scheduled = chunks;
+		
+		//schedule as much as possible
 		if(chunks>remaining_net_cap){
-			schedule_f_t_n_temp[flow][time][network]+=remaining_net_cap;
-			return remaining_net_cap;
+			s[flow][time][network]+=remaining_net_cap;
+			scheduled= remaining_net_cap;
 		}else{
-			schedule_f_t_n_temp[flow][time][network]+=chunks;
-			return chunks;
+			s[flow][time][network]+=chunks;
 		}
+		//any constraint violated? use if ok, else revert
+		if(verificationOfConstraints(s)){
+			schedule_f_t_n_temp=s;
+			return scheduled;
+		}else{
+			return 0;
+		}
+		
+		//calculate remaining capacity of network in this slot
+//		int remaining_net_cap=getRemainingNetCap(network, time);
+//		if(chunks>remaining_net_cap){
+//			schedule_f_t_n_temp[flow][time][network]+=remaining_net_cap;
+//			return remaining_net_cap;
+//		}else{
+//			schedule_f_t_n_temp[flow][time][network]+=chunks;
+//			return chunks;
+//		}
 	}
 	
 	/**
@@ -262,4 +313,36 @@ public abstract class Scheduler {
 			return false;
 		}
 	}
+	
+	
+	public String showSchedule(int[][][] schedule_f_t_n){
+		String s=getType()+"\n";
+		for(int n=0; n<ng.getNetworks().size();n++){
+			s+="\n############### Network "+n+" ##############";
+			for(int f=0; f<tg.getFlows().size();f++){
+				boolean used=false;
+				for(int t=0; t<ng.getTimeslots();t++){
+					if(schedule_f_t_n[f][t][n]>0){
+						used=true;
+						break;
+					}
+				}
+				if(used){
+					s+="\nF"+f+"\t|";
+					for(int t=0; t<ng.getTimeslots();t++){
+						if(t%10==0){
+							s+="["+t+"]";
+						}
+						if(schedule_f_t_n[f][t][n]>0){
+							s+=schedule_f_t_n[f][t][n];
+						}
+						s+="\t|";
+						
+					}
+				}
+			}
+		}
+		return s;
+	}
+	
 }

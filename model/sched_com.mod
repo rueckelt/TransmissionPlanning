@@ -159,7 +159,7 @@ int importance[ImportanceTypes, Flows] = ...;
 
 //user profiles
 int userImportance[Flows] = ...;
-int userWTP = ...; //willingness to pay
+int costImp = ...; //willingness to pay
 
 //#######  output values (decision and expression variables) #########
 
@@ -170,7 +170,7 @@ dvar int+ non_allocated[Flows];
 dvar int+ cummulatedChunks[Flows, Time];
 
 //violation decision variables
-dvar int+ vioTpMax[Flows, Time];
+//dvar int+ vioTpMax[Flows, Time];
 dvar int+ vioTpMin[Flows, Time];
 
 
@@ -214,8 +214,8 @@ dexpr int non_allo_vio[f in Flows] =
 
 
 //Throughput violation		
-dexpr int vioThroughput[f in Flows] = sum(t in Time) ((vioTpMax[ f, t]*importance[IMP_TP_MAX,  f])
-														+(vioTpMin[f, t]*importance[IMP_TP_MIN, f]));  
+dexpr int vioThroughput[f in Flows] = sum(t in Time) (//(vioTpMax[ f, t]*importance[IMP_TP_MAX,  f])+ //upper tp limit as hard constraint, not cost function
+														(vioTpMin[f, t]*importance[IMP_TP_MIN, f]));  
 
 
 //punish switches slightly to avoid ping-pong (and to model control traffic for switch)
@@ -227,7 +227,7 @@ dexpr int cost_switch = sum(f in Flows, t in 1..nTime-1, n in Networks)(
 dexpr int cost_violation = sum(f in Flows)((st_vio[f]+dl_vio[f]+non_allo_vio[f]+vioThroughput[f]+vioLcy[f]+vioJit[f])*userImportance[f]);
 dexpr int cost_ch = sum(f in Flows, t in Time, n in Networks)(allocatedChunks[f, t, n]*network_cost[n]);
 
-dexpr int cost_total = cost_violation+cost_ch+cost_switch;
+dexpr int cost_total = cost_violation+cost_ch*costImp+cost_switch;
 
 
 

@@ -1,10 +1,15 @@
 package schedulingIOModel;
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.sound.sampled.ReverbType;
+
+import schedulers.PriorityScheduler;
+import schedulers.Scheduler;
 import ToolSet.RndInt;
 
 
-public class Flow implements Serializable{
+public class Flow implements Serializable, Cloneable{
 	
 	//default flow = now special requirements, no chunks
 	
@@ -37,6 +42,18 @@ public class Flow implements Serializable{
 	
 	private int impUser=1;
 
+	//each flow gets a unique ID
+	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
+    int id = NEXT_ID.getAndIncrement();
+
+    //set ID externally
+    public void setId(int id) {
+    	this.id = id;
+    }
+    
+    public int getId() {
+         return id;
+    }
 
 
 	public int getChunks() {
@@ -286,7 +303,34 @@ public class Flow implements Serializable{
 		return update;
 	}
 	
-	
-	
+	public Flow clone(){  
+		try {
+			Flow f = new Flow();
+			f.chunks=chunks;
+			f.chunksMax=chunksMax;
+			f.chunksMin=chunksMin;
+			f.deadline=deadline;
+			f.id=id;
+			f.impDeadline=impDeadline;
+			f.impJitter=impJitter;
+			f.impLatency=impLatency;
+			f.impStartTime=impStartTime;
+			f.impThroughputMin=impThroughputMin;
+			f.impThrouthputMax=impThrouthputMax;
+			f.impUnsched=impUnsched;
+			f.impUser=impUser;
+			f.reqJitter=reqJitter;
+			f.reqLatency=reqLatency;
+			f.startTime=startTime;
+			f.windowMax=windowMax;
+			f.windowMin=windowMin;
+			return f;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}  
+	} 
+
+
 		
 }

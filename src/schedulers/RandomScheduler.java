@@ -2,6 +2,7 @@ package schedulers;
 import java.util.Collections;
 import java.util.Vector;
 
+import ToolSet.RndInt;
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
 import schedulingIOModel.NetworkGenerator;
@@ -39,6 +40,7 @@ public class RandomScheduler extends Scheduler{
 	}
 	
 	private final int RUNS;
+	private int c;	//final averaged cost
 
 	private int run_counter = 0;
 	private long sum_duration=0;
@@ -78,6 +80,7 @@ public class RandomScheduler extends Scheduler{
 		//add cost function results to log file
 		logger.comment("cost function results");
 		logger.log("costTotal", (int)(sum_cost/RUNS));
+		c=(int) (sum_cost/RUNS);
 		
 		//finish logging and write to file
 		logger.writeLog(getLogfileName(path));
@@ -121,7 +124,7 @@ public class RandomScheduler extends Scheduler{
 				int allocated=0;	//is zero if previous allocation not successful (e.g. no network resources free)
 				//next step if allocation possible or after nof_net^2 steps 
 				while(allocated<1 && steps<(ng.getNetworks().size())){	//stop next allocation if all networks have been tried
-
+						
 					int n0=netOrder.get(n);		//get network id from randomized vector
 					//allocate chunks
 					if(flowTpMax>nonAlloChunks){
@@ -130,13 +133,17 @@ public class RandomScheduler extends Scheduler{
 						allocated=allocate(f0, t, n0, flowTpMax);	//allocate as much as possible
 					}
 					nonAlloChunks-=allocated;	//remove chunks from allocated
-					
+
 					
 					if(allocated<1){	//if allocation failed, select new network for next step
 						n=(n+1)%ng.getNetworks().size();	//select next of randomized networks
 						steps++;									//count number of networks for which allocation failed
 					}else{
-						steps=0; //keep network, reset counter
+						if(RndInt.get(0, 4)==0){	//20 percent chance of shuffeling again
+							Collections.shuffle(netOrder);
+						}
+						steps=0; //tokens scheduled: keep network with 80% probability, reset counter
+							
 					}
 					
 				}
@@ -145,6 +152,10 @@ public class RandomScheduler extends Scheduler{
 		}
 	}
 
+	@Override
+	public int getCost(){
+		return c;
+	}
 	
 
 }

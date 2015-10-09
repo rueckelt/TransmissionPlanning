@@ -52,5 +52,5 @@ importance = [
 
 //user profiles
 userImportance = [[impUser]]; //[Flows]
-userWTP = 2; //willingness to pay
+costImp = [costImp]; //former willingness to pay is now inversely proportional value: cost importance 
  

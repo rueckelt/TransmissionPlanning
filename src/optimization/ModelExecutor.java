@@ -1,5 +1,6 @@
 package optimization;
 import ilog.concert.IloException;
+import ilog.cp.IloCP;
 import ilog.cplex.IloCplex;
 import ilog.cplex.IloCplex.BooleanParam;
 import ilog.opl.IloCustomOplDataSource;
@@ -32,12 +33,14 @@ import ToolSet.LogMatlabFormat;
 public class ModelExecutor {
 
 	private final boolean PRESOLVE = true;
+	private final boolean USE_CP = false;
 	
 	IloOplFactory oplF;
 	IloOplErrorHandler errHandler;
 	IloOplModelSource modelSource;
 		
 	IloCplex cplex;
+	IloCP cp;
 	
 	IloOplModel opl_model;
 	IloOplSettings settings;
@@ -50,13 +53,13 @@ public class ModelExecutor {
 	String[] log_scenario = {"nTime", "nChannels", "nRequests"};
 	
 	String[] logparam = {"allocatedChunks","non_allocated",
-							"dl_vio", "st_vio","vioLcy", "vioJit","vioTpMax","vioTpMin",
+							"dl_vio", "st_vio","vioLcy", "vioJit","vioTpMin",//"vioTpMax",
 							"st_vio","dl_vio","cost_switch","cost_ch",
 							"vioThroughput", "non_allo_vio", "nChunks", 
 							"prefStartTime", "deadline", "availChunkBuckets",
 							"closed_gaps"};
 	int[] dim = {3, 1,  
-				 1, 1,1,1,2,2,
+				 1, 1,1,1,2,//2,
 				 1,1,0,0,
 				1, 1, 1,
 				1, 1, 2,
@@ -76,19 +79,17 @@ public class ModelExecutor {
 
 		settings = oplF.createOplSettings(errHandler);
 
-		
 		modelSource = oplF.createOplModelSource(model);
 		definition = oplF.createOplModelDefinition(modelSource, settings);
 		try {
-			
 			cplex = oplF.createCplex();
 			cplex.setParam(IloCplex.BooleanParam.PreInd, PRESOLVE);
+
 		} catch (IloException e) {
 			System.out.println("ERROR_INIT");
 			e.printStackTrace();
 		}
 		opl_model = oplF.createOplModel(definition, cplex);
-	
 	}
 	
 	public IloOplModel getModel(){
@@ -107,7 +108,9 @@ public class ModelExecutor {
 
 		time=System.nanoTime();
 		IloOplDataSource dataSource = oplF.createOplDataSource(datasource_file);
+
 		opl_model = oplF.createOplModel(definition, cplex);
+
 		opl_model.addDataSource(dataSource);
 		time = System.nanoTime()-time;
 		timeMap.put("create_model", (int) (time/1000000));
@@ -138,7 +141,7 @@ public class ModelExecutor {
 		}
 
 		
-//		Logging for the Model executor; not used anymore
+//		Logging for the Model executor; not used anymore - only for verification of cost function
 //		log(logfile+"opti_log.m");
 //		dataSource.end();
 //		opl_model.end();

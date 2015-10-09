@@ -1,6 +1,7 @@
 package schedulingIOModel;
 import java.io.Serializable;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import ToolSet.RndInt;
 
@@ -13,7 +14,7 @@ import ToolSet.RndInt;
  */
 
 
-public class Network implements Serializable{
+public class Network implements Serializable, Cloneable{
 	
 	/**
 	 * 
@@ -32,12 +33,30 @@ public class Network implements Serializable{
 	 * @param slots
 	 * @param meanChunks
 	 */
+	
+	public Network(){
+		
+	}
+	
 	public Network(int slots, int meanChunks){
 		this.meanChunks=meanChunks;
 		for(int i=0;i<slots; i++){
 			capacity.add(meanChunks);
 		}
 	}
+	
+	//each network gets a unique ID
+	//unique identifier enables shrinking of problem and later reconstruction (decomposition heuristic) 
+	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
+    int id = NEXT_ID.getAndIncrement();
+
+    //set ID externally
+    public void setId(int id) {
+    	this.id = id;
+    }
+    public int getId() {
+         return id;
+    }
 	
 	/**
 	 * add ramp of n slots as first slots of bucket configuration
@@ -67,6 +86,10 @@ public class Network implements Serializable{
 		for(int i=0;i<slots;i++){
 			capacity.add(0, 0);
 		}
+	}
+	
+	public void setCapacity(Vector<Integer> capacity){
+		this.capacity = capacity;
 	}
 	
 	public Vector<Integer> getCapacity(){
@@ -159,6 +182,21 @@ public class Network implements Serializable{
 		return cell;
 	}
 	
-	
+	public Network clone(){  
+		try {
+			Network n = new Network();
+			n.setCapacity((Vector<Integer>)capacity.clone());
+			n.jitter=jitter;
+			n.cost=cost;
+			n.id=id;
+			n.latency=latency;
+			n.meanChunks=meanChunks;
+			n.type=type;
+			return n;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}  
+	} 
 	
 }

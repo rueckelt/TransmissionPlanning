@@ -1,8 +1,10 @@
 package ToolSet;
 import java.io.File;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import schedulers.OptimizationScheduler;
+import schedulers.PriorityMatchScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
@@ -43,9 +45,10 @@ public class EvaluationScenarioCreator {
 	 */
 	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, TrafficGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		//schedulers.add(new OptimizationScheduler(ng, tg));
-		schedulers.add(new RandomScheduler(ng, tg, 500));	//500 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new OptimizationScheduler(ng, tg));
+		schedulers.add(new RandomScheduler(ng, tg, 100));	//100 random runs of this scheduler. Returns average duration and cost
 		schedulers.add(new PriorityScheduler(ng, tg));
+		schedulers.add(new PriorityMatchScheduler(ng, tg));
 		return schedulers;
 	}
 	
@@ -77,7 +80,7 @@ public class EvaluationScenarioCreator {
 				for(int req=0;req<MAX_FLOWS;req++){
 					//repetitions of optimization
 					for(int rep=0; rep<REPETITIONS;rep++){
-						calculateInstance_t_n_i(t, net, req, rep, LOG, LOG_OVERWRITE, RECALC);
+						calculateInstance_t_n_i(t, net, req, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
 					}
 					
 				}
@@ -97,23 +100,23 @@ public class EvaluationScenarioCreator {
 	 * @param overwrite
 	 * @param recalc
 	 */
-	public void calculateInstance_t_n_i(int t, int n, int f, int rep, String folder, boolean overwrite, boolean recalc){
+	public void calculateInstance_t_n_i(int t, int n, int f, int rep, String folder, boolean overwrite, boolean recalc, boolean decomposition_heuristic){
 		int time = 25*pow(2,t);
 		int nets = pow(2,n);
 		int flows = pow(2,f);
 		String folder_out = folder+f+"_"+t+"_"+n+File.separator;
-		calculateInstance(time, nets, flows, rep, folder_out, overwrite, recalc);
-		
+		calculateInstance(time, nets, flows, rep, folder_out, overwrite, recalc, decomposition_heuristic);
 	}
 	
 	
-	public void calculateInstance(int time, int nets, int flows, int rep, String folder, boolean overwrite, boolean recalc) {
+	public void calculateInstance(int time, int nets, int flows, int rep, String folder, boolean overwrite, boolean recalc, boolean decomposition_heuristic) {
 		NetworkGenerator ng;
 		TrafficGenerator tg;
 		
 		String path=folder+"rep_"+ rep+File.separator;
 		//skip if folder exists
 		if(!new File(path).exists() || overwrite || recalc){
+			System.out.println(1+" "+path);
 			new File(path).mkdirs();
 			System.out.println(recalc);
 			if(!recalc){
@@ -130,22 +133,44 @@ public class EvaluationScenarioCreator {
 			}
 			
 
-			if(TEST_COST_FUNCTION){
-//				run optimization and compare results to results of the cost function
-				OptimizationScheduler sched = new OptimizationScheduler(ng, tg);
-				sched.testCostFunction(ng, tg);
-				sched.calculateInstance(path);
-			}else{
-				//default case:
-				//run instance for each scheduler which is created in method "initSchedulers(ng,tg)" above
-				for(Scheduler scheduler: initSchedulers(ng, tg)){
-					scheduler.calculateInstance(path);
+			if(decomposition_heuristic){
+				//TODO test output
+				OptimizationScheduler o = new OptimizationScheduler(ng, tg);
+				o.writeDatFile(path);
+				
+				Decomposer d = new Decomposer(tg, ng);
+				d.decompose();
+				
+			} else {
+				if (TEST_COST_FUNCTION) {
+					// run optimization and compare results to results of the
+					// cost function
+					OptimizationScheduler sched = new OptimizationScheduler(ng,
+							tg);
+					sched.testCostFunction(ng, tg);
+					sched.calculateInstance(path);
+				} else {
+					LinkedList<Integer> cost= new LinkedList<Integer>();
+					LinkedList<String> s_name= new LinkedList<String>();
+					// default case:
+					// run instance for each scheduler which is created in
+					// method "initSchedulers(ng,tg)" above
+					for (Scheduler scheduler : initSchedulers(ng, tg)) {
+						scheduler.calculateInstance(path);
+						cost.add(scheduler.getCost());
+						s_name.add(scheduler.getType());
+					}
+					Scheduler s = new PriorityScheduler(ng, tg);
+					cost.add(s.getCost());
+					s_name.add("empty");
+					System.out.println(s_name);
+					System.out.println("Cost "+cost);
 				}
 			}
-			
 		}
 	}
 
+	
 	private int pow(int v, int exp){
 		return (int)Math.round(Math.pow(v, exp));
 	}

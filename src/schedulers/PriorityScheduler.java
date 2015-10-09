@@ -79,25 +79,23 @@ public class PriorityScheduler extends Scheduler{
 				//System.out.println("##########~~~~~~Flow "+f+", vio (steigend) "+f+" --> vio:"+calcVio(flow, ng.getNetworks().get(networkIDs.get(n))));
 				//allocate in this network between start time and deadline of flow
 				//do not allocate more than once in same time slot
-				for(int t=flow.getStartTime(); t<flow.getDeadline() && !usedSlots.contains(t) && chunksToAllocate>0;t++){
-					int allocated=0;
-					if(chunksToAllocate<chunksMaxTp){
-						allocated=allocate(f, t, n0, chunksToAllocate); //do not allocate more chunks than required
-					}else{
-						allocated=allocate(f, t, n0, chunksMaxTp);
-					}	
-					//System.out.println(chunksToAllocate);
-					chunksToAllocate-=allocated;
-					if(allocated>0){
-						usedSlots.add(t);
+				for(int t=flow.getStartTime(); t<flow.getDeadline() && chunksToAllocate>0;t++){
+					if(!usedSlots.contains(t)){
+						int allocated=0;
+						if(chunksToAllocate<chunksMaxTp){
+							allocated=allocate(f, t, n0, chunksToAllocate); //do not allocate more chunks than required
+						}else{
+							allocated=allocate(f, t, n0, chunksMaxTp);
+						}	
+						//System.out.println(chunksToAllocate);
+						chunksToAllocate-=allocated;
+						if(allocated>0){
+							usedSlots.add(t);
+						}
 					}
-					
 				}
-			
 			}
-			
 		}
-
 	}
 
 	/**

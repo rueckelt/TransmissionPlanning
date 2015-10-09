@@ -22,7 +22,7 @@ import optimization.ModelAccess;
  */
 
 
-public class NetworkGenerator implements Serializable {
+public class NetworkGenerator implements Serializable, Cloneable {
 	
 	/**
 	 * 
@@ -30,6 +30,9 @@ public class NetworkGenerator implements Serializable {
 	private static final long serialVersionUID = -4527605239252256091L;
 	public static final String NG_NAME = "NetworkGenerator";
 	private Vector<Network> networks = new Vector<Network>();
+	
+	private int hysteresis = 100;
+	private int cost_imp = 1;	//importance of monetary cost for network use
 	
 	public NetworkGenerator(){
 	}
@@ -62,8 +65,6 @@ public class NetworkGenerator implements Serializable {
 		PersistentStore.storeObject(dest+NG_NAME, this);
 	}
 	
-	
-	private int hysteresis = 100;
 	
 	public Vector<Network> getNetworks(){
 		return networks;
@@ -145,6 +146,7 @@ public class NetworkGenerator implements Serializable {
 		content=content.replace("[nTime]", ""+size);
 		content=content.replace("[interfaceTypes]", ""+interfaceTypes);
 		content=content.replace("[hysteresis]", ""+hysteresis);
+		content=content.replace("[costImp]", ""+cost_imp);
 		
 		//one interface of each type
 		boolean first=true;
@@ -257,4 +259,25 @@ public class NetworkGenerator implements Serializable {
 		return hysteresis;
 	}
 	
+	public void setCostImportance(int value){
+		cost_imp=value;
+	}
+	
+	public int getCostImportance(){
+		return cost_imp;
+	}
+	public NetworkGenerator clone(){  
+		try {
+			NetworkGenerator ng_clone = new NetworkGenerator();
+			ng_clone.setHysteresis(getHysteresis());
+			ng_clone.setCostImportance(getCostImportance());
+			for(Network n: getNetworks()){
+				ng_clone.addNetwork(n.clone());
+			}
+			return ng_clone;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}  
+	} 
 }
