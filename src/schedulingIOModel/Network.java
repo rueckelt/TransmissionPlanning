@@ -23,10 +23,10 @@ public class Network implements Serializable{
 	
 	private NetworkType networkType = NetworkType.WIFI;
 	private int type =1;		//1 = wifi; 2=cellular; ..?
-	
+
 	private int meanChunks=0;
-	private int latency = 0;
-	private int jitter = 0;
+	private int latency = 0;	// [ms]
+	private int jitter = 0;		// [ms]
 	private int cost = 0;
 	
 	Vector<Integer> capacity = new Vector<Integer>();
@@ -152,21 +152,19 @@ public class Network implements Serializable{
 
 	/**
 	 * 
-	 * @param slots
-	 * @param throughput
+	 * @param duration in time slots
+	 * @param throughput in chunks per time slot
 	 * @param startTime in time slots
 	 * @return
 	 */
-	public static Network getWiFi(int slots, int throughput, int startTime){
-		Network wifi = new Network(slots*1/2, throughput);
-		wifi.addRampUp(slots/4);
-		wifi.addRampDown(slots/4);
-		wifi.delay(startTime + RndInt.get(-1, 1));
+	public static Network getWiFi(int duration, int throughput, int startTime){
+		Network wifi = new Network(duration, throughput);
+		wifi.delay(startTime);
 		wifi.setType(1);
 		wifi.setNetworkType(NetworkType.WIFI);
-		wifi.setCost(3 + RndInt.get(-1, 1));
-		wifi.setJitter(8 + RndInt.get(-1, 1));
-		wifi.setLatency(2 + RndInt.get(-1, 2));
+		wifi.setCost(3);
+		wifi.setJitter(7);
+		wifi.setLatency(2);
 		return wifi;
 	}
 
@@ -181,8 +179,10 @@ public class Network implements Serializable{
 		cell.setType(2);
 		cell.setNetworkType(NetworkType.CELLULAR);
 		cell.setCost(10  + RndInt.get(-3, 3));
-		cell.setJitter(6 + RndInt.get(-2, 2));
-		cell.setLatency(8 + RndInt.get(-2, 2));
+		//cell.setJitter(6 + RndInt.get(-2, 2));
+		//cell.setLatency(8 + RndInt.get(-2, 2));
+		cell.setJitter(6);
+		cell.setLatency(6);
 		return cell;
 	}
 }

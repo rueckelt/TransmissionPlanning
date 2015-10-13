@@ -115,7 +115,9 @@ public class ModelExecutor {
 		System.out.println("USE DATASOURCE: "+datasource_file);
 //		generate
 		time=System.nanoTime();
+		System.out.println("Start generating opl model.");
 		opl_model.generate();
+		System.out.println("End generating opl model.");
 
 		time = System.nanoTime()-time;
 

@@ -39,8 +39,9 @@ public class OptimizationScheduler extends Scheduler {
 		tg.writeOutput(MODELDIR+dataset_net, dataset_path);			//write the file for ILP
 		
 		ModelExecutor me = new ModelExecutor(MODELDIR+model);
+		System.out.println("Start model executor.");
 		me.execute(dataset_path, logpath);
-		
+		System.out.println("End model executor.");
 		//does not use the "allocate" function, but set schedule from optimization directly
 		setTempSchedule(me.getSchedule_f_t_n());
 		

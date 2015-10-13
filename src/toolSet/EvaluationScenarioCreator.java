@@ -2,6 +2,9 @@ package toolSet;
 import java.io.File;
 import java.util.Vector;
 
+import javax.swing.text.SimpleAttributeSet;
+
+import io.SimulationInputGenerator;
 import schedulers.OptimizationScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.RandomScheduler;
@@ -36,12 +39,15 @@ public class EvaluationScenarioCreator {
 	public EvaluationScenarioCreator(NetworkGenerator ng, FlowGenerator fg, String logpath){
 		//TODO refactoring
 		REPETITIONS = 0;
-		MAX_TIME = 120;
+		MAX_TIME = fg.getFlows().lastElement().getDeadline();
 		MAX_FLOWS = fg.getFlows().size();
 		MAX_NETS = ng.getNetworks().size();
 		LOG = logpath+File.separator;
-		for(Scheduler scheduler: initSchedulers(ng, fg)){
+		Vector<Scheduler> schedulers = initSchedulers(ng, fg);
+		for(Scheduler scheduler: schedulers){
 			scheduler.calculateInstance(LOG);
+			System.out.println("Start simulation input generator.");
+			SimulationInputGenerator sim = new SimulationInputGenerator(scheduler.getSchedule(), ng.getNetworks(), fg.getFlows());
 		}
 	}
 
@@ -53,9 +59,9 @@ public class EvaluationScenarioCreator {
 	 */
 	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		//schedulers.add(new OptimizationScheduler(ng, tg));
 		schedulers.add(new RandomScheduler(ng, tg, 500));	//500 random runs of this scheduler. Returns average duration and cost
-		schedulers.add(new OptimizationScheduler(ng, tg));
+		schedulers.add(new PriorityScheduler(ng, tg));
+		//schedulers.add(new OptimizationScheduler(ng, tg));
 		return schedulers;
 	}
 	
@@ -87,7 +93,7 @@ public class EvaluationScenarioCreator {
 				for(int req=0;req<MAX_FLOWS;req++){
 					//repetitions of optimization
 					for(int rep=0; rep<REPETITIONS;rep++){
-						calculateInstance_t_n_i(t, net, req, rep, LOG, LOG_OVERWRITE, RECALC);
+						calculateInstance_t_n_f(t, net, req, rep, LOG, LOG_OVERWRITE, RECALC);
 					}
 					
 				}
@@ -107,7 +113,7 @@ public class EvaluationScenarioCreator {
 	 * @param overwrite
 	 * @param recalc
 	 */
-	public void calculateInstance_t_n_i(int t, int n, int f, int rep, String folder, boolean overwrite, boolean recalc){
+	public void calculateInstance_t_n_f(int t, int n, int f, int rep, String folder, boolean overwrite, boolean recalc){
 		int time = 25*pow(2,t);
 		int nets = pow(2,n);
 		int flows = pow(2,f);

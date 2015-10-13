@@ -241,7 +241,6 @@ public class FlowGenerator implements Serializable{
 		int[] impUser = new int[flows.size()];
 		//nRequests does not change..does it?
 		
-		
 		//set values of arrays
 		int i=0;
 		for(Flow flow:flows){

@@ -57,6 +57,7 @@ public class ApplicationPanel extends JPanel {
 		applicationTypeComboBox = new JComboBox<FlowType>();
 		applicationTypeComboBox.setModel(new DefaultComboBoxModel<FlowType>(FlowType.values()));
 		GridBagConstraints gbc_comboBoxApplicationType = new GridBagConstraints();
+		gbc_comboBoxApplicationType.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxApplicationType.insets = new Insets(0, 0, 5, 0);
 		gbc_comboBoxApplicationType.gridx = 1;
 		gbc_comboBoxApplicationType.gridy = 1;
@@ -70,8 +71,9 @@ public class ApplicationPanel extends JPanel {
 		add(durationLabel, gbc_labelDuration);
 
 		durationSpinner = new JSpinner();
-		durationSpinner.setModel(new SpinnerNumberModel(1, 1, 100, 1));
+		durationSpinner.setModel(new SpinnerNumberModel(new Integer(30), new Integer(1), null, new Integer(1)));
 		GridBagConstraints gbc_spinnerDuration = new GridBagConstraints();
+		gbc_spinnerDuration.fill = GridBagConstraints.HORIZONTAL;
 		gbc_spinnerDuration.insets = new Insets(0, 0, 5, 0);
 		gbc_spinnerDuration.gridx = 1;
 		gbc_spinnerDuration.gridy = 2;
@@ -85,8 +87,9 @@ public class ApplicationPanel extends JPanel {
 		add(startTimeLabel, gbc_labelStartTime);
 
 		startTimeSpinner = new JSpinner();
-		startTimeSpinner.setModel(new SpinnerNumberModel(1, 1, 100, 1));
+		startTimeSpinner.setModel(new SpinnerNumberModel(new Integer(25), new Integer(1), null, new Integer(1)));
 		GridBagConstraints gbc_spinnerStartTime = new GridBagConstraints();
+		gbc_spinnerStartTime.fill = GridBagConstraints.HORIZONTAL;
 		gbc_spinnerStartTime.gridx = 1;
 		gbc_spinnerStartTime.gridy = 3;
 		add(startTimeSpinner, gbc_spinnerStartTime);
@@ -129,8 +132,7 @@ public class ApplicationPanel extends JPanel {
 		case BUFFERABLESTREAM:
 			return Flow.BufferableStream(getStartTime(), getDuration());
 		case USERREQUEST:
-			// TODO set chunks = 15 * duration in slots?
-			return Flow.UserRequest(getStartTime(), getDuration() * 15);
+			return Flow.UserRequest(getStartTime(), getDuration());
 		case UPDATE:
 			// TODO set chunks = 15 * duration in slots?
 			return Flow.Update(getDuration() * 15);

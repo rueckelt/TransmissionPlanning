@@ -124,8 +124,7 @@ public class NetworkGenerator implements Serializable {
 		return slots;
 	}
 	
-	public void writeOutput(String source, String dest){
-
+	public void writeOutput(String source, String dest){		
 		String content="";
 		//read source
 		try {
@@ -134,7 +133,6 @@ public class NetworkGenerator implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		
 		//get max size
 		int size = getNofTimeSlots();

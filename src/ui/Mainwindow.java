@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import io.SimulationInputGenerator;
 import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
@@ -160,7 +161,6 @@ public class Mainwindow extends JFrame {
 							e.printStackTrace();
 						}
 					}
-					System.out.println(">>> Added network to network generator");
 				}
 
 				FlowGenerator flowGenerator = new FlowGenerator();
@@ -176,12 +176,10 @@ public class Mainwindow extends JFrame {
 							e.printStackTrace();
 						}
 					}
-					System.out.println(">>> Added application flow to flow generator");
 				}
 
 				EvaluationScenarioCreator eval = new EvaluationScenarioCreator(networkGenerator, flowGenerator,
 						txtLogPath.getText());
-				eval.evaluateAll();
 			}
 		});
 
