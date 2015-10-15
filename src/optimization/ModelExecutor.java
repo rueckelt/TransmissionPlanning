@@ -142,7 +142,7 @@ public class ModelExecutor {
 
 		
 //		Logging for the Model executor; not used anymore - only for verification of cost function
-//		log(logfile+"opti_log.m");
+		log(logfile+"opti_log.m");
 //		dataSource.end();
 //		opl_model.end();
 		return feasible;

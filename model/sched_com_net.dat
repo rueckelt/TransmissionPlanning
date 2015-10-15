@@ -5,29 +5,26 @@
  *********************************************/
 
 
-nNetworks = 4;
+nNetworks = 1;
 nTime = 50;
 nInterfaceTypes = 3;
 nFlows = [nRequests];
 
-//channel model: generated Fri Oct 09 18:32:21 CEST 2015
+//channel model: generated Mon Oct 12 16:08:06 CEST 2015
 availChunkBuckets = //[Networks, Time]  
 [
-	[36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 36, 54, 54, 54, 54, 54, 54, 36, 18, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 34, 52, 52, 52, 52, 52, 52, 34, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 23, 35, 47, 47, 47, 47, 47, 47, 47, 47, 35, 23, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	[36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36]
 ];
 	
 network_cost = //[Networks] 
-	[8, 2, 4, 4];				//static cost per channel (change later to more realistic model)
+	[11];				//static cost per channel (change later to more realistic model)
 network_lcy =
-	[8, 2, 1, 4];
+	[9];
 network_jit =
-	[8, 9, 8, 7];	
+	[6];	
 
 network_type= //[Networks] 				//each channel has a specific type; e.g. WiFi, LTE..
-	[2, 1, 1, 1];		
+	[2];		
 nClientInterfaces = //[InterfaceTypes]
 	[1, 1, 1];	
 
@@ -46,8 +43,8 @@ hysteresis = 100;
 importance = [
 	[[impDeadline]],	//deadline
 	[[impStartTime]],	//start time
-	[[impThroughputMin]],	//throughput lower bound
 	[[impThroughputMax]],	//throughput upper bound
+	[[impThroughputMin]],	//throughput lower bound
 	[[impUnscheduled]],	//unsched
 	[[impLatency]],	//latency
 	[[impJitter]]	//jitter

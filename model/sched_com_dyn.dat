@@ -43,8 +43,8 @@ hysteresis = [hysteresis];
 importance = [
 	[[impDeadline]],	//deadline
 	[[impStartTime]],	//start time
-	[[impThroughputMin]],	//throughput lower bound
 	[[impThroughputMax]],	//throughput upper bound
+	[[impThroughputMin]],	//throughput lower bound
 	[[impUnscheduled]],	//unsched
 	[[impLatency]],	//latency
 	[[impJitter]]	//jitter

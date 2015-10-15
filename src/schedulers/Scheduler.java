@@ -38,6 +38,7 @@ public abstract class Scheduler {
 	
 	//set limit for Deadlines of flows to scheduling length
 	private void boundFlowDeadlines(TrafficGenerator tg, NetworkGenerator ng) {
+		if(tg!=null && ng!=null)
 		for(Flow f: tg.getFlows()){
 			if(!(f.getDeadline()<ng.getTimeslots())){
 				f.setDeadline(ng.getTimeslots()-1);

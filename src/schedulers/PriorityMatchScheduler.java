@@ -40,7 +40,9 @@ public class PriorityMatchScheduler extends Scheduler{
 	public PriorityMatchScheduler(NetworkGenerator ng, TrafficGenerator tg) {
 		
 		super(ng, tg);
-		ng_tmp=ng.clone();
+		if(ng!=null&&tg!=null){
+			ng_tmp=ng.clone();
+		}
 	}
 	
 	

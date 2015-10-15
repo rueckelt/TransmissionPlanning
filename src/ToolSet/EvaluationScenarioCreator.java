@@ -17,7 +17,7 @@ import schedulingIOModel.TrafficGenerator;
 public class EvaluationScenarioCreator {
 	
 	private boolean LOG_OVERWRITE = false;				//overwrites last simulation including network generator and traffic generator	
-	private boolean RECALC= true;						//recalculates results, loading network and traffic generators from previous run
+	private boolean RECALC= false;						//recalculates results, loading network and traffic generators from previous run
 	private final boolean TEST_COST_FUNCTION = false;	//tests cost function implemented in java, comparing all results to optimization output
 
 	
@@ -155,16 +155,35 @@ public class EvaluationScenarioCreator {
 					// default case:
 					// run instance for each scheduler which is created in
 					// method "initSchedulers(ng,tg)" above
+					
+					boolean first=true, error=false;
+					int c_opt=0;
 					for (Scheduler scheduler : initSchedulers(ng, tg)) {
 						scheduler.calculateInstance(path);
 						cost.add(scheduler.getCost());
 						s_name.add(scheduler.getType());
+						
+						//
+						if(first){
+							c_opt=scheduler.getCost();
+							first=false;
+						}else{
+							if(scheduler.getCost()<c_opt){
+								System.err.println("OPT STILL NOT BEST");
+								error=true;
+							}
+						}
+
 					}
 					Scheduler s = new PriorityScheduler(ng, tg);
 					cost.add(s.getCost());
 					s_name.add("empty");
 					System.out.println(s_name);
 					System.out.println("Cost "+cost);
+
+					if(error){
+						System.exit(0);
+					}
 				}
 			}
 		}

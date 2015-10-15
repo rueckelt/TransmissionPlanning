@@ -135,7 +135,7 @@ public class CostFunction {
 			Flow flow = tg.getFlows().get(f);
 			for(int n = 0; n<networks; n++){
 				for (int t = 0; t < timeslots; t++) {
-					if((t+1)<flow.getStartTime()){
+					if((t+1)<flow.getStartTime()){		//start time and deadline are in CPLEX index (starting at 1) we therefore compare with modified time index (t+1)
 						vioSt[f]+= Math.pow(flow.getStartTime()-(t+1),2)*schedule[f][t][n]*flow.getImpStartTime();
 					}
 				}
@@ -217,6 +217,7 @@ public class CostFunction {
 			Flow flow = tg.getFlows().get(f);
 				vioNon[f]= (flow.getChunks()-cummulated_f_t[f][timeslots-1])* 
 				flow.getImpUnsched()* flow.getImpUser();
+
 		}
 //		System.out.println("vioNon: "+Arrays.toString(vioNon));
 		check(vioNon, "non_allo_vio");
@@ -246,42 +247,42 @@ public class CostFunction {
 		return vioTp;
 	}
 	
-	/**
-	 * todo: first case --> nothing to subtract!
-	 * @param cummulated_f_t
-	 * @return
-	 */
-	public int[][] vioTpMax(int[][] cummulated_f_t){
-		int flows = cummulated_f_t.length;
-		int timeslots = cummulated_f_t[0].length;
-		
-		int[][] vioTpMax = new int[flows][timeslots];
-		for(int f = 0; f<flows; f++){
-			Flow flow = tg.getFlows().get(f);
-			//throughput window violations check
-			//maximum throughput
-			int t0=0;
-			int subtract = 0;
-			for(int t=flow.getWindowMax()-1; t<timeslots; t++){
-				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){
-					
-					int tp = cummulated_f_t[f][t]-subtract;	//get chunks in window
-					if(tp>flow.getChunksMax()){				//if there are too much
-						int vio=tp-flow.getChunksMax();
-						vioTpMax[f][t] +=vio;
-					}
-				}
-				subtract=cummulated_f_t[f][t0];			//first step: nothing to subtract; then cummulated[t0]
-				t0++;
-			}
-		}
-		check(vioTpMax, "vioTpMax");
-		if(logger!=null){
-			logger.log("vioTpMax", vioTpMax);
-		}
-		return vioTpMax;
-	}
-	
+//	/**
+//	 * todo: first case --> nothing to subtract!
+//	 * @param cummulated_f_t
+//	 * @return
+//	 */
+//	public int[][] vioTpMax(int[][] cummulated_f_t){
+//		int flows = cummulated_f_t.length;
+//		int timeslots = cummulated_f_t[0].length;
+//		
+//		int[][] vioTpMax = new int[flows][timeslots];
+//		for(int f = 0; f<flows; f++){
+//			Flow flow = tg.getFlows().get(f);
+//			//throughput window violations check
+//			//maximum throughput
+//			int t0=0;
+//			int subtract = 0;
+//			for(int t=flow.getWindowMax()-1; t<timeslots; t++){
+//				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){
+//					
+//					int tp = cummulated_f_t[f][t]-subtract;	//get chunks in window
+//					if(tp>flow.getChunksMax()){				//if there are too much
+//						int vio=tp-flow.getChunksMax();
+//						vioTpMax[f][t] +=vio;
+//					}
+//				}
+//				subtract=cummulated_f_t[f][t0];			//first step: nothing to subtract; then cummulated[t0]
+//				t0++;
+//			}
+//		}
+//		check(vioTpMax, "vioTpMax");
+//		if(logger!=null){
+//			logger.log("vioTpMax", vioTpMax);
+//		}
+//		return vioTpMax;
+//	}
+//	
 	public int[][] vioTpMin(int[][] cummulated_f_t){
 		int flows = cummulated_f_t.length;
 		int timeslots = cummulated_f_t[0].length;
@@ -292,8 +293,8 @@ public class CostFunction {
 			//search only within window between startTime and deadline
 			int t0=0;	//lower bound of window
 			int subtract = 0;
-			for(int t=flow.getWindowMin()-1; t<timeslots; t++){		// t is upper bound of window
-				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){
+			for(int t=flow.getWindowMin()-1; t<timeslots; t++){		// t is upper bound of window (minus 1 for cplex index starting at 1)
+				if(t0>=flow.getStartTime()-1 && t<=flow.getDeadline()-1){		//TODO -1 after startime added	
 					int tp =  cummulated_f_t[f][t]- subtract;	//get chunks in window
 					if(tp<flow.getChunksMin()){				//if there are too many tokens/chunks scheduled
 						int vio=flow.getChunksMin()-tp;

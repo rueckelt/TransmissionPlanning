@@ -236,11 +236,11 @@ public class Flow implements Serializable, Cloneable{
 		
 		IPCall.setWindowMin(1);
 		IPCall.setChunksMin(5 + RndInt.get(-1, 0));
-		IPCall.setImpThroughputMin(10);		//should deliver all 5 --> high priority (10? more? what should be max?)
+		IPCall.setImpThroughputMin(100);		//should deliver all 5 --> high priority (10? more? what should be max?)
 		IPCall.setImpDeadline(10); 			// call is over after deadline --> high prio
 		
-		IPCall.setReqJitter(2);
-		IPCall.setReqLatency(2);			//low latency, low jitter
+		IPCall.setReqJitter(3);
+		IPCall.setReqLatency(3);			//low latency, low jitter
 		
 		IPCall.setWindowMax(1);
 		IPCall.setChunksMax(5 + RndInt.get(0, 1));
@@ -248,10 +248,10 @@ public class Flow implements Serializable, Cloneable{
 		IPCall.setImpStartTime(10);			//data not existent before call --> high prio
 		
 		IPCall.setImpUnsched(8 + RndInt.get(-1, 1));		//lower priority for unscheduled than for deadline violation
-		IPCall.setImpJitter(7 + RndInt.get(-1, 2));			//jitter and latency are important
-		IPCall.setImpLatency(8 + RndInt.get(-2, 1));
+		IPCall.setImpJitter(6 + RndInt.get(-1, 2));			//jitter and latency are important
+		IPCall.setImpLatency(7 + RndInt.get(-2, 1));
 		
-		IPCall.setImpUser(7 + RndInt.get(-1, 2));
+		IPCall.setImpUser(9 + RndInt.get(-1, 2));
 		
 		return IPCall;
 	}
