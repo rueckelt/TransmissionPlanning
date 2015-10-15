@@ -1,3 +1,5 @@
 /bin
 my_logs/
 model/generatedTcpApps.dat
+model/generatedScheduledTcpApps.dat
+model/generatedUnscheduledTcpApps.dat

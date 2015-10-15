@@ -111,13 +111,14 @@ public class ModelExecutor {
 		opl_model.addDataSource(dataSource);
 		time = System.nanoTime()-time;
 		timeMap.put("create_model", (int) (time/1000000));
-//		System.out.println("create_model: "+time/1000000);
+		System.out.println("create_model: " + time/1000000);
 		System.out.println("USE DATASOURCE: "+datasource_file);
 //		generate
 		time=System.nanoTime();
-		System.out.println("Start generating opl model.");
+		System.out.println("[" + time/1000000 + "] Start generating opl model.");
 		opl_model.generate();
-		System.out.println("End generating opl model.");
+		time = System.nanoTime()-time;
+		System.out.println("[" + time/1000000 + "] End generating opl model.");
 
 		time = System.nanoTime()-time;
 
@@ -125,7 +126,7 @@ public class ModelExecutor {
 		
 		
 		timeMap.put("generate_model", (int) (time/1000000));
-//		System.out.println("generate_model: "+time/1000000);
+		System.out.println("generate_model: "+time/1000000);
 		
 //		solve
 		boolean feasible = false;
@@ -134,7 +135,7 @@ public class ModelExecutor {
 			feasible = cplex.solve();
 			time = System.nanoTime()-time;
 			timeMap.put("duration_to_solve_model_us", (int) (time/1000000));
-//			System.out.println("duration_to_solve_model_us: "+time/1000000);
+			System.out.println("duration_to_solve_model_us: "+time/1000000);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

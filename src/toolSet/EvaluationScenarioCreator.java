@@ -59,9 +59,9 @@ public class EvaluationScenarioCreator {
 	 */
 	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		schedulers.add(new RandomScheduler(ng, tg, 500));	//500 random runs of this scheduler. Returns average duration and cost
-		schedulers.add(new PriorityScheduler(ng, tg));
-		//schedulers.add(new OptimizationScheduler(ng, tg));
+		//schedulers.add(new RandomScheduler(ng, tg, 500));	//500 random runs of this scheduler. Returns average duration and cost
+		//schedulers.add(new PriorityScheduler(ng, tg));
+		schedulers.add(new OptimizationScheduler(ng, tg));
 		return schedulers;
 	}
 	

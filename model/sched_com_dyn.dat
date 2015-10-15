@@ -29,7 +29,7 @@ nClientInterfaces = //[InterfaceTypes]
 	[[clientInterfaces]];	
 
 //requests: generated [trafficGenTime]
-nChunks = 				[[chunks]];		//[Flows]		
+nChunks = 				[[chunks]];			//[Flows]		
 deadline= 				[[deadline]];		//[Flows] 
 prefStartTime = 		[[startTime]];		//[Flows]
 tpMaxWindow = 			[[windowMax]];		//[Flows]	//0 says not relevant/no maximum transfer rate; upper throughput limit
@@ -43,8 +43,8 @@ hysteresis = [hysteresis];
 importance = [
 	[[impDeadline]],	//deadline
 	[[impStartTime]],	//start time
-	[[impThroughputMin]],	//throughput lower bound
-	[[impThroughputMax]],	//throughput upper bound
+	[[impThroughputMax]],	//throughput lower bound
+	[[impThroughputMin]],	//throughput upper bound
 	[[impUnscheduled]],	//unsched
 	[[impLatency]],	//latency
 	[[impJitter]]	//jitter

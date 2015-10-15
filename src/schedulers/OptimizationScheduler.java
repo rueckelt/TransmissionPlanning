@@ -36,7 +36,7 @@ public class OptimizationScheduler extends Scheduler {
 		System.out.println(logpath);
 		System.out.println(MODELDIR+dataset_dyn);
 		ng.writeOutput(MODELDIR+dataset_dyn, MODELDIR+dataset_net);		//write the file for ILP
-		tg.writeOutput(MODELDIR+dataset_net, dataset_path);			//write the file for ILP
+		tg.writeOutput(MODELDIR+dataset_net, dataset_path);				//write the file for ILP
 		
 		ModelExecutor me = new ModelExecutor(MODELDIR+model);
 		System.out.println("Start model executor.");

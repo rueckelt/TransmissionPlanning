@@ -54,6 +54,10 @@ public class NetworkGenerator implements Serializable {
 		return ng;
 	}
 	
+	/**
+	 * 
+	 * @return The number of timeslots from the first network
+	 */
 	public int getTimeslots(){
 		return networks.get(0).getSlots();
 	}
@@ -114,7 +118,11 @@ public class NetworkGenerator implements Serializable {
 		return intByType;
 	}
 	
-	private int getNofTimeSlots(){
+	/**
+	 * 
+	 * @return The number of timeslots from the network with the biggest time
+	 */
+	public int getNofTimeSlots(){
 		int slots=0;
 		for(Network network: networks){
 			if(network.capacity.size()>slots){

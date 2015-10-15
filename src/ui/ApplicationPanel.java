@@ -14,6 +14,11 @@ import java.awt.Font;
 
 import schedulingIOModel.Flow;
 
+/**
+ * 
+ * @author Jens Balze
+ *
+ */
 public class ApplicationPanel extends JPanel {
 
 	/**
@@ -97,7 +102,7 @@ public class ApplicationPanel extends JPanel {
 
 	/**
 	 * 
-	 * @return start time in time slots
+	 * @return The start time in time slots
 	 */
 	public int getStartTime() {
 		return (int) startTimeSpinner.getValue() * 10;
@@ -105,7 +110,7 @@ public class ApplicationPanel extends JPanel {
 
 	/**
 	 * 
-	 * @return duration in time slots
+	 * @return The duration in time slots
 	 */
 	public int getDuration() {
 		return (int) durationSpinner.getValue() * 10;
@@ -113,7 +118,7 @@ public class ApplicationPanel extends JPanel {
 
 	/**
 	 * 
-	 * @return type of flow
+	 * @return The enum type of flow
 	 */
 	public FlowType getFlowType() {
 		return applicationTypeComboBox.getModel().getElementAt(applicationTypeComboBox.getSelectedIndex());
@@ -121,7 +126,7 @@ public class ApplicationPanel extends JPanel {
 
 	/**
 	 * 
-	 * @return flow object created from user entries
+	 * @return The flow object created from user entries
 	 */
 	public Flow getFlow() {
 		FlowType type = getFlowType();

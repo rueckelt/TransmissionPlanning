@@ -11,19 +11,31 @@ import javax.swing.text.AbstractDocument.LeafElement;
 import schedulingIOModel.Flow;
 import schedulingIOModel.Network;
 
+/**
+ * 
+ * @author Jens Balze
+ *
+ */
 public class SimulationInputGenerator {
 
 	private int[][][] model_f_t_n;
 	private Vector<Flow> flows;
 	private String source = "model\\tcpAppString.dat";
-	private String dest = "model\\generatedTcpApps.dat";
+	private String dest;
 
-	public SimulationInputGenerator(int[][][] output_f_t_n, Vector<Network> networks, Vector<Flow> flows) {
+	/**
+	 * 
+	 * @param output_f_t_n Model contains the number of chunks send from an application [f] over a network [n] to a time [t]
+	 * @param networks Vector contains all the networks for the simulation
+	 * @param flows Vector contains all the flows for the simulation
+	 */
+	public SimulationInputGenerator(int[][][] output_f_t_n, Vector<Network> networks, Vector<Flow> flows, String dest) {
 		this.setModel_f_t_n(output_f_t_n);
 		this.flows = flows;
+		this.dest = dest;
 		this.writeSimulationTcpApps();
 	}
-
+	
 	public int[][][] getModel_f_t_n() {
 		return model_f_t_n;
 	}
@@ -36,6 +48,10 @@ public class SimulationInputGenerator {
 		return source;
 	}
 
+	/**
+	 * 
+	 * @param src Set the source string where the template for the generated tcp apps is stored
+	 */
 	public void setSource(String src) {
 		this.source = src;
 	}
@@ -44,10 +60,17 @@ public class SimulationInputGenerator {
 		return dest;
 	}
 
+	/**
+	 * 
+	 * @param dest Set the destination string where the generated tcp apps should be stored
+	 */
 	public void setDest(String dest) {
 		this.dest = dest;
 	}
 
+	/**
+	 * For each application generate an output string for the simulation tool
+	 */
 	public void writeSimulationTcpApps() {
 		System.out.print("Write tcp apps");
 		String content = "**.cli[*].numTcpApps = " + model_f_t_n.length + "\n\n";
@@ -90,10 +113,10 @@ public class SimulationInputGenerator {
 			tcpApp = tcpApp.replace("[tcpAppSendScript]", sendScript);
 			tcpApp = tcpApp.replace("[tcpAppDeadline]", String.valueOf( (float) flow.getDeadline() / 10));
 			content += tcpApp;
-			
-			System.out.println("<<<<<<Time:" + model_f_t_n[f].length + "; Nets: " + model_f_t_n[f][0].length);
 		}
 
+		System.out.println("Destination: " + dest);
+		
 		// write file
 		try {
 			PrintWriter pw = new PrintWriter(dest);

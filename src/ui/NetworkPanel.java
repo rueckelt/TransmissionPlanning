@@ -14,6 +14,12 @@ import java.awt.Font;
 import schedulingIOModel.Network;
 import schedulingIOModel.Network.NetworkType;
 
+/**
+ * 
+ * @author Jens Balze
+ *
+ */
+
 // TODO refactoring!
 public class NetworkPanel extends JPanel {
 
@@ -108,13 +114,17 @@ public class NetworkPanel extends JPanel {
 
 	}
 	
+	/**
+	 * 
+	 * @return The networktype enum from the combobox
+	 */
 	public NetworkType getNetworkType(){
 		return comboBoxNetworkType.getModel().getElementAt(comboBoxNetworkType.getSelectedIndex());
 	}
 	
 	/**
 	 * 
-	 * @return the duration the network is available in time slots
+	 * @return The duration the network is available in time slots
 	 */
 	public int getSlots(){
 		return (int) spinnerSlots.getValue() * 10;
@@ -122,7 +132,7 @@ public class NetworkPanel extends JPanel {
 	
 	/**
 	 * 
-	 * @return the throughput in chunks per time slot
+	 * @return The throughput in chunks per time slot
 	 */
 	public int getThroughput(){
 		return (int) spinnerThroughput.getValue();
@@ -130,12 +140,16 @@ public class NetworkPanel extends JPanel {
 	
 	/**
 	 * 
-	 * @return the start time in time slots
+	 * @return The start time in time slots
 	 */
 	public int getStartTime(){
 		return (int) spinnerStartTime.getValue() * 10;
 	}
 	
+	/**
+	 * 
+	 * @return The network object created from the user entries
+	 */
 	public Network getNetwork(){
 		NetworkType type = getNetworkType();
 		
