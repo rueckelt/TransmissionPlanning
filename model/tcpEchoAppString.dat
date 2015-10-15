@@ -1,0 +1,4 @@
+**.server.tcpApp[[echoIndex]].localAddress = ""
+**.server.tcpApp[[echoIndex]].localPort = [echoPort]
+**.server.tcpApp[[echoIndex]].echoFactor = [echoFactor]
+**.server.tcpApp[[echoIndex]].echoDelay = [echoDelay]
