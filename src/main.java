@@ -9,15 +9,15 @@ public class main {
 
 	
 	public static void main(String[] args) {
-		boolean decomp = false;
+		boolean deco = false;
 //		int n=0;//3_0_2 soll
 //		int f=2;
 //		int t=3;
-		int f=3;
-		int n=3;
-		int t=3;
+		int f=4;
+		int n=4;
+		int t=4;
 		int rep=30;
-		String logpath= "my_logs"+File.separator+"testMinCostOpt";
+		String logpath= "my_logs"+File.separator+"longTest1";
 		
 //		for(int rep = 4; rep<=rep1; rep++){
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);

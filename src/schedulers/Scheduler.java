@@ -211,7 +211,7 @@ public abstract class Scheduler {
 				}
 				if(chunkSum>chunksMax){
 					System.err.println("Upper throughput limit exceeded for flow: "+f +" in time window " + t+" to " + t+winSize +" by "+ (chunkSum-chunksMax));
-					return false;	//violation of upper tp limit
+//					return false;	//violation of upper tp limit
 				}
 			}
 		}

@@ -65,7 +65,7 @@ public class RandomScheduler extends Scheduler{
 		sum_duration+=duration;
 		int cost = new CostFunction(ng, tg).costTotal(getSchedule());
 		sum_cost+=(long)cost;
-				System.out.println(cost);
+//				System.out.println(cost);
 		
 		//write log if all runs finished
 		if(run_counter<=0){

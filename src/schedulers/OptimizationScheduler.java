@@ -11,7 +11,7 @@ public class OptimizationScheduler extends Scheduler {
 
 	
 	final static String MODELDIR = "model"+File.separator;	
-	final static String model = "sched_com3.mod";
+	final static String model = "sched_com.mod";
 //	final static String model = "split_sched_com.mod";
 //	final static String dataset1 = "sched_com4.dat";
 	
@@ -46,6 +46,7 @@ public class OptimizationScheduler extends Scheduler {
 			TestCostFunction cf = new TestCostFunction(ng, tg, me.getModel());
 			cf.costTotal(getSchedule());
 		}
+		me.end();
 	}
 	
 	public void writeDatFile(String logpath){

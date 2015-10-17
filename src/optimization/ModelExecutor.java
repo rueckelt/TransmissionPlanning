@@ -1,8 +1,10 @@
 package optimization;
+import java.util.HashMap;
+
+import ToolSet.LogMatlabFormat;
 import ilog.concert.IloException;
 import ilog.cp.IloCP;
 import ilog.cplex.IloCplex;
-import ilog.cplex.IloCplex.BooleanParam;
 import ilog.opl.IloCustomOplDataSource;
 import ilog.opl.IloOplDataElements;
 import ilog.opl.IloOplDataHandler;
@@ -13,14 +15,6 @@ import ilog.opl.IloOplModel;
 import ilog.opl.IloOplModelDefinition;
 import ilog.opl.IloOplModelSource;
 import ilog.opl.IloOplSettings;
-
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import schedulingIOModel.TestCostFunction;
-import ToolSet.LogMatlabFormat;
 
 /**
  * Execute IBM CPLEX model
@@ -33,14 +27,11 @@ import ToolSet.LogMatlabFormat;
 public class ModelExecutor {
 
 	private final boolean PRESOLVE = true;
-	private final boolean USE_CP = false;
-	
 	IloOplFactory oplF;
 	IloOplErrorHandler errHandler;
 	IloOplModelSource modelSource;
 		
 	IloCplex cplex;
-	IloCP cp;
 	
 	IloOplModel opl_model;
 	IloOplSettings settings;
@@ -67,7 +58,6 @@ public class ModelExecutor {
 	
 	long time =0;
 	HashMap<String, Integer> timeMap; 
-
 	
 	public ModelExecutor(String model){
 		
@@ -84,6 +74,7 @@ public class ModelExecutor {
 		try {
 			cplex = oplF.createCplex();
 			cplex.setParam(IloCplex.BooleanParam.PreInd, PRESOLVE);
+			cplex.setOut(null);
 
 		} catch (IloException e) {
 			System.out.println("ERROR_INIT");
@@ -115,7 +106,7 @@ public class ModelExecutor {
 		time = System.nanoTime()-time;
 		timeMap.put("create_model", (int) (time/1000000));
 //		System.out.println("create_model: "+time/1000000);
-		System.out.println("USE DATASOURCE: "+datasource_file);
+//		System.out.println("USE DATASOURCE: "+datasource_file);
 //		generate
 		time=System.nanoTime();
 		opl_model.generate();
@@ -135,17 +126,35 @@ public class ModelExecutor {
 			feasible = cplex.solve();
 			time = System.nanoTime()-time;
 			timeMap.put("duration_to_solve_model_us", (int) (time/1000000));
-//			System.out.println("duration_to_solve_model_us: "+time/1000000);
+//			.println("duration_to_solve_model_us: "+time/1000000);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		
 //		Logging for the Model executor; not used anymore - only for verification of cost function
-		log(logfile+"opti_log.m");
+//		log(logfile+"opti_log.m");
 //		dataSource.end();
 //		opl_model.end();
 		return feasible;
+	}
+	
+	public void end(){
+		try {
+		cplex.clearCallbacks();
+		cplex.clearCuts();
+		cplex.clearLazyConstraints();
+		cplex.clearModel();
+		cplex.clearUserCuts();
+		cplex.end();
+		oplF.end();
+		opl_model.delete();
+		
+		
+		} catch (IloException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public int[][][] getSchedule_f_t_n(){
@@ -156,7 +165,7 @@ public class ModelExecutor {
 	 * logging for evaluation, not used currently; using external (but equal) costFunction 
 	 */
 	public void log(String filename){
-		System.out.println("FILENAME: "+filename);
+//		System.out.println("FILENAME: "
 		LogMatlabFormat logger= new LogMatlabFormat();
 		//log timing
 		String log="% t_n_i\n% time:\n";

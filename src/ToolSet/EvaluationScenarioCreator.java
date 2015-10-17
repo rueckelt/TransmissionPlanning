@@ -116,18 +116,18 @@ public class EvaluationScenarioCreator {
 		String path=folder+"rep_"+ rep+File.separator;
 		//skip if folder exists
 		if(!new File(path).exists() || overwrite || recalc){
-			System.out.println(1+" "+path);
+			System.out.println(path);
 			new File(path).mkdirs();
-			System.out.println(recalc);
+//			System.out.println(recalc);
 			if(!recalc){
-				System.out.println("Creating Networks and Flows..");
+//				System.out.println("Creating Networks and Flows..");
 				ng=new NetworkGenerator(nets, time);	//add network input data
 				ng.writeObject(path);
 				tg = new TrafficGenerator(time, flows);		//add application traffic input data
 				tg.writeObject(path); 
 			}else{
-				System.out.println("Loading stored Networks and Flows..");
-				System.out.println(path);
+//				System.out.println("Loading stored Networks and Flows..");
+//				System.out.println(path);
 				ng=NetworkGenerator.loadNetworkGenerator(path);
 				tg=TrafficGenerator.loadTrafficGenerator(path);
 			}
@@ -170,7 +170,7 @@ public class EvaluationScenarioCreator {
 						}else{
 							if(scheduler.getCost()<c_opt){
 								System.err.println("OPT STILL NOT BEST");
-								error=true;
+//								error=true;
 							}
 						}
 
@@ -178,8 +178,8 @@ public class EvaluationScenarioCreator {
 					Scheduler s = new PriorityScheduler(ng, tg);
 					cost.add(s.getCost());
 					s_name.add("empty");
-					System.out.println(s_name);
-					System.out.println("Cost "+cost);
+//					System.out.println(s_name);
+//					System.out.println("Cost "+cost);
 
 					if(error){
 						System.exit(0);

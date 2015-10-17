@@ -79,7 +79,7 @@ public class LogMatlabFormat {
 		PrintWriter pw=null;
 		//check/create path
 		String path = filename.substring(0, filename.lastIndexOf(File.separator));
-		System.out.println(path);
+//		System.out.println(path);
 		if(!new File(path).exists()){
 			new File(path).mkdirs();
 		}
