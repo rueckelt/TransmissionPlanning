@@ -1,0 +1,27 @@
+
+% 2015-10-17 01:03:36
+
+% my_logs\longTest1\0_0_0\rep_17\optimization_log.m
+scheduling_duration_us = 43726;
+
+% schedule
+schedule_f_t_n(:,:,1) = [6; 6; 6; 4; 6; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 4; 0];
+
+% cost function results
+vioSt = [0];
+vioDl = [0];
+vioNon = [0];
+vioTpMin = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+vioTp = [0];
+vioLcy = [4680];
+vioJit = [832];
+cost_vio = 49608;
+cost_switches = 0;
+cost_ch = 1144;
+costTotal = 50752;
+
+% optimization
+% 
+% ############### Network 0 ##############
+% F0	|[0]6	|6	|6	|4	|6	|4	|4	|4	|4	|4	|[10]4	|4	|4	|4	|4	|4	|4	|4	|4	|4	|[20]4	|4	|4	|4	|	|
+

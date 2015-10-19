@@ -1,0 +1,59 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: QZ61P8
+ * Creation Date: 10.07.2014 at 08:59:12
+ *********************************************/
+
+
+nNetworks = 4;
+nTime = 50;
+nInterfaceTypes = 3;
+nFlows = 1;
+
+//channel model: generated Sat Oct 17 01:28:55 CEST 2015
+availChunkBuckets = //[Networks, Time]  
+[
+	[23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 38, 57, 57, 57, 57, 57, 57, 57, 38, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 32, 49, 49, 49, 49, 49, 49, 49, 32, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 64, 64, 64, 64, 64, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+];
+	
+network_cost = //[Networks] 
+	[7, 4, 2, 4];				//static cost per channel (change later to more realistic model)
+network_lcy =
+	[10, 3, 2, 2];
+network_jit =
+	[6, 7, 7, 7];	
+
+network_type= //[Networks] 				//each channel has a specific type; e.g. WiFi, LTE..
+	[2, 1, 1, 1];		
+nClientInterfaces = //[InterfaceTypes]
+	[1, 1, 1];	
+
+//requests: generated Sat Oct 17 01:28:55 CEST 2015
+nChunks = 				[340];		//[Flows]		
+deadline= 				[49];		//[Flows] 
+prefStartTime = 		[0];		//[Flows]
+tpMaxWindow = 			[1];		//[Flows]	//0 says not relevant/no maximum transfer rate; upper throughput limit
+tpMaxChunks = 			[5]; 		//maximum of chunks in above specified time frame
+tpMinWindow = 			[1];		//[Flows]  //1000 says not relevant / no minimum transfer rate
+tpMinChunks = 			[5]; 		//minimum of chunks in above specified time frame; lower throughput limit
+latency = 				[3];	
+jitter = 				[3];
+
+hysteresis = 100;
+importance = [
+	[10],	//deadline
+	[10],	//start time
+	[10000],	//throughput upper bound
+	[100],	//throughput lower bound
+	[8],	//unsched
+	[8],	//latency
+	[5]	//jitter
+]; //[ImportanceTypes, Flows]
+
+//user profiles
+userImportance = [11]; //[Flows]
+costImp = 1; //former willingness to pay is now inversely proportional value: cost importance 
+ 
