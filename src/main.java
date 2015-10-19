@@ -13,9 +13,9 @@ public class main {
 //		int n=0;//3_0_2 soll
 //		int f=2;
 //		int t=3;
-		int f=4;
-		int n=4;
-		int t=4;
+		int f=2;
+		int n=2;
+		int t=2;
 		int rep=30;
 		String logpath= "my_logs"+File.separator+"longTest1";
 		
