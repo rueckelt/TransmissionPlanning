@@ -146,7 +146,7 @@ public class Mainwindow extends JFrame {
 			}
 
 		});
-		
+
 		JButton generateUnscheduledModelButton = new JButton("Generate unscheduled Model");
 		GridBagConstraints gbc_generateUnscheduledModelButton = new GridBagConstraints();
 		gbc_generateUnscheduledModelButton.insets = new Insets(0, 0, 5, 5);
@@ -160,44 +160,46 @@ public class Mainwindow extends JFrame {
 				FlowGenerator fg = getFlowGenerator();
 				Vector<Network> networks = ng.getNetworks();
 				Vector<Flow> flows = fg.getFlows();
-				
+
 				int model_f_t_n[][][] = new int[flows.size()][ng.getNofTimeSlots()][networks.size()];
-				
+
 				for (int n = 0; n < networks.size(); ++n) {
 					Network network = networks.elementAt(n);
-					Vector<Integer> capacity = network.getCapacity();
 					boolean appFinished[] = new boolean[flows.size()];
-					
+
 					for (int f = 0; f < flows.size(); ++f) {
-						if(appFinished[f] == true) continue;
+						if (appFinished[f] == true)
+							continue;
 						Flow flow = flows.elementAt(f);
-						int chunks = flow.getChunks();
-						
-						//if application will send chunks after there is no more network open, than continue
-						if (flow.getStartTime() > ng.getNofTimeSlots()) continue;
-						
+						int chunksToSend = flow.getChunks();
+						int sendChunks = 0;
+						int chunksPerSlot = flow.getChunksPerSlot();
+						System.out.println("Chunks: " + chunksToSend);
+						// application will send chunks after there is no more
+						// network open, than continue
+						if (flow.getStartTime() > ng.getNofTimeSlots())
+							continue;
+
 						for (int t = flow.getStartTime(); t < ng.getNofTimeSlots(); ++t) {
-							if(t > flow.getDeadline()) continue;						
-							if(capacity.elementAt(t) >= 0){
-								if(capacity.elementAt(t) > chunks){
-									model_f_t_n[f][t][n] = chunks;
-									int chunksLeft = capacity.elementAt(t) - chunks;
-									capacity.set(t, chunksLeft);
-									chunks = 0;
-									appFinished[f] = true;
-								}
-								if(capacity.elementAt(t) <= chunks){
-									model_f_t_n[f][t][n] = capacity.elementAt(t);
-									int chunksLeft = chunks - capacity.elementAt(t);
-									capacity.set(t, 0);
-									chunks = chunksLeft;
-								}
+							if (t > flow.getDeadline() || appFinished[f] == true)
+								continue;
+
+							if (sendChunks < chunksToSend) {
+								model_f_t_n[f][t][n] = chunksPerSlot;
+								sendChunks += chunksPerSlot;
 							}
+							if (sendChunks >= chunksToSend) {
+								appFinished[f] = true;
+							}
+
 						}
+						System.out.println("Send Chunks: " + sendChunks);
 					}
 				}
-				
-				SimulationInputGenerator sim = new SimulationInputGenerator(model_f_t_n, ng.getNetworks(), fg.getFlows(), "model\\generatedUnscheduledTcpApps.dat");
+
+				SimulationInputGenerator sim = new SimulationInputGenerator(model_f_t_n, ng.getNetworks(),
+						fg.getFlows(), "model\\generatedUnscheduledTcpApps.dat");
+				sim.writeSimulationTcpApps();
 			}
 		});
 
@@ -212,12 +214,14 @@ public class Mainwindow extends JFrame {
 			public void actionPerformed(ActionEvent ae) {
 				NetworkGenerator ng = getNetworkGenerator();
 				FlowGenerator fg = getFlowGenerator();
-				
+
 				Vector<Scheduler> schedulers = initSchedulers(ng, fg);
-				for(Scheduler scheduler: schedulers){
+				for (Scheduler scheduler : schedulers) {
 					scheduler.calculateInstance(txtLogPath.getText() + File.separator);
 					System.out.println("Start simulation input generator.");
-					SimulationInputGenerator sim = new SimulationInputGenerator(scheduler.getSchedule(), ng.getNetworks(), fg.getFlows(), "model\\generatedScheduledTcpApps.dat");
+					SimulationInputGenerator sim = new SimulationInputGenerator(scheduler.getSchedule(),
+							ng.getNetworks(), fg.getFlows(), "model\\generatedScheduledTcpApps.dat");
+					sim.writeSimulationTcpApps();
 				}
 			}
 		});
@@ -264,12 +268,12 @@ public class Mainwindow extends JFrame {
 			}
 		});
 	}
-	
+
 	/**
 	 * 
 	 * @return The networkgenerator represented by the ui
 	 */
-	public NetworkGenerator getNetworkGenerator(){
+	public NetworkGenerator getNetworkGenerator() {
 		NetworkGenerator networkGenerator = new NetworkGenerator();
 		for (NetworkPanel networkPanel : networkPanels) {
 			Network network = networkPanel.getNetwork();
@@ -286,12 +290,12 @@ public class Mainwindow extends JFrame {
 		}
 		return networkGenerator;
 	}
-	
+
 	/**
 	 * 
 	 * @return The flowgenerator represented by the ui
 	 */
-	public FlowGenerator getFlowGenerator(){
+	public FlowGenerator getFlowGenerator() {
 		FlowGenerator flowGenerator = new FlowGenerator();
 		for (ApplicationPanel applicationPanel : applicationPanels) {
 			Flow flow = applicationPanel.getFlow();
@@ -308,18 +312,20 @@ public class Mainwindow extends JFrame {
 		}
 		return flowGenerator;
 	}
-	
+
 	/**
 	 * get list of all schedulers which shall calculate a schedule
+	 * 
 	 * @param ng
 	 * @param tg
 	 * @return list of schedulers
 	 */
-	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
+	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg) {
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		//schedulers.add(new RandomScheduler(ng, tg, 500));	//500 random runs of this scheduler. Returns average duration and cost
+		// schedulers.add(new RandomScheduler(ng, tg, 500)); //500 random runs
+		// of this scheduler. Returns average duration and cost
 		schedulers.add(new PriorityScheduler(ng, tg));
-		//schedulers.add(new OptimizationScheduler(ng, tg));
+		// schedulers.add(new OptimizationScheduler(ng, tg));
 		return schedulers;
 	}
 }

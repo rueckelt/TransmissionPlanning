@@ -19,6 +19,8 @@ public class Flow implements Serializable {
 
 	private FlowType flowType;
 	private int chunks = 0;
+	private int chunksPerSlot = 1;
+
 	private int deadline = 100000;
 	private int startTime = 0;
 
@@ -30,8 +32,8 @@ public class Flow implements Serializable {
 	private int windowMax = 1;
 	private int chunksMax = 100000;
 
-	private int reqJitter = 10; // low value if low jitter required [ms]
-	private int reqLatency = 10; // low value if low latency required [ms]
+	private int reqJitter = 10; // low value if low jitter required [~1000ms]
+	private int reqLatency = 15; // low value if low latency required [~225ms]
 
 	// importance values
 	private int impDeadline = 1;
@@ -192,70 +194,114 @@ public class Flow implements Serializable {
 		this.flowType = flowType;
 	}
 
+	public int getChunksPerSlot() {
+		return chunksPerSlot;
+	}
+
+	public void setChunksPerSlot(int chunksPerSlot) {
+		this.chunksPerSlot = chunksPerSlot;
+	}
+
+	/**
+	 * 
+	 * @param startTime
+	 *            in time slots
+	 * @param deadline
+	 *            in time slots
+	 * @return flow object represents an ip call from start time till deadline
+	 */
 	public static Flow IPCall(int startTime, int deadline) {
 		Flow IPCall = new Flow();
-		int chunks_per_slot = 1;
+
+		// 1 chunk ~ 1 kb --> 100 chunks / 1 s
+		IPCall.setChunksPerSlot(10);
 
 		IPCall.setFlowType(FlowType.IPCALL);
 
 		IPCall.setStartTime(startTime);
 		IPCall.setDeadline(deadline);
-		IPCall.setChunks((deadline - startTime) * chunks_per_slot);
-
+		IPCall.setChunks((deadline - startTime) * IPCall.getChunksPerSlot());
 		IPCall.setWindowMin(1);
-		IPCall.setChunksMin(5 + RndInt.get(-1, 0));
-		IPCall.setImpThroughputMin(10); // should deliver all 5 --> high
-										// priority (10? more? what should be
-										// max?)
-		IPCall.setImpDeadline(10); // call is over after deadline --> high prio
-
-		IPCall.setReqJitter(2);
-		IPCall.setReqLatency(2); // low latency, low jitter
-
 		IPCall.setWindowMax(1);
-		IPCall.setChunksMax(5 + RndInt.get(0, 1));
-		IPCall.setImpThrouthputMax(100); 	// cannot deliver more than 5 -->
-											// blocking high priority
-		IPCall.setImpStartTime(10); // data not existent before call --> high
-									// prio
+		IPCall.setChunksMin(10 + RndInt.get(-1,0));
+		// should not deliver more than 100 + rndInt
+		IPCall.setChunksMax(10 + RndInt.get(0,1));
 
-		IPCall.setImpUnsched(8 + RndInt.get(-1, 1)); 	// lower priority for
-														// unscheduled than for
-														// deadline violation
-		IPCall.setImpJitter(8 + RndInt.get(-1, 2)); // jitter and latency are
-													// important
-		IPCall.setImpLatency(8 + RndInt.get(-2, 1));
+		// require jitter ~ 10 ms --> 3 points (9ms)
+		IPCall.setReqJitter(3);
+		// ITU-T G.114 recommends a maximum of a 150 ms one-way latency
+		IPCall.setReqLatency(5);
 
-		IPCall.setImpUser(7 + RndInt.get(-1, 2));
+		// call is over after deadline
+		IPCall.setImpDeadline(10);
+		// should deliver all the same count of chunks
+		IPCall.setImpThroughputMin(10);
+		IPCall.setImpThrouthputMax(10);
+		// data not existent before call
+		IPCall.setImpStartTime(10);
+		// lower priority for unscheduled than for deadline violation
+		IPCall.setImpUnsched(7);
+		// Jitter and latency have high priority
+		// Latency > 250ms can be odd for user
+		// Jitter > 50ms can result in loss of packets and in false order
+		IPCall.setImpJitter(8);
+		IPCall.setImpLatency(8);
+
+		IPCall.setImpUser(7);
 
 		return IPCall;
 	}
 
-	public static Flow BufferableStream(int startTime, int duration){
+	/**
+	 * 
+	 * @param startTime
+	 *            in time slots
+	 * @param duration
+	 *            in time slots
+	 * @return flow object represents a stream from start time till duration
+	 *         ends
+	 */
+	public static Flow BufferableStream(int startTime, int duration) {
 		Flow stream = new Flow();
-		int chunks_per_slot=1;
-		
+
+		stream.setChunksPerSlot(1);
+
 		stream.setFlowType(FlowType.BUFFERABLESTREAM);
-		
+
 		stream.setStartTime(startTime);
-		stream.setDeadline(startTime+duration);
-		stream.setChunks(duration*chunks_per_slot);
+		stream.setDeadline(startTime + duration);
+		stream.setChunks(duration * stream.getChunksPerSlot());
 		
-		//relaxed window
+		// very little chunks to send, because there is only a request for  a song
+		// after the request there will only be send the ack's for confirming
+		
+		// relaxed window
 		stream.setWindowMin(15 + RndInt.get(-5, 5));
-		stream.setChunksMin(15 * chunks_per_slot);
-		stream.setChunksMax(15 * (chunks_per_slot + 1));
-		stream.setImpThroughputMin(5 + RndInt.get(-1, 1));		// soft minimum throughput limit; allowed to be bursty (large window)		
-		stream.setImpDeadline(7+ RndInt.get(-2, 2)); 			
-		
-		stream.setImpStartTime(2 + RndInt.get(-1, 4));			//later start time is ok 	
-		stream.setImpUnsched(6 + RndInt.get(-1, 1));			//unscheduled chunks are ok for long streams and short scheduling duration
-		stream.setImpUser(7 + RndInt.get(-3, 2));
-		
-		// Pakets have to be in the right order rather than beeing as fast as possible at the destination
-		stream.setImpJitter(8);
+		stream.setChunksMin(1 * stream.getChunksPerSlot());
+		stream.setChunksMax(1 * stream.getChunksPerSlot());
+
+		// ~ 49ms
+		stream.setReqJitter(7);
+		// ~ 216ms
+		stream.setReqLatency(6);
+
+		// soft minimum throughput limit; allowed to be bursty (large window)
+		stream.setImpThroughputMin(5);
+		stream.setImpDeadline(7);
+		// later start time is ok
+		stream.setImpStartTime(4);
+		// unscheduled chunks are ok for long streams and short scheduling
+		// duration
+		stream.setImpUnsched(6);
+		stream.setImpUser(7);
+
+		// Pakets have to be in the right order rather than beeing as fast as
+		// possible at the destination
+		// De-jitter buffer against high jitter causes high latency
+		// user waits rather for some seconds and stream plays well all the time
+		stream.setImpJitter(6);
 		stream.setImpLatency(4);
-		
+
 		return stream;
 	}
 
@@ -270,35 +316,48 @@ public class Flow implements Serializable {
 	 */
 	public static Flow UserRequest(int startTime, int duration) {
 		Flow userRequest = new Flow();
-		int deadline = startTime + duration; // early deadline, depends on
-												// request size
-		int chunks_per_slot = 3 + RndInt.get(-1, 1);
+		// early deadline, depends on request size
+		int deadline = startTime + duration;
+
+		userRequest.setChunksPerSlot(100);
 
 		userRequest.setFlowType(FlowType.USERREQUEST);
 
 		userRequest.setStartTime(startTime);
 		userRequest.setDeadline(deadline);
-		userRequest.setChunks(duration * chunks_per_slot);
+		userRequest.setChunks(duration * userRequest.getChunksPerSlot());
 
-		userRequest.setImpUnsched(15 + RndInt.get(-3, 3)); // all chunks must be
-															// scheduled
-		userRequest.setImpUser(7 + RndInt.get(-1, 3));
-		userRequest.setImpDeadline(8 + RndInt.get(-1, 1));
+		// all chunks must be scheduled
+		userRequest.setImpUnsched(10);
+		userRequest.setImpUser(7);
+		userRequest.setImpDeadline(8);
+
+		// Jitter and latency are unimportant
 
 		return userRequest;
 	}
 
-	public static Flow Update(int chunks) {
+	/**
+	 * 
+	 * @param startTime
+	 *            in time slots
+	 * @param duration
+	 *            duration in time slots the update wants to send data
+	 * @return flow object represents an update with size of the given number of
+	 *         chunks
+	 */
+	public static Flow Update(int startTime, int duration) {
+		// TODO maybe add a start time
 		Flow update = new Flow();
 
+		update.setStartTime(startTime);
+		update.setChunksPerSlot(250);
 		update.setFlowType(FlowType.UPDATE);
+		update.setChunks(duration * update.getChunksPerSlot());
 
-		update.setChunks(chunks);
-		update.setImpUnsched(4 + RndInt.get(-2, 1)); // chunks should be
-														// scheduled with low
-														// priority
-
-		update.setImpUser(2 + RndInt.get(-1, 1));
+		// chunks should be scheduled with low priority
+		update.setImpUnsched(2);
+		update.setImpUser(2);
 		return update;
 	}
 }

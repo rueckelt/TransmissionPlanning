@@ -163,8 +163,12 @@ public class Network implements Serializable{
 		wifi.setType(1);
 		wifi.setNetworkType(NetworkType.WIFI);
 		wifi.setCost(3);
-		wifi.setJitter(7);
-		wifi.setLatency(2);
+		
+		// jitter 3 ~ 9ms
+		wifi.setJitter(3 + RndInt.get(-1, 1));
+		
+		// latency 2 ~ 8ms
+		wifi.setLatency(2 + RndInt.get(-1, 1));
 		return wifi;
 	}
 
@@ -179,10 +183,12 @@ public class Network implements Serializable{
 		cell.setType(2);
 		cell.setNetworkType(NetworkType.CELLULAR);
 		cell.setCost(10  + RndInt.get(-3, 3));
-		//cell.setJitter(6 + RndInt.get(-2, 2));
-		//cell.setLatency(8 + RndInt.get(-2, 2));
-		cell.setJitter(6);
-		cell.setLatency(6);
+		
+		// jitter 3 ~ 9ms
+		cell.setJitter(3);
+		
+		// latency 4 ~ 64ms
+		cell.setLatency(4);
 		return cell;
 	}
 }

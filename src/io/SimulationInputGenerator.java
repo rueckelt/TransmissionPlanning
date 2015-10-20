@@ -42,7 +42,6 @@ public class SimulationInputGenerator {
 		this.networks = networks;
 		this.flows = flows;
 		this.dest = dest;
-		this.writeSimulationTcpApps();
 	}
 
 	public int[][][] getModel_f_t_n() {
@@ -106,11 +105,29 @@ public class SimulationInputGenerator {
 			tcpApp = tcpApp.replace("[tcpAppName]", f + "_" + flow.getFlowType().toString());
 
 			tcpApp = tcpApp.replace("[tcpAppConnectAddress]", tcpEchoServerName);
+			
+			int port = 0;
+			switch(flow.getFlowType()){
+			case IPCALL:
+				port = 1000;
+				break;
+			case BUFFERABLESTREAM:
+				port = 1001;
+				break;
+			case USERREQUEST:
+				port = 1002;
+				break;
+			case UPDATE:
+				port = 1003;
+				break;
+			}
+			tcpApp = tcpApp.replace("[tcpAppConnectPort]", String.valueOf(port));
+			
 			tcpApp = tcpApp.replace("[tcpAppStartTime]", String.valueOf((float) flow.getStartTime() / 10));
 
-			// Chunk size can be about 10kb --> 1MiB ~ 100 Chunks
+			// Chunk size can be about 1kb --> 1MiB ~ 1000 Chunks
 			System.out.println((float) flow.getChunks() / 100);
-			tcpApp = tcpApp.replace("[tcpAppSendBytes]", String.valueOf((float) flow.getChunks() / 100));
+			tcpApp = tcpApp.replace("[tcpAppSendBytes]", String.valueOf((float) flow.getChunks() / 1000));
 
 			String sendScript = "\" ";
 			for (int t = 0; t < model_f_t_n[f].length; ++t) {
@@ -141,15 +158,15 @@ public class SimulationInputGenerator {
 				echoDelay = 0;
 				break;
 			case BUFFERABLESTREAM:
-				echoFactor = 3;
+				echoFactor = 10;
 				echoDelay = 1;
 				break;
 			case USERREQUEST:
-				echoFactor = 10;
+				echoFactor = 15;
 				echoDelay = 2;
 				break;
 			case UPDATE:
-				echoFactor = 100;
+				echoFactor = 50;
 				echoDelay = 5;
 				break;
 			}

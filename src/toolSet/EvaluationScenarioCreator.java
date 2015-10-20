@@ -35,21 +35,6 @@ public class EvaluationScenarioCreator {
 		
 		//evaluate();
 	}
-	
-	public EvaluationScenarioCreator(NetworkGenerator ng, FlowGenerator fg, String logpath){
-		//TODO refactoring
-		REPETITIONS = 0;
-		MAX_TIME = fg.getFlows().lastElement().getDeadline();
-		MAX_FLOWS = fg.getFlows().size();
-		MAX_NETS = ng.getNetworks().size();
-		LOG = logpath+File.separator;
-		Vector<Scheduler> schedulers = initSchedulers(ng, fg);
-		for(Scheduler scheduler: schedulers){
-			scheduler.calculateInstance(LOG);
-			System.out.println("Start simulation input generator.");
-			SimulationInputGenerator sim = new SimulationInputGenerator(scheduler.getSchedule(), ng.getNetworks(), fg.getFlows());
-		}
-	}
 
 	/**
 	 * get list of all schedulers which shall calculate a schedule

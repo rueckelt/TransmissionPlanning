@@ -8,7 +8,7 @@
 
 **.cli[*].tcpApp[[tcpAppIndex]].connectAddress = [tcpAppConnectAddress]
 
-**.cli[*].tcpApp[[tcpAppIndex]].connectPort = 1000
+**.cli[*].tcpApp[[tcpAppIndex]].connectPort = [tcpAppConnectPort]
 
 **.cli[*].tcpApp[[tcpAppIndex]].tOpen = exponential(0.1s)
 

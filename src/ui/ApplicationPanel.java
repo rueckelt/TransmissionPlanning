@@ -140,7 +140,7 @@ public class ApplicationPanel extends JPanel {
 			return Flow.UserRequest(getStartTime(), getDuration());
 		case UPDATE:
 			// TODO set chunks = 15 * duration in slots?
-			return Flow.Update(getDuration() * 15);
+			return Flow.Update(getStartTime(), getDuration());
 		}
 
 		return null;
