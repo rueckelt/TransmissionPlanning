@@ -1,4 +1,8 @@
 package schedulingIOModel;
+import java.util.Arrays;
+
+import schedulers.PriorityScheduler;
+import schedulers.Scheduler;
 import toolSet.LogMatlabFormat;
 
 
@@ -38,6 +42,7 @@ public class CostFunction {
 	 */
 	public static int latencyMatch(Flow flow, Network net){
 		if(net.getLatency()>flow.getReqLatency()){
+			//System.out.println("lcy "+(Math.pow(net.getLatency()-flow.getReqLatency(),2)*flow.getImpLatency()));
 			return (int) (Math.pow(net.getLatency()-flow.getReqLatency(),2)*flow.getImpLatency());
 		}else{
 			return 0;
@@ -130,7 +135,7 @@ public class CostFunction {
 			Flow flow = tg.getFlows().get(f);
 			for(int n = 0; n<networks; n++){
 				for (int t = 0; t < timeslots; t++) {
-					if((t+1)<flow.getStartTime()){
+					if((t+1)<flow.getStartTime()){		//start time and deadline are in CPLEX index (starting at 1) we therefore compare with modified time index (t+1)
 						vioSt[f]+= Math.pow(flow.getStartTime()-(t+1),2)*schedule[f][t][n]*flow.getImpStartTime();
 					}
 				}
@@ -210,10 +215,11 @@ public class CostFunction {
 		int[] vioNon = new int[flows];
 		for(int f = 0; f<flows; f++){
 			Flow flow = tg.getFlows().get(f);
-			for (int t = 0; t < timeslots; t++) {
-				vioNon[f]= (flow.getChunks()-cummulated_f_t[f][timeslots-1])* flow.getImpUnsched()*flow.getImpUser();
-			}
+				vioNon[f]= (flow.getChunks()-cummulated_f_t[f][timeslots-1])* 
+				flow.getImpUnsched()* flow.getImpUser();
+
 		}
+//		System.out.println("vioNon: "+Arrays.toString(vioNon));
 		check(vioNon, "non_allo_vio");
 		if(logger!=null){
 			logger.log("vioNon", vioNon);
@@ -226,11 +232,11 @@ public class CostFunction {
 		int timeslots = cummulated_f_t[0].length;
 		
 		int[] vioTp = new int[flows];
-		int[][] vioTpMax = vioTpMax(cummulated_f_t);
+		//int[][] vioTpMax = vioTpMax(cummulated_f_t);
 		int[][] vioTpMin = vioTpMin(cummulated_f_t);
 		for(int f = 0; f<flows; f++){
 			for(int t=0; t<timeslots; t++){
-				vioTp[f]=	vioTpMax[f][t]*tg.getFlows().get(f).getImpThroughputMax()+
+				vioTp[f]+=	//vioTpMax[f][t]*tg.getFlows().get(f).getImpThroughputMax()+
 							vioTpMin[f][t]*tg.getFlows().get(f).getImpThroughputMin();
 			}
 		}
@@ -241,42 +247,42 @@ public class CostFunction {
 		return vioTp;
 	}
 	
-	/**
-	 * todo: first case --> nothing to subtract!
-	 * @param cummulated_f_t
-	 * @return
-	 */
-	public int[][] vioTpMax(int[][] cummulated_f_t){
-		int flows = cummulated_f_t.length;
-		int timeslots = cummulated_f_t[0].length;
-		
-		int[][] vioTpMax = new int[flows][timeslots];
-		for(int f = 0; f<flows; f++){
-			Flow flow = tg.getFlows().get(f);
-			//throughput window violations check
-			//maximum throughput
-			int t0=0;
-			int subtract = 0;
-			for(int t=flow.getWindowMax()-1; t<timeslots; t++){
-				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){
-					
-					int tp = cummulated_f_t[f][t]-subtract;	//get chunks in window
-					if(tp>flow.getChunksMax()){				//if there are too much
-						int vio=tp-flow.getChunksMax();
-						vioTpMax[f][t] +=vio;
-					}
-				}
-				subtract=cummulated_f_t[f][t0];			//first step: nothing to subtract; then cummulated[t0]
-				t0++;
-			}
-		}
-		check(vioTpMax, "vioTpMax");
-		if(logger!=null){
-			logger.log("vioTpMax", vioTpMax);
-		}
-		return vioTpMax;
-	}
-	
+//	/**
+//	 * todo: first case --> nothing to subtract!
+//	 * @param cummulated_f_t
+//	 * @return
+//	 */
+//	public int[][] vioTpMax(int[][] cummulated_f_t){
+//		int flows = cummulated_f_t.length;
+//		int timeslots = cummulated_f_t[0].length;
+//		
+//		int[][] vioTpMax = new int[flows][timeslots];
+//		for(int f = 0; f<flows; f++){
+//			Flow flow = tg.getFlows().get(f);
+//			//throughput window violations check
+//			//maximum throughput
+//			int t0=0;
+//			int subtract = 0;
+//			for(int t=flow.getWindowMax()-1; t<timeslots; t++){
+//				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){
+//					
+//					int tp = cummulated_f_t[f][t]-subtract;	//get chunks in window
+//					if(tp>flow.getChunksMax()){				//if there are too much
+//						int vio=tp-flow.getChunksMax();
+//						vioTpMax[f][t] +=vio;
+//					}
+//				}
+//				subtract=cummulated_f_t[f][t0];			//first step: nothing to subtract; then cummulated[t0]
+//				t0++;
+//			}
+//		}
+//		check(vioTpMax, "vioTpMax");
+//		if(logger!=null){
+//			logger.log("vioTpMax", vioTpMax);
+//		}
+//		return vioTpMax;
+//	}
+//	
 	public int[][] vioTpMin(int[][] cummulated_f_t){
 		int flows = cummulated_f_t.length;
 		int timeslots = cummulated_f_t[0].length;
@@ -285,12 +291,12 @@ public class CostFunction {
 			Flow flow = tg.getFlows().get(f);
 			//minimum throughput
 			//search only within window between startTime and deadline
-			int t0=0;
+			int t0=0;	//lower bound of window
 			int subtract = 0;
-			for(int t=flow.getWindowMin()-1; t<timeslots; t++){
-				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){
+			for(int t=flow.getWindowMin()-1; t<timeslots; t++){		// t is upper bound of window (minus 1 for cplex index starting at 1)
+				if(t0>=flow.getStartTime()-1 && t<=flow.getDeadline()-1){		//TODO -1 after startime added	
 					int tp =  cummulated_f_t[f][t]- subtract;	//get chunks in window
-					if(tp<flow.getChunksMin()){				//if there are too much
+					if(tp<flow.getChunksMin()){				//if there are too many tokens/chunks scheduled
 						int vio=flow.getChunksMin()-tp;
 						vioTpMin[f][t] +=vio;
 					}
@@ -312,7 +318,7 @@ public class CostFunction {
 	/**
 	 * 
 	 * @param schedule[f][t][n]
-	 * @return Latency violations for each flow (without user pref)
+	 * @return monetary cost for schedule
 	 */
 	public int costMon(int[][][] schedule){
 		int flows = schedule.length;
@@ -328,6 +334,7 @@ public class CostFunction {
 				}
 			}
 		}
+		costMon*=ng.getCostImportance();	//multiply with cost importance
 		check(costMon,"cost_ch");
 		if(logger!=null){
 			logger.log("cost_ch", costMon);
@@ -344,7 +351,7 @@ public class CostFunction {
 			int[][] cummulated_f_t = cummulated_f_t(schedule);
 			
 			cost_vio+=	(	vioSt(schedule)[f]+vioDl(schedule)[f]
-							+vioNon(cummulated_f_t)[f]+vioTp(cummulated_f_t)[f]
+							+vioNon(cummulated_f_t)[f]+vioTp(cummulated_f_t)[f]		//impUser is squared for vioNon
 							+vioLcy(schedule)[f]+vioJit(schedule)[f]
 						) * flow.getImpUser();
 		}
@@ -412,4 +419,29 @@ public class CostFunction {
 	public void calculate(int[][][] schedule) {
 		costTotal(schedule);		
 	}
+	
+	/**
+	 * criticality is worst case schedule cost (flow NOT scheduled) 
+	 * @param f flow
+	 * @param ng available networks
+	 * @return criticality
+	 */
+	public static int calculateFlowCriticality(Flow f, NetworkGenerator ng){
+		//calculate violation if flow is NOT scheduled (worst case)
+		//and subtract violation is flow is scheduled alone (best case)
+		FlowGenerator tg_temp= new FlowGenerator();
+		tg_temp.addFlow(f);
+		CostFunction cf = new CostFunction(ng, tg_temp);
+		Scheduler s = getScheduler(tg_temp, ng);
+		//get cost with empty schedule (worst case, flow is unscheduled)
+		int cost_wc = cf.costViolation(s.getSchedule());
+		//cost_wc*=f.getImpUser();
+		//System.out.println("criticality:cost of flow "+getId()+" worst: "+cost_wc);
+		return cost_wc;//-cost_bc;
+	}
+
+	private static Scheduler getScheduler(FlowGenerator tg, NetworkGenerator ng){
+		return new PriorityScheduler(ng, tg);	//this could be a dummy scheduler.. only need empty schedule from it
+	}
+
 }

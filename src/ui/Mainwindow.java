@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 import io.SimulationInputGenerator;
 import schedulers.OptimizationScheduler;
+import schedulers.PriorityMatchScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.Scheduler;
 import schedulingIOModel.CostFunction;
@@ -323,14 +324,14 @@ public class Mainwindow extends JFrame {
 	 * get list of all schedulers which shall calculate a schedule
 	 * 
 	 * @param ng
-	 * @param tg
+	 * @param fg
 	 * @return list of schedulers
 	 */
-	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg) {
+	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator fg) {
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		// schedulers.add(new RandomScheduler(ng, tg, 500)); //500 random runs
-		// of this scheduler. Returns average duration and cost
-		schedulers.add(new PriorityScheduler(ng, tg));
+		// schedulers.add(new RandomScheduler(ng, tg, 500)); //500 random runs of this scheduler. Returns average duration and cost
+		//schedulers.add(new PriorityScheduler(ng, fg));
+		schedulers.add(new PriorityMatchScheduler(ng, fg));
 		// schedulers.add(new OptimizationScheduler(ng, tg));
 		return schedulers;
 	}

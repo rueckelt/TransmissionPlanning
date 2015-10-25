@@ -31,6 +31,7 @@ public class NetworkGenerator implements Serializable {
 	private Vector<Network> networks = new Vector<Network>();
 	
 	private int hysteresis = 100;
+	private int cost_imp = 1;	//importance of monetary cost for network use
 	
 	public NetworkGenerator(){
 	}
@@ -260,6 +261,29 @@ public class NetworkGenerator implements Serializable {
 	
 	public int getHysteresis(){
 		return hysteresis;
+	}
+	
+	public void setCostImportance(int value){
+		cost_imp=value;
+	}
+	
+	public int getCostImportance(){
+		return cost_imp;
+	}
+	
+	public NetworkGenerator clone(){  
+		try {
+			NetworkGenerator ng_clone = new NetworkGenerator();
+			ng_clone.setHysteresis(getHysteresis());
+			ng_clone.setCostImportance(getCostImportance());
+			for(Network n: getNetworks()){
+				ng_clone.addNetwork(n.clone());
+			}
+			return ng_clone;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}  
 	}
 	
 }

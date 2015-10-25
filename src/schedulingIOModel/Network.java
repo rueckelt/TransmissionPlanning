@@ -1,6 +1,7 @@
 package schedulingIOModel;
 import java.io.Serializable;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import toolSet.RndInt;
 
@@ -10,7 +11,7 @@ import toolSet.RndInt;
  * 
  */
 
-public class Network implements Serializable{
+public class Network implements Serializable, Cloneable{
 	
 	/**
 	 * 
@@ -30,6 +31,18 @@ public class Network implements Serializable{
 	private int cost = 0;
 	
 	Vector<Integer> capacity = new Vector<Integer>();
+	
+	//each network gets a unique ID
+	//unique identifier enables shrinking of problem and later reconstruction (decomposition heuristic) 
+	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
+	int id = NEXT_ID.getAndIncrement();
+	
+	/**
+	 * Empty constructor for clone method
+	 */
+	public Network(){
+		
+	}
 	
 	/**
 	 * initialize a network with #slots token buckets and capacity of "meanchunks"
@@ -75,6 +88,10 @@ public class Network implements Serializable{
 	
 	public Vector<Integer> getCapacity(){
 		return capacity;
+	}
+	
+	public void setCapacity(Vector<Integer> capacity){
+		this.capacity = capacity;
 	}
 	
 	public int getSlots(){
@@ -148,6 +165,32 @@ public class Network implements Serializable{
 	
 	public void setNetworkType(NetworkType type){
 		this.networkType = type;
+	}
+	
+	//set ID externally
+    public void setId(int id) {
+    	this.id = id;
+    }
+    
+    public int getId() {
+         return id;
+    }
+	
+	public Network clone(){  
+		try {
+			Network n = new Network();
+			n.setCapacity((Vector<Integer>)capacity.clone());
+			n.jitter=jitter;
+			n.cost=cost;
+			n.id=id;
+			n.latency=latency;
+			n.meanChunks=meanChunks;
+			n.type=type;
+			return n;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}  
 	}
 
 	/**
