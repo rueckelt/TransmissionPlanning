@@ -8,6 +8,7 @@ import io.SimulationInputGenerator;
 import schedulers.OptimizationScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.Scheduler;
+import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
@@ -200,6 +201,9 @@ public class Mainwindow extends JFrame {
 				SimulationInputGenerator sim = new SimulationInputGenerator(model_f_t_n, ng.getNetworks(),
 						fg.getFlows(), "model\\generatedUnscheduledTcpApps.dat");
 				sim.writeSimulationTcpApps();
+				
+				CostFunction cf = new CostFunction(ng, fg);
+				System.out.println("Total cost unscheduled model: " + cf.costTotal(model_f_t_n));
 			}
 		});
 
@@ -222,6 +226,8 @@ public class Mainwindow extends JFrame {
 					SimulationInputGenerator sim = new SimulationInputGenerator(scheduler.getSchedule(),
 							ng.getNetworks(), fg.getFlows(), "model\\generatedScheduledTcpApps.dat");
 					sim.writeSimulationTcpApps();
+					CostFunction cf = new CostFunction(ng, fg);
+					System.out.println("Total cost scheduled model: " + cf.costTotal(scheduler.getSchedule()));
 				}
 			}
 		});

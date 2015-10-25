@@ -25,10 +25,6 @@ public class ApplicationPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JLabel startTimeLabel;
-	private JLabel durationLabel;
-	private JLabel applicationTypeLabel;
-	private JLabel applicationLabel;
 	private JSpinner startTimeSpinner;
 	private JSpinner durationSpinner;
 	private JComboBox<FlowType> applicationTypeComboBox;
@@ -44,7 +40,7 @@ public class ApplicationPanel extends JPanel {
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
-		applicationLabel = new JLabel("Application");
+		JLabel applicationLabel = new JLabel("Application");
 		applicationLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
 		GridBagConstraints gbc_lblApplication = new GridBagConstraints();
 		gbc_lblApplication.insets = new Insets(0, 0, 5, 5);
@@ -52,7 +48,7 @@ public class ApplicationPanel extends JPanel {
 		gbc_lblApplication.gridy = 0;
 		add(applicationLabel, gbc_lblApplication);
 
-		applicationTypeLabel = new JLabel("Application type:");
+		JLabel applicationTypeLabel = new JLabel("Application type:");
 		GridBagConstraints gbc_lblApplicationType = new GridBagConstraints();
 		gbc_lblApplicationType.insets = new Insets(0, 0, 5, 5);
 		gbc_lblApplicationType.gridx = 0;
@@ -68,7 +64,7 @@ public class ApplicationPanel extends JPanel {
 		gbc_comboBoxApplicationType.gridy = 1;
 		add(applicationTypeComboBox, gbc_comboBoxApplicationType);
 
-		durationLabel = new JLabel("Duration [s]");
+		JLabel durationLabel = new JLabel("Duration [s]");
 		GridBagConstraints gbc_labelDuration = new GridBagConstraints();
 		gbc_labelDuration.insets = new Insets(0, 0, 5, 5);
 		gbc_labelDuration.gridx = 0;
@@ -84,7 +80,7 @@ public class ApplicationPanel extends JPanel {
 		gbc_spinnerDuration.gridy = 2;
 		add(durationSpinner, gbc_spinnerDuration);
 
-		startTimeLabel = new JLabel("Start time [s]");
+		JLabel startTimeLabel = new JLabel("Start time [s]");
 		GridBagConstraints gbc_labelStartTime = new GridBagConstraints();
 		gbc_labelStartTime.insets = new Insets(0, 0, 0, 5);
 		gbc_labelStartTime.gridx = 0;

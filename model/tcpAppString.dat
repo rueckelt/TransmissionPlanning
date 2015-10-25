@@ -1,23 +1,10 @@
-**.cli[*].tcpApp[[tcpAppIndex]].typename = [tcpAppName]
-
-**.cli[*].tcpApp[[tcpAppIndex]].active = true
-
-**.cli[*].tcpApp[[tcpAppIndex]].localAddress = ""
-
-**.cli[*].tcpApp[[tcpAppIndex]].localPort = -1
-
-**.cli[*].tcpApp[[tcpAppIndex]].connectAddress = [tcpAppConnectAddress]
-
-**.cli[*].tcpApp[[tcpAppIndex]].connectPort = [tcpAppConnectPort]
-
-**.cli[*].tcpApp[[tcpAppIndex]].tOpen = exponential(0.1s)
-
-**.cli[*].tcpApp[[tcpAppIndex]].tSend = [tcpAppStartTime]s
-
-**.cli[*].tcpApp[[tcpAppIndex]].sendBytes = [tcpAppSendBytes]MiB
-
-**.cli[*].tcpApp[[tcpAppIndex]].sendScript = [tcpAppSendScript]
-
-**.cli[*].tcpApp[[tcpAppIndex]].tClose = [tcpAppDeadline]s
-
-**.cli[*].tcpApp[[tcpAppIndex]].dataTransferMode = "object"
+**.MA[*].tcpApp[[tcpAppIndex]].active = true
+**.MA[*].tcpApp[[tcpAppIndex]].localAddress = ""
+**.MA[*].tcpApp[[tcpAppIndex]].localPort = -1
+**.MA[*].tcpApp[[tcpAppIndex]].connectAddress = [tcpAppConnectAddress]
+**.MA[*].tcpApp[[tcpAppIndex]].connectPort = [tcpAppConnectPort]
+**.MA[*].tcpApp[[tcpAppIndex]].tOpen = exponential(0.1s)
+**.MA[*].tcpApp[[tcpAppIndex]].tSend = [tcpAppStartTime]s
+**.MA[*].tcpApp[[tcpAppIndex]].sendScript = [tcpAppSendScript]
+**.MA[*].tcpApp[[tcpAppIndex]].tClose = [tcpAppDeadline]s
+**.MA[*].tcpApp[[tcpAppIndex]].dataTransferMode = "object"

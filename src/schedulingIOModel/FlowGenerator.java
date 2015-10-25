@@ -74,7 +74,7 @@ public class FlowGenerator implements Serializable{
 				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
 				//				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
 			}else if(i%5==2){		//3		Download
-				flows.add(Flow.Update(duration/2));
+				flows.add(Flow.Update(i * tmp, duration/2));
 				//System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
 			}else{					//Stream
 				flows.add(Flow.BufferableStream(i*tmp, tmp*5));

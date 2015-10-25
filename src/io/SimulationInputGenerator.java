@@ -22,7 +22,7 @@ public class SimulationInputGenerator {
 	private int[][][] model_f_t_n;
 	private Vector<Network> networks;
 	private Vector<Flow> flows;
-	private String tcpEchoServerName = "\"TCPEchoApp\"";
+	private String tcpEchoServerName = "\"TCPEchoServer\"";
 	private String tcpAppSource = "model\\tcpAppString.dat";
 	private String tcpEchoAppSource = "model\\tcpEchoAppString.dat";
 	private String dest;
@@ -85,10 +85,10 @@ public class SimulationInputGenerator {
 	 */
 	public void writeSimulationTcpApps() {
 		System.out.print("Write tcp apps");
-		// numTcpApps = 1 for one server
+		
 		String content = "# TCP apps \n";
-		content += "**.cli[*].numTcpApps = 1\n\n";
-
+		content += "**.numTcpApps = " + flows.size() + "\n";
+		content += "**.MA[*].tcpApp[*].typename = \"TCPSessionApp\" \n\n";
 		for (int f = 0; f < model_f_t_n.length; ++f) {
 			Flow flow = flows.elementAt(f);
 			String tcpApp = "";
@@ -102,8 +102,6 @@ public class SimulationInputGenerator {
 			}
 			tcpApp += "\n\n";
 			tcpApp = tcpApp.replace("[tcpAppIndex]", String.valueOf(f));
-			tcpApp = tcpApp.replace("[tcpAppName]", f + "_" + flow.getFlowType().toString());
-
 			tcpApp = tcpApp.replace("[tcpAppConnectAddress]", tcpEchoServerName);
 			
 			int port = 0;
@@ -127,7 +125,7 @@ public class SimulationInputGenerator {
 
 			// Chunk size can be about 1kb --> 1MiB ~ 1000 Chunks
 			System.out.println((float) flow.getChunks() / 100);
-			tcpApp = tcpApp.replace("[tcpAppSendBytes]", String.valueOf((float) flow.getChunks() / 1000));
+			//tcpApp = tcpApp.replace("[tcpAppSendBytes]", String.valueOf((float) flow.getChunks() / 1000));
 
 			String sendScript = "\" ";
 			for (int t = 0; t < model_f_t_n[f].length; ++t) {
@@ -146,7 +144,7 @@ public class SimulationInputGenerator {
 		}
 		
 		content += "# Echo server \n";
-		content += "**.server.tcpApp[*].typename = " + tcpEchoServerName + " \n";
+		content += "**.CN1.tcpApp[*].typename = " + tcpEchoServerName + " \n";
 		int i = 0;
 		for (FlowType type : FlowType.values()) {
 			int echoFactor = 1;

@@ -24,10 +24,10 @@ import schedulingIOModel.Network.NetworkType;
 public class NetworkPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JComboBox<NetworkType> comboBoxNetworkType;
 	private JSpinner spinnerStartTime;
 	private JSpinner spinnerSlots;
 	private JSpinner spinnerThroughput;
+	private JComboBox<NetworkType> comboBoxNetworkType;
 
 	/**
 	 * Create the panel.

@@ -1,4 +1,4 @@
-**.server.tcpApp[[echoIndex]].localAddress = ""
-**.server.tcpApp[[echoIndex]].localPort = [echoPort]
-**.server.tcpApp[[echoIndex]].echoFactor = [echoFactor]
-**.server.tcpApp[[echoIndex]].echoDelay = [echoDelay]
+**.CN1.tcpApp[[echoIndex]].localAddress = ""
+**.CN1.tcpApp[[echoIndex]].localPort = [echoPort]
+**.CN1.tcpApp[[echoIndex]].echoFactor = [echoFactor]
+**.CN1.tcpApp[[echoIndex]].echoDelay = [echoDelay]
