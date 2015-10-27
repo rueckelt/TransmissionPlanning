@@ -20,11 +20,14 @@ import schedulingIOModel.Network;
 public class SimulationInputGenerator {
 
 	private int[][][] model_f_t_n;
+	private boolean scheduled;
 	private Vector<Network> networks;
 	private Vector<Flow> flows;
-	private String tcpEchoServerName = "\"TCPEchoServer\"";
+	private String tcpEchoServerName = "\"TCPEchoApp\"";
 	private String tcpAppSource = "model\\tcpAppString.dat";
 	private String tcpEchoAppSource = "model\\tcpEchoAppString.dat";
+	private String omnetppSource = "model\\omnetpp.ini";
+	private String omnetppDest = "model\\generatedOmnetpp.ini";
 	private String dest;
 
 	/**
@@ -37,8 +40,9 @@ public class SimulationInputGenerator {
 	 * @param flows
 	 *            Vector contains all the flows for the simulation
 	 */
-	public SimulationInputGenerator(int[][][] output_f_t_n, Vector<Network> networks, Vector<Flow> flows, String dest) {
+	public SimulationInputGenerator(int[][][] output_f_t_n, Vector<Network> networks, Vector<Flow> flows, String dest, boolean scheduled) {
 		this.setModel_f_t_n(output_f_t_n);
+		this.scheduled = scheduled;
 		this.networks = networks;
 		this.flows = flows;
 		this.dest = dest;
@@ -102,7 +106,7 @@ public class SimulationInputGenerator {
 			}
 			tcpApp += "\n\n";
 			tcpApp = tcpApp.replace("[tcpAppIndex]", String.valueOf(f));
-			tcpApp = tcpApp.replace("[tcpAppConnectAddress]", tcpEchoServerName);
+			tcpApp = tcpApp.replace("[tcpAppConnectAddress]", "\"CN1[*]\"");
 			
 			int port = 0;
 			switch(flow.getFlowType()){
@@ -144,28 +148,28 @@ public class SimulationInputGenerator {
 		}
 		
 		content += "# Echo server \n";
-		content += "**.CN1.tcpApp[*].typename = " + tcpEchoServerName + " \n";
+		content += "**.CN1[*].tcpApp[*].typename = " + tcpEchoServerName + " \n";
 		int i = 0;
 		for (FlowType type : FlowType.values()) {
 			int echoFactor = 1;
-			int echoDelay = 0; 
+			String echoDelay = "0s"; 
 			
 			switch(type){
 			case IPCALL:
 				echoFactor = 1;
-				echoDelay = 0;
+				echoDelay = "0s";
 				break;
 			case BUFFERABLESTREAM:
 				echoFactor = 10;
-				echoDelay = 1;
+				echoDelay = "1s";
 				break;
 			case USERREQUEST:
 				echoFactor = 15;
-				echoDelay = 2;
+				echoDelay = "2s";
 				break;
 			case UPDATE:
 				echoFactor = 50;
-				echoDelay = 5;
+				echoDelay = "5s";
 				break;
 			}
 			
@@ -198,6 +202,30 @@ public class SimulationInputGenerator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		String omnetpp ="";
+		try {
+			Scanner scanner = new Scanner(new File(omnetppSource));
+			omnetpp = scanner.useDelimiter("\\Z").next();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(scheduled) omnetpp = omnetpp.replace("#[Insert_scheduled_tcp_apps_here]", content);
+		else omnetpp = omnetpp.replace("#[Config Generated_TCP_APPS]", content);
+		
+		// write file
+		try {
+			PrintWriter pw = new PrintWriter(omnetppDest);
+			pw.println(omnetpp);
+			pw.flush();
+			pw.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		System.out.println("Finished writing tcp apps");
 	}
 }

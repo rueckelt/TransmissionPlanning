@@ -200,7 +200,7 @@ public class Mainwindow extends JFrame {
 				}
 
 				SimulationInputGenerator sim = new SimulationInputGenerator(model_f_t_n, ng.getNetworks(),
-						fg.getFlows(), "model\\generatedUnscheduledTcpApps.dat");
+						fg.getFlows(), "model\\generatedUnscheduledTcpApps.dat", false);
 				sim.writeSimulationTcpApps();
 				
 				CostFunction cf = new CostFunction(ng, fg);
@@ -225,7 +225,7 @@ public class Mainwindow extends JFrame {
 					scheduler.calculateInstance(txtLogPath.getText() + File.separator);
 					System.out.println("Start simulation input generator.");
 					SimulationInputGenerator sim = new SimulationInputGenerator(scheduler.getSchedule(),
-							ng.getNetworks(), fg.getFlows(), "model\\generatedScheduledTcpApps.dat");
+							ng.getNetworks(), fg.getFlows(), "model\\generatedScheduledTcpApps.dat", true);
 					sim.writeSimulationTcpApps();
 					CostFunction cf = new CostFunction(ng, fg);
 					System.out.println("Total cost scheduled model: " + cf.costTotal(scheduler.getSchedule()));
@@ -330,8 +330,8 @@ public class Mainwindow extends JFrame {
 	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator fg) {
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
 		// schedulers.add(new RandomScheduler(ng, tg, 500)); //500 random runs of this scheduler. Returns average duration and cost
-		//schedulers.add(new PriorityScheduler(ng, fg));
-		schedulers.add(new PriorityMatchScheduler(ng, fg));
+		schedulers.add(new PriorityScheduler(ng, fg));
+		//schedulers.add(new PriorityMatchScheduler(ng, fg));
 		// schedulers.add(new OptimizationScheduler(ng, tg));
 		return schedulers;
 	}
