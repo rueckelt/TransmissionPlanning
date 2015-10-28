@@ -34,10 +34,10 @@ public class ApplicationPanel extends JPanel {
 	 */
 	public ApplicationPanel() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.columnWidths = new int[] { 0, 0, 20, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
 		JLabel applicationLabel = new JLabel("Application");
@@ -59,12 +59,12 @@ public class ApplicationPanel extends JPanel {
 		applicationTypeComboBox.setModel(new DefaultComboBoxModel<FlowType>(FlowType.values()));
 		GridBagConstraints gbc_comboBoxApplicationType = new GridBagConstraints();
 		gbc_comboBoxApplicationType.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBoxApplicationType.insets = new Insets(0, 0, 5, 0);
+		gbc_comboBoxApplicationType.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBoxApplicationType.gridx = 1;
 		gbc_comboBoxApplicationType.gridy = 1;
 		add(applicationTypeComboBox, gbc_comboBoxApplicationType);
 
-		JLabel durationLabel = new JLabel("Duration [s]");
+		JLabel durationLabel = new JLabel("Duration");
 		GridBagConstraints gbc_labelDuration = new GridBagConstraints();
 		gbc_labelDuration.insets = new Insets(0, 0, 5, 5);
 		gbc_labelDuration.gridx = 0;
@@ -75,14 +75,22 @@ public class ApplicationPanel extends JPanel {
 		durationSpinner.setModel(new SpinnerNumberModel(new Integer(30), new Integer(1), null, new Integer(1)));
 		GridBagConstraints gbc_spinnerDuration = new GridBagConstraints();
 		gbc_spinnerDuration.fill = GridBagConstraints.HORIZONTAL;
-		gbc_spinnerDuration.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerDuration.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerDuration.gridx = 1;
 		gbc_spinnerDuration.gridy = 2;
 		add(durationSpinner, gbc_spinnerDuration);
+		
+		JLabel durationUnitLabel = new JLabel("sec");
+		GridBagConstraints gbc_durationUnitLabel = new GridBagConstraints();
+		gbc_durationUnitLabel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_durationUnitLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_durationUnitLabel.gridx = 2;
+		gbc_durationUnitLabel.gridy = 2;
+		add(durationUnitLabel, gbc_durationUnitLabel);
 
-		JLabel startTimeLabel = new JLabel("Start time [s]");
+		JLabel startTimeLabel = new JLabel("Start time");
 		GridBagConstraints gbc_labelStartTime = new GridBagConstraints();
-		gbc_labelStartTime.insets = new Insets(0, 0, 0, 5);
+		gbc_labelStartTime.insets = new Insets(0, 0, 5, 5);
 		gbc_labelStartTime.gridx = 0;
 		gbc_labelStartTime.gridy = 3;
 		add(startTimeLabel, gbc_labelStartTime);
@@ -90,10 +98,19 @@ public class ApplicationPanel extends JPanel {
 		startTimeSpinner = new JSpinner();
 		startTimeSpinner.setModel(new SpinnerNumberModel(new Integer(25), new Integer(1), null, new Integer(1)));
 		GridBagConstraints gbc_spinnerStartTime = new GridBagConstraints();
+		gbc_spinnerStartTime.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerStartTime.fill = GridBagConstraints.HORIZONTAL;
 		gbc_spinnerStartTime.gridx = 1;
 		gbc_spinnerStartTime.gridy = 3;
 		add(startTimeSpinner, gbc_spinnerStartTime);
+		
+		JLabel startTimeUnitLabel = new JLabel("sec");
+		GridBagConstraints gbc_startTimeUnitLabel = new GridBagConstraints();
+		gbc_startTimeUnitLabel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_startTimeUnitLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_startTimeUnitLabel.gridx = 2;
+		gbc_startTimeUnitLabel.gridy = 3;
+		add(startTimeUnitLabel, gbc_startTimeUnitLabel);
 	}
 
 	/**

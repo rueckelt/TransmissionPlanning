@@ -21,14 +21,12 @@ public class SimulationInputGenerator {
 
 	private int[][][] model_f_t_n;
 	private boolean scheduled;
-	private Vector<Network> networks;
+	private Vector<Network> networks;	// Can maybe removed because not used
 	private Vector<Flow> flows;
-	private String tcpEchoServerName = "\"TCPEchoApp\"";
 	private String tcpAppSource = "model\\tcpAppString.dat";
 	private String tcpEchoAppSource = "model\\tcpEchoAppString.dat";
 	private String omnetppSource = "model\\omnetpp.ini";
 	private String omnetppDest = "model\\generatedOmnetpp.ini";
-	private String dest;
 
 	/**
 	 * 
@@ -40,12 +38,11 @@ public class SimulationInputGenerator {
 	 * @param flows
 	 *            Vector contains all the flows for the simulation
 	 */
-	public SimulationInputGenerator(int[][][] output_f_t_n, Vector<Network> networks, Vector<Flow> flows, String dest, boolean scheduled) {
+	public SimulationInputGenerator(int[][][] output_f_t_n, Vector<Network> networks, Vector<Flow> flows, boolean scheduled) {
 		this.setModel_f_t_n(output_f_t_n);
 		this.scheduled = scheduled;
 		this.networks = networks;
 		this.flows = flows;
-		this.dest = dest;
 	}
 
 	public int[][][] getModel_f_t_n() {
@@ -70,31 +67,20 @@ public class SimulationInputGenerator {
 		this.tcpAppSource = src;
 	}
 
-	public String getDest() {
-		return dest;
-	}
-
 	/**
-	 * 
-	 * @param dest
-	 *            Set the destination string where the generated tcp apps should
-	 *            be stored
+	 * Writes the omnetpp.ini file which you can load in omnetpp for simulation
 	 */
-	public void setDest(String dest) {
-		this.dest = dest;
-	}
-
-	/**
-	 * For each application generate an output string for the simulation tool
-	 */
-	public void writeSimulationTcpApps() {
-		System.out.print("Write tcp apps");
+	public void writeSimulationInputFile() {
 		
-		String content = "# TCP apps \n";
-		content += "**.numTcpApps = " + flows.size() + "\n";
-		content += "**.MA[*].tcpApp[*].typename = \"TCPSessionApp\" \n\n";
+		/**
+		 * Generate for each flow one representing TCPSessionApp
+		 */
+		String apps = "**.numTcpApps = " + flows.size() + "\n";
+		apps += "**.MA[*].tcpApp[*].typename = \"TCPSessionApp\" \n\n";
 		for (int f = 0; f < model_f_t_n.length; ++f) {
 			Flow flow = flows.elementAt(f);
+			
+			// Read string which contains the basic structure for a TCPSessionApp
 			String tcpApp = "";
 			// read tcp app string
 			try {
@@ -105,9 +91,8 @@ public class SimulationInputGenerator {
 				e.printStackTrace();
 			}
 			tcpApp += "\n\n";
-			tcpApp = tcpApp.replace("[tcpAppIndex]", String.valueOf(f));
-			tcpApp = tcpApp.replace("[tcpAppConnectAddress]", "\"CN1[*]\"");
 			
+			// Set the port depending on flowtype
 			int port = 0;
 			switch(flow.getFlowType()){
 			case IPCALL:
@@ -123,14 +108,14 @@ public class SimulationInputGenerator {
 				port = 1003;
 				break;
 			}
-			tcpApp = tcpApp.replace("[tcpAppConnectPort]", String.valueOf(port));
 			
+			// replace all placeholder with the values from the flow
+			tcpApp = tcpApp.replace("[tcpAppIndex]", String.valueOf(f));
+			tcpApp = tcpApp.replace("[tcpAppConnectAddress]", "\"CN1[*]\"");
+			tcpApp = tcpApp.replace("[tcpAppConnectPort]", String.valueOf(port));
 			tcpApp = tcpApp.replace("[tcpAppStartTime]", String.valueOf((float) flow.getStartTime() / 10));
 
-			// Chunk size can be about 1kb --> 1MiB ~ 1000 Chunks
-			System.out.println((float) flow.getChunks() / 100);
-			//tcpApp = tcpApp.replace("[tcpAppSendBytes]", String.valueOf((float) flow.getChunks() / 1000));
-
+			// generate the sendScript: " <time> <sendBytes>; ... "
 			String sendScript = "\" ";
 			for (int t = 0; t < model_f_t_n[f].length; ++t) {
 				int chunks = 0;
@@ -144,11 +129,15 @@ public class SimulationInputGenerator {
 			sendScript += "\" ";
 			tcpApp = tcpApp.replace("[tcpAppSendScript]", sendScript);
 			tcpApp = tcpApp.replace("[tcpAppDeadline]", String.valueOf((float) flow.getDeadline() / 10));
-			content += tcpApp;
+			apps += tcpApp;
 		}
 		
-		content += "# Echo server \n";
-		content += "**.CN1[*].tcpApp[*].typename = " + tcpEchoServerName + " \n";
+		/**
+		 * Generate for each flowtype one server TCPEchoApp
+		 */
+		String server = "**.CN1[*].tcpApp[*].typename = \"TCPEchoApp\" \n";
+		
+		// set for each flowtype the server settings
 		int i = 0;
 		for (FlowType type : FlowType.values()) {
 			int echoFactor = 1;
@@ -174,7 +163,7 @@ public class SimulationInputGenerator {
 			}
 			
 			String tcpEchoApp = "";
-			// read tcp app string
+			// read basic structure for a TCPEchoApp
 			try {
 				Scanner scanner = new Scanner(new File(tcpEchoAppSource));
 				tcpEchoApp = scanner.useDelimiter("\\Z").next();
@@ -183,26 +172,18 @@ public class SimulationInputGenerator {
 				e.printStackTrace();
 			}
 			tcpEchoApp += "\n\n";
+			
+			// replace all placeholder with the flowtype values
 			tcpEchoApp = tcpEchoApp.replace("[echoIndex]", String.valueOf(i));
 			tcpEchoApp = tcpEchoApp.replace("[echoPort]", String.valueOf(1000 + i));
 			tcpEchoApp = tcpEchoApp.replace("[echoFactor]", String.valueOf(echoFactor));
 			tcpEchoApp = tcpEchoApp.replace("[echoDelay]", String.valueOf(echoDelay));
 			
-			content += tcpEchoApp;
+			server += tcpEchoApp;
 			++i;
 		}
-
-		// write file
-		try {
-			PrintWriter pw = new PrintWriter(dest);
-			pw.println(content);
-			pw.flush();
-			pw.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
+		// read the basic simulation scenario structure
 		String omnetpp ="";
 		try {
 			Scanner scanner = new Scanner(new File(omnetppSource));
@@ -212,10 +193,14 @@ public class SimulationInputGenerator {
 			e.printStackTrace();
 		}
 		
-		if(scheduled) omnetpp = omnetpp.replace("#[Insert_scheduled_tcp_apps_here]", content);
-		else omnetpp = omnetpp.replace("#[Config Generated_TCP_APPS]", content);
+		// replace the configuration of tcp apps
+		if(scheduled) omnetpp = omnetpp.replace("#[Insert_scheduled_tcp_apps_here]", apps);
+		else omnetpp = omnetpp.replace("#[Insert_generated_tcp_apps_here]", apps);
 		
-		// write file
+		// insert the server
+		omnetpp = omnetpp.replace("#[Insert_server_here]", server);
+		
+		// write generatedOmnetpp.ini file
 		try {
 			PrintWriter pw = new PrintWriter(omnetppDest);
 			pw.println(omnetpp);
@@ -225,7 +210,5 @@ public class SimulationInputGenerator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		System.out.println("Finished writing tcp apps");
 	}
 }

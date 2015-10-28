@@ -200,9 +200,9 @@ public class Mainwindow extends JFrame {
 				}
 
 				SimulationInputGenerator sim = new SimulationInputGenerator(model_f_t_n, ng.getNetworks(),
-						fg.getFlows(), "model\\generatedUnscheduledTcpApps.dat", false);
-				sim.writeSimulationTcpApps();
-				
+						fg.getFlows(), false);
+				sim.writeSimulationInputFile();
+
 				CostFunction cf = new CostFunction(ng, fg);
 				System.out.println("Total cost unscheduled model: " + cf.costTotal(model_f_t_n));
 			}
@@ -225,8 +225,8 @@ public class Mainwindow extends JFrame {
 					scheduler.calculateInstance(txtLogPath.getText() + File.separator);
 					System.out.println("Start simulation input generator.");
 					SimulationInputGenerator sim = new SimulationInputGenerator(scheduler.getSchedule(),
-							ng.getNetworks(), fg.getFlows(), "model\\generatedScheduledTcpApps.dat", true);
-					sim.writeSimulationTcpApps();
+							ng.getNetworks(), fg.getFlows(), true);
+					sim.writeSimulationInputFile();
 					CostFunction cf = new CostFunction(ng, fg);
 					System.out.println("Total cost scheduled model: " + cf.costTotal(scheduler.getSchedule()));
 				}
@@ -278,7 +278,7 @@ public class Mainwindow extends JFrame {
 
 	/**
 	 * 
-	 * @return The networkgenerator represented by the ui
+	 * @return The NetworkGenerator object represented by the UI
 	 */
 	public NetworkGenerator getNetworkGenerator() {
 		NetworkGenerator networkGenerator = new NetworkGenerator();
@@ -300,7 +300,7 @@ public class Mainwindow extends JFrame {
 
 	/**
 	 * 
-	 * @return The flowgenerator represented by the ui
+	 * @return The FlowGenerator object represented by the UI
 	 */
 	public FlowGenerator getFlowGenerator() {
 		FlowGenerator flowGenerator = new FlowGenerator();
@@ -323,15 +323,16 @@ public class Mainwindow extends JFrame {
 	/**
 	 * get list of all schedulers which shall calculate a schedule
 	 * 
-	 * @param ng
-	 * @param fg
-	 * @return list of schedulers
+	 * @param ng NetworkGenerator for scheduler initialization
+	 * @param fg FlowGenerator for scheduler initialization
+	 * @return Vector of initialized schedulers
 	 */
 	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator fg) {
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		// schedulers.add(new RandomScheduler(ng, tg, 500)); //500 random runs of this scheduler. Returns average duration and cost
+		// schedulers.add(new RandomScheduler(ng, tg, 500)); //500 random runs
+		// of this scheduler. Returns average duration and cost
 		schedulers.add(new PriorityScheduler(ng, fg));
-		//schedulers.add(new PriorityMatchScheduler(ng, fg));
+		// schedulers.add(new PriorityMatchScheduler(ng, fg));
 		// schedulers.add(new OptimizationScheduler(ng, tg));
 		return schedulers;
 	}

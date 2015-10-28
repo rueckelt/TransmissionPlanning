@@ -34,9 +34,9 @@ public class NetworkPanel extends JPanel {
 	 */
 	public NetworkPanel() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
+		gridBagLayout.columnWidths = new int[] { 0, 0, 20, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 
@@ -59,12 +59,12 @@ public class NetworkPanel extends JPanel {
 		comboBoxNetworkType = new JComboBox<NetworkType>();
 		comboBoxNetworkType.setModel(new DefaultComboBoxModel<NetworkType>(NetworkType.values()));
 		GridBagConstraints gbc_comboBoxNetworkType = new GridBagConstraints();
-		gbc_comboBoxNetworkType.insets = new Insets(0, 0, 5, 0);
+		gbc_comboBoxNetworkType.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBoxNetworkType.gridx = 1;
 		gbc_comboBoxNetworkType.gridy = 1;
 		add(comboBoxNetworkType, gbc_comboBoxNetworkType);
 
-		JLabel lblSlots = new JLabel("Duration [s]");
+		JLabel lblSlots = new JLabel("Duration");
 		GridBagConstraints gbc_lblSlots = new GridBagConstraints();
 		gbc_lblSlots.insets = new Insets(0, 0, 5, 5);
 		gbc_lblSlots.gridx = 0;
@@ -75,12 +75,20 @@ public class NetworkPanel extends JPanel {
 		spinnerSlots.setModel(new SpinnerNumberModel(new Integer(100), new Integer(1), null, new Integer(1)));
 		GridBagConstraints gbc_spinnerSlots = new GridBagConstraints();
 		gbc_spinnerSlots.fill = GridBagConstraints.HORIZONTAL;
-		gbc_spinnerSlots.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerSlots.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerSlots.gridx = 1;
 		gbc_spinnerSlots.gridy = 2;
 		add(spinnerSlots, gbc_spinnerSlots);
+		
+		JLabel durationUnitLabel = new JLabel("sec");
+		GridBagConstraints gbc_durationUnitLabel = new GridBagConstraints();
+		gbc_durationUnitLabel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_durationUnitLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_durationUnitLabel.gridx = 2;
+		gbc_durationUnitLabel.gridy = 2;
+		add(durationUnitLabel, gbc_durationUnitLabel);
 
-		JLabel lblThroughput = new JLabel("Throughput[chunks/slot]");
+		JLabel lblThroughput = new JLabel("Throughput");
 		GridBagConstraints gbc_lblThroughput = new GridBagConstraints();
 		gbc_lblThroughput.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblThroughput.insets = new Insets(0, 0, 5, 5);
@@ -89,15 +97,23 @@ public class NetworkPanel extends JPanel {
 		add(lblThroughput, gbc_lblThroughput);
 
 		spinnerThroughput = new JSpinner();
-		spinnerThroughput.setModel(new SpinnerNumberModel(new Integer(100), new Integer(1), null, new Integer(1)));
+		spinnerThroughput.setModel(new SpinnerNumberModel(new Integer(200000), new Integer(1), null, new Integer(1)));
 		GridBagConstraints gbc_spinnerThroughput = new GridBagConstraints();
 		gbc_spinnerThroughput.fill = GridBagConstraints.HORIZONTAL;
-		gbc_spinnerThroughput.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerThroughput.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerThroughput.gridx = 1;
 		gbc_spinnerThroughput.gridy = 3;
 		add(spinnerThroughput, gbc_spinnerThroughput);
+		
+		JLabel throughputUnitLabel = new JLabel("chunks/slot");
+		GridBagConstraints gbc_throughputUnitLabel = new GridBagConstraints();
+		gbc_throughputUnitLabel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_throughputUnitLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_throughputUnitLabel.gridx = 2;
+		gbc_throughputUnitLabel.gridy = 3;
+		add(throughputUnitLabel, gbc_throughputUnitLabel);
 
-		JLabel lblStartTime = new JLabel("Start time[s]");
+		JLabel lblStartTime = new JLabel("Start time");
 		GridBagConstraints gbc_lblStartTime = new GridBagConstraints();
 		gbc_lblStartTime.insets = new Insets(0, 0, 0, 5);
 		gbc_lblStartTime.gridx = 0;
@@ -107,10 +123,18 @@ public class NetworkPanel extends JPanel {
 		spinnerStartTime = new JSpinner();
 		spinnerStartTime.setModel(new SpinnerNumberModel(new Integer(20), new Integer(1), null, new Integer(1)));
 		GridBagConstraints gbc_spinnerStartTime = new GridBagConstraints();
+		gbc_spinnerStartTime.insets = new Insets(0, 0, 0, 5);
 		gbc_spinnerStartTime.fill = GridBagConstraints.HORIZONTAL;
 		gbc_spinnerStartTime.gridx = 1;
 		gbc_spinnerStartTime.gridy = 4;
 		add(spinnerStartTime, gbc_spinnerStartTime);
+		
+		JLabel startTimeUnitLabel = new JLabel("sec");
+		GridBagConstraints gbc_startTimeUnitLabel = new GridBagConstraints();
+		gbc_startTimeUnitLabel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_startTimeUnitLabel.gridx = 2;
+		gbc_startTimeUnitLabel.gridy = 4;
+		add(startTimeUnitLabel, gbc_startTimeUnitLabel);
 
 	}
 

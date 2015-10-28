@@ -213,8 +213,9 @@ public class Flow implements Serializable {
 	public static Flow IPCall(int startTime, int deadline) {
 		Flow IPCall = new Flow();
 
-		// 1 chunk ~ 1 kb --> 100 chunks / 1 s
-		IPCall.setChunksPerSlot(10);
+		// 1 chunk ~ 1 Byte
+		//Measurments: ~3,4 kByte/s = 3400 Byte/s --> 340Byte/slot
+		IPCall.setChunksPerSlot(340);
 
 		IPCall.setFlowType(FlowType.IPCALL);
 
@@ -223,9 +224,9 @@ public class Flow implements Serializable {
 		IPCall.setChunks((deadline - startTime) * IPCall.getChunksPerSlot());
 		IPCall.setWindowMin(1);
 		IPCall.setWindowMax(1);
-		IPCall.setChunksMin(10 + RndInt.get(-1,0));
-		// should not deliver more than 100 + rndInt
-		IPCall.setChunksMax(10 + RndInt.get(0,1));
+		IPCall.setChunksMin(IPCall.getChunksPerSlot() + RndInt.get(-10,0));
+		// should not deliver more than 340 + rndInt
+		IPCall.setChunksMax(IPCall.getChunksPerSlot() + RndInt.get(0,10));
 
 		// require jitter ~ 10 ms --> 3 points (9ms)
 		IPCall.setReqJitter(3);
@@ -264,7 +265,9 @@ public class Flow implements Serializable {
 	public static Flow BufferableStream(int startTime, int duration) {
 		Flow stream = new Flow();
 
-		stream.setChunksPerSlot(1);
+		// Measurments: 33Pakets/s; 56Byte;
+		// 3.3 pakets/slot * 56 Byte = 184.8 Byte/slot
+		stream.setChunksPerSlot(185);
 
 		stream.setFlowType(FlowType.BUFFERABLESTREAM);
 
@@ -277,8 +280,8 @@ public class Flow implements Serializable {
 		
 		// relaxed window
 		stream.setWindowMin(15 + RndInt.get(-5, 5));
-		stream.setChunksMin(1 * stream.getChunksPerSlot());
-		stream.setChunksMax(1 * stream.getChunksPerSlot());
+		stream.setChunksMin(stream.getChunksPerSlot() * RndInt.get(-10, 0));
+		stream.setChunksMax(stream.getChunksPerSlot() * RndInt.get(0, 10));
 
 		// ~ 49ms
 		stream.setReqJitter(7);
@@ -318,8 +321,9 @@ public class Flow implements Serializable {
 		Flow userRequest = new Flow();
 		// early deadline, depends on request size
 		int deadline = startTime + duration;
-
-		userRequest.setChunksPerSlot(100);
+		
+		// 500kBps = 50kB/slot ~ 50000B/slot
+		userRequest.setChunksPerSlot(50000);
 
 		userRequest.setFlowType(FlowType.USERREQUEST);
 
@@ -351,7 +355,8 @@ public class Flow implements Serializable {
 		Flow update = new Flow();
 
 		update.setStartTime(startTime);
-		update.setChunksPerSlot(250);
+		// 1000kB/s = 100kB/slot = 100000B/slot
+		update.setChunksPerSlot(100000);
 		update.setFlowType(FlowType.UPDATE);
 		update.setChunks(duration * update.getChunksPerSlot());
 
