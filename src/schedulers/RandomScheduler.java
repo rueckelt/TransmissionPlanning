@@ -2,10 +2,10 @@ package schedulers;
 import java.util.Collections;
 import java.util.Vector;
 
-import schedulingIOModel.CostFunction;
-import schedulingIOModel.Flow;
-import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.FlowGenerator;
+import schedulingModel.CostFunction;
+import schedulingModel.Flow;
+import schedulingModel.FlowGenerator;
+import schedulingModel.NetworkGenerator;
 
 
 public class RandomScheduler extends Scheduler{

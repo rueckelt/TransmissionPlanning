@@ -12,13 +12,13 @@ import ilog.opl.IloOplModel;
 import ilog.opl.IloOplModelDefinition;
 import ilog.opl.IloOplModelSource;
 import ilog.opl.IloOplSettings;
+import schedulingModel.TestCostFunction;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import schedulingIOModel.TestCostFunction;
 import toolSet.LogMatlabFormat;
 
 /**

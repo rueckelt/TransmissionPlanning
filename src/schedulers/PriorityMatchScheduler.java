@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import schedulingIOModel.CostFunction;
-import schedulingIOModel.Flow;
-import schedulingIOModel.Network;
-import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.FlowGenerator;
+import schedulingModel.CostFunction;
+import schedulingModel.Flow;
+import schedulingModel.FlowGenerator;
+import schedulingModel.Network;
+import schedulingModel.NetworkGenerator;
 
 
 public class PriorityMatchScheduler extends Scheduler{

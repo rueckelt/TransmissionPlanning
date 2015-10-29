@@ -8,9 +8,9 @@ import java.util.Vector;
 
 import javax.swing.text.AbstractDocument.LeafElement;
 
-import schedulingIOModel.Flow;
-import schedulingIOModel.Flow.FlowType;
-import schedulingIOModel.Network;
+import schedulingModel.Flow;
+import schedulingModel.Network;
+import schedulingModel.Flow.FlowType;
 
 /**
  * 

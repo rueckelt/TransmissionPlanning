@@ -1,4 +1,4 @@
-package schedulingIOModel;
+package schedulingModel;
 import java.util.Arrays;
 
 import schedulers.PriorityScheduler;

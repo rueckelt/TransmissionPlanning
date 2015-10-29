@@ -9,11 +9,11 @@ import schedulers.OptimizationScheduler;
 import schedulers.PriorityMatchScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.Scheduler;
-import schedulingIOModel.CostFunction;
-import schedulingIOModel.Flow;
-import schedulingIOModel.FlowGenerator;
-import schedulingIOModel.Network;
-import schedulingIOModel.NetworkGenerator;
+import schedulingModel.CostFunction;
+import schedulingModel.Flow;
+import schedulingModel.FlowGenerator;
+import schedulingModel.Network;
+import schedulingModel.NetworkGenerator;
 
 import javax.swing.JLabel;
 import java.awt.event.ActionEvent;
@@ -332,7 +332,7 @@ public class Mainwindow extends JFrame {
 		// schedulers.add(new RandomScheduler(ng, tg, 500)); //500 random runs
 		// of this scheduler. Returns average duration and cost
 		schedulers.add(new PriorityScheduler(ng, fg));
-		// schedulers.add(new PriorityMatchScheduler(ng, fg));
+		//schedulers.add(new PriorityMatchScheduler(ng, fg));
 		// schedulers.add(new OptimizationScheduler(ng, tg));
 		return schedulers;
 	}

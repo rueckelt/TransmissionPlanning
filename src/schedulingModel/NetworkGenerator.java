@@ -1,4 +1,4 @@
-package schedulingIOModel;
+package schedulingModel;
 import ilog.opl.IloOplFactory;
 import ilog.opl.IloOplModel;
 

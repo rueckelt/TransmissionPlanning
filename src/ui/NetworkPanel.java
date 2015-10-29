@@ -9,10 +9,11 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import java.awt.Font;
 
-import schedulingIOModel.Network;
-import schedulingIOModel.Network.NetworkType;
+import schedulingModel.Network;
+import schedulingModel.Network.NetworkType;
+
+import java.awt.Font;
 
 /**
  * 

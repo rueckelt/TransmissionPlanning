@@ -8,11 +8,12 @@ import java.awt.Insets;
 import javax.swing.JSpinner;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
-import schedulingIOModel.Flow.FlowType;
 import javax.swing.SpinnerNumberModel;
-import java.awt.Font;
 
-import schedulingIOModel.Flow;
+import schedulingModel.Flow;
+import schedulingModel.Flow.FlowType;
+
+import java.awt.Font;
 
 /**
  * 

@@ -9,8 +9,8 @@ import schedulers.OptimizationScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
-import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.FlowGenerator;
+import schedulingModel.FlowGenerator;
+import schedulingModel.NetworkGenerator;
 
 
 public class EvaluationScenarioCreator {

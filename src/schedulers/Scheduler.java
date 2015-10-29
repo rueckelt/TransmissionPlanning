@@ -2,11 +2,11 @@ package schedulers;
 import java.util.Arrays;
 import java.util.Vector;
 
-import schedulingIOModel.CostFunction;
-import schedulingIOModel.Flow;
-import schedulingIOModel.Network;
-import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.FlowGenerator;
+import schedulingModel.CostFunction;
+import schedulingModel.Flow;
+import schedulingModel.FlowGenerator;
+import schedulingModel.Network;
+import schedulingModel.NetworkGenerator;
 import toolSet.LogMatlabFormat;
 
 
