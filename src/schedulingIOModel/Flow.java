@@ -214,8 +214,9 @@ public class Flow implements Serializable {
 		Flow IPCall = new Flow();
 
 		// 1 chunk ~ 1 Byte
-		//Measurments: ~3,4 kByte/s = 3400 Byte/s --> 340Byte/slot
-		IPCall.setChunksPerSlot(340);
+		// Measurments: ~3,4 kByte/s = 3400 Byte/s --> 340Byte/slot
+		// Twice because of up- and downstream
+		IPCall.setChunksPerSlot(340 * 2);
 
 		IPCall.setFlowType(FlowType.IPCALL);
 
@@ -265,9 +266,9 @@ public class Flow implements Serializable {
 	public static Flow BufferableStream(int startTime, int duration) {
 		Flow stream = new Flow();
 
-		// Measurments: 33Pakets/s; 56Byte;
-		// 3.3 pakets/slot * 56 Byte = 184.8 Byte/slot
-		stream.setChunksPerSlot(185);
+		// Measurments: 99 pakets/s; 972Byte;
+		// 9.9 pakets/slot * 972 Byte = 9622.8 Byte/slot
+		stream.setChunksPerSlot(9623);
 
 		stream.setFlowType(FlowType.BUFFERABLESTREAM);
 
@@ -280,8 +281,8 @@ public class Flow implements Serializable {
 		
 		// relaxed window
 		stream.setWindowMin(15 + RndInt.get(-5, 5));
-		stream.setChunksMin(stream.getChunksPerSlot() * RndInt.get(-10, 0));
-		stream.setChunksMax(stream.getChunksPerSlot() * RndInt.get(0, 10));
+		stream.setChunksMin(stream.getChunksPerSlot() + RndInt.get(-300, 0));
+		stream.setChunksMax(stream.getChunksPerSlot() + RndInt.get(0, 300));
 
 		// ~ 49ms
 		stream.setReqJitter(7);
