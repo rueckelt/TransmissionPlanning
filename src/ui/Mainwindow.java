@@ -166,7 +166,6 @@ public class Mainwindow extends JFrame {
 				int model_f_t_n[][][] = new int[flows.size()][ng.getNofTimeSlots()][networks.size()];
 
 				for (int n = 0; n < networks.size(); ++n) {
-					Network network = networks.elementAt(n);
 					boolean appFinished[] = new boolean[flows.size()];
 
 					for (int f = 0; f < flows.size(); ++f) {
@@ -176,7 +175,6 @@ public class Mainwindow extends JFrame {
 						int chunksToSend = flow.getChunks();
 						int sendChunks = 0;
 						int chunksPerSlot = flow.getChunksPerSlot();
-						System.out.println("Chunks: " + chunksToSend);
 						// application will send chunks after there is no more
 						// network open, than continue
 						if (flow.getStartTime() > ng.getNofTimeSlots())
@@ -195,7 +193,6 @@ public class Mainwindow extends JFrame {
 							}
 
 						}
-						System.out.println("Send Chunks: " + sendChunks);
 					}
 				}
 

@@ -268,7 +268,7 @@ public class Flow implements Serializable {
 
 		// Measurments: 99 pakets/s; 972Byte;
 		// 9.9 pakets/slot * 972 Byte = 9622.8 Byte/slot
-		stream.setChunksPerSlot(185);
+		stream.setChunksPerSlot(9623);
 
 		stream.setFlowType(FlowType.BUFFERABLESTREAM);
 
