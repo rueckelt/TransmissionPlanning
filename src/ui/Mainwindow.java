@@ -172,6 +172,23 @@ public class Mainwindow extends JFrame {
 						if (appFinished[f] == true)
 							continue;
 						Flow flow = flows.elementAt(f);
+						
+						int factor = 1;
+						switch(flow.getFlowType()){
+						case IPCALL:
+							factor = 2;
+							break;
+						case BUFFERABLESTREAM:
+							factor = 52;
+							break;
+						case USERREQUEST:
+							factor = 1;
+							break;
+						case UPDATE:
+							factor = 1;
+							break;
+						}
+						
 						int chunksToSend = flow.getChunks();
 						int sendChunks = 0;
 						int chunksPerSlot = flow.getChunksPerSlot();
@@ -185,7 +202,7 @@ public class Mainwindow extends JFrame {
 								continue;
 
 							if (sendChunks < chunksToSend) {
-								model_f_t_n[f][t][n] = chunksPerSlot;
+								model_f_t_n[f][t][n] = chunksPerSlot * factor;;
 								sendChunks += chunksPerSlot;
 							}
 							if (sendChunks >= chunksToSend) {

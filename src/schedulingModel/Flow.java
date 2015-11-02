@@ -215,19 +215,19 @@ public class Flow implements Serializable {
 
 		// 1 chunk ~ 1 Byte
 		// Measurments: ~3,4 kByte/s = 3400 Byte/s --> 340Byte/slot
-		// Twice because of up- and downstream
-		IPCall.setChunksPerSlot(340 * 2);
+		IPCall.setChunksPerSlot(340);
 
 		IPCall.setFlowType(FlowType.IPCALL);
 
 		IPCall.setStartTime(startTime);
 		IPCall.setDeadline(deadline);
-		IPCall.setChunks((deadline - startTime) * IPCall.getChunksPerSlot());
+		// Twice because of up- and downstream
+		IPCall.setChunks((deadline - startTime) * IPCall.getChunksPerSlot() * 2);
 		IPCall.setWindowMin(1);
 		IPCall.setWindowMax(1);
-		IPCall.setChunksMin(IPCall.getChunksPerSlot() + RndInt.get(-10,0));
+		IPCall.setChunksMin((IPCall.getChunksPerSlot() * 2));
 		// should not deliver more than 340 + rndInt
-		IPCall.setChunksMax(IPCall.getChunksPerSlot() + RndInt.get(0,10));
+		IPCall.setChunksMax((IPCall.getChunksPerSlot() * 2));
 
 		// require jitter ~ 10 ms --> 3 points (9ms)
 		IPCall.setReqJitter(3);
@@ -267,22 +267,24 @@ public class Flow implements Serializable {
 		Flow stream = new Flow();
 
 		// Measurments: 99 pakets/s; 972Byte;
-		// 9.9 pakets/slot * 972 Byte = 9622.8 Byte/slot
-		stream.setChunksPerSlot(9623);
+		// 3.3 pakets/slot * 56  Byte = 184.8  Byte/Slot (Downstream only)
+		// 9.9 pakets/slot * 972 Byte = 9622.8 Byte/slot (Up- and downstream)
+		stream.setChunksPerSlot(185);
 
 		stream.setFlowType(FlowType.BUFFERABLESTREAM);
 
 		stream.setStartTime(startTime);
 		stream.setDeadline(startTime + duration);
-		stream.setChunks(duration * stream.getChunksPerSlot());
+		// 9620 = 185 * 52
+		stream.setChunks(duration * (stream.getChunksPerSlot() * 52));
 		
 		// very little chunks to send, because there is only a request for  a song
 		// after the request there will only be send the ack's for confirming
 		
 		// relaxed window
 		stream.setWindowMin(15 + RndInt.get(-5, 5));
-		stream.setChunksMin(stream.getChunksPerSlot() + RndInt.get(-300, 0));
-		stream.setChunksMax(stream.getChunksPerSlot() + RndInt.get(0, 300));
+		stream.setChunksMin(stream.getChunksPerSlot() * 52);
+		stream.setChunksMax(stream.getChunksPerSlot() * 52);
 
 		// ~ 49ms
 		stream.setReqJitter(7);

@@ -80,6 +80,37 @@ public class SimulationInputGenerator {
 		for (int f = 0; f < model_f_t_n.length; ++f) {
 			Flow flow = flows.elementAt(f);
 			
+			// Set the name, divisor and port depending on flowtype
+			String name = flow.getFlowType().name();
+			int divisor = 1;
+			int port = 0;
+			switch(flow.getFlowType()){
+			case IPCALL:
+				// Only upstream
+				divisor = flow.getChunksMax() / flow.getChunksPerSlot();
+				port = 1000;
+				break;
+			case BUFFERABLESTREAM:
+				// Only upstream
+				divisor = flow.getChunksMax() / flow.getChunksPerSlot();
+				port = 1001;
+				break;
+			case USERREQUEST:
+				// ~10% from downstream
+				// 50.000 / 10 = 5.000 ~ 50kB/s
+				divisor = 10;
+				port = 1002;
+				break;
+			case UPDATE:
+				// ~5 % from downstream
+				// 1000 / 20 = 50
+				divisor = 20;
+				port = 1003;
+				break;
+			}
+			
+			apps += "#-----" + name + "-----\n";
+			
 			// Read string which contains the basic structure for a TCPSessionApp
 			String tcpApp = "";
 			// read tcp app string
@@ -91,23 +122,6 @@ public class SimulationInputGenerator {
 				e.printStackTrace();
 			}
 			tcpApp += "\n\n";
-			
-			// Set the port depending on flowtype
-			int port = 0;
-			switch(flow.getFlowType()){
-			case IPCALL:
-				port = 1000;
-				break;
-			case BUFFERABLESTREAM:
-				port = 1001;
-				break;
-			case USERREQUEST:
-				port = 1002;
-				break;
-			case UPDATE:
-				port = 1003;
-				break;
-			}
 			
 			// replace all placeholder with the values from the flow
 			tcpApp = tcpApp.replace("[tcpAppIndex]", String.valueOf(f));
@@ -123,7 +137,7 @@ public class SimulationInputGenerator {
 					chunks += model_f_t_n[f][t][n];
 				}
 				if (chunks > 0) {
-					sendScript += String.valueOf((float) t / 10) + " " + chunks + "; ";
+					sendScript += String.valueOf((float) t / 10) + " " + chunks / divisor + "; ";
 				}
 			}
 			sendScript += "\" ";
@@ -149,15 +163,18 @@ public class SimulationInputGenerator {
 				echoDelay = "0s";
 				break;
 			case BUFFERABLESTREAM:
-				echoFactor = 10;
+				//Only Downstream
+				echoFactor = 51;
 				echoDelay = "1s";
 				break;
 			case USERREQUEST:
-				echoFactor = 15;
+				// 5 * 100kB/s ~ 500kB/s
+				echoFactor = 5;
 				echoDelay = "2s";
 				break;
 			case UPDATE:
-				echoFactor = 50;
+				// 20 * 50kB/s ~ 1MB/s
+				echoFactor = 20;
 				echoDelay = "5s";
 				break;
 			}
