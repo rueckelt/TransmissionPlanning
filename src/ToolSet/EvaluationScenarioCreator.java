@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 import schedulers.OptimizationScheduler;
-import schedulers.PriorityMatchScheduler;
+import schedulers.GreedyScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
@@ -48,7 +48,7 @@ public class EvaluationScenarioCreator {
 		schedulers.add(new OptimizationScheduler(ng, tg));
 		schedulers.add(new RandomScheduler(ng, tg, 100));	//100 random runs of this scheduler. Returns average duration and cost
 		schedulers.add(new PriorityScheduler(ng, tg));
-		schedulers.add(new PriorityMatchScheduler(ng, tg));
+		schedulers.add(new GreedyScheduler(ng, tg));
 		return schedulers;
 	}
 	

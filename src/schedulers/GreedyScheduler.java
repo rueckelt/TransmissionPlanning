@@ -14,7 +14,7 @@ import schedulingIOModel.NetworkGenerator;
 import schedulingIOModel.TrafficGenerator;
 
 
-public class PriorityMatchScheduler extends Scheduler{
+public class GreedyScheduler extends Scheduler{
 	
 
 	@Override
@@ -37,7 +37,7 @@ public class PriorityMatchScheduler extends Scheduler{
 	 * schedule_f_t_n
 	 */
 
-	public PriorityMatchScheduler(NetworkGenerator ng, TrafficGenerator tg) {
+	public GreedyScheduler(NetworkGenerator ng, TrafficGenerator tg) {
 		
 		super(ng, tg);
 		if(ng!=null&&tg!=null){
@@ -159,7 +159,7 @@ public class PriorityMatchScheduler extends Scheduler{
 				+ CostFunction.latencyMatch(flow, network)
 				//scheduling avoids throughput-violation cost and unsched cost
 				- throughputMatch(flow, network)
-				- flow.getImpUnsched()*flow.getImpUser()*10	//each unscheduled chunk leads to this cost
+				- flow.getImpUnsched()*flow.getImpUser()	//each unscheduled chunk leads to this cost
 				)*flow.getImpUser()
 				+ network.getCost()*ng.getCostImportance();	//cost independent from flow user weight
 		
@@ -196,16 +196,17 @@ public class PriorityMatchScheduler extends Scheduler{
 			averageTp=Math.round(sum/slotcount);
 		}
 		
-		
 		//get minimum throughput requirement of flow
 		int flow_minTp = (int) Math.ceil(flow.getChunksMin()/flow.getWindowMin());
 		
-		int tp = flow_minTp;
+		int tp;
 		if(averageTp<flow_minTp){
 			tp=averageTp;
+		}else{
+			tp = flow_minTp;
 		}
-		int vio =tp*flow.getImpThroughputMin();	
-		return vio;	//more throughput leads to lower violation --> prefer high throughput networks slightly	
+		int savedvio =tp*flow.getImpThroughputMin();	
+		return savedvio;	
 		
 	}
 	
