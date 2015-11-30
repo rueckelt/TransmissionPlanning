@@ -348,6 +348,7 @@ public class CostFunction {
 		int cost_vio =0;
 		for(int f = 0; f<flows; f++){
 			Flow flow = tg.getFlows().get(f);
+			
 			int[][] cummulated_f_t = cummulated_f_t(schedule);
 			
 			cost_vio+=	(	vioSt(schedule)[f]+vioDl(schedule)[f]
@@ -402,13 +403,13 @@ public class CostFunction {
 	}
 	
 	//this is only dummy for overwriting in extending test classes and should be left empty
-	private void check(int value, String variable){
+	protected void check(int value, String variable){
 		
 	}
-	private void check(int[] value, String variable){
+	protected void check(int[] value, String variable){
 		
 	}
-	private void check(int[][] value, String variable){
+	protected void check(int[][] value, String variable){
 		
 	}
 

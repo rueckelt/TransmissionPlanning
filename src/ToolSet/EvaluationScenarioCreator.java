@@ -18,7 +18,7 @@ public class EvaluationScenarioCreator {
 	
 	private boolean LOG_OVERWRITE = false;				//overwrites last simulation including network generator and traffic generator	
 	private boolean RECALC= false;						//recalculates results, loading network and traffic generators from previous run
-	private final boolean TEST_COST_FUNCTION = false;	//tests cost function implemented in java, comparing all results to optimization output
+	private final boolean TEST_COST_FUNCTION = true;	//tests cost function implemented in java, comparing all results to optimization output
 
 	
 	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
@@ -145,9 +145,10 @@ public class EvaluationScenarioCreator {
 				if (TEST_COST_FUNCTION) {
 					// run optimization and compare results to results of the
 					// cost function
+					System.out.println("TEST_COST_FUNCTION active");
 					OptimizationScheduler sched = new OptimizationScheduler(ng,
 							tg);
-					sched.testCostFunction(ng, tg);
+					sched.testCostFunction();
 					sched.calculateInstance(path);
 				} else {
 					LinkedList<Integer> cost= new LinkedList<Integer>();
