@@ -47,6 +47,8 @@ for f=1:f_max
         fig = figure('visible', 'off');
         sched_m=squeeze(data(:,f,t,:,:));
 
+         t1=25*2^(t-1);
+         f1=2^(f-1);
         max_sched = hi*max(sched_m(:));
         min_sched = low*min(sched_m(:));
         ylim=[min_sched max_sched];
@@ -54,7 +56,7 @@ for f=1:f_max
          for type=1:type_max
             if(ismember(skip, type)<1)  % if type is not in skip list
                %printoutvar=['draw graph ' num2str(plot_no)]
-               subplot(1,type_max-skip_no,plot_no);
+              % subplot(1,type_max-skip_no,plot_no);
                 fixed_f_t=squeeze(data(type,f,t,:,:))';
                 boxplot(fixed_f_t, x(1:n_max));
                 xlabel(labels{type});
@@ -70,14 +72,15 @@ for f=1:f_max
                     ylabel(my_ylabel2);
                 end
                 plot_no=plot_no+1;
+                
+                filename = [out_folder '\' name '__nets_comp__t_' num2str(t1) '__app_' num2str(f1) '__' labels{type} '.tikz'];
+                MATLAB2TIKZ('filename',filename,'figurehandle',fig, 'height', '\figureheight', 'width', '\figurewidth' );
             end
          end
-         t1=25*2^(t-1);
-         f1=2^(f-1);
-        filename = [out_folder '\' name '__nets_comp__t_' num2str(t1) '__app_' num2str(f1) '.png'];
+       % filename = [out_folder '\' name '__nets_comp__t_' num2str(t1) '__app_' num2str(f1) '.png'];
        % title(['Execution time: variation of number of networks, ' num2str(t1) ' time slots ', num2str(f1) ' flows']);
-        saveas(fig,filename);
-       % matlab2tikz(filename);
+        %saveas(fig,filename);
+
     end
 end
 

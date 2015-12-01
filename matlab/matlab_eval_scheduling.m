@@ -54,14 +54,14 @@ state = 'calc relative cost done'
 %draw boxplots
 mkdir(out_folder);
 
-%plotCompare(out_folder, duration_us, 0);  
+plotCompare(out_folder, duration_us, 0);  
 
 state = 'plot duration done'
 %plotCompare(out_folder, cost_rel, 1);
 
-size(cost_rel2)
+
 state = 'plot cost done'
-plotCompare(out_folder, cost_rel2, 2);
+%plotCompare(out_folder, cost_rel2, 2);
 
 state = 'plot cost2 done, finished'
 clearvars

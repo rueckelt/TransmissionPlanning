@@ -37,6 +37,8 @@ public class RandomScheduler extends Scheduler{
 	public RandomScheduler(NetworkGenerator ng, TrafficGenerator tg, int runs) {
 		super(ng, tg);
 		RUNS = runs;
+		per_run_cost = new int[RUNS];
+		per_run_duration = new int[RUNS];
 	}
 	
 	private final int RUNS;
@@ -45,6 +47,9 @@ public class RandomScheduler extends Scheduler{
 	private int run_counter = 0;
 	private long sum_duration=0;
 	private long sum_cost=0;
+	
+	private int[] per_run_cost;
+	private int[] per_run_duration;
 	
 	/**
 	 * runs instance multiple (RUNS) times
@@ -66,6 +71,8 @@ public class RandomScheduler extends Scheduler{
 		int cost = new CostFunction(ng, tg).costTotal(getSchedule());
 		sum_cost+=(long)cost;
 //				System.out.println(cost);
+		per_run_cost[run_counter]=cost;
+		per_run_duration[run_counter]=(int)(duration/1000);
 		
 		//write log if all runs finished
 		if(run_counter<=0){
@@ -81,6 +88,11 @@ public class RandomScheduler extends Scheduler{
 		logger.comment("cost function results");
 		logger.log("costTotal", (int)(sum_cost/RUNS));
 		c=(int) (sum_cost/RUNS);
+		
+		//runs
+		logger.comment("per run statistics");
+		logger.log("per_run_cost", per_run_cost);
+		logger.log("per_run_duration_us", per_run_duration);
 		
 		//finish logging and write to file
 		logger.writeLog(getLogfileName(path));
