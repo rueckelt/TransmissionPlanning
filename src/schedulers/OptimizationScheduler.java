@@ -11,7 +11,7 @@ public class OptimizationScheduler extends Scheduler {
 
 	
 	final static String MODELDIR = "model"+File.separator;	
-	final static String model = "sched_com.mod";
+	final static String model = "sched_com_tp.mod";
 //	final static String model = "split_sched_com.mod";
 //	final static String dataset1 = "sched_com4.dat";
 	
@@ -44,7 +44,7 @@ public class OptimizationScheduler extends Scheduler {
 		
 		if(testCF){
 			TestCostFunction cf = new TestCostFunction(ng, tg, me.getModel());
-			cf.costTotal(getSchedule());
+			cf.costTotal(getTempSchedule());
 		}
 		me.end();
 	}
@@ -57,9 +57,7 @@ public class OptimizationScheduler extends Scheduler {
 		tg.writeOutput(MODELDIR+dataset_net, dataset_path);			//write the file for ILP
 	}
 	
-	public void testCostFunction(NetworkGenerator ng, TrafficGenerator tg){
-		this.ng=ng;
-		this.tg=tg;
+	public void testCostFunction(){
 		this.testCF=true;
 	}
 

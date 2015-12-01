@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 import schedulers.OptimizationScheduler;
-import schedulers.PriorityMatchScheduler;
+import schedulers.GreedyScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
@@ -31,6 +31,20 @@ public class EvaluationScenarioCreator {
 		//evaluate();
 	}
 	
+	/*
+	 * reads out generated simulation scenarios and recalculates results
+	 */
+	public void recalc(){
+		RECALC=true;
+	}
+	/*
+	 * overwrites generated simulation scenarios and results
+	 */
+	public void overwrite(){
+		LOG_OVERWRITE=true;
+	}
+	
+	
 	private final int REPETITIONS;
 	private final int MAX_TIME;
 	private final int MAX_FLOWS;
@@ -45,14 +59,14 @@ public class EvaluationScenarioCreator {
 	 */
 	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, TrafficGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		schedulers.add(new OptimizationScheduler(ng, tg));
+//		schedulers.add(new OptimizationScheduler(ng, tg));
 		schedulers.add(new RandomScheduler(ng, tg, 100));	//100 random runs of this scheduler. Returns average duration and cost
-		schedulers.add(new PriorityScheduler(ng, tg));
-		schedulers.add(new PriorityMatchScheduler(ng, tg));
+//		schedulers.add(new PriorityScheduler(ng, tg));
+//		schedulers.add(new GreedyScheduler(ng, tg));
 		return schedulers;
 	}
 	
-	private void writeScenarioLog(){
+	private void writeScenarioLog(int evaluateMax){
 		
 		//write scenario parameters log
 		LogMatlabFormat logger = new LogMatlabFormat();
@@ -61,6 +75,7 @@ public class EvaluationScenarioCreator {
 		logger.log("max_flows", MAX_FLOWS);
 		logger.log("max_nets", MAX_NETS);
 		logger.log("max_rep", REPETITIONS);
+		logger.log("evaluate_max_only", evaluateMax);			//is 1 if simulation did not ran from 0 to max, but only max
 		logger.logSchedulers(initSchedulers(null, null));	//save which schedulers are available for evaluation
 		
 		logger.writeLog(LOG+"parameters_log.m");
@@ -69,15 +84,15 @@ public class EvaluationScenarioCreator {
 	
 	public void evaluateAll(){
 		//paramter log
-		writeScenarioLog();
+		writeScenarioLog(0);
 		
 		//data sizes of..
 		//(i) time
-		for(int t=0;t<MAX_TIME;t++){
+		for(int t=0;t<=MAX_TIME;t++){
 			//(ii) number of networks
-			for(int net=0;net<MAX_NETS;net++){	
+			for(int net=0;net<=MAX_NETS;net++){	
 				//(iii) number of flows/requests
-				for(int req=0;req<MAX_FLOWS;req++){
+				for(int req=0;req<=MAX_FLOWS;req++){
 					//repetitions of optimization
 					for(int rep=0; rep<REPETITIONS;rep++){
 						calculateInstance_t_n_i(t, net, req, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
@@ -86,6 +101,18 @@ public class EvaluationScenarioCreator {
 				}
 			}
 		}
+	
+	System.out.println("###############   DONE  ##################");
+	}
+	
+	public void evaluateTop(){
+		//paramter log
+		writeScenarioLog(1);
+
+		for(int rep=0; rep<REPETITIONS;rep++){
+			calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
+		}
+		
 	
 	System.out.println("###############   DONE  ##################");
 	}
@@ -145,9 +172,10 @@ public class EvaluationScenarioCreator {
 				if (TEST_COST_FUNCTION) {
 					// run optimization and compare results to results of the
 					// cost function
+					System.out.println("TEST_COST_FUNCTION active");
 					OptimizationScheduler sched = new OptimizationScheduler(ng,
 							tg);
-					sched.testCostFunction(ng, tg);
+					sched.testCostFunction();
 					sched.calculateInstance(path);
 				} else {
 					LinkedList<Integer> cost= new LinkedList<Integer>();

@@ -102,7 +102,7 @@ public abstract class Scheduler {
 			schedule_f_t_n=schedule_f_t_n_temp;	//store to schedule_f_t_n if constraints hold
 			
 			logInstance(path, duration);
-			
+
 		}else{
 			System.err.println(getType()+" Scheduler: calculated schedule violates constraints: "+path);
 		}

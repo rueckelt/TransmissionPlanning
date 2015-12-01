@@ -1,0 +1,1040 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0102)http://www-01.ibm.com/support/knowledgecenter/SSSA5P_12.6.2/ilog.odms.studio.help/pdf/opl_languser.pdf -->
+<html xmlns="http://www.w3.org/1999/xhtml" class="dj_webkit dj_chrome dj_contentbox" lang="de" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">	
+		<!-- this has to come right after head element to force IE to use the latest compatibility version -->
+	<title>IBM Knowledge Center</title>
+	<meta name="viewport" content="">
+	<meta content="$locale" http-equiv="Content-Language">
+	
+	<meta name="DC.Rights" content="© Copyright IBM Corp. 2013, 2014">
+	<meta name="Keywords" content="publications, information, documentation, libraries, infocenters, knowledge center">
+	<meta name="DC.Date" scheme="iso8601" content="2013-01-01">
+	<meta name="Source" content="v17 Template Generator, Template 17.02">
+	<meta name="Security" content="Public">
+	<meta name="Abstract" content="IBM product documentation is available in a searchable, browsable Knowledge Center--IBM&#39;s revolutionary approach to product information delivery.">
+	<meta name="IBM.Effective" scheme="W3CDTF" content="2013-01-01">
+	<meta name="DC.Subject" scheme="IBM_SubjectTaxonomy" content="SU400">
+	<meta name="Owner" content="IBM Knowledge Center/Pittsburgh/IBM">
+	<meta name="DC.Language" scheme="rfc1766" content="en-us">
+	<meta name="IBM.Country" content="ZZ">
+	<meta name="Robots" content="noindex,nofollow">
+	<meta name="DC.Type" scheme="IBM_ContentClassTaxonomy" content="CT701">
+	<meta name="Description" content="IBM product documentation is available in a searchable, browsable Knowledge Center; IBM&#39;s revolutionary approach to product information delivery.">
+	<meta name="IBM.WTMSite" content="ESTKCS">
+	<meta name="IBM.WTMCategory" scheme="IBM_WTMCategory" content="ELSKCS">
+	<script type="text/javascript" async="" charset="utf-8" src="http://cdn5.userzoom.com/trueintent/js/uz_til_us.js?cuid=BE645839F6384BA18DDC3B7D1E3C0A70"></script><script type="text/javascript" src="http://www.ibm.com/common/stats/ida_production.js"></script>	
+	
+	
+		
+	<!--[if IE]>
+    	<script type="text/javascript">
+    		var ieDM = document.documentMode;
+    		if (ieDM <=7 && ieDM > 0) {
+    			location.href = "/support/knowledgecenter" + "/unsupported.jsp";
+    		}
+	    </script>
+	<![endif]-->
+	
+	<script type="text/javascript">		
+		var contextPath = "/support/knowledgecenter";
+
+		//Determine which language KC and dojo should load...
+		//Step a: look at the url
+		var lang = undefined;
+		var dir = "ltr";
+		var query = location.search.substring(1);  
+		var pairs = query.split("&"); 
+		for (var i = 0; i < pairs.length; i++) { 
+			var pair = pairs[i];
+			var eqPos = pair.indexOf('=');
+			if (eqPos == -1) continue;
+			var arg = pair.substring(0, eqPos);
+			if (arg === "lang") {	//this has to match Constants.BROWSER_STATE_PARAMETER_LANGUAGE
+				lang = pair.substring(eqPos+1); 
+				break;
+			}
+		}
+		//Step b: look at the browser setting
+		if (!lang) {
+			
+            lang = "de_DE";
+		}
+		//Step c: if nothing found, default to English
+		if (!lang) {
+			lang = "en-us";
+		}
+		//Fix for dojo - this is required for dojo because it otherwise treats pt as pt-br
+		if (lang === "pt") lang = "pt-pt";		
+		
+		var startsWith = function(string, prefix) {
+			return (string.indexOf(prefix) == 0);
+		};	
+		if (startsWith(lang, "ar") || startsWith(lang, "he") || startsWith(lang, "iw")) {
+			dir="rtl";
+		}
+
+		lang = lang.replace("_", "-").toLowerCase();
+	 
+	    var djConfig = {
+		    parseOnLoad: false, 
+		    async: true,
+		    locale: lang,		
+		    packages: [{name: 'idx', location: contextPath + '/js/idx' },
+				  	   {name: 'kc', location: contextPath + '/js/kc' }
+				  	  ]
+	    };
+	</script>
+	
+	<script type="text/javascript" src="./IBM Knowledge Center_files/dojo.js"></script>
+	<script type="text/javascript" src="./IBM Knowledge Center_files/layer_dojo_prereqs.js"></script>
+	<script type="text/javascript" src="./IBM Knowledge Center_files/layer_idx_prereqs.js"></script>
+	<script type="text/javascript" src="./IBM Knowledge Center_files/layer_kc.js"></script>
+
+	<link rel="shortcut icon" href="http://www-01.ibm.com/support/knowledgecenter/js/kc/themes/images/kc.ico">
+	
+	<style type="text/css">
+		@import "/support/knowledgecenter/js/kc/themes/css/kc.css";
+		@import "/support/knowledgecenter/js/idx/themes/oneui/oneui.css";		
+	</style>
+
+
+	<script type="text/javascript">
+	require(["dojo/ready"], function(ready) {
+		ready(function() {			
+			function loadKC() {				
+				//This is needed before the next block so we handle necessary hash/html5 URL handling and do the URL redirections before doing more computation
+				require(["kc/state/URLReconciler"], function(URLReconciler) {
+				});
+	
+				require(["kc/Constants", "dojo/has", "dojo/dom-style", "kc/controller/AuthenticationController",
+					"kc/LinkManager", "kc/state/BrowserStateController", "kc/KCExtensions",
+					"kc/FeedbackManager", "kc/InstrumentationManager", "kc/UserZoomStudy", "kc/MockManager",	//these scripts will initialize themselves automatically upon require...
+					"kc/frame/Frame", "idx/oneui/messaging/Toaster"], function(Constants, has, domStyle) {
+					var h = document.getElementsByTagName('html')[0];
+					h.lang = Constants.KC_LANGUAGE;
+					h.dir = dir;
+					var b = document.getElementsByTagName('body')[0];
+					b.lang = Constants.KC_LANGUAGE;
+					b.dir = dir;
+					b.setAttribute("loaded", true);
+	
+					if (has("ie") == 8) {	//94791
+						domStyle.set(b, "visibility", "hidden");
+						domStyle.set(b, "visibility", "visible");
+					}
+	
+					var toaster = new idx.oneui.messaging.Toaster({lang:Constants.KC_LANGUAGE, dir:dir, messageTimeout: 12345, style: 'z-index: 9', role: 'alert'}, "kcToaster");
+					toaster.startup();
+	
+					var frame = new kc.frame.Frame({lang:Constants.KC_LANGUAGE, dir:dir}, "kcFrame");
+					frame.startup();
+				});
+			}
+
+			// display overlay, don't load KC
+			require(["kc/MobileRedirectOverlay", "kc/Constants"], function(overlay, Constants){
+				//Set the context path and other constants that will be user later on
+				Constants.KC_ROOT = contextPath;
+				Constants.KC_API_ROOT = contextPath + "/api";
+		
+				//pass the exposed server side properties to the UI
+				
+				
+				Constants.SERVER_PROPERTIES['private.feedback.domain'] = 'http://www.ibm.com/support/knowledgecenter';
+				
+				Constants.SERVER_PROPERTIES['feedback.exitsurvey.url'] = 'https://www-01.ibm.com/support/knowledgecenter/welcome/exitsurvey/survey.html';
+				
+				Constants.SERVER_PROPERTIES['feedback.exitsurvey.exiturl'] = 'https*://www-01.ibm.com/support/knowledgecenter/.*';
+				
+				Constants.SERVER_PROPERTIES['feedback'] = 'hybrid';
+				
+				Constants.SERVER_PROPERTIES['healthcheck.message.url'] = '/doc/alert.messages.json';
+				
+				Constants.SERVER_PROPERTIES['feedback.max.comments'] = '100';
+				
+				Constants.SERVER_PROPERTIES['feedback.exitsurvey.percentage'] = '10';
+				
+				Constants.SERVER_PROPERTIES['feedback.exitsurvey.id'] = '55338';
+				
+				Constants.SERVER_PROPERTIES['pdf.max.topic'] = '1000';
+				
+				Constants.SERVER_PROPERTIES['max.jobs.per.user'] = '1';
+				
+				Constants.SERVER_PROPERTIES['sign.out.disabled'] = 'true';
+				
+				Constants.SERVER_PROPERTIES['feedback.exitsurvey.stop'] = '';
+				
+				Constants.SERVER_PROPERTIES['feedback.exitsurvey.start'] = '';
+				
+				Constants.SERVER_PROPERTIES['logindlg.forgotid.url'] = 'https://www.ibm.com/account/profile/us?page=reghelpdesk';
+				
+				Constants.SERVER_PROPERTIES['logindlg.forgotpassword.url'] = 'https://www.ibm.com/account/profile/us?page=forgot';
+				
+				Constants.SERVER_PROPERTIES['savedsearch.amount'] = '10';
+				
+				Constants.SERVER_PROPERTIES['healthcheck.frequency'] = '600000';
+				
+				Constants.SERVER_PROPERTIES['healthcheck.alert.url'] = '/doc/alert.properties';
+				
+				Constants.SERVER_PROPERTIES['logindlg.register.url'] = 'https://www.ibm.com/account/profile/us?page=reg';
+				
+				Constants.SERVER_PROPERTIES['healthcheck.disabled'] = 'true';
+				
+	
+				Constants.serverPropertiesLoaded();
+				
+				if(overlay.shouldDisplayOverlay()) {
+					overlay.displayOverlay();
+				} else if(overlay.shouldRedirectToMobile()) {
+					overlay._processMobileClick();
+				} else {
+					loadKC();
+				}				
+			});
+		});				
+	});
+	</script>
+
+	<link rel="shortcut icon" href="http://www-01.ibm.com/support/knowledgecenter/js/kc/themes/images/kc.ico">
+
+	<style type="text/css">
+		@import "/support/knowledgecenter/js/kc/themes/css/kc.css";
+		@import "/support/knowledgecenter/js/idx/themes/oneui/oneui.css";
+	</style>
+<link rel="stylesheet" type="text/css" href="./IBM Knowledge Center_files/opinionlab.css"><script src="http://1.www.s81c.com/common/js/dojo/1.6/ibmweb/external/opinionlab.js" type="text/javascript" async=""></script><script src="http://cdn3.userzoom.com/uz.js?cuid=BE645839F6384BA18DDC3B7D1E3C0A70" type="text/javascript" charset="utf-8" async=""></script><style>@-webkit-keyframes popqbuwantfncdijszayforyghlwctqpvimixtjopbjmn {50% {-webkit-transform:scale(1.2);}100% {-webkit-transform:scale(1);}}@keyframes popqbuwantfncdijszayforyghlwctqpvimixtjopbjmn {50% {-webkit-transform:scale(1.2);transform:scale(1.2);}100% {-webkit-transform:scale(1);transform:scale(1);}}#qbuwantfncdijszayforyghlwctqpvimixtjopbjmn{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;border:solid 2px #fff !important;box-sizing:content-box !important;color:#fff !important;display:block !important;height:auto !important;margin:0 !important;opacity:0.9 !important;padding:7px 10px !important;position:fixed !important;visibility:visible !important;width:auto !important;z-index:2147483647 !important;-webkit-border-radius:5px !important;-webkit-box-shadow:0px 0px 20px #000 !important;-webkit-box-sizing:content-box !important;}.qbuwantfncdijszayforyghlwctqpvimixtjopbjmn-blocked{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;color:#AAA !important;display:inline !important;text-decoration:line-through !important;}#qbuwantfncdijszayforyghlwctqpvimixtjopbjmn br{display:block !important;padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;}#qbuwantfncdijszayforyghlwctqpvimixtjopbjmn span{background:transparent !important;padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;}#qbuwantfncdijszayforyghlwctqpvimixtjopbjmn div{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;border:0 !important;margin:0 !important;padding:0 !important;width:auto !important;letter-spacing:normal !important;font:13px Arial,Helvetica !important;text-align:left !important;text-shadow:none !important;text-transform:none !important;word-spacing:normal !important;}#qbuwantfncdijszayforyghlwctqpvimixtjopbjmn a{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;font-weight:normal !important;background:none !important;text-decoration:underline !important;color:#fff !important;}a#qbuwantfncdijszayforyghlwctqpvimixtjopbjmn-gear{padding:0;margin:0;font:13px Arial,Helvetica;text-transform:none;font-size: 100%;vertical-align:baseline;line-height:normal;color:#fff;position:static;text-decoration:none !important;position:absolute !important;display:none !important;font-size:20px !important;width:20px !important;height:20px !important;line-height:20px !important;text-align:center !important;background-color:rgba(255,255,255,.8) !important;background-image:url(chrome-extension://mlomiejdfkolichcflejclcbmpeaniij/data/images/gear.svg) !important;background-size:16px 16px !important;background-position:center center !important;background-repeat:no-repeat !important;text-decoration:none !important;}a#qbuwantfncdijszayforyghlwctqpvimixtjopbjmn-gear:hover{-webkit-animation-name:popqbuwantfncdijszayforyghlwctqpvimixtjopbjmn !important;animation-name:popqbuwantfncdijszayforyghlwctqpvimixtjopbjmn !important;-webkit-animation-duration:0.3s !important;animation-duration:0.3s !important;}#qbuwantfncdijszayforyghlwctqpvimixtjopbjmn:hover #qbuwantfncdijszayforyghlwctqpvimixtjopbjmn-gear{text-decoration:none !important;display:inline-block !important;}@media print{#qbuwantfncdijszayforyghlwctqpvimixtjopbjmn{display:none !important;}}</style></head>
+
+<body class="oneui kc idx_dojo_1_7" lang="de" dir="ltr" loaded="true">
+	<div id="kcMobileRedirectOverlay"></div>
+	<div class="frameContent" id="kcFrame" lang="de" dir="ltr" widgetid="kcFrame">
+	
+	
+	
+	<div data-dojo-type="kc.widget.common.ToggleContainer" data-dojo-props="style: &#39;width: 100%; height: 100%;&#39;, header: &#39;kcHeader&#39;" data-dojo-attach-point="_kcHLT" class="dijitBorderContainerNoGutter dijitContainer dijitLayoutContainer" id="kc_widget_common_ToggleContainer_0" dir="ltr" lang="de" widgetid="kc_widget_common_ToggleContainer_0" style="width: 100%; height: 100%; padding: 0px;"><div class="headerFrameContent idxBanner headerFrame dijitAlignTop dijitBorderContainerNoGutter-child dijitBorderContainerNoGutterPane" dir="ltr" lang="de" id="kcHeader" role="banner" widgetid="kcHeader" style="left: 0px; top: 0px; position: absolute; width: 1920px;">
+	<div class="idxBannerInnerContainer">
+		<div data-dojo-attach-point="_menuContainer" class="menuContainer clickable floatLeading">
+			<span data-dojo-attach-point="_logo" id="ibmLogo" class="headerLogo displayInlineBlock ibm-intercept-exit-survey" tabindex="0" role="link" title="IBM Homepage"></span>
+			<span data-dojo-attach-point="_ibmMenuDropdown" class="ibmMenuArrowButtonInner  dijitArrowButtonInner displayInlineBlock" tabindex="0" aria-label="IBM Menü" role="button">
+				<span>▼</span>
+			</span>
+  			
+		</div>
+		<div data-dojo-attach-point="containerNode" class="idxBannerContainer">
+			<span data-dojo-attach-point="_title" class="productTitle clickable" tabindex="0" id="dijit__OnDijitClickMixin_0" widgetid="dijit__OnDijitClickMixin_0">IBM Knowledge Center</span>
+		 </div>		
+		<div data-dojo-attach-point="_trailerNode" class="idxBannerTrailer">
+			<div data-dojo-attach-point="_actionsContainer" class="actionsContainer">
+				<div data-dojo-attach-point="_healthCheckContainer" class="healthCheckContainer hidden" id="kc_widget_common_HealthCheckAlert_0" dir="ltr" lang="de" widgetid="kc_widget_common_HealthCheckAlert_0">
+	<span class="dijit dijitReset dijitInline dijitButton idxButtonDerived" role="presentation" dir="ltr" lang="de" widgetid="dijit_form_Button_0"><span class="dijitReset dijitInline dijitButtonNode" data-dojo-attach-event="ondijitclick:_onClick" role="presentation"><span class="dijitReset dijitStretch dijitButtonContents" data-dojo-attach-point="titleNode,focusNode" role="button" aria-labelledby="dijit_form_Button_0_label" tabindex="0" id="dijit_form_Button_0" title="IBM Knowledge Center - Warnung"><span class="dijitReset dijitInline dijitIcon healthCheckWarning" data-dojo-attach-point="iconNode"></span><span class="dijitReset dijitToggleButtonIconChar">●</span><span class="dijitReset dijitInline dijitButtonText dijitDisplayNone" id="dijit_form_Button_0_label" data-dojo-attach-point="containerNode">IBM Knowledge Center - Warnung</span></span></span><input type="button" value="" class="dijitOffScreen" tabindex="-1" role="presentation" data-dojo-attach-point="valueNode"></span>
+</div>
+
+				<div data-dojo-attach-point="_ownerContainer" class="ownerContainer">
+					<!-- The user is signed in; display user name -->
+					
+						<span class="dijit dijitReset dijitInline dijitButton idxButtonDerived" role="presentation" dir="ltr" lang="de" widgetid="dijit_form_Button_1"><span class="dijitReset dijitInline dijitButtonNode" data-dojo-attach-event="ondijitclick:_onClick" role="presentation"><span class="dijitReset dijitStretch dijitButtonContents" data-dojo-attach-point="titleNode,focusNode" role="button" aria-labelledby="dijit_form_Button_1_label" tabindex="0" id="dijit_form_Button_1"><span class="dijitReset dijitInline dijitIcon dijitNoIcon" data-dojo-attach-point="iconNode"></span><span class="dijitReset dijitToggleButtonIconChar">●</span><span class="dijitReset dijitInline dijitButtonText" id="dijit_form_Button_1_label" data-dojo-attach-point="containerNode">Anmelden</span></span></span><input type="button" value="" class="dijitOffScreen" tabindex="-1" role="presentation" data-dojo-attach-point="valueNode"></span>
+					
+				</div>
+			</div> 
+		</div>
+	</div>
+</div>		
+		<div id="kc_frame_Search_0" dir="ltr" lang="de" role="search" aria-label="IBM Knowledge Center" class="searchFrame dijitAlignTop dijitBorderContainerNoGutter-child dijitBorderContainerNoGutterPane" widgetid="kc_frame_Search_0" style="left: 0px; top: 42px; position: absolute; width: 1920px;">
+	<div class="searchFrameContent">
+		<div data-dojo-attach-point="containerNode" id="kc_widget_search_SearchBox_0" dir="ltr" lang="de" widgetid="kc_widget_search_SearchBox_0">
+	<div id="searchNode" class="searchNode" data-dojo-attach-point="searchNode">
+		<div class="searchNodeInner" data-dojo-attach-point="searchNodeInner">
+		    <div id="searchInput" dir="ltr" lang="de" class="searchKeywordContainer displayInline" widgetid="searchInput" style="width: 1576px;">
+	<div class="searchInputboxContainer">
+	    <label for="searchInputBox" style="display: none;">Suchen</label>
+	    <!-- role="textbox" is a better fit for the input however JAWS and RPT have issues with it. The accessibility team suggest using role="combobox" instead. All work well like this also -->
+        <input id="searchInputBox" maxlength="200" class="searchInputBox" data-dojo-attach-point="_searchInputBox" tabindex="0" role="combobox" aria-autocomplete="list" aria-haspopup="true" aria-label="Suchen" aria-describedby="searchTypeAheadStatus" placeholder="Suchen" accesskey="x" style="width: 1551px;">
+        <span id="searchTypeAheadStatus" role="status" aria-live="polite" aria-label="Suchvorschläge" class="hiddenAccesible" data-dojo-attach-point="_searchTypeAheadStatus"></span>
+    </div>
+    <div data-dojo-attach-point="_typeaheadSearchInput" class="typeaheadSearchInput"></div>
+</div>
+		    <div data-dojo-attach-point="saveSearchQueryContainerNode" id="kc_widget_search_SaveSearchQuery_0" dir="ltr" lang="de" class="saveSearchQueryContainer" widgetid="kc_widget_search_SaveSearchQuery_0">
+	<!-- TODO add accessibility, tab cycles -->
+	<a class="idxLink idxLinkDerived displayInlineBlock" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="idx_form_Link_0" dir="ltr" lang="de" widgetid="idx_form_Link_0" href="javascript:;" title="Melden Sie sich an, um diese Suchabfrage zu speichern">Suche speichern</a>
+	<span class="dijit dijitReset dijitInline dijitDropDownButton idxButtonDerived saveSearchQueryButton" dir="ltr" lang="de" widgetid="dijit_form_DropDownButton_0"><span class="dijitReset dijitInline dijitButtonNode" data-dojo-attach-event="ondijitclick:_onClick" data-dojo-attach-point="_buttonNode"><span class="dijitReset dijitStretch dijitButtonContents dijitDownArrowButton" data-dojo-attach-point="focusNode,titleNode,_arrowWrapperNode" role="button" aria-haspopup="true" aria-labelledby="dijit_form_DropDownButton_0_label" tabindex="0" id="dijit_form_DropDownButton_0" title="Speichert die Suchoptionen"><span class="dijitReset dijitInline dijitIcon dijitNoIcon" data-dojo-attach-point="iconNode"></span><span class="dijitReset dijitInline dijitButtonText dijitDisplayNone" data-dojo-attach-point="containerNode,_popupStateNode" id="dijit_form_DropDownButton_0_label">Suche speichern</span><span class="dijitReset dijitInline dijitArrowButtonInner"></span><span class="dijitReset dijitInline dijitArrowButtonChar">▼</span></span></span><input type="button" value="" class="dijitOffScreen" tabindex="-1" data-dojo-attach-point="valueNode" role="presentation" wairole="presentation"></span>
+</div>
+		</div>		    
+    </div>
+</div>
+		<div class="filterRow" role="toolbar" id="kc_widget_search_FilterRow_0" data-dojo-attach-point="_filterRow" aria-labelledby="filterRowLabel" dir="ltr" lang="de" widgetid="kc_widget_search_FilterRow_0">
+	<span class="filterRowLabel" id="filterRowLabel" data-dojo-attach-point="_filterLabel">Suchfilter: </span>
+	<div class="filterRowMsg displayInlineBlock hidden" id="filterRowMsg" data-dojo-attach-point="_msg">Keine Produkte ausgewählt.</div>
+	<div class="filterProduct displayInlineBlock" style="width: 238px;">
+		<span class="displayInlineBlock" data-dojo-attach-point="_product"><div class="displayInlineBlock filterProductItem" id="kc_widget_search_FilterRowItem_0" widgetid="kc_widget_search_FilterRowItem_0">
+	<div class="displayInlineBlock nonBadgeItem" data-dojo-attach-point="_title">ILOG CPLEX Optimization Studio 12.6.2</div>
+	<div class="productCollection displayInlineBlock" data-dojo-attach-point="_productCollection" tabindex="0" role="button" style="display: none;"></div>
+	<a class="idxLink idxLinkDerived filterRowItemClose" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="button" wairole="link" id="idx_form_Link_15" widgetid="idx_form_Link_15" href="javascript:;" title="Produkt ILOG CPLEX Optimization Studio 12.6.2 entfernen">&nbsp;</a>
+</div></span>
+	</div>
+	<div class="displayInlineBlock hidden" data-dojo-attach-point="_suffixHint">...</div>
+    <div id="widget_idx_oneui_form_CheckBox_0" class="dijitReset dijitInline idxComposite idxButtonDerived displayInlineBlock delimiter idxCheckBoxWrap idxCheckBoxWrapChecked dijitChecked" dir="ltr" lang="de" widgetid="idx_oneui_form_CheckBox_0" title="Produkt automatisch unter Verwendung des aktuellen Kontexts auswählen"><div class="dijit dijitReset dijitInline dijitCheckBox dijitCheckBoxChecked dijitChecked" role="presentation" dojoattachpoint="stateNode,oneuiBaseNode"><input name="autoContextOption" type="checkbox" class="dijitReset dijitCheckBoxInput" dojoattachpoint="focusNode" dojoattachevent="onclick:_onClick" value="on" tabindex="0" id="idx_oneui_form_CheckBox_0" role="checkbox" aria-checked="true" aria-invalid="false"></div><div class="idxLabel dijitInline"><label for="idx_oneui_form_CheckBox_0" dojoattachpoint="compLabelNode">Automatische Auswahl</label></div><div class="dijitReset dijitInline dijitValidationContainer" dojoattachpoint="iconNode"><div class="dijitValidationIcon"><input class="dijitReset dijitInputField dijitValidationInner" value="Χ " type="text" tabindex="-1" readonly="readonly" role="presentation"></div></div></div>
+	<a class="idxLink idxLinkDerived filterRowActionLink delimiter" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="button" wairole="link" id="idx_form_Link_1" dir="ltr" lang="de" widgetid="idx_form_Link_1" href="javascript:;">Alle löschen</a>
+	<a class="idxLink idxLinkDerived filterRowActionLink" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="button" wairole="link" id="idx_form_Link_2" dir="ltr" lang="de" widgetid="idx_form_Link_2" href="javascript:;">Produkte hinzufügen...</a>
+</div>
+	</div>
+</div>
+		<div class="consoleFrameContent dijitAlignCenter dijitBorderContainerNoGutter-child dijitBorderContainerNoGutterPane" id="kc_frame_Console_0" dir="ltr" lang="de" widgetid="kc_frame_Console_0" style="left: 0px; top: 118px; position: absolute; width: 1920px; height: 867px;">
+		<div data-dojo-type="dijit.layout.StackContainer" dolayout="true" data-dojo-attach-point="_stackContainer" style="width: 100%; height: 100%;" class="dijitStackContainer dijitContainer dijitLayoutContainer" role="presentation" id="dijit_layout_StackContainer_0" dir="ltr" lang="de" widgetid="dijit_layout_StackContainer_0">	
+
+			<div data-dojo-type="kc.widget.common.ToggleContainer" dolayout="true" data-dojo-props="&#39;class&#39;:&#39;kcContentFrame&#39;" data-dojo-attach-point="_kcContent" class="dijitBorderContainerNoGutter dijitContainer kcContentFrame dijitStackContainer-child dijitStackContainer-dijitBorderContainerNoGutter dijitVisible dijitLayoutContainer" id="kc_widget_common_ToggleContainer_1" dir="ltr" lang="de" widgetid="kc_widget_common_ToggleContainer_1" title="" style="padding: 0px; left: 0px; top: 0px; width: 1870px; height: 867px;">
+				<div data-dojo-type="kc.widget.common.ToggleContainer" dolayout="true" data-dojo-props="&#39;class&#39;:&#39;&#39;, region: &#39;center&#39;" data-dojo-attach-point="_kcContentInner" class="dijitBorderContainerNoGutter dijitContainer dijitBorderContainerNoGutter-child dijitBorderContainerNoGutter-dijitBorderContainerNoGutter dijitBorderContainerNoGutterPane dijitAlignCenter dijitLayoutContainer" id="kc_widget_common_ToggleContainer_2" dir="ltr" lang="de" widgetid="kc_widget_common_ToggleContainer_2" style="left: 0px; top: 10px; position: absolute; padding: 0px; width: 1870px; height: 857px;">
+					<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="&#39;class&#39;:&#39;contentToolbarFrame&#39;, region: &#39;top&#39;" role="region" aria-label="Symbolleiste" class="dijitContentPane contentToolbarFrame dijitBorderContainerNoGutter-child dijitBorderContainerNoGutter-dijitContentPane dijitBorderContainerNoGutterPane dijitAlignTop" title="" id="dijit_layout_ContentPane_0" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_0" style="left: 0px; top: 0px; position: absolute; width: 1870px;">
+						<div id="kc_frame_ToolBar_0" dir="ltr" lang="de" class="toolBar" widgetid="kc_frame_ToolBar_0">
+	<div class="navigationToggleContainer" data-dojo-attach-point="_navigationToggleContainer" style="width: 290px;">
+		<div class="displayInlineBlock" data-dojo-attach-point="_navigationToggleIcon"></div>
+		<a class="idxLink idxLinkDerived displayInlineBlock navigationToggleContainerLink" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" role="button" wairole="link" id="idx_form_Link_3" dir="ltr" lang="de" aria-live="polite" widgetid="idx_form_Link_3" href="javascript:;" title=" Navigation ausblenden" aria-label=" Navigation ausblenden"><img data-dojo-attach-point="_navigationToggleImage" src="./IBM Knowledge Center_files/hide_show.png" alt=" Navigation ausblenden"></a>
+	</div>
+	<div data-dojo-type="dijit.layout.StackContainer" dolayout="true" data-dojo-attach-point="_actionBarContainer" data-dojo-props="&#39;class&#39;:&#39;actionBarContainer&#39;" class="dijitStackContainer dijitContainer dijitLayoutContainer actionBarContainer" role="presentation" id="dijit_layout_StackContainer_1" dir="ltr" lang="de" widgetid="dijit_layout_StackContainer_1">
+		<div data-dojo-type="dijit.layout.ContentPane" data-dojo-attach-point="_noActions" class="dijitContentPane dijitStackContainer-child dijitStackContainer-dijitContentPane dijitHidden" title="" role="presentation" id="dijit_layout_ContentPane_1" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_1" style="left: 10px; top: 5px;"></div>
+		<div data-dojo-attach-point="_searchActionsPlaceholder"></div>
+		<div class="topicActionBar dijitVisible" data-dojo-attach-point="_actionbar" id="kc_widget_topic_TopicActionBar_0" widgetid="kc_widget_topic_TopicActionBar_0">
+
+	
+	<a class="idxLink idxLinkDerived toolBarAction printIcon imageLink" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="button" wairole="link" id="idx_form_Link_12" title="Drucken" accesskey="p" widgetid="idx_form_Link_12" href="javascript:;">&nbsp;</a>
+
+
+	
+
+	 
+			
+		
+		 <!-- This is used by Welcome, Topic action bars -->
+		 <span class="dijitInline idxDropDownLink idxLinkDerived dijitDownArrowButton toolBarAction" role="button" wairole="button" aria-labelledby="idx_form_DropDownLink_1_link" aria-haspopup="true" tabindex="0" dojoattachpoint="containerNode, _arrowWrapperNode, _buttonNode, _aroundNode, focusNode" dojoattachevent="onclick:_onClick" id="idx_form_DropDownLink_1" widgetid="idx_form_DropDownLink_1"><a id="idx_form_DropDownLink_1_link" tabindex="-1" dojoattachpoint="linkNode" class="idxDropDownLinkAnchor" href="javascript:;">Weitergeben</a><span tabindex="-1" role="presentation" wairole="presentation" class="dijitReset dijitInline dijitArrowButtonInner"></span><span tabindex="-1" role="presentation" wairole="presentation" class="dijitReset dijitInline dijitArrowButtonChar">▼</span></span>
+		 		
+		
+	
+
+	
+ 	 <span class="dijitInline idxDropDownLink idxLinkDerived dijitDownArrowButton toolBarAction" role="button" wairole="button" aria-labelledby="idx_form_DropDownLink_2_link" aria-haspopup="true" tabindex="0" dojoattachpoint="containerNode, _arrowWrapperNode, _buttonNode, _aroundNode, focusNode" dojoattachevent="onclick:_onClick" id="idx_form_DropDownLink_2" widgetid="idx_form_DropDownLink_2"><a id="idx_form_DropDownLink_2_link" tabindex="-1" dojoattachpoint="linkNode" class="idxDropDownLinkAnchor" href="javascript:;">Zur Sammlung hinzufügen</a><span tabindex="-1" role="presentation" wairole="presentation" class="dijitReset dijitInline dijitArrowButtonInner"></span><span tabindex="-1" role="presentation" wairole="presentation" class="dijitReset dijitInline dijitArrowButtonChar">▼</span></span>
+
+	
+		<div class="displayInlineBlock toolBarAction" id="kc_widget_topic_Rating_0" widgetid="kc_widget_topic_Rating_0">
+	<div data-dojo-attach-point="_topicThumbs" class="topicThumbs">
+		<a class="idxLinkDerived thumb thumbsUp imageLink idxLink" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="idx_form_Link_13" widgetid="idx_form_Link_13" href="javascript:;" title="&#39;Gefällt mir&#39; für dieses Thema angeben">&nbsp;</a>
+		<a class="badge idxLinkDerived likeBadge imageLink hidden" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="kc_widget_common_Badge_0" widgetid="kc_widget_common_Badge_0" href="javascript:;" title="0 &#39;Gefällt mir&#39;" aria-label="0 &#39;Gefällt mir&#39;">0</a>
+		<a class="idxLinkDerived thumb thumbsDown marginLeading5 imageLink idxLink" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="idx_form_Link_14" widgetid="idx_form_Link_14" href="javascript:;" title="&#39;Gefällt mir nicht&#39; für dieses Thema angeben">&nbsp;</a>
+		<a class="badge idxLinkDerived dislikeBadge imageLink hidden" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="kc_widget_common_Badge_1" widgetid="kc_widget_common_Badge_1" href="javascript:;" title="0 &#39;Gefällt mir nicht&#39;" aria-label="0 &#39;Gefällt mir nicht&#39;">0</a>
+	</div>
+	
+	<!-- 
+	<div data-dojo-attach-point="_userRating" class="userRating">
+		<span data-dojo-attach-point="_userRatingMessage"   class="floatLeading userRatingMessage"></span>
+		<div data-dojo-attach-point="_removeRating" 		class="floatLeading removeRating marginLeading5" data-dojo-type="idx.form.Link" label="Bewertung entfernen."></div>
+		<div class="clearBoth"></div>
+	</div>
+	 -->
+	
+</div>
+		
+	 
+</div>
+		<div data-dojo-attach-point="_collectionActionsPlaceholder"></div>
+		<div data-dojo-attach-point="_welcomeActionsPlaceholder"></div>
+	</div>
+</div>
+					</div>
+					
+					<div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="splitter: &#39;toggle&#39;, minSize: 200, maxSize: 500, splitterTag:&#39;navigationToggle&#39;, &#39;class&#39;:&#39;navigationFrame&#39;, region: &#39;leading&#39;" data-dojo-attach-point="_navigationContainer" role="navigation" aria-label="IBM Knowledge Center" class="dijitContentPane navigationFrame dijitBorderContainerNoGutter-child dijitBorderContainerNoGutter-dijitContentPane dijitBorderContainerNoGutterPane dijitAlignLeft" title="" id="dijit_layout_ContentPane_2" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_2" style="display: block; overflow: hidden; visibility: visible; width: 300px; padding: 10px 10px 10px 0px; margin: 0px; border-width: 0px 1px 0px 0px; left: 0px; top: 27px; position: absolute; height: 810px;">
+						<div class="navigationFrameContent" role="tablist" id="kc_frame_Navigation_0" dir="ltr" lang="de" widgetid="kc_frame_Navigation_0">
+ 
+	<div class="idxContentPane dijitContainer idxTitlePane navigationPane tocPane dijitTitlePane" title="" role="presentation" id="idx_layout_TitlePane_0" dir="ltr" lang="de" widgetid="idx_layout_TitlePane_0" selected="true" style="height: 738px;">
+	<div data-dojo-attach-event="onclick:_onTitleClick, onkeypress:_onTitleKey" class="dijitTitlePaneTitle dijitOpen" data-dojo-attach-point="titleBarNode">
+		<div class="dijitTitlePaneTitleFocus" data-dojo-attach-point="focusNode" role="tab" aria-controls="idx_layout_TitlePane_0_pane" tabindex="0" aria-posinset="1" aria-setsize="3" style="height: 14px;" aria-expanded="true" aria-selected="true">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="arrowNode" class="dijitArrowNode" role="presentation"><span data-dojo-attach-point="arrowNodeInner" class="dijitArrowNodeInner">-</span><span data-dojo-attach-point="titleNode" class="dijitTitlePaneTextNode" style="width: auto; height: auto;"><a class="idxLink idxLinkDerived navigationTitle ellipseString" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="-1" alt="" role="presentation" id="idx_form_Link_6" accesskey="t" widgetid="idx_form_Link_6" href="javascript:;" style="width: auto;">Inhaltsverzeichnis</a></span>
+		<div class="idxTitlePaneActions" style="width: auto; height: auto;"></div></div>
+	</div>
+	<div class="dijitTitlePaneContentOuter" data-dojo-attach-point="hideNode" role="presentation" tabindex="-1" style="height: 692px;">
+		<div class="dijitReset" data-dojo-attach-point="wipeNode" role="presentation" style="height: auto;">
+			<div class="dijitTitlePaneContentInner" data-dojo-attach-point="containerNode" role="tabpanel" id="idx_layout_TitlePane_0_pane" aria-hidden="false" aria-labelledby="idx_layout_TitlePane_0">
+				<!-- nested divs because wipeIn()/wipeOut() doesn't work right on node w/padding etc.  Put padding on inner div. -->
+			
+		<div class="toc dijitTitlePane-child" id="kc_widget_navigation_TOC_0" dir="ltr" lang="de" widgetid="kc_widget_navigation_TOC_0">
+	<span role="group" data-dojo-attach-event="onkeypress" class="dijitStackController idxBreadcrumbController tocBreadcrumb" id="kc_widget_navigation_BreadcrumbController_0" dir="ltr" lang="de" aria-label="Produkte" widgetid="kc_widget_navigation_BreadcrumbController_0"><a class="idxLinkDerived kcBreadcrumb" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="kc_widget_navigation_BreadcrumbController_0_kc_widget_navigation_TOCContent_0" title="" widgetid="kc_widget_navigation_BreadcrumbController_0_kc_widget_navigation_TOCContent_0" href="javascript:;">Nicht verfügbar</a><a class="kcBreadcrumb idxLinkDerived" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="kc_widget_navigation_BreadcrumbController_0_kc_widget_navigation_TOCContent_1" title="" widgetid="kc_widget_navigation_BreadcrumbController_0_kc_widget_navigation_TOCContent_1" href="javascript:;">Zurück zu allen Produkten</a><a class="idxLinkDerived kcBreadcrumb kcBreadcrumbChecked dijitChecked" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="kc_widget_navigation_BreadcrumbController_0_kc_widget_navigation_TOCContent_2" title="" widgetid="kc_widget_navigation_BreadcrumbController_0_kc_widget_navigation_TOCContent_2" href="javascript:;">ILOG CPLEX Optimization Studio</a></span>
+
+	<div class="currentProductLabel currentProductLabelWithBorder" id="currentProductLabel" data-dojo-attach-point="_currentProductLabel">ILOG CPLEX Optimization Studio 12.6.2</div>
+		
+	<div data-dojo-type="dijit.layout.StackContainer" class="dijitStackContainer dijitContainer dijitLayoutContainer tocContentContainer" id="tocContentContainer" data-dojo-attach-point="_tocContentContainer" dolayout="true" style="width: 100%; height: 100%;" role="presentation" dir="ltr" lang="de" widgetid="tocContentContainer" aria-labelledby="kc_widget_navigation_BreadcrumbController_0_kc_widget_navigation_TOCContent_2"><div class="tocContent dijitStackContainer-child dijitHidden" data-dojo-attach-point="_tocContentRoot" id="kc_widget_navigation_TOCContent_0" widgetid="kc_widget_navigation_TOCContent_0" title="Nicht verfügbar">
+	<div class="dijitTree dijitTreeContainer dojoDndContainer tocTree" role="presentation" data-dojo-attach-event="onkeypress:_onKeyPress" id="kc_widget_navigation_Tree_1" widgetid="kc_widget_navigation_Tree_1" _dijitmenudijit_menu_4="1" tabindex="-1">
+	<div class="dijitInline dijitTreeIndent" style="position: absolute; top: -9999px" data-dojo-attach-point="indentDetector"></div>
+<div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_6" widgetid="kc_widget_common_KCTreeNode_6" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" style="padding-left: 0px; display: none;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoOpened" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">-</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent dijitTreeContentExpanded" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItemExpanded" role="presentation" tabindex="-1" data-dojo-attach-event="onfocus:_onLabelFocus">Produkte</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="tree" style="height: auto;" aria-labelledby="currentProductLabel"><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_7" widgetid="kc_widget_common_KCTreeNode_7" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Algorithmics" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Algorithmics</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Algorithmics"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_8" widgetid="kc_widget_common_KCTreeNode_8" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="CICS" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">CICS</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="CICS"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_9" widgetid="kc_widget_common_KCTreeNode_9" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Clarity Systems" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Clarity Systems</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Clarity Systems"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_10" widgetid="kc_widget_common_KCTreeNode_10" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Cloud &amp; Smarter Infrastructure" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Cloud &amp; Smarter Infrastructure</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Cloud &amp; Smarter Infrastructure"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_11" widgetid="kc_widget_common_KCTreeNode_11" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Cluster software" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Cluster software</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Cluster software"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_12" widgetid="kc_widget_common_KCTreeNode_12" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Cognos" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Cognos</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Cognos"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_13" widgetid="kc_widget_common_KCTreeNode_13" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Collaboration Solutions" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Collaboration Solutions</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Collaboration Solutions"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_14" widgetid="kc_widget_common_KCTreeNode_14" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Emptoris" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Emptoris</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Emptoris"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_15" widgetid="kc_widget_common_KCTreeNode_15" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Enterprise Content Management" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Enterprise Content Management</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Enterprise Content Management"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_16" widgetid="kc_widget_common_KCTreeNode_16" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="ExperienceOne" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">ExperienceOne</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="ExperienceOne"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_17" widgetid="kc_widget_common_KCTreeNode_17" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Financial Operations" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Financial Operations</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Financial Operations"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_18" widgetid="kc_widget_common_KCTreeNode_18" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Systemsoftware " style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Systemsoftware </span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Systemsoftware "></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_19" widgetid="kc_widget_common_KCTreeNode_19" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Information Management" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Information Management</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Information Management"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_20" widgetid="kc_widget_common_KCTreeNode_20" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="MobileFirst Platform" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">MobileFirst Platform</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="MobileFirst Platform"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_21" widgetid="kc_widget_common_KCTreeNode_21" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="OpenPages" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">OpenPages</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="OpenPages"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_22" widgetid="kc_widget_common_KCTreeNode_22" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Weitere Software " style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoOpened" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">-</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent dijitTreeContentExpanded" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItemExpanded" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="true">Weitere Software </span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="group" style="height: auto;" aria-label="Weitere Software "><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_35" widgetid="kc_widget_common_KCTreeNode_35" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Automated Modular Management" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSVV6P/AMMKC_WelcomePage.html?lang=de">Automated Modular Management</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Automated Modular Management"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_36" widgetid="kc_widget_common_KCTreeNode_36" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Education Assistant for other software" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/other_iea/other_iea_welcome.html?lang=de">Education Assistant for other software</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Education Assistant for other software"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_37" widgetid="kc_widget_common_KCTreeNode_37" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM Counter Fraud Management" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSXJFX/welcome?lang=de">IBM Counter Fraud Management</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM Counter Fraud Management"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_38" widgetid="kc_widget_common_KCTreeNode_38" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM SDK for Node.js" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSWLKB/welcome_nodesdk_family.html?lang=de">IBM SDK for Node.js</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM SDK for Node.js"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_39" widgetid="kc_widget_common_KCTreeNode_39" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Communications Server for Data Center Deployment" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSKK8Z/kc_welcome.html?lang=de">Communications Server for Data Center Deployment</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Communications Server for Data Center Deployment"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_40" widgetid="kc_widget_common_KCTreeNode_40" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Communications Server for Windows" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSHQNF/kc_welcome.html?lang=de">Communications Server for Windows</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Communications Server for Windows"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_41" widgetid="kc_widget_common_KCTreeNode_41" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="CPLEX Optimizer for z/OS" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SS9UKU/welcome?lang=de">CPLEX Optimizer for z/OS</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="CPLEX Optimizer for z/OS"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_42" widgetid="kc_widget_common_KCTreeNode_42" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM Cloud Manager with OpenStack" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SST55W/welcome?lang=de">IBM Cloud Manager with OpenStack</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM Cloud Manager with OpenStack"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_43" widgetid="kc_widget_common_KCTreeNode_43" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM Decision Optimization Center" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSQVNT/welcome?lang=de">IBM Decision Optimization Center</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM Decision Optimization Center"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_44" widgetid="kc_widget_common_KCTreeNode_44" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM MobileFirst Platform Foundation" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSNJXP/welcome.html?lang=de">IBM MobileFirst Platform Foundation</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM MobileFirst Platform Foundation"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_45" widgetid="kc_widget_common_KCTreeNode_45" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM MobileFirst Platform Foundation for iOS" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSHSCD/welcome.html?lang=de">IBM MobileFirst Platform Foundation for iOS</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM MobileFirst Platform Foundation for iOS"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_46" widgetid="kc_widget_common_KCTreeNode_46" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM Predictive Solutions Foundation on Cloud" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSDM4S/welcome?lang=de">IBM Predictive Solutions Foundation on Cloud</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM Predictive Solutions Foundation on Cloud"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_47" widgetid="kc_widget_common_KCTreeNode_47" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM Mobile Quality Assurance for Bluemix" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSJML5/mqas_family_welcome.html?lang=de">IBM Mobile Quality Assurance for Bluemix</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM Mobile Quality Assurance for Bluemix"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_48" widgetid="kc_widget_common_KCTreeNode_48" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM Monitoring and Diagnostic Tools" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SS3KLZ/SS3KLZ/welcome_tools_family.html?lang=de">IBM Monitoring and Diagnostic Tools</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM Monitoring and Diagnostic Tools"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_49" widgetid="kc_widget_common_KCTreeNode_49" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM Systems Director" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSAV7B/welcome?lang=de">IBM Systems Director</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM Systems Director"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_50" widgetid="kc_widget_common_KCTreeNode_50" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM Support Assistant" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSLLVC/welcome/isa_welcome.html?lang=de">IBM Support Assistant</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM Support Assistant"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_51" widgetid="kc_widget_common_KCTreeNode_51" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM Wave for z/VM" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SS6JTX/welcome?lang=de">IBM Wave for z/VM</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM Wave for z/VM"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_52" widgetid="kc_widget_common_KCTreeNode_52" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem dijitTreeRowSelected" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="ILOG CPLEX Optimization Studio" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="0" aria-selected="true" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSSA5P/welcome?lang=de">ILOG CPLEX Optimization Studio</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="ILOG CPLEX Optimization Studio"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_53" widgetid="kc_widget_common_KCTreeNode_53" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="PowerSC Express Edition" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSNRQU/welcome?lang=de">PowerSC Express Edition</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="PowerSC Express Edition"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_54" widgetid="kc_widget_common_KCTreeNode_54" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="PowerSC Standard Edition" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSTQK9/welcome?lang=de">PowerSC Standard Edition</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="PowerSC Standard Edition"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_55" widgetid="kc_widget_common_KCTreeNode_55" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="PowerSC Trusted Surveyor" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSMK7X/welcome?lang=de">PowerSC Trusted Surveyor</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="PowerSC Trusted Surveyor"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_56" widgetid="kc_widget_common_KCTreeNode_56" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="PowerVC Standard Edition" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSXK2N/welcome?lang=de">PowerVC Standard Edition</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="PowerVC Standard Edition"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_57" widgetid="kc_widget_common_KCTreeNode_57" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="PowerVC Express Edition" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel oneUILink" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" href="http://www-01.ibm.com/support/knowledgecenter/SSXKGY/welcome?lang=de">PowerVC Express Edition</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="PowerVC Express Edition"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsLast" role="presentation" id="kc_widget_common_KCTreeNode_58" widgetid="kc_widget_common_KCTreeNode_58" style="background-position: 19px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="z/OS Problem Determination Tools" style="padding-left: 19px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">z/OS Problem Determination Tools</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="z/OS Problem Determination Tools"></div>
+</div></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_23" widgetid="kc_widget_common_KCTreeNode_23" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Platform Computing" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Platform Computing</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Platform Computing"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_24" widgetid="kc_widget_common_KCTreeNode_24" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Power Systems" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Power Systems</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Power Systems"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_25" widgetid="kc_widget_common_KCTreeNode_25" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="PureSystems" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">PureSystems</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="PureSystems"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_26" widgetid="kc_widget_common_KCTreeNode_26" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Rational" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Rational</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Rational"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_27" widgetid="kc_widget_common_KCTreeNode_27" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Security Systems" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Security Systems</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Security Systems"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_28" widgetid="kc_widget_common_KCTreeNode_28" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Smarter Cities" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Smarter Cities</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Smarter Cities"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_29" widgetid="kc_widget_common_KCTreeNode_29" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="SPSS" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">SPSS</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="SPSS"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_30" widgetid="kc_widget_common_KCTreeNode_30" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Sterling Commerce" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Sterling Commerce</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Sterling Commerce"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_31" widgetid="kc_widget_common_KCTreeNode_31" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Systemspeicher " style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Systemspeicher </span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Systemspeicher "></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_32" widgetid="kc_widget_common_KCTreeNode_32" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="Watson Group" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">Watson Group</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="Watson Group"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_33" widgetid="kc_widget_common_KCTreeNode_33" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="WebSphere" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">WebSphere</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="WebSphere"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_34" widgetid="kc_widget_common_KCTreeNode_34" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="z Systems" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false">z Systems</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="z Systems"></div>
+</div></div>
+</div></div>
+</div><div class="tocContent dijitStackContainer-child dijitHidden" data-dojo-attach-point="_tocContentRoot" id="kc_widget_navigation_TOCContent_1" widgetid="kc_widget_navigation_TOCContent_1" title="Zurück zu allen Produkten">
+	<div data-dojo-attach-point="_treePlaceholder" tabindex="-1" role="log" aria-live="polite" aria-label="Produkte">Laden läuft...</div>
+</div><div class="tocContent dijitStackContainer-child dijitVisible" data-dojo-attach-point="_tocContentRoot" id="kc_widget_navigation_TOCContent_2" widgetid="kc_widget_navigation_TOCContent_2" title="ILOG CPLEX Optimization Studio">
+	<div class="dijitTree dijitTreeContainer tocTree dojoDndContainer" role="presentation" data-dojo-attach-event="onkeypress:_onKeyPress" id="kc_widget_navigation_Tree_0" widgetid="kc_widget_navigation_Tree_0" _dijitmenudijit_menu_3="1" tabindex="-1">
+	<div class="dijitInline dijitTreeIndent" style="position: absolute; top: -9999px" data-dojo-attach-point="indentDetector"></div>
+<div class="dijitTreeIsRoot dijitTreeNode dijitTreeNodeLOADED dijitLOADED" role="presentation" id="kc_widget_common_KCTreeNode_0" widgetid="kc_widget_common_KCTreeNode_0" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" style="padding-left: 0px; display: none;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoOpened" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">-</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent dijitTreeContentExpanded" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItemExpanded" role="presentation" tabindex="-1" data-dojo-attach-event="onfocus:_onLabelFocus">Produkte</span>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="tree" style="height: auto;" aria-labelledby="currentProductLabel"><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_1" widgetid="kc_widget_common_KCTreeNode_1" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem dijitTreeRowSelected" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM ILOG CPLEX Optimization Studio V12.6.2" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="0" aria-selected="true" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false" href="http://www-01.ibm.com/support/knowledgecenter/SSSA5P_12.6.2/ilog.odms.studio.help/Optimization_Studio/topics/COS_home.html?lang=de">IBM ILOG CPLEX Optimization Studio V12.6.2</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM ILOG CPLEX Optimization Studio V12.6.2"></div>
+</div><div class="dijitTreeIsRoot dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_2" widgetid="kc_widget_common_KCTreeNode_2" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IDE and OPL" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false" href="http://www-01.ibm.com/support/knowledgecenter/SSSA5P_12.6.2/ilog.odms.ide.help/OPL_Studio/maps/globals/opl_homepage.html?lang=de">IDE and OPL</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IDE and OPL"></div>
+</div><div class="dijitTreeIsRoot dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_3" widgetid="kc_widget_common_KCTreeNode_3" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="CPLEX" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false" href="http://www-01.ibm.com/support/knowledgecenter/SSSA5P_12.6.2/ilog.odms.cplex.help/CPLEX/homepages/CPLEX.html?lang=de">CPLEX</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="CPLEX"></div>
+</div><div class="dijitTreeIsRoot dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED" role="presentation" id="kc_widget_common_KCTreeNode_4" widgetid="kc_widget_common_KCTreeNode_4" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="CP Optimizer" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false" href="http://www-01.ibm.com/support/knowledgecenter/SSSA5P_12.6.2/ilog.odms.cpo.help/CP_Optimizer/topics/cpoptimizer_splash.html?lang=de">CP Optimizer</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="CP Optimizer"></div>
+</div><div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common_KCTreeNode_5" widgetid="kc_widget_common_KCTreeNode_5" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow kcTreeItem" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" title="IBM ILOG CPLEX Enterprise Server" style="padding-left: 0px;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoClosed" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">+</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon" role="presentation"><a data-dojo-attach-point="labelNode" class="dijitTreeLabel kcTreeItem" role="treeitem" tabindex="-1" aria-selected="false" data-dojo-attach-event="onfocus:_onLabelFocus" aria-expanded="false" href="http://www-01.ibm.com/support/knowledgecenter/SSSA5P_12.6.2/ilog.odms.server.help/topics/ces_installguide_general_information.html?cp=SSSA5P_12.6.2%2F4&lang=de">IBM ILOG CPLEX Enterprise Server</a>
+		</span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="display: none;" aria-label="IBM ILOG CPLEX Enterprise Server"></div>
+</div></div>
+</div></div>
+</div></div>
+</div>	
+	</div>
+		</div>
+	</div>
+</div>	
+	
+	<div class="dijitTitlePane idxContentPane dijitContainer idxTitlePane navigationPane collectionsContainer" title="" role="presentation" id="idx_layout_TitlePane_1" dir="ltr" lang="de" widgetid="idx_layout_TitlePane_1" style="height: auto;">
+	<div data-dojo-attach-event="onclick:_onTitleClick, onkeypress:_onTitleKey" class="dijitTitlePaneTitle dijitClosed" data-dojo-attach-point="titleBarNode">
+		<div class="dijitTitlePaneTitleFocus" data-dojo-attach-point="focusNode" role="tab" aria-controls="idx_layout_TitlePane_1_pane" tabindex="-1" aria-posinset="2" aria-setsize="3" style="height: 14px;" aria-expanded="false" aria-selected="false">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="arrowNode" class="dijitArrowNode" role="presentation"><span data-dojo-attach-point="arrowNodeInner" class="dijitArrowNodeInner">+</span><span data-dojo-attach-point="titleNode" class="dijitTitlePaneTextNode" style="width: auto; height: auto;"><a class="idxLink idxLinkDerived navigationTitle ellipseString" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="-1" alt="" role="presentation" id="idx_form_Link_7" accesskey="c" widgetid="idx_form_Link_7" href="javascript:;" style="width: auto;">Meine Sammlungen</a></span>
+		<div class="idxTitlePaneActions" style="width: auto; height: auto;"></div></div>
+	</div>
+	<div class="dijitTitlePaneContentOuter" data-dojo-attach-point="hideNode" role="presentation" style="display: none;">
+		<div class="dijitReset" data-dojo-attach-point="wipeNode" role="presentation" style="height: auto; display: none;">
+			<div class="dijitTitlePaneContentInner" data-dojo-attach-point="containerNode" role="tabpanel" id="idx_layout_TitlePane_1_pane" aria-hidden="true" aria-labelledby="idx_layout_TitlePane_1">
+				<!-- nested divs because wipeIn()/wipeOut() doesn't work right on node w/padding etc.  Put padding on inner div. -->
+			
+		<div class="collections dijitTitlePane-child" id="kc_widget_collection_Collections_0" dir="ltr" lang="de" widgetid="kc_widget_collection_Collections_0">
+	<div data-dojo-attach-point="_treePlaceholder">
+		<div class="initialMessage" role="log" aria-live="polite" aria-label="Meine Sammlungen" tabindex="0">Melden Sie sich an, um die gespeicherten Sammlungen anzuzeigen.</div>
+	</div>
+</div>
+	</div>
+		</div>
+	</div>
+</div>
+
+	<div class="dijitTitlePane idxContentPane dijitContainer idxTitlePane navigationPane searchResultsContainer" title="" role="presentation" id="idx_layout_TitlePane_2" dir="ltr" lang="de" widgetid="idx_layout_TitlePane_2" style="height: auto;">
+	<div data-dojo-attach-event="onclick:_onTitleClick, onkeypress:_onTitleKey" class="dijitTitlePaneTitle dijitClosed" data-dojo-attach-point="titleBarNode">
+		<div class="dijitTitlePaneTitleFocus" data-dojo-attach-point="focusNode" role="tab" aria-controls="idx_layout_TitlePane_2_pane" tabindex="-1" aria-posinset="3" aria-setsize="3" style="height: 14px;" aria-expanded="false" aria-selected="false">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="arrowNode" class="dijitArrowNode" role="presentation"><span data-dojo-attach-point="arrowNodeInner" class="dijitArrowNodeInner">+</span><span data-dojo-attach-point="titleNode" class="dijitTitlePaneTextNode" style="width: auto; height: auto;"><a class="idxLink idxLinkDerived navigationTitle ellipseString" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="-1" alt="" role="presentation" id="idx_form_Link_8" accesskey="s" widgetid="idx_form_Link_8" href="javascript:;" style="width: auto;">Suchergebnisse</a></span>
+		<div class="idxTitlePaneActions" style="width: auto; height: auto;"></div></div>
+	</div>
+	<div class="dijitTitlePaneContentOuter" data-dojo-attach-point="hideNode" role="presentation" style="display: none;">
+		<div class="dijitReset" data-dojo-attach-point="wipeNode" role="presentation" style="height: auto; display: none;">
+			<div class="dijitTitlePaneContentInner" data-dojo-attach-point="containerNode" role="tabpanel" id="idx_layout_TitlePane_2_pane" aria-hidden="true" aria-labelledby="idx_layout_TitlePane_2">
+				<!-- nested divs because wipeIn()/wipeOut() doesn't work right on node w/padding etc.  Put padding on inner div. -->
+			
+		<div id="kc_widget_search_SearchResultFacets_0" dir="ltr" lang="de" class="searchResultFacets dijitTitlePane-child" widgetid="kc_widget_search_SearchResultFacets_0">
+	<div class="searchResultFacet" data-dojo-attach-point="_dateFacet">
+	    <div class="searchResultFacetList">
+	        <div class="overallItemContainer">
+	            <div class="facetCategory">Datumsbereich</div>
+		        <div data-dojo-attach-point="_dateFacetList"><div><div class="displayInlineBlock searchResultFacetItem" tabindex="0" data-dojo-attach-point="_content" data-dojo-attach-event="onclick:_onclick, onkeypress:_onkeypress" id="fpastWeek" widgetid="fpastWeek">Letzte Woche</div><div class="dijitToolbarSeparator dijitInline" role="presentation" id="dijit_ToolbarSeparator_0" widgetid="dijit_ToolbarSeparator_0"></div><div class="displayInlineBlock searchResultFacetItem" tabindex="0" data-dojo-attach-point="_content" data-dojo-attach-event="onclick:_onclick, onkeypress:_onkeypress" id="fpastMonth" widgetid="fpastMonth">Letzter Monat</div><div class="dijitToolbarSeparator dijitInline" role="presentation" id="dijit_ToolbarSeparator_1" widgetid="dijit_ToolbarSeparator_1"></div><div class="displayInlineBlock searchResultFacetItem" tabindex="0" data-dojo-attach-point="_content" data-dojo-attach-event="onclick:_onclick, onkeypress:_onkeypress" id="fpastYear" widgetid="fpastYear">Letztes Jahr</div></div><div><a class="idxLink idxLinkDerived searchResultFacetItem" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="idx_form_Link_9" widgetid="idx_form_Link_9" href="javascript:;">Angepasster Bereich</a><div class="dijitToolbarSeparator dijitInline" role="presentation" id="dijit_ToolbarSeparator_2" widgetid="dijit_ToolbarSeparator_2"></div><div class="displayInlineBlock searchResultFacetItem" tabindex="0" data-dojo-attach-point="_content" data-dojo-attach-event="onclick:_onclick, onkeypress:_onkeypress" id="fanytime" widgetid="fanytime">Beliebige Zeit</div><div class="searchResultFacetItem" id="fsfc" widgetid="fsfc">
+<table role="presentation">
+<tbody><tr><td><label for="datePicker1">Von</label></td><td><div class="dijit dijitReset dijitInline dijitLeft dijitTextBox dijitComboBox dijitDateTextBox idxIconPicker idxDatePicker" id="widget_datePicker1" role="combobox" widgetid="datePicker1"><div class="dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer" data-dojo-attach-point="_buttonNode, _popupStateNode" role="presentation"><input class="dijitReset dijitInputField dijitArrowButtonInner" value="▼ " type="text" tabindex="-1" readonly="readonly" role="presentation"></div><div class="dijitReset dijitValidationContainer"><input class="dijitReset dijitInputField dijitValidationIcon dijitValidationInner" value="Χ " type="text" tabindex="-1" readonly="readonly" role="presentation"></div><div class="dijitReset dijitInputField dijitInputContainer"><input class="dijitReset dijitInputInner" type="text" autocomplete="off" data-dojo-attach-point="textbox,focusNode" role="textbox" aria-haspopup="true" aria-invalid="false" tabindex="0" id="datePicker1" value=""><input type="hidden" value=""></div><div class="dijitInline idxPickerIconLink" title="Zum Öffnen der Auswahlfunktion für das Datum hier klicken" tabindex="0"><img class="idxPickerIcon idxCalendarIcon" alt="Zum Öffnen der Auswahlfunktion für das Datum hier klicken" src="./IBM Knowledge Center_files/blank.gif"><div class="idxPickerTextIcon">▼</div></div></div></td><td>&nbsp;</td></tr>
+<tr><td><label for="datePicker2">Bis</label></td><td><div class="dijit dijitReset dijitInline dijitLeft dijitTextBox dijitComboBox dijitDateTextBox idxIconPicker idxDatePicker" id="widget_datePicker2" role="combobox" widgetid="datePicker2"><div class="dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer" data-dojo-attach-point="_buttonNode, _popupStateNode" role="presentation"><input class="dijitReset dijitInputField dijitArrowButtonInner" value="▼ " type="text" tabindex="-1" readonly="readonly" role="presentation"></div><div class="dijitReset dijitValidationContainer"><input class="dijitReset dijitInputField dijitValidationIcon dijitValidationInner" value="Χ " type="text" tabindex="-1" readonly="readonly" role="presentation"></div><div class="dijitReset dijitInputField dijitInputContainer"><input class="dijitReset dijitInputInner" type="text" autocomplete="off" data-dojo-attach-point="textbox,focusNode" role="textbox" aria-haspopup="true" aria-invalid="false" tabindex="0" id="datePicker2" value=""><input type="hidden" value=""></div><div class="dijitInline idxPickerIconLink" title="Zum Öffnen der Auswahlfunktion für das Datum hier klicken" tabindex="0"><img class="idxPickerIcon idxCalendarIcon" alt="Zum Öffnen der Auswahlfunktion für das Datum hier klicken" src="./IBM Knowledge Center_files/blank.gif"><div class="idxPickerTextIcon">▼</div></div></div></td><td><span class="dijit dijitReset dijitInline dijitButton idxButtonDerived" role="presentation" widgetid="dijit_form_Button_5"><span class="dijitReset dijitInline dijitButtonNode" data-dojo-attach-event="ondijitclick:_onClick" role="presentation"><span class="dijitReset dijitStretch dijitButtonContents" data-dojo-attach-point="titleNode,focusNode" role="button" aria-labelledby="dijit_form_Button_5_label" tabindex="0" id="dijit_form_Button_5"><span class="dijitReset dijitInline dijitIcon dijitNoIcon" data-dojo-attach-point="iconNode"></span><span class="dijitReset dijitToggleButtonIconChar">●</span><span class="dijitReset dijitInline dijitButtonText" id="dijit_form_Button_5_label" data-dojo-attach-point="containerNode">OK</span></span></span><input type="button" value="" class="dijitOffScreen" tabindex="-1" role="presentation" data-dojo-attach-point="valueNode"></span></td></tr>
+</tbody></table>
+</div></div></div>
+		    </div>
+		</div>
+	</div>
+	<!-- task 55802, Removing "info type" from KC 1. 5 search results , will enable this function in future version -->
+	<!--
+	<div class="searchResultFacet" data-dojo-attach-point="_infoTypeFacet">
+		<div class="searchResultFacetList">
+			<div class="searchResultFacetOpenLink" data-dojo-type="idx.form.Link" data-dojo-attach-point="_moreTypeFacets" title="Weitere Suchfacetten" label="&nbsp;"></div>
+			<div class="overallItemContainer">
+				<div class="facetCategory">Inhaltstypen</div>
+				<div data-dojo-attach-point="_infoTypeFacetList"></div>
+			</div>
+		</div>
+	</div>
+	 -->
+	<div class="searchResultFacet" data-dojo-attach-point="_taskFacet">
+		<div class="searchResultFacetList">
+			<a class="idxLink idxLinkDerived searchResultFacetOpenLink" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="idx_form_Link_4" dir="ltr" lang="de" title="Weitere Suchfacetten" widgetid="idx_form_Link_4" href="javascript:;"><label class="hidden">Weitere Suchfacetten</label></a>
+			<div class="overallItemContainer">
+				<div class="facetCategory">Tasks</div>
+				<div data-dojo-attach-point="_taskFacetList"></div>
+			</div>
+		</div>
+	</div>
+	<div class="searchResultFacet" data-dojo-attach-point="_osFacet">
+		<div class="searchResultFacetList">
+				<a class="idxLink idxLinkDerived searchResultFacetOpenLink" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="idx_form_Link_5" dir="ltr" lang="de" title="Weitere Suchfacetten" widgetid="idx_form_Link_5" href="javascript:;"><label class="hidden">Weitere Suchfacetten</label></a>
+				<div class="overallItemContainer">
+					<div class="facetCategory">Betriebssysteme</div>
+					<div data-dojo-attach-point="_osFacetList"></div>
+				</div>
+		</div>
+	</div>
+</div>		
+	</div>
+		</div>
+	</div>
+</div>
+	
+	<a data-dojo-attach-point="focusAccessKey" accesskey="z" tabindex="-1" style="display:none;"></a>
+</div>
+					</div><div class="dijitSplitter dojoxToggleSplitter dijitSplitterV dojoxToggleSplitterLeft dijitAlignLeft" dojoattachevent="onkeypress:_onKeyPress,onmousedown:_startDrag,onmouseenter:_onMouse,onmouseleave:_onMouse" id="dijit_layout_ContentPane_2_splitter" widgetid="dijit_layout_ContentPane_2_splitter" aria-controls="dijit_layout_ContentPane_2" aria-expanded="true" role="region" style="left: 311px; top: 27px; position: absolute; height: 830px;" aria-label="Splitter für Navigation"><div dojoattachpoint="toggleNode" class="dijitSplitterThumb dojoxToggleSplitterIcon dojoxToggleSplitterLeftIconOpen" tabindex="0" role="separator" dojoattachevent="onmousedown:_onToggleNodeMouseDown,onclick:_toggle,onmouseenter:_onToggleNodeMouseMove,onmouseleave:_onToggleNodeMouseMove,onfocus:_onToggleNodeMouseMove,onblur:_onToggleNodeMouseMove"><span class="dojoxToggleSplitterA11y" dojoattachpoint="a11yText">◀</span></div></div>
+	
+					<div data-dojo-type="dijit.layout.StackContainer" dolayout="true" data-dojo-attach-point="_contentStackContainer" style="width: 1554px; height: 830px; left: 316px; top: 27px; position: absolute;" data-dojo-props="&#39;class&#39;:&#39;contentFrame&#39;, region: &#39;center&#39;" role="main" class="dijitStackContainer dijitContainer dijitLayoutContainer contentFrame dijitBorderContainerNoGutter-child dijitBorderContainerNoGutter-dijitStackContainer dijitBorderContainerNoGutterPane dijitAlignCenter" id="dijit_layout_StackContainer_2" dir="ltr" lang="de" widgetid="dijit_layout_StackContainer_2">
+						<div data-dojo-type="dijit.layout.ContentPane" class="dijitContentPane contentPlaceHolder welcomePlaceholder iframeContainer dijitStackContainer-child dijitStackContainer-dijitContentPane dijitHidden" data-dojo-attach-point="_kcWelcomePlaceholder" tabindex="0" title="" role="presentation" id="dijit_layout_ContentPane_3" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_3" style="left: 0px; top: 0px; width: 1554px; height: 874px;"></div>
+						<div data-dojo-type="dijit.layout.ContentPane" class="dijitContentPane contentPlaceHolder collectionsWelcomePlaceholder dijitStackContainer-child dijitStackContainer-dijitContentPane dijitHidden" data-dojo-attach-point="_myCollectionsWelcomePlaceholder" tabindex="0" title="" role="presentation" id="dijit_layout_ContentPane_4" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_4"></div>
+						<div data-dojo-type="dijit.layout.ContentPane" class="dijitContentPane contentPlaceHolder searchResultsPlaceholder dijitStackContainer-child dijitStackContainer-dijitContentPane dijitHidden" data-dojo-attach-point="_searchResultsPlaceholder" tabindex="0" title="" role="presentation" id="dijit_layout_ContentPane_5" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_5"></div>
+						<div data-dojo-type="dijit.layout.ContentPane" class="dijitContentPane contentPlaceHolder topicPlaceholder iframeContainer dijitStackContainer-child dijitStackContainer-dijitContentPane dijitVisible" data-dojo-attach-point="_topicPlaceholder" tabindex="0" title="" role="presentation" id="dijit_layout_ContentPane_6" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_6" style="left: 0px; top: 0px; width: 1554px; height: 830px;"><div id="kc_widget_topic_TopicViewer_0" widgetid="kc_widget_topic_TopicViewer_0" class="content">
+	<div class="topicBreadcrumbs" data-dojo-attach-point="container" id="kc_widget_topic_TopicBreadcrumbs_0" widgetid="kc_widget_topic_TopicBreadcrumbs_0"><span tabindex="0" dir="ltr">ILOG CPLEX Optimization Studio 12.6.2</span></div>
+    <div style="display:none" id="topicMsg" dojoattachpoint="_topicMsgNode"><br>&nbsp;</div>  
+	<!-- The topic content iframe or a TopicNav instance will be under this -->
+	<div data-dojo-attach-point="_content"><div class="topicIFrameContainer" id="kc_widget_topic_TopicIFrameContainer_0" widgetid="kc_widget_topic_TopicIFrameContainer_0"><iframe frameborder="0" title="Themenanzeige" maxavailableheight="true" class="topicVieverIFrame" src="./IBM Knowledge Center_files/opl_languser.html" style="height: 710px;"></iframe></div></div>
+	
+	<div class="topicActionBar2" data-dojo-attach-point="_actionbar" id="kc_widget_topic_TopicActionBar2_0" widgetid="kc_widget_topic_TopicActionBar2_0">
+
+	
+
+	 	
+		
+		
+		 <!-- This is used by Welcome and Topic action bars -->
+		 <div id="widget_idx_oneui_form_Select_0" class="dijitInline dijitReset dijitLeft idxComposite toolBarAction toolBarLanguageMenu idxSelectWrap" dojoattachpoint="_popupStateNode" widgetid="idx_oneui_form_Select_0"><div class="idxLabel dijitInline"><span class="idxRequiredIcon">*&nbsp;</span><label for="idx_oneui_form_Select_0" dojoattachpoint="compLabelNode">Andere Sprachen</label></div><div class="dijitInline"><table class="dijit dijitReset dijitInline dijitLeft dijitDownArrowButton dijitSelect" dojoattachpoint="_aroundNode,_buttonNode,tableNode,focusNode,stateNode,oneuiBaseNode" cellspacing="0" cellpadding="0" role="listbox" aria-haspopup="true" tabindex="-1" id="idx_oneui_form_Select_0" title="Verfügbare Sprachen für dieses Thema" aria-live="assertive" aria-disabled="false" aria-invalid="false"><tbody role="presentation"><tr role="presentation"><td class="dijitReset dijitStretch dijitButtonContents dijitButtonNode" role="presentation"><span class="dijitReset dijitInline dijitButtonText" dojoattachpoint="containerNode"><span class="dijitReset dijitInline idxSelectWrapLabel" role="option" tabindex="0">Andere Sprachen</span></span><input type="hidden" dojoattachpoint="valueNode" value="" aria-hidden="true"></td><td class="dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton" dojoattachpoint="titleNode" role="presentation"><div class="dijitReset dijitArrowButtonInner" role="presentation"></div><div class="dijitReset dijitArrowButtonChar" role="presentation">▼</div></td></tr></tbody></table></div><div class="idxUnit dijitInline dijitHidden" dojoattachpoint="compUnitNode"></div><div class="dijitReset dijitValidationContainer dijitInline" dojoattachpoint="iconNode"><div class="dijitValidationIcon"><input class="dijitReset dijitInputField dijitValidationInner" value="Χ " type="text" tabindex="-1" readonly="readonly" role="presentation"></div></div></div>
+		 
+		
+		
+	
+
+	
+
+	
+	<span class="dijitInline idxLinkDerived dijitDownArrowButton toolBarAction otherVersions idxDropDownLink" role="listbox" wairole="button" aria-labelledby="idx_form_DropDownLink_0_link" aria-haspopup="true" tabindex="0" dojoattachpoint="containerNode, _arrowWrapperNode, _buttonNode, _aroundNode, focusNode" dojoattachevent="onclick:_onClick" id="idx_form_DropDownLink_0" widgetid="idx_form_DropDownLink_0" aria-live="assertive"><a id="idx_form_DropDownLink_0_link" tabindex="-1" dojoattachpoint="linkNode" class="idxDropDownLinkAnchor" href="javascript:;">Andere Versionen</a><span tabindex="-1" role="presentation" wairole="presentation" class="dijitReset dijitInline dijitArrowButtonInner"></span><span tabindex="-1" role="presentation" wairole="presentation" class="dijitReset dijitInline dijitArrowButtonChar">▼</span></span>
+	
+	 
+</div>
+	<div class="commentPane clearBoth" role="complementary" aria-label="Kommentare" id="kc_widget_topic_Comment_0" widgetid="kc_widget_topic_Comment_0">
+	<div class="commentDisclaimer" data-dojo-attach-point="commentDisclaimer">Wenn Sie einen Kommentar hinzufügen, akzeptieren Sie die <a class="idxLink idxLinkDerived" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="link" wairole="link" id="idx_form_Link_11" href="http://www-01.ibm.com/support/knowledgecenter/doc/de/kc_termsofuse.html" widgetid="idx_form_Link_11">Nutzungsbedingungen des IBM Knowledge Centers</a>. Ihre auf der IBM Knowledge Center-Site eingegebenen Kommentare stellen nicht die Ansichten oder Meinungen von IBM dar. IBM behält sich das Recht vor, Kommentare nach eigenem Ermessen von dieser Site zu entfernen. IBM ist für die von Ihnen eingestellten Kommentare nicht verantwortlich, führt keine Überprüfung auf Fehlerfreiheit oder Richtigkeit durch und erteilt keine Bestätigung dafür. Die Veröffentlichung Ihres Kommentars bedeutet nicht, dass IBM dessen Inhalt billigt. Alle IBM Kommentare werden im gegenwärtigen Zustand bereitgestellt und sind ohne Gewähr. </div>
+	
+	<div class="dijitTitlePane idxContentPane dijitContainer idxTitlePane" title="" id="idx_layout_TitlePane_3" widgetid="idx_layout_TitlePane_3">
+	<div data-dojo-attach-event="onclick:_onTitleClick, onkeypress:_onTitleKey" class="dijitTitlePaneTitle dijitOpen" data-dojo-attach-point="titleBarNode">
+		<div class="dijitTitlePaneTitleFocus idxTitlePaneNoCollapse" data-dojo-attach-point="focusNode" role="presentation" aria-controls="idx_layout_TitlePane_3_pane" tabindex="0" style="height: 14px;">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="arrowNode" class="dijitArrowNode" role="presentation"><span data-dojo-attach-point="arrowNodeInner" class="dijitArrowNodeInner">-</span><span data-dojo-attach-point="titleNode" class="dijitTitlePaneTextNode" style="width: auto; height: auto;"><span data-dojo-attach-point="titleRow">	<!-- this will be moved inside the titleNode of the titlePane -->
+		<span class="commentLabel" data-dojo-attach-point="commentCountLabel" id="kcCommentLabel" title="Kommentare">Kommentare (0)</span>
+		<a class="idxLink idxLinkDerived commentAddLink" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="button" wairole="link" id="idx_form_Link_10" widgetid="idx_form_Link_10" href="javascript:;">Kommentar hinzufügen</a>
+		<span class="commentLabel hidden" data-dojo-attach-point="commentMaxLabel" aria-label="Diesem Thema können keine weiteren Kommentare hinzugefügt werden." title="Diesem Thema können keine weiteren Kommentare hinzugefügt werden.">Diesem Thema können keine weiteren Kommentare hinzugefügt werden.</span>		
+	</span></span>
+		<div class="idxTitlePaneActions" style="width: auto; height: auto;"></div></div>
+	</div>
+	<div class="dijitTitlePaneContentOuter" data-dojo-attach-point="hideNode" role="presentation">
+		<div class="dijitReset" data-dojo-attach-point="wipeNode" role="presentation">
+			<div class="dijitTitlePaneContentInner" data-dojo-attach-point="containerNode" role="region" id="idx_layout_TitlePane_3_pane" aria-hidden="false" aria-labelledby="kcCommentLabel">
+				<!-- nested divs because wipeIn()/wipeOut() doesn't work right on node w/padding etc.  Put padding on inner div. -->
+			
+		<div class="commentMsgNode" data-dojo-attach-point="msgNode">Keine Kommentare</div>	
+		<div class="" data-dojo-attach-point="treeContainer"><div class="dijitTree dijitTreeContainer" role="presentation" data-dojo-attach-event="onkeypress:_onKeyPress" id="dijit_Tree_1" widgetid="dijit_Tree_1" tabindex="0">
+	<div class="dijitInline dijitTreeIndent" style="position: absolute; top: -9999px" data-dojo-attach-point="indentDetector"></div>
+<div class="dijitTreeNode dijitTreeNodeUNCHECKED dijitUNCHECKED dijitTreeIsRoot" role="presentation" id="kc_widget_common__KCi18nMixin_1" widgetid="kc_widget_common__KCi18nMixin_1" style="background-position: 0px 0px;"><div data-dojo-attach-point="rowNode" class="dijitTreeRow" role="presentation" data-dojo-attach-event="onmouseenter:_onMouseEnter, onmouseleave:_onMouseLeave, onclick:_onClick, ondblclick:_onDblClick" style="padding-left: 0px; display: none;"><img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="expandoNode" class="dijitTreeExpando dijitTreeExpandoLeaf" role="presentation"><span data-dojo-attach-point="expandoNodeText" class="dijitExpandoText" role="presentation">*</span><span data-dojo-attach-point="contentNode" class="dijitTreeContent dijitTreeContentExpanded" role="presentation">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" data-dojo-attach-point="iconNode" class="dijitIcon dijitTreeIcon dijitFolderOpened" role="presentation"><span data-dojo-attach-point="labelNode" class="dijitTreeLabel hidden" role="presentation" tabindex="-1" data-dojo-attach-event="onfocus:_onLabelFocus">undefined</span>
+		<div class="commentItem" id="kc_widget_topic_CommentItem_1" widgetid="kc_widget_topic_CommentItem_1">
+	<div class="commentTitleBar" data-dojo-attach-point="titlebarNode">
+		<!-- DISABLED FOR KC R1.5 -->
+		<!-- 
+		<span data-dojo-type="idx.form.Link" class="commentEditLink" data-dojo-attach-point="editLink">Bearbeiten</span>
+		<span data-dojo-type="idx.form.Link" class="commentDeleteLink" data-dojo-attach-point="deleteLink">Löschen</span>
+		 -->
+		<span class="commentTitle" data-dojo-attach-point="titleNode"></span> 
+		<span class="commentInfo" data-dojo-attach-point="author_dateNode"></span>
+	</div>
+	  
+	<div class="commentBody clearBoth" data-dojo-attach-point="bodyNode">	
+		<div class="commentContent" data-dojo-attach-point="contentNode"></div>
+		
+		<div>
+			<a class="idxLink idxLinkDerived commentResponseLink" dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0" alt="" role="button" wairole="link" id="idx_form_Link_17" widgetid="idx_form_Link_17" href="javascript:;">Antwort hinzufügen</a>&nbsp;
+		</div>
+		
+		<div data-dojo-attach-point="editorNode"></div> 
+	</div>
+</div></span></div>
+	<div data-dojo-attach-point="containerNode" class="dijitTreeContainer" role="presentation" style="height: auto;"></div>
+</div></div></div>
+	</div>
+		</div>
+	</div>
+</div>
+</div>
+</div></div>
+						<div data-dojo-type="dijit.layout.ContentPane" class="dijitContentPane contentPlaceHolder collectionPlaceholder dijitStackContainer-child dijitStackContainer-dijitContentPane dijitHidden" data-dojo-attach-point="_collectionPlaceholder" tabindex="0" title="" role="presentation" id="dijit_layout_ContentPane_7" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_7"></div>					
+					</div>
+					<a data-dojo-attach-point="focusAccessKey" accesskey="v" tabindex="-1" style="display:none;"></a>	
+				</div>
+				
+				<div data-dojo-type="dijit.layout.ContentPane" data-dojo-attach-point="_relatedContentContainer" data-dojo-props="splitter: &#39;toggle&#39;, minSize: 225, maxSize: 225, splitterTag:&#39;relatedContentToggle&#39;, toggleSplitterState: &#39;closed&#39;, &#39;class&#39;:&#39;relatedContentFrame&#39;, region: &#39;trailing&#39; " class="dijitContentPane relatedContentFrame dijitBorderContainerNoGutter-child dijitBorderContainerNoGutter-dijitContentPane dijitBorderContainerNoGutterPane dijitAlignRight" title="" role="presentation" id="dijit_layout_ContentPane_8" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_8" style="overflow: hidden; visibility: hidden; width: 0px; padding: 0px; margin: 0px; border-width: 0px; left: 1870px; top: 10px; position: absolute; height: 857px; display: none;">
+					<div class="relatedContentFrameContent" id="kc_frame_RelatedContent_0" dir="ltr" lang="de" widgetid="kc_frame_RelatedContent_0" role="complementary" aria-label="Zugehörige Informationen">
+	<div data-dojo-type="dijit.layout.StackContainer" dolayout="true" data-dojo-attach-point="_relatedContentContainer" data-dojo-props="&#39;class&#39;:&#39;relatedContentContainer&#39;" class="dijitStackContainer dijitContainer dijitLayoutContainer relatedContentContainer" id="dijit_layout_StackContainer_3" dir="ltr" lang="de" widgetid="dijit_layout_StackContainer_3">
+		<div data-dojo-attach-point="_productRelatedContentPlaceholder"></div>
+	</div>			
+</div>
+				</div><div class="dijitSplitter dojoxToggleSplitter dijitSplitterV dojoxToggleSplitterRight dijitAlignRight" dojoattachevent="onkeypress:_onKeyPress,onmousedown:_startDrag,onmouseenter:_onMouse,onmouseleave:_onMouse" id="dijit_layout_ContentPane_8_splitter" widgetid="dijit_layout_ContentPane_8_splitter" aria-controls="dijit_layout_ContentPane_8" aria-expanded="false" role="region" style="cursor: auto; left: 1870px; top: 10px; position: absolute; height: 857px; display: none;" aria-label="Splitter für zugehörige Informationen"><div dojoattachpoint="toggleNode" class="dijitSplitterThumb dojoxToggleSplitterIcon dojoxToggleSplitterRightIconClosed" tabindex="0" role="separator" dojoattachevent="onmousedown:_onToggleNodeMouseDown,onclick:_toggle,onmouseenter:_onToggleNodeMouseMove,onmouseleave:_onToggleNodeMouseMove,onfocus:_onToggleNodeMouseMove,onblur:_onToggleNodeMouseMove"><span class="dojoxToggleSplitterA11y" dojoattachpoint="a11yText">◀</span></div></div>
+			</div>
+	
+			<!-- Make the filter pane hidden initially, otherwise it shows up for a split second when loading KC. Display will be set to visible automatically by dijit when the stack container shows this pane -->
+			<div data-dojo-type="dijit.layout.ContentPane" style="display: none;" data-dojo-props="&#39;class&#39;:&#39;filter&#39;" data-dojo-attach-point="_kcFilter" class="dijitContentPane filter dijitStackContainer-child dijitStackContainer-dijitContentPane dijitHidden" title="" role="presentation" id="dijit_layout_ContentPane_9" dir="ltr" lang="de" widgetid="dijit_layout_ContentPane_9">
+				<div class="filterPane" role="dialog" aria-labelledby="kcFilterPanelTitle" id="kc_widget_search_FilterPane_0" dir="ltr" lang="de" widgetid="kc_widget_search_FilterPane_0">
+    <div class="filterPaneTitleBar">
+        <span id="kcFilterPanelTitle" class="filterPaneTitle">Suchkriterien</span>
+        <div class="filterButton">
+            <span class="dijit dijitReset dijitInline dijitButton idxButtonDerived filterApplyButton" role="presentation" dir="ltr" lang="de" widgetid="dijit_form_Button_3"><span class="dijitReset dijitInline dijitButtonNode" data-dojo-attach-event="ondijitclick:_onClick" role="presentation"><span class="dijitReset dijitStretch dijitButtonContents" data-dojo-attach-point="titleNode,focusNode" role="button" aria-labelledby="dijit_form_Button_3_label" tabindex="0" id="dijit_form_Button_3"><span class="dijitReset dijitInline dijitIcon dijitNoIcon" data-dojo-attach-point="iconNode"></span><span class="dijitReset dijitToggleButtonIconChar">●</span><span class="dijitReset dijitInline dijitButtonText" id="dijit_form_Button_3_label" data-dojo-attach-point="containerNode">Fertig</span></span></span><input type="button" value="" class="dijitOffScreen" tabindex="-1" role="presentation" data-dojo-attach-point="valueNode"></span>
+            <span class="dijit dijitReset dijitInline dijitButton idxButtonDerived filterCancelButton idxSecondaryButton" role="presentation" dir="ltr" lang="de" widgetid="dijit_form_Button_4"><span class="dijitReset dijitInline dijitButtonNode" data-dojo-attach-event="ondijitclick:_onClick" role="presentation"><span class="dijitReset dijitStretch dijitButtonContents" data-dojo-attach-point="titleNode,focusNode" role="button" aria-labelledby="dijit_form_Button_4_label" tabindex="0" id="dijit_form_Button_4"><span class="dijitReset dijitInline dijitIcon dijitNoIcon" data-dojo-attach-point="iconNode"></span><span class="dijitReset dijitToggleButtonIconChar">●</span><span class="dijitReset dijitInline dijitButtonText" id="dijit_form_Button_4_label" data-dojo-attach-point="containerNode">Abbrechen</span></span></span><input type="button" value="" class="dijitOffScreen" tabindex="-1" role="presentation" data-dojo-attach-point="valueNode"></span>
+        </div>
+        <div class="filterPaneTip">Wählen Sie Filter aus, um die Suche einzugrenzen</div>
+    </div>
+    <div class="filterContent">
+        <div class="filterLabel">Produkte</div>
+		<div data-dojo-attach-point="_productTreePlaceholder" id="productTree"></div>
+    </div>
+</div>
+			</div>
+		</div>
+	</div>
+		<div id="kc_frame_Footer_0" dir="ltr" lang="de" role="contentinfo" class="footerFrame dijitAlignBottom dijitBorderContainerNoGutter-child dijitBorderContainerNoGutterPane" widgetid="kc_frame_Footer_0" style="left: 0px; top: 985px; position: absolute; width: 1920px;">
+	<div class="footerFrameContent">	
+		<div class="footerContent">
+		  <ul>
+		    <li><a href="javascript:void(0);" title="Kontakt" class="contact ibm-intercept-exit-survey" data-dojo-attach-point="_contactLink">Kontakt</a></li>
+		    <li><a href="javascript:void(0);" title="Datenschutz" class="privacy ibm-intercept-exit-survey" data-dojo-attach-point="_privacyLink">Datenschutz</a></li>
+		    <li><a href="javascript:void(0);" title="Nutzungsbedingungen" class="termsOfUse ibm-intercept-exit-survey" data-dojo-attach-point="_termsOfUseLink">Nutzungsbedingungen</a></li>
+		    <li><a href="javascript:void(0);" title="Behindertengerechte Bedienung" class="accessibility ibm-intercept-exit-survey" data-dojo-attach-point="_accessibilityLink">Behindertengerechte Bedienung</a></li>
+		    <li><a href="javascript:void(0);" title="Hilfe" class="help ibm-intercept-exit-survey" data-dojo-attach-point="_helpLink">Hilfe</a></li>
+		    <li><a href="javascript:void(0);" title="Feedback" class="feedback feedbackIcon" data-dojo-attach-point="_feedbackLink">Feedback</a></li>
+		    <li></li>
+		  </ul>
+		</div>
+		<div data-dojo-attach-point="_languageChooserContainer" class="languageChooserContainer separator">
+			<div id="widget_languageChooser" class="dijitInline dijitReset dijitLeft idxComposite idxSelectWrap languageChooser" dojoattachpoint="_popupStateNode" dir="ltr" lang="de" widgetid="languageChooser"><div class="idxLabel dijitInline"><span class="idxRequiredIcon">*&nbsp;</span><label for="languageChooser" dojoattachpoint="compLabelNode">Sprache</label></div><div class="dijitInline"><table class="dijit dijitReset dijitInline dijitLeft dijitDownArrowButton dijitSelect" dojoattachpoint="_aroundNode,_buttonNode,tableNode,focusNode,stateNode,oneuiBaseNode" cellspacing="0" cellpadding="0" role="listbox" aria-haspopup="true" tabindex="-1" id="languageChooser" title="Sprache" aria-invalid="false"><tbody role="presentation"><tr role="presentation"><td class="dijitReset dijitStretch dijitButtonContents dijitButtonNode" role="presentation"><span class="dijitReset dijitInline dijitButtonText" dojoattachpoint="containerNode"><span class="dijitReset dijitInline idxSelectWrapLabel" role="option" tabindex="0">Deutsch</span></span><input type="hidden" dojoattachpoint="valueNode" value="de" aria-hidden="true"></td><td class="dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton" dojoattachpoint="titleNode" role="presentation"><div class="dijitReset dijitArrowButtonInner" role="presentation"></div><div class="dijitReset dijitArrowButtonChar" role="presentation">▼</div></td></tr></tbody></table></div><div class="idxUnit dijitInline dijitHidden" dojoattachpoint="compUnitNode"></div><div class="dijitReset dijitValidationContainer dijitInline" dojoattachpoint="iconNode"><div class="dijitValidationIcon"><input class="dijitReset dijitInputField dijitValidationInner" value="Χ " type="text" tabindex="-1" readonly="readonly" role="presentation"></div></div></div>
+		</div>
+	</div>
+</div>	
+	</div>
+	
+</div>
+	<div class="dijitHidden oneuiToaster" data-dojo-attach-event="onmouseover:_onMouseOver,onmouseout:_onMouseOut" id="kcToaster" lang="de" dir="ltr" role="alert" widgetid="kcToaster" style="z-index: 9;"><span data-dojo-attach-event="onclick:reset" class="close"></span><ul data-dojo-attach-point="messageList"></ul><div class="reveal"><a href="http://www-01.ibm.com/support/knowledgecenter/SSSA5P_12.6.2/ilog.odms.studio.help/pdf/opl_languser.pdf#">View All (<span data-dojo-attach-point="overflowCountNode"></span>)...</a></div></div>
+
+
+<div class="idxDialog signInDialog" role="dialog" title="" id="idx_oneui_Dialog_0" widgetid="idx_oneui_Dialog_0" style="display: none; position: absolute; border: none; overflow: hidden;" aria-label="Anmelden">
+	
+		
+	<div dojoattachpoint="contentWrapper" class="compact">
+		<div dojoattachpoint="containerNode" class="dijitDialogPaneContent" tabindex="0">
+		
+		<iframe src="" style="height: 257px; width: 508px; border: 0" data-dojo-attach-point="_signinIframe" title="Anmelden"></iframe>
+	</div>
+	</div>
+	
+</div><ul role="menu" data-dojo-attach-point="_ibmMenu" id="ibmMenu">
+  				<li><a href="javascript:void(0);" role="menuitem" title="Analytics" class="analytics ibm-intercept-exit-survey" data-dojo-attach-point="_analyticsLink">Analytics</a></li>
+  				<li><a href="javascript:void(0);" role="menuitem" title="Cloud" class="cloud ibm-intercept-exit-survey" data-dojo-attach-point="_cloudLink">Cloud</a></li>
+  				<li><a href="javascript:void(0);" role="menuitem" title="Commerce" class="commerce ibm-intercept-exit-survey" data-dojo-attach-point="_commerceLink">Commerce</a></li>
+  				<li><a href="javascript:void(0);" role="menuitem" title="MobileFirst" class="mobilefirst ibm-intercept-exit-survey" data-dojo-attach-point="_mobilefirstLink">MobileFirst</a></li>
+  				<li><a href="javascript:void(0);" role="menuitem" title="Security" class="security ibm-intercept-exit-survey" data-dojo-attach-point="_securityLink">Security</a></li>
+  				<li><a href="javascript:void(0);" role="menuitem" title="Watson" class="watson ibm-intercept-exit-survey" data-dojo-attach-point="_watsonLink">Watson</a></li>
+  				<li class="menu-divider" tabindex="0"></li>
+			    <li><a href="javascript:void(0);" role="menuitem" title="Products &amp; Solutions" class="products_and_solutions ibm-intercept-exit-survey" data-dojo-attach-point="_products_and_solutionsLink">Products &amp; Solutions</a></li>
+			    <li><a href="javascript:void(0);" role="menuitem" title="Services" class="services ibm-intercept-exit-survey" data-dojo-attach-point="_servicesLink">Services</a></li>
+			    <li><a href="javascript:void(0);" role="menuitem" title="Industries" class="industries ibm-intercept-exit-survey" data-dojo-attach-point="_industriesLink">Industries</a></li>
+			    <li><a href="javascript:void(0);" role="menuitem" title="Unterstützung und Downloads" class="support ibm-intercept-exit-survey" data-dojo-attach-point="_supportLink">Unterstützung und Downloads</a></li>
+			    <li><a href="javascript:void(0);" role="menuitem" title="Mein IBM" class="account ibm-intercept-exit-survey" data-dojo-attach-point="_accountLink">Mein IBM</a></li>  			
+  			</ul><div class="dijitPopup" role="region" aria-label="Suche speichern" style="display: none;"><table class="dijit dijitMenu dijitMenuPassive dijitReset dijitMenuTable saveSearchQueryMenu" role="menu" tabindex="0" data-dojo-attach-event="onkeypress:_onKeyPress" cellspacing="0" id="dijit_DropDownMenu_0" dir="ltr" lang="de" aria-label="Suche speichern" widgetid="dijit_DropDownMenu_0" style="top: 0px;">
+	<tbody class="dijitReset" data-dojo-attach-point="containerNode">
+		    <tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_0_text kc_widget_common__DataHolderMixin_0_accel" id="kc_widget_common__DataHolderMixin_0" dir="ltr" lang="de" widgetid="kc_widget_common__DataHolderMixin_0" title="Melden Sie sich an, um diese Suchabfrage zu speichern">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_0_text">Diese Suchabfrage speichern</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_0_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+		    <tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_1_text kc_widget_common__DataHolderMixin_1_accel" id="kc_widget_common__DataHolderMixin_1" dir="ltr" lang="de" widgetid="kc_widget_common__DataHolderMixin_1" title="Melden Sie sich an, um gespeicherte Suchabfragen zu verwalten">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_1_text">Gespeicherte Suchabfragen verwalten</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_1_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+			<tr class="dijitMenuSeparator" id="dijit_MenuSeparator_0" dir="ltr" lang="de" widgetid="dijit_MenuSeparator_0" tabindex="-1">
+	<td class="dijitMenuSeparatorIconCell">
+		<div class="dijitMenuSeparatorTop"></div>
+		<div class="dijitMenuSeparatorBottom"></div>
+	</td>
+	<td colspan="3" class="dijitMenuSeparatorLabelCell">
+		<div class="dijitMenuSeparatorTop dijitMenuSeparatorLabel"></div>
+		<div class="dijitMenuSeparatorBottom"></div>
+	</td>
+</tr>
+			<tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_2_text kc_widget_common__DataHolderMixin_2_accel" id="kc_widget_common__DataHolderMixin_2" dir="ltr" lang="de" widgetid="kc_widget_common__DataHolderMixin_2" style="display: none;">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_2_text"><div class="loading"></div></td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_2_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+			<tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_3_text kc_widget_common__DataHolderMixin_3_accel" id="kc_widget_common__DataHolderMixin_3" dir="ltr" lang="de" widgetid="kc_widget_common__DataHolderMixin_3">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_3_text">Melden Sie sich an, um die gespeicherten Suchoperationen anzuzeigen...</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_3_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+		</tbody>
+</table></div><div class="idxOneuiHoverCard idxOneuiHoverCardLeft dijitTooltipDialog dijitHidden" title="" role="alert" id="idx_oneui_HoverCard_0" widgetid="idx_oneui_HoverCard_0">
+	<div> <span data-dojo-attach-point="closeButtonNode, focusNode" class="idxOneuiHoverCardCloseIcon" data-dojo-attach-event="ondijitclick: hide" role="button" draggable="false" title="Schließen"></span></div>
+	
+	<div data-dojo-attach-point="bodyNode" class="idxOneuiHoverCardBody">	
+		
+		<div class="idxOneuiHoverCardContainer" role="alert" data-dojo-attach-point="containerNode">		
+		</div>
+		
+		
+	</div>
+	<div class="idxOneuiHoverCardConnector" data-dojo-attach-point="connectorNode"></div>
+</div><div class="dijitPopup" role="region" aria-label="Andere Versionen" style="display: none;"><table class="dijit dijitMenu dijitMenuPassive dijitReset dijitMenuTable" role="presentation" tabindex="0" data-dojo-attach-event="onkeypress:_onKeyPress" cellspacing="0" id="dijit_Menu_0" widgetid="dijit_Menu_0" aria-label="Andere Versionen" style="top: 0px;">
+	<tbody class="dijitReset" data-dojo-attach-point="containerNode"></tbody>
+</table></div><div class="dijitPopup" role="region" aria-label="Weitergeben" style="display: none;"><table class="dijit dijitMenu dijitMenuPassive dijitReset dijitMenuTable" role="menu" tabindex="0" data-dojo-attach-event="onkeypress:_onKeyPress" cellspacing="0" id="dijit_Menu_1" widgetid="dijit_Menu_1" aria-label="Weitergeben" style="top: 0px;">
+	<tbody class="dijitReset" data-dojo-attach-point="containerNode">						
+				<tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_4_text kc_widget_common__DataHolderMixin_4_accel" id="kc_widget_common__DataHolderMixin_4" widgetid="kc_widget_common__DataHolderMixin_4">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_4_text">E-Mail</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_4_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+				<tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_5_text kc_widget_common__DataHolderMixin_5_accel" id="kc_widget_common__DataHolderMixin_5" widgetid="kc_widget_common__DataHolderMixin_5">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_5_text">LinkedIn</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_5_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+				<tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_6_text kc_widget_common__DataHolderMixin_6_accel" id="kc_widget_common__DataHolderMixin_6" widgetid="kc_widget_common__DataHolderMixin_6">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_6_text">Twitter</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_6_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+				<!-- 
+				<div data-dojo-type="dijit.MenuItem" data-dojo-attach-point="_shareFacebook" label="Facebook (not working yet)"></div>
+				 -->
+			</tbody>
+</table></div><div class="dijitPopup" role="region" aria-label="Zur Sammlung hinzufügen" style="display: none;"><table class="dijit dijitMenu dijitMenuPassive dijitReset dijitMenuTable" role="menu" tabindex="0" data-dojo-attach-event="onkeypress:_onKeyPress" cellspacing="0" id="dijit_Menu_2" widgetid="dijit_Menu_2" aria-label="Zur Sammlung hinzufügen" style="top: 0px;">
+	<tbody class="dijitReset" data-dojo-attach-point="containerNode">						
+			<tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_7_text kc_widget_common__DataHolderMixin_7_accel" id="kc_widget_common__DataHolderMixin_7" widgetid="kc_widget_common__DataHolderMixin_7">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_7_text">Dieses Thema zu einer bestehenden Sammlung hinzufügen</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_7_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+			<tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_8_text kc_widget_common__DataHolderMixin_8_accel" id="kc_widget_common__DataHolderMixin_8" widgetid="kc_widget_common__DataHolderMixin_8">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_8_text">Dieses Thema zu einer neuen Sammlung hinzufügen</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_8_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+			<tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_9_text kc_widget_common__DataHolderMixin_9_accel" id="kc_widget_common__DataHolderMixin_9" widgetid="kc_widget_common__DataHolderMixin_9">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_9_text">Fügt dieses Thema und seine Unterthemen zu einer bestehenden Sammlung hinzu.</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_9_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>
+			<tr class="dijitReset dijitMenuItem" data-dojo-attach-point="focusNode" role="menuitem" tabindex="-1" data-dojo-attach-event="onmouseenter:_onHover,onmouseleave:_onUnhover,ondijitclick:_onClick" aria-labelledby="kc_widget_common__DataHolderMixin_10_text kc_widget_common__DataHolderMixin_10_accel" id="kc_widget_common__DataHolderMixin_10" widgetid="kc_widget_common__DataHolderMixin_10">
+	<td class="dijitReset dijitMenuItemIconCell" role="presentation">
+		<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitIcon dijitMenuItemIcon dijitNoIcon" data-dojo-attach-point="iconNode">
+	</td>
+	<td class="dijitReset dijitMenuItemLabel" colspan="2" data-dojo-attach-point="containerNode" id="kc_widget_common__DataHolderMixin_10_text">Fügt dieses Thema und seine Unterthemen zu einer neuen Sammlung hinzu.</td>
+	<td class="dijitReset dijitMenuItemAccelKey" style="display: none" data-dojo-attach-point="accelKeyNode" id="kc_widget_common__DataHolderMixin_10_accel"></td>
+	<td class="dijitReset dijitMenuArrowCell" role="presentation">
+		<div data-dojo-attach-point="arrowWrapper" style="visibility: hidden">
+			<img src="./IBM Knowledge Center_files/blank.gif" alt="" class="dijitMenuExpand">
+			<span class="dijitMenuExpandA11y">+</span>
+		</div>
+	</td>
+</tr>				
+		</tbody>
+</table></div></body></html>
