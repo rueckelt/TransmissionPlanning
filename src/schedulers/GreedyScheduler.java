@@ -19,7 +19,7 @@ public class GreedyScheduler extends Scheduler{
 
 	@Override
 	public String getType() {
-		return "priorityMatch";
+		return "greedyFill";
 	}
 	
 	/**
@@ -28,7 +28,7 @@ public class GreedyScheduler extends Scheduler{
 	 * 
 	 * Behavior:
 	 * 
-	 * 1. Order flows according to matching
+	 * 1. Order flows according to criticality
 	 * 2. Schedule flows in this order
 	 * 		2.1. Order networks for each flow according to constraints match
 	 * 		2.2. Try to allocate as much as possible to highest priority network, second highest network,third... from flow-start-time till flow-deadline 
@@ -57,7 +57,7 @@ public class GreedyScheduler extends Scheduler{
 		List<Integer> flow_order = new LinkedList<Integer>();
 		for(int f=0; f<tg.getFlows().size(); f++){
 			flow_order.add(f);
-			flowCriticality.add(CostFunction.calculateFlowCriticality(tg.getFlows().get(f), ng));
+			flowCriticality.add(calculateFlowCriticality(tg.getFlows().get(f), ng));
 		}
 		final List<Integer> flowCrit_tmp=flowCriticality;
 		Collections.sort(flow_order, new Comparator<Integer>() {
@@ -72,55 +72,97 @@ public class GreedyScheduler extends Scheduler{
 			int f0 = flow_order.get(f);
 //			System.out.println("flow "+f0+" criticality decerasing: "+ flowCriticality.get(f0));
 			
-			Flow flow = tg.getFlows().get(f0);	
-			Set<Integer> usedSlots = new HashSet<Integer>(); 
-			int chunksMaxTp = (int)(flow.getChunksMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
-			int chunksToAllocate = flow.getChunks();
-			
-			//sort networks according to match with flow
-			Vector<Integer> networkIDs = sortNetworkIDs(flow);
+			scheduleFlow(f0, true);
+		}
+	}
+
+	/**
+	 * @param flowId
+	 * @param rate boolean if you just need the rating (true) or if it should be scheduled (false)
+	 * rate=true deletes the current schedule. It should be used only on fresh instances/before scheduling. 
+	 */
+	private int scheduleFlow(int flowId, boolean rate) {
+		Flow flow = tg.getFlows().get(flowId);	
+		Set<Integer> usedSlots = new HashSet<Integer>(); 
+		int chunksMaxTp = (int)(flow.getChunksMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
+		int chunksToAllocate = flow.getChunks();
+		
+		//sort networks according to match with flow
+		Vector<Integer> networkIDs = sortNetworkIDs(flow);
 //			System.out.println("Network order: "+networkIDs);
 
 
-	//############## 2. Network choice according to flow matching #################
-			//try to allocate in networks in descending order according to match
-			for(int n =0; n<ng.getNetworks().size() && chunksToAllocate>0; n++){
-				int n0=networkIDs.get(n);
-				Network net = ng_tmp.getNetworks().get(n0);
+//############## 2. Network choice according to flow matching #################
+		//try to allocate in networks in descending order according to match
+		for(int n =0; n<ng.getNetworks().size() && chunksToAllocate>0; n++){
+			int n0=networkIDs.get(n);
+			Network net = ng_tmp.getNetworks().get(n0);
+			
+			//do only allocate if allocation leads to cost reduction
+			if(calcVio(flow, net)<0){
+			//allocate in this network between start time and deadline of flow
+			//do not allocate more than once in same time slot
 				
-				//do only allocate if allocation leads to cost reduction
-				if(calcVio(flow, net)<0){
-				//allocate in this network between start time and deadline of flow
-				//do not allocate more than once in same time slot
-					
-					for(int t=getStartTime(flow); t<=getDeadline(flow) && chunksToAllocate>0;t++){
-						if(!usedSlots.contains(t)){
-		//					System.out.println("time match "+chunksToAllocate);
-							int allocated=0;
-							if(chunksToAllocate<chunksMaxTp){
-								allocated=allocate(f0, t, n0, chunksToAllocate); //do not allocate more chunks than required
-							}else{
-								allocated=allocate(f0, t, n0, chunksMaxTp);
-							}	
-							//System.out.println(chunksToAllocate);
-							chunksToAllocate-=allocated;
-							if(allocated>0){
+				for(int t=getStartTime(flow); t<=getDeadline(flow) && chunksToAllocate>0;t++){
+					if(!usedSlots.contains(t)){
+//					System.out.println("time match "+chunksToAllocate);
+						int allocated=0;
+						if(chunksToAllocate<chunksMaxTp){
+							allocated=allocate(flowId, t, n0, chunksToAllocate); //do not allocate more chunks than required
+						}else{
+							allocated=allocate(flowId, t, n0, chunksMaxTp);
+						}	
+						//System.out.println(chunksToAllocate);
+						chunksToAllocate-=allocated;
+						if(allocated>0){
 //								System.out.println("allocated "+allocated+ " t="+t+" n="+n0 +" remaining "+chunksToAllocate);
-								usedSlots.add(t);	//mark slot as used
-								//remove capacity from network
+							usedSlots.add(t);	//mark slot as used
+							//remove capacity from network
+							if(!rate){
+								//rate=false
 								int remaining_chunks=ng_tmp.getNetworks().get(n0).getCapacity().get(t)-allocated;
-		//						System.out.println(remaining_chunks+" rem, alloc "+ allocated);
+	//							System.out.println(remaining_chunks+" rem, alloc "+ allocated);
 								ng_tmp.getNetworks().get(n0).getCapacity().set(t,remaining_chunks);
-//							}else{
-//								System.out.println("not alloc in t="+t+" n="+n0 +" remaining "+chunksToAllocate + "cap "+net.getCapacity().get(n0)+ "c "+calcVio(flow, net));
+							}else{
+								//rate=true
+								int[][][] sched = getTempSchedule();	//hold schedule
+								setTempSchedule(getEmptySchedule());	//reset schedule
+								return new CostFunction(ng_tmp, tg).costViolation(sched);	//calculate rating
 							}
+							
 						}
 					}
 				}
 			}
 		}
+		return 0;
 	}
 
+	/**
+	 * criticality is worst case schedule cost (flow NOT scheduled) 
+	 * @param f flow
+	 * @param ng available networks
+	 * @return criticality
+	 */
+	private int calculateFlowCriticality(Flow f, NetworkGenerator ng){
+		//calculate violation if flow is NOT scheduled (worst case)
+		//TODO: and subtract violation is flow is scheduled alone (best case)
+		TrafficGenerator tg_temp= new TrafficGenerator();
+		tg_temp.addFlow(f);
+		CostFunction cf = new CostFunction(ng, tg_temp);
+		//get cost with empty schedule (worst case, flow is unscheduled)
+		int cost_wc = cf.costViolation(getEmptySchedule(tg_temp, ng));
+		//cost_wc*=f.getImpUser();
+		//System.out.println("criticality:cost of flow "+getId()+" worst: "+cost_wc);
+		int cost_bc = 0;
+		return cost_wc;//-cost_bc;
+	}
+	
+
+	private int[][][] getEmptySchedule(TrafficGenerator tg, NetworkGenerator ng){
+		return new PriorityScheduler(ng, tg).getEmptySchedule();	//this could be a dummy scheduler.. only need empty schedule from it
+	}
+	
 	/**
 	 * rates for the flow and the remaining capacity of the networks, which networks fit best
 	 * @param flow 
@@ -151,7 +193,12 @@ public class GreedyScheduler extends Scheduler{
 	}
 	
 	
-	//negative, if allocation leads to profit 
+	/**
+	 * 
+	 * @param flow
+	 * @param network
+	 * @return estimation of cost for scheduling a chunk: negative, if allocation is expected to lead to profit 
+	 */
 	private int calcVio(Flow flow, Network network){
 
 				//scheduling may lead to jitter and latency cost
@@ -178,6 +225,7 @@ public class GreedyScheduler extends Scheduler{
 	 * @param flow
 	 * @param net
 	 * @return approximation of how much cost can be saved per chunk if chunk is scheduled
+	 * TODO: I blame this function to overestimate minTp cost.. need evidence!
 	 */
 	private int throughputMatch(Flow flow, Network net){
 		//calculate average capacity of a network per bucket neglecting zero-buckets

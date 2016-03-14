@@ -1,0 +1,172 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+unbounded coords=jump,
+xmin=0.5,
+xmax=4.5,
+xtick={1,2,3,4},
+xticklabels={{1},{2},{4},{8}},
+xlabel={greedy/opt},
+xmajorgrids,
+ymin=0.862676923533426,
+ymax=3.52715991571061,
+ymajorgrids,
+axis background/.style={fill=white}
+]
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	1.73753847350467\\
+1	2.50636855784833\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	1.66851717719975\\
+2	2.35037307429307\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	1.36613932066782\\
+3	1.56951133438512\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+4	1.76225212524614\\
+4	2.34054506408718\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	1.01467114073762\\
+1	1.18006026085521\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	1\\
+2	1.10452896865991\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	1.02761583307763\\
+3	1.12417694739594\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+4	1.06372935743221\\
+4	1.33355777527914\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.875	2.50636855784833\\
+1.125	2.50636855784833\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.875	2.35037307429307\\
+2.125	2.35037307429307\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.875	1.56951133438512\\
+3.125	1.56951133438512\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+3.875	2.34054506408718\\
+4.125	2.34054506408718\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.875	1.01467114073762\\
+1.125	1.01467114073762\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.875	1\\
+2.125	1\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.875	1.02761583307763\\
+3.125	1.02761583307763\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+3.875	1.06372935743221\\
+4.125	1.06372935743221\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+0.75	1.18006026085521\\
+0.75	1.73753847350467\\
+1.25	1.73753847350467\\
+1.25	1.18006026085521\\
+0.75	1.18006026085521\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+1.75	1.10452896865991\\
+1.75	1.66851717719975\\
+2.25	1.66851717719975\\
+2.25	1.10452896865991\\
+1.75	1.10452896865991\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+2.75	1.12417694739594\\
+2.75	1.36613932066782\\
+3.25	1.36613932066782\\
+3.25	1.12417694739594\\
+2.75	1.12417694739594\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+3.75	1.33355777527914\\
+3.75	1.76225212524614\\
+4.25	1.76225212524614\\
+4.25	1.33355777527914\\
+3.75	1.33355777527914\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+0.75	1.53464321334736\\
+1.25	1.53464321334736\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+1.75	1.29462341383285\\
+2.25	1.29462341383285\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+2.75	1.26141379973672\\
+3.25	1.26141379973672\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+3.75	1.58663528516878\\
+4.25	1.58663528516878\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+3	1.84495976141067\\
+3	2.07883442875968\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+4	2.75490015720641\\
+};
+\end{axis}
+\end{tikzpicture}%

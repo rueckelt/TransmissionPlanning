@@ -59,10 +59,10 @@ public class EvaluationScenarioCreator {
 	 */
 	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, TrafficGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-//		schedulers.add(new OptimizationScheduler(ng, tg));
-		schedulers.add(new RandomScheduler(ng, tg, 5000));	//100 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new OptimizationScheduler(ng, tg));
+//		schedulers.add(new RandomScheduler(ng, tg, 5000));	//100 random runs of this scheduler. Returns average duration and cost
 //		schedulers.add(new PriorityScheduler(ng, tg));
-//		schedulers.add(new GreedyScheduler(ng, tg));
+		schedulers.add(new GreedyScheduler(ng, tg));
 		return schedulers;
 	}
 	
@@ -187,6 +187,7 @@ public class EvaluationScenarioCreator {
 					boolean first=true, error=false;
 					int c_opt=0;
 					for (Scheduler scheduler : initSchedulers(ng, tg)) {
+						System.out.print(" "+scheduler.getType());
 						scheduler.calculateInstance(path);
 						cost.add(scheduler.getCost());
 						s_name.add(scheduler.getType());

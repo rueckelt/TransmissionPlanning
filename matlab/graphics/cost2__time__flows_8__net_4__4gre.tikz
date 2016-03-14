@@ -1,0 +1,172 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+unbounded coords=jump,
+xmin=0.5,
+xmax=4.5,
+xtick={1,2,3,4},
+xticklabels={{25},{50},{100},{200}},
+xlabel={greedy/opt},
+xmajorgrids,
+ymin=0.674611963603321,
+ymax=3.79235200714142,
+ymajorgrids,
+axis background/.style={fill=white}
+]
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	1.45527161533901\\
+1	1.81761504138885\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	1.76225212524614\\
+2	2.34054506408718\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	2.22800980660577\\
+3	2.93499898339866\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+4	2.78287242099465\\
+4	3.34615409078044\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	1.01343601937165\\
+1	1.12590338531761\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	1.06372935743221\\
+2	1.33355777527914\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	1.26690144831908\\
+3	1.75270064873107\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+4	1.15466076641086\\
+4	1.74240166281031\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.875	1.81761504138885\\
+1.125	1.81761504138885\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.875	2.34054506408718\\
+2.125	2.34054506408718\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.875	2.93499898339866\\
+3.125	2.93499898339866\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+3.875	3.34615409078044\\
+4.125	3.34615409078044\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.875	1.01343601937165\\
+1.125	1.01343601937165\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.875	1.06372935743221\\
+2.125	1.06372935743221\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.875	1.26690144831908\\
+3.125	1.26690144831908\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+3.875	1.15466076641086\\
+4.125	1.15466076641086\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+0.75	1.12590338531761\\
+0.75	1.45527161533901\\
+1.25	1.45527161533901\\
+1.25	1.12590338531761\\
+0.75	1.12590338531761\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+1.75	1.33355777527914\\
+1.75	1.76225212524614\\
+2.25	1.76225212524614\\
+2.25	1.33355777527914\\
+1.75	1.33355777527914\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+2.75	1.75270064873107\\
+2.75	2.22800980660577\\
+3.25	2.22800980660577\\
+3.25	1.75270064873107\\
+2.75	1.75270064873107\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+3.75	1.74240166281031\\
+3.75	2.78287242099465\\
+4.25	2.78287242099465\\
+4.25	1.74240166281031\\
+3.75	1.74240166281031\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+0.75	1.30401632919867\\
+1.25	1.30401632919867\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+1.75	1.58663528516878\\
+2.25	1.58663528516878\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+2.75	1.89746555601646\\
+3.25	1.89746555601646\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+3.75	2.10024998724216\\
+4.25	2.10024998724216\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+1	1.99851120050481\\
+1	2.29350023208109\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+2	2.75490015720641\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\end{axis}
+\end{tikzpicture}%

@@ -1,12 +1,12 @@
 
-% 2015-12-01 20:16:19
+% 2016-03-02 15:20:48
 
 % my_logs\longTest1\
 max_time = 3;
 max_flows = 3;
 max_nets = 3;
 max_rep = 30;
-evaluate_max_only = 1;
+evaluate_max_only = 0;
 
-scheduler_logs= char('random_log.m');
+scheduler_logs= char('greedyFill_log.m');
 

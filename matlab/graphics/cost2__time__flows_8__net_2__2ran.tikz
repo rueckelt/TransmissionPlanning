@@ -1,0 +1,175 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+unbounded coords=jump,
+xmin=0.5,
+xmax=4.5,
+xtick={1,2,3,4},
+xticklabels={{25},{50},{100},{200}},
+xlabel={random/opt},
+xmajorgrids,
+ymin=0.750452381661652,
+ymax=4.11768347294663,
+ylabel={cost / optimal cost},
+ymajorgrids,
+axis background/.style={fill=white}
+]
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	2.00194350210837\\
+1	2.23975316710046\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	2.19063770212206\\
+2	2.73369224174882\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	2.24011146391791\\
+3	2.97658281030918\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+4	2.44295786320737\\
+4	3.35165759802547\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	1.27874319280426\\
+1	1.56837516469574\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	1.29164275497006\\
+2	1.49200260581571\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	1.27524013141676\\
+3	1.56173864462477\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+4	1.25063332128888\\
+4	1.7959024055756\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.875	2.23975316710046\\
+1.125	2.23975316710046\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.875	2.73369224174882\\
+2.125	2.73369224174882\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.875	2.97658281030918\\
+3.125	2.97658281030918\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+3.875	3.35165759802547\\
+4.125	3.35165759802547\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.875	1.27874319280426\\
+1.125	1.27874319280426\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.875	1.29164275497006\\
+2.125	1.29164275497006\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.875	1.27524013141676\\
+3.125	1.27524013141676\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+3.875	1.25063332128888\\
+4.125	1.25063332128888\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+0.75	1.56837516469574\\
+0.75	2.00194350210837\\
+1.25	2.00194350210837\\
+1.25	1.56837516469574\\
+0.75	1.56837516469574\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+1.75	1.49200260581571\\
+1.75	2.19063770212206\\
+2.25	2.19063770212206\\
+2.25	1.49200260581571\\
+1.75	1.49200260581571\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+2.75	1.56173864462477\\
+2.75	2.24011146391791\\
+3.25	2.24011146391791\\
+3.25	1.56173864462477\\
+2.75	1.56173864462477\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+3.75	1.7959024055756\\
+3.75	2.44295786320737\\
+4.25	2.44295786320737\\
+4.25	1.7959024055756\\
+3.75	1.7959024055756\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+0.75	1.86109335821559\\
+1.25	1.86109335821559\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+1.75	1.74007326954078\\
+2.25	1.74007326954078\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+2.75	1.84737927309042\\
+3.25	1.84737927309042\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+3.75	2.06320569149829\\
+4.25	2.06320569149829\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+1	2.74383119307152\\
+1	2.83743318296785\\
+1	3.10205323596338\\
+1	3.30626891593344\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+3	3.47249144458917\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+4	3.60042279121227\\
+};
+\end{axis}
+\end{tikzpicture}%

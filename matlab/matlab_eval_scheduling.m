@@ -4,7 +4,7 @@
 %delete this file to read logs from raw files
 
 in_folder = '..\my_logs\longTest1';% 'logs_time';
-out_folder = '..\my_logs\longTest1\graphs';
+out_folder = 'graphics'% '..\my_logs\longTest1\graphs_tikz';
 
 %get paramters from file
 parameter_file=[in_folder '\parameters_log.m'];
@@ -47,24 +47,26 @@ for f=1:f_max
    end
 end
 
-
+tikz = false;
 
 state = 'calc relative cost done'
 %cost_mean=cost_mean(2:type_max,:,:,:);
 %draw boxplots
 mkdir(out_folder);
 
-plotCompare(out_folder, duration_us, 0);  
-
+%plotCompare(out_folder, duration_us, 0,tikz);  
 state = 'plot duration done'
-%plotCompare(out_folder, cost_rel, 1);
 
+%plot cost2 includes all values from plot cost!
+% %plotCompare(out_folder, cost_rel, 1,tikz);
+% state = 'plot cost done'
 
-state = 'plot cost done'
-%plotCompare(out_folder, cost_rel2, 2);
-
+plotCompare(out_folder, cost_rel2, 2, tikz);
 state = 'plot cost2 done, finished'
 clearvars
 
-
+%The functions you mention return H=0 when a test cannot reject the hypothesis of a normal distribution.
+%Kolmogorow-Smirnow-Test kstest
+%Anderson-Darling-Test adtest
+%Lilliefors-Test [h,p,k,c] = lillietest()
 

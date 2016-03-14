@@ -429,7 +429,7 @@ public class CostFunction {
 	 */
 	public static int calculateFlowCriticality(Flow f, NetworkGenerator ng){
 		//calculate violation if flow is NOT scheduled (worst case)
-		//and subtract violation is flow is scheduled alone (best case)
+		//TODO: and subtract violation is flow is scheduled alone (best case)
 		TrafficGenerator tg_temp= new TrafficGenerator();
 		tg_temp.addFlow(f);
 		CostFunction cf = new CostFunction(ng, tg_temp);

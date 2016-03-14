@@ -1,4 +1,4 @@
-function [ ] = plotCompare(out_folder, data, isCost)
+function [ ] = plotCompare(out_folder, data, isCost, tikz)
 %PLOTEXECUTIONTIME Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -56,12 +56,14 @@ for f=1:f_max
          for type=1:type_max
             if(ismember(skip, type)<1)  % if type is not in skip list
                %printoutvar=['draw graph ' num2str(plot_no)]
-              % subplot(1,type_max-skip_no,plot_no);
+              if ~tikz
+               subplot(1,type_max-skip_no,plot_no);
+              end
                 fixed_f_t=squeeze(data(type,f,t,:,:))';
                 boxplot(fixed_f_t, x(1:n_max));
                 xlabel(labels{type});
                 set(gca,'YLim',ylim); 
-                if isCost>1
+                if isCost<1
                     set(gca,'yscale','log');
                 end
                 grid on
@@ -72,14 +74,17 @@ for f=1:f_max
                     ylabel(my_ylabel2);
                 end
                 plot_no=plot_no+1;
-                
-                filename = [out_folder '\' name '__nets_comp__t_' num2str(t1) '__app_' num2str(f1) '__' labels{type} '.tikz'];
-                MATLAB2TIKZ('filename',filename,'figurehandle',fig, 'height', '\figureheight', 'width', '\figurewidth' );
+                if tikz
+                    filename = [out_folder '\' name '__nets_comp__t_' num2str(t1) '__app_' num2str(f1) '__' num2str(type) labels{type}(1:3) '.tikz'];
+                    matlab2tikz(filename,'width','\figW','height','\figH','showInfo',false);
+                end
             end
          end
-       % filename = [out_folder '\' name '__nets_comp__t_' num2str(t1) '__app_' num2str(f1) '.png'];
-       % title(['Execution time: variation of number of networks, ' num2str(t1) ' time slots ', num2str(f1) ' flows']);
-        %saveas(fig,filename);
+         if ~tikz
+            filename = [out_folder '\' name '__nets_comp__t_' num2str(t1) '__app_' num2str(f1) '.png'];
+           % title(['Execution time: variation of number of networks, ' num2str(t1) ' time slots ', num2str(f1) ' flows']);
+            saveas(fig,filename);
+         end
 
     end
 end
@@ -93,14 +98,19 @@ for n=1:n_max
         min_sched = low*min(sched_m(:));
         ylim=[min_sched max_sched];
         plot_no=1;
+        
+         t1=25*2^(t-1);
+         n1=2^(n-1);
          for type=1:type_max
             if(ismember(skip, type)<1)  % if type is not in skip list
+               if ~tikz
                 subplot(1,type_max-skip_no,plot_no);
+               end
                 fixed_f_t=squeeze(data(type,:,t,n,:))';
                 boxplot(fixed_f_t, x(1:f_max));
                 xlabel(labels{type});
                 set(gca,'YLim',ylim);
-                if isCost>1
+                if isCost<1
                     set(gca,'yscale','log');
                 end
                 grid on
@@ -111,12 +121,16 @@ for n=1:n_max
                     ylabel(my_ylabel2);
                 end
                 plot_no=plot_no+1;
+                if tikz
+                    filename = [out_folder '\' name '__apps__t_' num2str(t1) '__net_' num2str(n1)  '__' num2str(type) labels{type}(1:3) '.tikz'];
+                    matlab2tikz(filename,'width','\figW','height','\figH','showInfo',false);
+                end
             end
          end
-         t1=25*2^(t-1);
-         n1=2^(n-1);
-        filename = [out_folder '\' name '__apps__t_' num2str(t1) '__net_' num2str(n1) '.png'];
-        saveas(fig,filename);
+         if ~tikz
+             filename = [out_folder '\' name '__apps__t_' num2str(t1) '__net_' num2str(n1) '.png'];
+             saveas(fig,filename);
+         end
     end
 end
 
@@ -137,15 +151,19 @@ for n=1:n_max
         min_sched = low*min(sched_m(:));
         ylim=[min_sched max_sched];
         
+         f1=2^(f-1);
+         n1=2^(n-1);
         plot_no=1;
          for type=1:type_max
             if(ismember(skip, type)<1)  % if type is not in skip list
-                subplot(1,type_max-skip_no,plot_no);
+                if ~tikz
+                    subplot(1,type_max-skip_no,plot_no);
+                end
                 fixed_f_t=squeeze(data(type,f,:,n,:))';
                 boxplot(fixed_f_t, ts(1:t_max));
                 xlabel(labels{type});
                 set(gca,'YLim',ylim);
-                if isCost>1
+                if isCost<1
                     set(gca,'yscale','log');
                 end
                 grid on
@@ -156,12 +174,16 @@ for n=1:n_max
                     ylabel(my_ylabel2);
                 end
                 plot_no=plot_no+1;
+                if tikz
+                    filename = [out_folder '\' name '__time__flows_' num2str(f1) '__net_' num2str(n1)  '__' num2str(type) labels{type}(1:3) '.tikz'];
+                    matlab2tikz(filename,'width','\figW','height','\figH','showInfo',false);
+                end
             end
          end
-         f1=2^(f-1);
-         n1=2^(n-1);
-        filename = [out_folder '\' name '__time__flows_' num2str(f1) '__net_' num2str(n1) '.png'];
-        saveas(fig,filename);
+         if ~tikz
+             filename = [out_folder '\' name '__time__flows_' num2str(f1) '__net_' num2str(n1) '.png'];
+             saveas(fig,filename);
+         end
     end
 end
 
