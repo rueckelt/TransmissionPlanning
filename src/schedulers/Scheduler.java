@@ -348,4 +348,13 @@ public abstract class Scheduler {
 		return s;
 	}
 	
+	
+	public int getFlowCounter() {
+		return tg.getFlows().size();
+	}
+	
+	public Flow getFlow(int pos) {
+		return tg.getFlows().get(pos);
+	}
+	
 }

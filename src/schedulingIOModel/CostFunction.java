@@ -65,6 +65,14 @@ public class CostFunction {
 	
 
 	///////////////////// VIOLATIONS /////////////////////
+	
+	public int vioLcy_f_t_n(int[][][] schedule, int f, int t, int n){
+		Flow flow = tg.getFlows().get(f);
+		Network net = ng.getNetworks().get(n);
+		int latencyMatch = latencyMatch(flow, net);
+		return latencyMatch*schedule[f][t][n];
+
+	}
 	/**
 	 * 
 	 * @param schedule[f][t][n]
@@ -77,12 +85,13 @@ public class CostFunction {
 		
 		int[] vioLcy = new int[flows];
 		for(int f = 0; f<flows; f++){
-			Flow flow = tg.getFlows().get(f);
+//			Flow flow = tg.getFlows().get(f);
 			for(int n = 0; n<networks; n++){
-				Network net = ng.getNetworks().get(n);
-				int latencyMatch = latencyMatch(flow, net);
+//				Network net = ng.getNetworks().get(n);
+//				int latencyMatch = latencyMatch(flow, net);
 				for (int t = 0; t < timeslots; t++) {
-					vioLcy[f]+= latencyMatch*schedule[f][t][n];
+//					vioLcy[f]+= latencyMatch*schedule[f][t][n];
+					vioLcy[f]+= vioLcy_f_t_n(schedule, f, t, n);
 				}
 			}
 		}
@@ -93,6 +102,12 @@ public class CostFunction {
 		return vioLcy;
 	}
 
+	public int vioJit_f_t_n(int[][][] schedule, int f, int t, int n){
+		Flow flow = tg.getFlows().get(f);
+		Network net = ng.getNetworks().get(n);
+		int jitterMatch = jitterMatch(flow, net);
+		return jitterMatch*schedule[f][t][n];
+	}
 	
 	public int[] vioJit(int[][][] schedule){
 		int flows = schedule.length;
@@ -101,12 +116,13 @@ public class CostFunction {
 		
 		int[] vioJit = new int[flows];
 		for(int f = 0; f<flows; f++){
-			Flow flow = tg.getFlows().get(f);
+//			Flow flow = tg.getFlows().get(f);
 			for(int n = 0; n<networks; n++){
-				Network net = ng.getNetworks().get(n);
-				int jitterMatch = jitterMatch(flow, net);
+//				Network net = ng.getNetworks().get(n);
+//				int jitterMatch = jitterMatch(flow, net);
 				for (int t = 0; t < timeslots; t++) {
-					vioJit[f]+= jitterMatch*schedule[f][t][n];
+//					vioJit[f]+= jitterMatch*schedule[f][t][n];
+					vioJit[f]+= vioJit_f_t_n(schedule, f, t, n);
 				}
 			}
 		}
@@ -117,6 +133,11 @@ public class CostFunction {
 		return vioJit;
 	}
 	
+	
+	public int vioSt_f_t_n(int[][][] schedule, int f, int t, int n){
+		Flow flow = tg.getFlows().get(f);
+		return (int) Math.pow(flow.getStartTime()-(t+1),2)*schedule[f][t][n]*flow.getImpStartTime();
+	}
 	
 	/**
 	 * 
@@ -136,7 +157,8 @@ public class CostFunction {
 			for(int n = 0; n<networks; n++){
 				for (int t = 0; t < timeslots; t++) {
 					if((t+1)<flow.getStartTime()){		//start time and deadline are in CPLEX index (starting at 1) we therefore compare with modified time index (t+1)
-						vioSt[f]+= Math.pow(flow.getStartTime()-(t+1),2)*schedule[f][t][n]*flow.getImpStartTime();
+//						vioSt[f]+= Math.pow(flow.getStartTime()-(t+1),2)*schedule[f][t][n]*flow.getImpStartTime();
+						vioSt[f]+= vioSt_f_t_n(schedule, f, t, n);
 					}
 				}
 			}
@@ -148,6 +170,11 @@ public class CostFunction {
 		return vioSt;
 	}
 	
+	
+	public int vioDl_f_t_n(int[][][] schedule, int f, int t, int n){
+		Flow flow = tg.getFlows().get(f);
+		return (int) Math.pow((t+1)-flow.getDeadline(),2)*schedule[f][t][n]*flow.getImpDeadline();
+	}
 	/**
 	 * 
 	 * @param schedule_f_t_n
@@ -166,7 +193,8 @@ public class CostFunction {
 			for(int n = 0; n<networks; n++){
 				for (int t = 0; t < timeslots; t++) {
 					if((t+1)>flow.getDeadline()){
-						vioDl[f]+= Math.pow((t+1)-flow.getDeadline(),2)*schedule[f][t][n]*flow.getImpDeadline();
+//						vioDl[f]+= Math.pow((t+1)-flow.getDeadline(),2)*schedule[f][t][n]*flow.getImpDeadline();
+						vioDl[f]+= vioDl_f_t_n(schedule, f, t, n);
 					}
 				}
 			}
@@ -183,7 +211,7 @@ public class CostFunction {
 	 * @param schedule[f][t][n]
 	 * @return cummulated chunks for flows and timeslots
 	 */
-	private int[][] cummulated_f_t(int[][][] schedule){
+	public int[][] cummulated_f_t(int[][][] schedule){
 		int flows = schedule.length;
 		int timeslots = schedule[0].length;
 		int networks = schedule[0][0].length;
@@ -226,6 +254,10 @@ public class CostFunction {
 		}
 		return vioNon;
 	}
+
+	public int vioTp_f_t(int[][] vioTpMin, int f, int t){
+		return vioTpMin[f][t]*tg.getFlows().get(f).getImpThroughputMin();
+	}
 	
 	public int[] vioTp(int[][] cummulated_f_t){
 		int flows = cummulated_f_t.length;
@@ -236,8 +268,10 @@ public class CostFunction {
 		int[][] vioTpMin = vioTpMin(cummulated_f_t);
 		for(int f = 0; f<flows; f++){
 			for(int t=0; t<timeslots; t++){
-				vioTp[f]+=	//vioTpMax[f][t]*tg.getFlows().get(f).getImpThroughputMax()+
-							vioTpMin[f][t]*tg.getFlows().get(f).getImpThroughputMin();
+				/*				vioTp[f]+=	//vioTpMax[f][t]*tg.getFlows().get(f).getImpThroughputMax()+
+				vioTpMin[f][t]*tg.getFlows().get(f).getImpThroughputMin();
+			*/
+				vioTp[f]+= vioTp_f_t(vioTpMin, f, t);
 			}
 		}
 		check(vioTp, "vioThroughput");

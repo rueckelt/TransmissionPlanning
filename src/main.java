@@ -19,6 +19,7 @@ public class main {
 //		for(int rep1 = 0; rep1<=rep; rep1++){
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 			eval.recalc();
+			eval.visualize();
 //			eval.overwrite();
 //			eval.evaluateAll();
 //			eval.evaluateTop();

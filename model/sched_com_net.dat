@@ -10,7 +10,7 @@ nTime = 50;
 nInterfaceTypes = 3;
 nFlows = [nRequests];
 
-//channel model: generated Mon Mar 14 15:33:28 CET 2016
+//channel model: generated Mon Mar 14 16:58:20 CET 2016
 availChunkBuckets = //[Networks, Time]  
 [
 	[39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39],
