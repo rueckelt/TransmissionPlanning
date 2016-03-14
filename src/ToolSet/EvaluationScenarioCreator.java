@@ -19,6 +19,7 @@ public class EvaluationScenarioCreator {
 	private boolean LOG_OVERWRITE = false;				//overwrites last simulation including network generator and traffic generator	
 	private boolean RECALC= false;						//recalculates results, loading network and traffic generators from previous run
 	private final boolean TEST_COST_FUNCTION = false;	//tests cost function implemented in java, comparing all results to optimization output
+	private boolean VISUALIZE = false;	//tests cost function implemented in java, comparing all results to optimization output
 
 	
 	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
@@ -44,6 +45,10 @@ public class EvaluationScenarioCreator {
 		LOG_OVERWRITE=true;
 	}
 	
+	public void visualize(){
+		VISUALIZE=true;
+	}
+	
 	
 	private final int REPETITIONS;
 	private final int MAX_TIME;
@@ -59,7 +64,7 @@ public class EvaluationScenarioCreator {
 	 */
 	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, TrafficGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		schedulers.add(new OptimizationScheduler(ng, tg));
+//		schedulers.add(new OptimizationScheduler(ng, tg));
 //		schedulers.add(new RandomScheduler(ng, tg, 5000));	//100 random runs of this scheduler. Returns average duration and cost
 //		schedulers.add(new PriorityScheduler(ng, tg));
 		schedulers.add(new GreedyScheduler(ng, tg));
