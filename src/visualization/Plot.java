@@ -313,7 +313,7 @@ class PlotGraph extends JPanel{
 		this.factor = factor;
 		costs = new CostFunction(vis.getNets(), vis.getTraffic());
 		
-		textArea = new JTextArea("Costs: "+costs.costMon(sched.getSchedule())+"\n\n");
+		textArea = new JTextArea("Costs: "+costs.costTotal(sched.getSchedule())+"\n\n");//costs.costMon(sched.getSchedule())+"\n\n");
 		textArea.setEditable(false);
 		textArea.setVisible(true);
 		scrollPane = new JScrollPane(textArea);
@@ -457,7 +457,7 @@ class PlotGraph extends JPanel{
 						
 						if (sched.getFlow(f).getReqJitter() < n.getJitter()) {
 							// Jitter violation
-							sViolation += "<br>"+"Jitter("+f+") T:"+sched.getFlow(f).getReqJitter()+" vs A:"+n.getJitter()+" | Cost: "+vioJit(f, t, netCounter);;
+							sViolation += "<br>"+"Jitter("+f+") T:"+sched.getFlow(f).getReqJitter()+" vs A:"+n.getJitter()+" | Cost: "+vioJit(f, t, netCounter);
 							violationFound = true;
 							if (firstTime) violations[f][1] += 1;
 						}	
@@ -560,23 +560,28 @@ class PlotGraph extends JPanel{
 	}
 	
 	private int vioDl (int flow, int timeslot, int network) {
-		return costs.vioDl_f_t_n(sched.getSchedule(), flow, timeslot, network);
+		return costs.vioDl_f_t_n(sched.getSchedule(), flow, timeslot, network)
+				*sched.getFlow(flow).getImpDeadline()*sched.getFlow(flow).getImpUser();
 	}
 	
 	private int vioSt (int flow, int timeslot, int network) {
-		return costs.vioSt_f_t_n(sched.getSchedule(), flow, timeslot, network);
+		return costs.vioSt_f_t_n(sched.getSchedule(), flow, timeslot, network)
+				*sched.getFlow(flow).getImpStartTime()*sched.getFlow(flow).getImpUser();
 	}
 	
 	private int vioLcy (int flow, int timeslot, int network) {
-		return costs.vioLcy_f_t_n(sched.getSchedule(), flow, timeslot, network);
+		return costs.vioLcy_f_t_n(sched.getSchedule(), flow, timeslot, network)
+				*sched.getFlow(flow).getImpLatency()*sched.getFlow(flow).getImpUser();
 	}
 	
 	private int vioJit (int flow, int timeslot, int network) {
-		return costs.vioJit_f_t_n(sched.getSchedule(), flow, timeslot, network);
+		return costs.vioJit_f_t_n(sched.getSchedule(), flow, timeslot, network)
+				*sched.getFlow(flow).getImpJitter()*sched.getFlow(flow).getImpUser();
 	}
 	
 	private int vioTp (int flow, int timeslot) {
 		int[][] cummulated_f_t = costs.cummulated_f_t(sched.getSchedule());
-		return costs.vioTp_f_t(cummulated_f_t, flow, timeslot);
+		return costs.vioTp_f_t(cummulated_f_t, flow, timeslot)
+				*sched.getFlow(flow).getImpThroughputMin()*sched.getFlow(flow).getImpUser();
 	}	
 }
