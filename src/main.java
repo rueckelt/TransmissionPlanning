@@ -1,9 +1,7 @@
+import java.awt.EventQueue;
 import java.io.File;
 
-import ToolSet.EvaluationScenarioCreator;
-
-
-
+import ui.Mainwindow;
 
 public class main {
 	
@@ -30,6 +28,15 @@ public class main {
 		
 		//eval.evaluate();	//calculate each instance from 0_0_0 till t_n_f
 
-		System.out.println("done");
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Mainwindow mainwindow = new Mainwindow();
+					mainwindow.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

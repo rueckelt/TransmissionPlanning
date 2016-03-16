@@ -5,6 +5,10 @@ import schedulers.PriorityScheduler;
 import schedulers.Scheduler;
 import ToolSet.LogMatlabFormat;
 
+import schedulers.PriorityScheduler;
+import schedulers.Scheduler;
+import toolSet.LogMatlabFormat;
+
 
 /***
  * 
@@ -19,15 +23,15 @@ import ToolSet.LogMatlabFormat;
 public class CostFunction {
 	
 	private NetworkGenerator ng;
-	private TrafficGenerator tg;
+	private FlowGenerator tg;
 	protected LogMatlabFormat logger = null;
 	
-	public CostFunction(NetworkGenerator ng, TrafficGenerator tg){
+	public CostFunction(NetworkGenerator ng, FlowGenerator tg){
 		this.ng=ng;
 		this.tg=tg;
 	}
 	
-	public CostFunction(NetworkGenerator ng, TrafficGenerator tg, LogMatlabFormat logger){
+	public CostFunction(NetworkGenerator ng, FlowGenerator tg, LogMatlabFormat logger){
 		this.ng=ng;
 		this.tg=tg;
 		this.logger=logger;
@@ -464,7 +468,7 @@ public class CostFunction {
 	public static int calculateFlowCriticality(Flow f, NetworkGenerator ng){
 		//calculate violation if flow is NOT scheduled (worst case)
 		//TODO: and subtract violation is flow is scheduled alone (best case)
-		TrafficGenerator tg_temp= new TrafficGenerator();
+		FlowGenerator tg_temp= new FlowGenerator();
 		tg_temp.addFlow(f);
 		CostFunction cf = new CostFunction(ng, tg_temp);
 		Scheduler s = getScheduler(tg_temp, ng);

@@ -9,11 +9,11 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.Vector;
 
-import schedulingIOModel.CostFunction;
-import schedulingIOModel.Flow;
-import schedulingIOModel.Network;
-import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.TrafficGenerator;
+import schedulingModel.CostFunction;
+import schedulingModel.Flow;
+import schedulingModel.FlowGenerator;
+import schedulingModel.Network;
+import schedulingModel.NetworkGenerator;
 
 
 public class PriorityScheduler extends Scheduler{
@@ -39,7 +39,7 @@ public class PriorityScheduler extends Scheduler{
 	 * schedule_f_t_n
 	 */
 
-	public PriorityScheduler(NetworkGenerator ng, TrafficGenerator tg) {
+	public PriorityScheduler(NetworkGenerator ng, FlowGenerator tg) {
 		super(ng, tg);
 	}
 

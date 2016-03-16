@@ -1,0 +1,9 @@
+**.MA[*].tcpApp[[tcpAppIndex]].active = true
+**.MA[*].tcpApp[[tcpAppIndex]].localPort = -1
+**.MA[*].tcpApp[[tcpAppIndex]].connectAddress = [tcpAppConnectAddress]
+**.MA[*].tcpApp[[tcpAppIndex]].connectPort = [tcpAppConnectPort]
+**.MA[*].tcpApp[[tcpAppIndex]].tOpen = 10s
+**.MA[*].tcpApp[[tcpAppIndex]].tSend = [tcpAppStartTime]s
+**.MA[*].tcpApp[[tcpAppIndex]].sendBytes = 0B
+**.MA[*].tcpApp[[tcpAppIndex]].sendScript = [tcpAppSendScript]
+**.MA[*].tcpApp[[tcpAppIndex]].tClose = [tcpAppDeadline]s

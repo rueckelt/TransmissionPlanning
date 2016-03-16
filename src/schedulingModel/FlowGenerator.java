@@ -1,4 +1,4 @@
-package schedulingIOModel;
+package schedulingModel;
 import ilog.opl.IloOplFactory;
 import ilog.opl.IloOplModel;
 
@@ -11,30 +11,30 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
 
-import ToolSet.PersistentStore;
 import optimization.ModelAccess;
+import toolSet.PersistentStore;
 
 
-public class TrafficGenerator implements Serializable{
+public class FlowGenerator implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8184271622466363691L;
-	public static final String TG_NAME = "TrafficGenerator";
+	public static final String TG_NAME = "FlowGenerator";
 	private Vector<Flow> flows = new Vector<Flow>();
 	
-	public TrafficGenerator(){
+	public FlowGenerator(){
 		
 	}
-	public TrafficGenerator(int duration, int requests){
-		addTraffic(duration,requests);
+	public FlowGenerator(int duration, int requests){
+		addTestTraffic(duration,requests);
 	}
 	
-	public static TrafficGenerator loadTrafficGenerator(String path){
-		TrafficGenerator tg=null;
+	public static FlowGenerator loadTrafficGenerator(String path){
+		FlowGenerator tg=null;
 		try{
-			tg= (TrafficGenerator) PersistentStore.loadObject(path+TG_NAME);
+			tg= (FlowGenerator) PersistentStore.loadObject(path+TG_NAME);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -54,23 +54,31 @@ public class TrafficGenerator implements Serializable{
 		flows.add(flow);
 	}
 	
+	//duration in timeslots!
 	private void addTraffic(int duration, int requests){
+		
+		for(int i = 0; i < requests; ++i){
+			//TODO generate traffic
+		}
+	}
+	
+	private void addTestTraffic(int duration, int requests){
 		Random r=new Random();
 		r.setSeed(System.nanoTime());
 		int tmp=duration/requests;
 		for(int i=0;i<requests;i++){
 			if(i%5==0){			//0		VoIP
 				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+20+i*tmp)); 	//todo
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
+				//System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
 			}else if(i%5==1 || i%5==4){		//4..10		Browsing
 				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
+				//				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
 			}else if(i%5==2){		//3		Download
-				flows.add(Flow.Update(duration/2));
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
+				flows.add(Flow.Update(i * tmp, duration/2));
+				//System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
 			}else{					//Stream
 				flows.add(Flow.BufferableStream(i*tmp, tmp*5));
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
+				//System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
 			}
 		}
 	}
@@ -99,6 +107,7 @@ public class TrafficGenerator implements Serializable{
 	}
 	
 
+	@SuppressWarnings("resource")
 	public void writeOutput(String source, String dest){
 				
 		//read source
@@ -109,7 +118,6 @@ public class TrafficGenerator implements Serializable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 				
 		//build arrays
 		String chunks="";
@@ -232,7 +240,6 @@ public class TrafficGenerator implements Serializable{
 
 		int[] impUser = new int[flows.size()];
 		//nRequests does not change..does it?
-		
 		
 		//set values of arrays
 		int i=0;

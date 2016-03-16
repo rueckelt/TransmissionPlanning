@@ -2,12 +2,12 @@ package schedulers;
 import java.util.Arrays;
 import java.util.Vector;
 
-import schedulingIOModel.CostFunction;
-import schedulingIOModel.Flow;
-import schedulingIOModel.Network;
-import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.TrafficGenerator;
-import ToolSet.LogMatlabFormat;
+import schedulingModel.CostFunction;
+import schedulingModel.Flow;
+import schedulingModel.FlowGenerator;
+import schedulingModel.Network;
+import schedulingModel.NetworkGenerator;
+import toolSet.LogMatlabFormat;
 
 
 public abstract class Scheduler {
@@ -18,7 +18,7 @@ public abstract class Scheduler {
 	 */
 	
 	protected NetworkGenerator ng; 
-	protected TrafficGenerator tg;
+	protected FlowGenerator tg;
 	protected LogMatlabFormat logger;
 	
 	protected CostFunction cf;
@@ -27,7 +27,7 @@ public abstract class Scheduler {
 	private int[][][] schedule_f_t_n_temp;		//may be used during calculation of a schedule
 	
 	
-	public Scheduler(NetworkGenerator ng, TrafficGenerator tg){
+	public Scheduler(NetworkGenerator ng, FlowGenerator tg){
 		boundFlowDeadlines(tg, ng);
 		this.ng=ng;
 		this.tg=tg;
@@ -48,8 +48,6 @@ public abstract class Scheduler {
 
 	/**
 	 * 
-	 * @param ng
-	 * @param tg
 	 * @param logfile path
 	 * 
 	 * calculates the schedule and stores it in internal variable schedule_f_t_n_temp

@@ -1,4 +1,4 @@
-package ToolSet;
+package toolSet;
 
 import java.util.Random;
 
