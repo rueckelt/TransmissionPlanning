@@ -141,11 +141,12 @@ for f=0:t_max-1
    ts(f+1)=25*2^f;
 end
 
+data2=permute(data,[1 2 4 3 5]);
 for n=1:n_max
     for f=1:f_max
         fig = figure('visible', 'off');
 
-        sched_m=squeeze(data(:,f,:,n,:));  %sched_m is only for scaling of non-opt plots
+        sched_m=squeeze(data2(:,f,:,n,:));  %sched_m is only for scaling of non-opt plots
 
         max_sched = hi*max(sched_m(:));
         min_sched = low*min(sched_m(:));
@@ -159,7 +160,7 @@ for n=1:n_max
                 if ~tikz
                     subplot(1,type_max-skip_no,plot_no);
                 end
-                fixed_f_t=squeeze(data(type,f,:,n,:))';
+                fixed_f_t=squeeze(data2(type,f,:,n,:))';
                 boxplot(fixed_f_t, ts(1:t_max));
                 xlabel(labels{type});
                 set(gca,'YLim',ylim);

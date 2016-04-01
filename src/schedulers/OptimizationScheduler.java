@@ -2,9 +2,9 @@ package schedulers;
 import java.io.File;
 
 import optimization.ModelExecutor;
-import schedulingModel.FlowGenerator;
-import schedulingModel.NetworkGenerator;
-import schedulingModel.TestCostFunction;
+import schedulingIOModel.NetworkGenerator;
+import schedulingIOModel.TestCostFunction;
+import schedulingIOModel.TrafficGenerator;
 
 
 public class OptimizationScheduler extends Scheduler {
@@ -26,7 +26,7 @@ public class OptimizationScheduler extends Scheduler {
 		return "optimization";
 	}
 	
-	public OptimizationScheduler(NetworkGenerator ng, FlowGenerator tg) {
+	public OptimizationScheduler(NetworkGenerator ng, TrafficGenerator tg) {
 		super(ng, tg);
 	}
 
@@ -37,9 +37,8 @@ public class OptimizationScheduler extends Scheduler {
 		writeDatFile(logpath);
 				
 		ModelExecutor me = new ModelExecutor(MODELDIR+model);
-		System.out.println("Start model executor.");
 		me.execute(dataset_path, logpath);
-		System.out.println("End model executor.");
+		
 		//does not use the "allocate" function, but set schedule from optimization directly
 		setTempSchedule(me.getSchedule_f_t_n());
 		

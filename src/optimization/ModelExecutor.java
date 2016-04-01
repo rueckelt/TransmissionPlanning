@@ -15,14 +15,6 @@ import ilog.opl.IloOplModel;
 import ilog.opl.IloOplModelDefinition;
 import ilog.opl.IloOplModelSource;
 import ilog.opl.IloOplSettings;
-import schedulingModel.TestCostFunction;
-
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import toolSet.LogMatlabFormat;
 
 /**
  * Execute IBM CPLEX model
@@ -113,14 +105,11 @@ public class ModelExecutor {
 		opl_model.addDataSource(dataSource);
 		time = System.nanoTime()-time;
 		timeMap.put("create_model", (int) (time/1000000));
-		System.out.println("create_model: " + time/1000000);
+//		System.out.println("create_model: "+time/1000000);
 //		System.out.println("USE DATASOURCE: "+datasource_file);
 //		generate
 		time=System.nanoTime();
-		System.out.println("[" + time/1000000 + "] Start generating opl model.");
 		opl_model.generate();
-		time = System.nanoTime()-time;
-		System.out.println("[" + time/1000000 + "] End generating opl model.");
 
 		time = System.nanoTime()-time;
 
@@ -128,7 +117,7 @@ public class ModelExecutor {
 		
 		
 		timeMap.put("generate_model", (int) (time/1000000));
-		System.out.println("generate_model: "+time/1000000);
+//		System.out.println("generate_model: "+time/1000000);
 		
 //		solve
 		boolean feasible = false;

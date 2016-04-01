@@ -3,10 +3,10 @@ import java.util.Collections;
 import java.util.Vector;
 
 import ToolSet.RndInt;
-import schedulingModel.CostFunction;
-import schedulingModel.Flow;
-import schedulingModel.FlowGenerator;
-import schedulingModel.NetworkGenerator;
+import schedulingIOModel.CostFunction;
+import schedulingIOModel.Flow;
+import schedulingIOModel.NetworkGenerator;
+import schedulingIOModel.TrafficGenerator;
 
 
 public class RandomScheduler extends Scheduler{
@@ -34,7 +34,7 @@ public class RandomScheduler extends Scheduler{
 	 * schedule_f_t_n
 	 */
 
-	public RandomScheduler(NetworkGenerator ng, FlowGenerator tg, int runs) {
+	public RandomScheduler(NetworkGenerator ng, TrafficGenerator tg, int runs) {
 		super(ng, tg);
 		RUNS = runs;
 		per_run_cost = new int[RUNS];

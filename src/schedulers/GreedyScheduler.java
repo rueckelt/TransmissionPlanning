@@ -7,16 +7,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import schedulingModel.CostFunction;
-import schedulingModel.Network;
-import schedulingModel.NetworkGenerator;
-import schedulingModel.FlowGenerator;
-import schedulingModel.Flow;
+import schedulingIOModel.CostFunction;
+import schedulingIOModel.Flow;
+import schedulingIOModel.Network;
+import schedulingIOModel.NetworkGenerator;
+import schedulingIOModel.TrafficGenerator;
 
 
 public class GreedyScheduler extends Scheduler{
 	
-	private final boolean ALLOW_TIME_LIMIT_VIOLATION = false;
 
 	@Override
 	public String getType() {
@@ -38,7 +37,7 @@ public class GreedyScheduler extends Scheduler{
 	 * schedule_f_t_n
 	 */
 
-	public GreedyScheduler(NetworkGenerator ng, FlowGenerator tg) {
+	public GreedyScheduler(NetworkGenerator ng, TrafficGenerator tg) {
 		
 		super(ng, tg);
 		if(ng!=null&&tg!=null){
@@ -148,7 +147,7 @@ public class GreedyScheduler extends Scheduler{
 	private int calculateFlowCriticality(Flow f, NetworkGenerator ng){
 		//calculate violation if flow is NOT scheduled (worst case)
 		//TODO: and subtract violation is flow is scheduled alone (best case)
-		FlowGenerator tg_temp= new FlowGenerator();
+		TrafficGenerator tg_temp= new TrafficGenerator();
 		tg_temp.addFlow(f);
 		CostFunction cf = new CostFunction(ng, tg_temp);
 		//get cost with empty schedule (worst case, flow is unscheduled)
@@ -160,7 +159,7 @@ public class GreedyScheduler extends Scheduler{
 	}
 	
 
-	private int[][][] getEmptySchedule(FlowGenerator tg, NetworkGenerator ng){
+	private int[][][] getEmptySchedule(TrafficGenerator tg, NetworkGenerator ng){
 		return new PriorityScheduler(ng, tg).getEmptySchedule();	//this could be a dummy scheduler.. only need empty schedule from it
 	}
 	
@@ -260,21 +259,14 @@ public class GreedyScheduler extends Scheduler{
 	}
 	
 	private int getStartTime(Flow flow){
-		if(ALLOW_TIME_LIMIT_VIOLATION){
-			int startTime = flow.getStartTime()-15/(flow.getImpStartTime()+1);
-			if(startTime<0){ startTime=0;}
-			return startTime;
-		}
-		else return flow.getStartTime();
-		
+		int startTime = flow.getStartTime()-15/(flow.getImpStartTime()+1);
+		if(startTime<0){ startTime=0;}
+		return startTime;
 	}
 	private int getDeadline(Flow flow){
-		if(ALLOW_TIME_LIMIT_VIOLATION){
-			int deadline = flow.getDeadline()+15/(flow.getImpDeadline()+1);
-			if(deadline>=ng.getTimeslots()) {deadline=ng.getTimeslots();}
-			return deadline;
-		}
-		else return flow.getDeadline();
+		int deadline = flow.getDeadline()+15/(flow.getImpDeadline()+1);
+		if(deadline>=ng.getTimeslots()) {deadline=ng.getTimeslots();}
+		return deadline;
 	}
 
 }

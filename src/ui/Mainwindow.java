@@ -28,7 +28,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 
-import toolSet.EvaluationScenarioCreator;
+import ToolSet.EvaluationScenarioCreator;
 
 import ui.ApplicationPanel;
 import java.awt.GridBagLayout;
