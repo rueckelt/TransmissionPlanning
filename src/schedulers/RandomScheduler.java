@@ -3,7 +3,10 @@ import java.util.Collections;
 import java.util.Vector;
 
 import ToolSet.RndInt;
+import schedulingModel.CostFunction;
+import schedulingModel.Flow;
 import schedulingModel.FlowGenerator;
+import schedulingModel.NetworkGenerator;
 
 
 public class RandomScheduler extends Scheduler{

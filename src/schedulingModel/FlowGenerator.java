@@ -12,7 +12,7 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import optimization.ModelAccess;
-import toolSet.PersistentStore;
+import ToolSet.PersistentStore;
 
 
 public class FlowGenerator implements Serializable{
@@ -31,7 +31,7 @@ public class FlowGenerator implements Serializable{
 		addTestTraffic(duration,requests);
 	}
 	
-	public static FlowGenerator loadTrafficGenerator(String path){
+	public static FlowGenerator loadFlowGenerator(String path){
 		FlowGenerator tg=null;
 		try{
 			tg= (FlowGenerator) PersistentStore.loadObject(path+TG_NAME);

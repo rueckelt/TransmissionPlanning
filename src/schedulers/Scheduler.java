@@ -7,7 +7,7 @@ import schedulingModel.Flow;
 import schedulingModel.FlowGenerator;
 import schedulingModel.Network;
 import schedulingModel.NetworkGenerator;
-import toolSet.LogMatlabFormat;
+import ToolSet.LogMatlabFormat;
 
 
 public abstract class Scheduler {
@@ -37,7 +37,7 @@ public abstract class Scheduler {
 	}
 	
 	//set limit for Deadlines of flows to scheduling length
-	private void boundFlowDeadlines(TrafficGenerator tg, NetworkGenerator ng) {
+	private void boundFlowDeadlines(FlowGenerator tg, NetworkGenerator ng) {
 		if(tg!=null && ng!=null)
 		for(Flow f: tg.getFlows()){
 			if(!(f.getDeadline()<ng.getTimeslots())){

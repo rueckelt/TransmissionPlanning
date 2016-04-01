@@ -6,18 +6,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import schedulingIOModel.CostFunction;
-import schedulingIOModel.Flow;
-import schedulingIOModel.Network;
-import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.TrafficGenerator;
+import schedulingModel.CostFunction;
+import schedulingModel.Flow;
+import schedulingModel.Network;
+import schedulingModel.NetworkGenerator;
+import schedulingModel.FlowGenerator;
 
 public class Decomposer {
 	
-	private TrafficGenerator tg;
+	private FlowGenerator tg;
 	private NetworkGenerator ng;
 	
-	public Decomposer(TrafficGenerator tg, NetworkGenerator ng){
+	public Decomposer(FlowGenerator tg, NetworkGenerator ng){
 		this.ng=ng;
 		this.tg=tg;
 	}
@@ -27,7 +27,7 @@ public class Decomposer {
 		boundFlowDeadlines(tg, ng);
 		//split
 		List<Integer> splitPoints = getSplitPoints(tg);
-		List<TrafficGenerator> tg_timeFrames = splitFlows(tg, splitPoints);
+		List<FlowGenerator> tg_timeFrames = splitFlows(tg, splitPoints);
 		List<NetworkGenerator> ng_timeFrames = splitNetworks(ng,  splitPoints);		
 		final List<Integer> criticalityList = getCriticalityList(tg_timeFrames, ng_timeFrames);
 		
@@ -54,7 +54,7 @@ public class Decomposer {
 		 
 	}
 	
-	private void boundFlowDeadlines(TrafficGenerator tg2, NetworkGenerator ng2) {
+	private void boundFlowDeadlines(FlowGenerator tg2, NetworkGenerator ng2) {
 		//leads to error at deadlines out of range. Therefore normalize them!
 		for(Flow f: tg.getFlows()){
 			if(!(f.getDeadline()<ng.getTimeslots())){
@@ -65,7 +65,7 @@ public class Decomposer {
 
 
 	//##################### 1. get splitPoints ########################
-	private List<Integer> getSplitPoints(final TrafficGenerator tg){
+	private List<Integer> getSplitPoints(final FlowGenerator tg){
 		List<Integer> splitPoints = new LinkedList<Integer>();
 		splitPoints.add(ng.getTimeslots()-1);
 		for(Flow f: tg.getFlows()){
@@ -84,13 +84,13 @@ public class Decomposer {
 	}
 	
 	//##################### 2. Decomposition ########################
-	private List<TrafficGenerator> splitFlows(final TrafficGenerator tg, final List<Integer> splitPoints){
-		List<TrafficGenerator> timeFrames = new LinkedList<TrafficGenerator>();
+	private List<FlowGenerator> splitFlows(final FlowGenerator tg, final List<Integer> splitPoints){
+		List<FlowGenerator> timeFrames = new LinkedList<FlowGenerator>();
 		int start=0;	//init; first possible time slot
 		for(int end: splitPoints){		//for each time frame (time between two split points) add relevant flows
 			int duration = end-start+1;	//both are included, therefore +1
 			System.out.println("start "+start+" end "+end);
-			TrafficGenerator tg_timeFrame = new TrafficGenerator();
+			FlowGenerator tg_timeFrame = new FlowGenerator();
 			for(Flow f: tg.getFlows()){
 				if(f.getStartTime()<=start && f.getDeadline() >= end){		//is flow in range of time frame?
 					Flow f_decomposed = f.clone();		//TODO: check if ID is same!
@@ -147,7 +147,7 @@ public class Decomposer {
 	 * @param net_timeFrames
 	 * @return list of timeFrame criticalities
 	 */
-	private List<Integer> getCriticalityList(List<TrafficGenerator> flow_timeFrames, List<NetworkGenerator> net_timeFrames){
+	private List<Integer> getCriticalityList(List<FlowGenerator> flow_timeFrames, List<NetworkGenerator> net_timeFrames){
 		List<Integer> criticalityList = new LinkedList<Integer>();
 		for(int i =0;i<flow_timeFrames.size();i++){
 			if(!flow_timeFrames.get(i).getFlows().isEmpty() && !net_timeFrames.get(i).getNetworks().isEmpty()){
@@ -161,7 +161,7 @@ public class Decomposer {
 		return criticalityList;
 	}
 	
-	private int getTimeFrameCriticality(TrafficGenerator tg, NetworkGenerator ng){
+	private int getTimeFrameCriticality(FlowGenerator tg, NetworkGenerator ng){
 		int criticality =0;
 		for(Flow f: tg.getFlows()){
 			criticality+=CostFunction.calculateFlowCriticality(f, ng);
@@ -170,7 +170,7 @@ public class Decomposer {
 	}
 	
 
-	private List<Integer[][][]>  scheduleTimeFrames(List<TrafficGenerator> flow_timeFrames, List<NetworkGenerator> net_timeFrames, List<Integer>tf_order){
+	private List<Integer[][][]>  scheduleTimeFrames(List<FlowGenerator> flow_timeFrames, List<NetworkGenerator> net_timeFrames, List<Integer>tf_order){
 		List<Integer[][][]> schedules = new LinkedList<Integer[][][]>();
 		
 		

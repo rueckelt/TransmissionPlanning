@@ -1,6 +1,7 @@
 import java.awt.EventQueue;
 import java.io.File;
 
+import ToolSet.EvaluationScenarioCreator;
 import ui.Mainwindow;
 
 public class main {
@@ -19,24 +20,25 @@ public class main {
 			eval.recalc();
 			eval.visualize();
 //			eval.overwrite();
-//			eval.evaluateAll();
+			eval.evaluateAll();
+			
 //			eval.evaluateTop();
-			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
+//			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
 //			System.gc();
 //		}
 		
 		//eval.evaluate();	//calculate each instance from 0_0_0 till t_n_f
 
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Mainwindow mainwindow = new Mainwindow();
-					mainwindow.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					Mainwindow mainwindow = new Mainwindow();
+//					mainwindow.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
 	}
 }

@@ -1,13 +1,7 @@
-package schedulingIOModel;
-import java.util.Arrays;
-
+package schedulingModel;
 import schedulers.PriorityScheduler;
 import schedulers.Scheduler;
 import ToolSet.LogMatlabFormat;
-
-import schedulers.PriorityScheduler;
-import schedulers.Scheduler;
-import toolSet.LogMatlabFormat;
 
 
 /***
@@ -479,7 +473,7 @@ public class CostFunction {
 		return cost_wc;//-cost_bc;
 	}
 
-	private static Scheduler getScheduler(TrafficGenerator tg, NetworkGenerator ng){
+	private static Scheduler getScheduler(FlowGenerator tg, NetworkGenerator ng){
 		return new PriorityScheduler(ng, tg);	//this could be a dummy scheduler.. only need empty schedule from it
 	}
 

@@ -1,4 +1,4 @@
-package schedulingIOModel;
+package schedulingModel;
 import ilog.opl.IloOplFactory;
 import ilog.opl.IloOplModel;
 
@@ -115,7 +115,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		return intByType;
 	}
 	
-	private int getNofTimeSlots(){
+	public int getNofTimeSlots(){
 		int slots=0;
 		for(Network network: networks){
 			if(network.capacity.size()>slots){
