@@ -1,12 +1,13 @@
 
-% 2016-03-02 15:20:48
+% 2016-04-03 16:12:26
 
 % my_logs\longTest1\
 max_time = 3;
 max_flows = 3;
 max_nets = 3;
 max_rep = 30;
-evaluate_max_only = 0;
+evaluate_max_only = 1;
 
-scheduler_logs= char('greedyFill_log.m');
+scheduler_logs= {'optimization_log.m','random_log.m','greedyFill_log.m'};
+schedulers= {'optimization','random','greedyFill'};
 

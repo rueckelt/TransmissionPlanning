@@ -11,7 +11,7 @@ import schedulers.Scheduler;
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.NetworkGenerator;
 import schedulingIOModel.TestCostFunction;
-import schedulingIOModel.TrafficGenerator;
+import schedulingIOModel.FlowGenerator;
 import visualization.Plot;
 import visualization.VisualizationPack;
 
@@ -64,10 +64,10 @@ public class EvaluationScenarioCreator {
 	 * @param tg
 	 * @return list of schedulers
 	 */
-	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, TrafficGenerator tg){
+	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
 		schedulers.add(new OptimizationScheduler(ng, tg));
-//		schedulers.add(new RandomScheduler(ng, tg, 5000));	//100 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new RandomScheduler(ng, tg, 5000));	//100 random runs of this scheduler. Returns average duration and cost
 //		schedulers.add(new PriorityScheduler(ng, tg));
 		schedulers.add(new GreedyScheduler(ng, tg));
 		return schedulers;
@@ -145,7 +145,7 @@ public class EvaluationScenarioCreator {
 	
 	public void calculateInstance(int time, int nets, int flows, int rep, String folder, boolean overwrite, boolean recalc, boolean decomposition_heuristic) {
 		NetworkGenerator ng;
-		TrafficGenerator tg;
+		FlowGenerator tg;
 		
 		String path=folder+"rep_"+ rep+File.separator;
 		//skip if folder exists
@@ -157,13 +157,13 @@ public class EvaluationScenarioCreator {
 //				System.out.println("Creating Networks and Flows..");
 				ng=new NetworkGenerator(nets, time);	//add network input data
 				ng.writeObject(path);
-				tg = new TrafficGenerator(time, flows);		//add application traffic input data
+				tg = new FlowGenerator(time, flows);		//add application traffic input data
 				tg.writeObject(path); 
 			}else{
 //				System.out.println("Loading stored Networks and Flows..");
 //				System.out.println(path);
 				ng=NetworkGenerator.loadNetworkGenerator(path);
-				tg=TrafficGenerator.loadTrafficGenerator(path);
+				tg=FlowGenerator.loadTrafficGenerator(path);
 			}
 			
 

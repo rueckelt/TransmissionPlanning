@@ -13,7 +13,7 @@ import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
 import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.TrafficGenerator;
+import schedulingIOModel.FlowGenerator;
 
 
 public class PriorityScheduler extends Scheduler{
@@ -39,7 +39,7 @@ public class PriorityScheduler extends Scheduler{
 	 * schedule_f_t_n
 	 */
 
-	public PriorityScheduler(NetworkGenerator ng, TrafficGenerator tg) {
+	public PriorityScheduler(NetworkGenerator ng, FlowGenerator tg) {
 		super(ng, tg);
 	}
 

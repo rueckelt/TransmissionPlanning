@@ -6,7 +6,7 @@ import ToolSet.RndInt;
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
 import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.TrafficGenerator;
+import schedulingIOModel.FlowGenerator;
 
 
 public class RandomScheduler extends Scheduler{
@@ -34,7 +34,7 @@ public class RandomScheduler extends Scheduler{
 	 * schedule_f_t_n
 	 */
 
-	public RandomScheduler(NetworkGenerator ng, TrafficGenerator tg, int runs) {
+	public RandomScheduler(NetworkGenerator ng, FlowGenerator tg, int runs) {
 		super(ng, tg);
 		RUNS = runs;
 		per_run_cost = new int[RUNS];

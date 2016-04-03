@@ -10,7 +10,7 @@ public class TestCostFunction extends CostFunction {
 
 	private IloOplModel model;
 	
-	public TestCostFunction(NetworkGenerator ng, TrafficGenerator tg, IloOplModel model) {
+	public TestCostFunction(NetworkGenerator ng, FlowGenerator tg, IloOplModel model) {
 		super(ng, tg);
 		this.model=model;
 	}

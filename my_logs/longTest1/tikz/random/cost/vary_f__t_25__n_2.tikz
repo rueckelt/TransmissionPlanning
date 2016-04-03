@@ -1,0 +1,109 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\figW,
+height=0.996\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+unbounded coords=jump,
+clip=false,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=2.5,
+xtick={\empty},
+xlabel={random},
+xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymode=log,
+ymin=71217,
+ymax=715860.20001,
+yminorticks=true,
+ymajorgrids,
+yminorgrids,
+axis background/.style={fill=white}
+]
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	402263\\
+1	513348\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	468168\\
+2	650782\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	173376\\
+1	242632\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	134661\\
+2	237125\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.925	513348\\
+1.075	513348\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.925	650782\\
+2.075	650782\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.925	173376\\
+1.075	173376\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.925	134661\\
+2.075	134661\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+0.85	242632\\
+0.85	402263\\
+1.15	402263\\
+1.15	242632\\
+0.85	242632\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+1.85	237125\\
+1.85	468168\\
+2.15	468168\\
+2.15	237125\\
+1.85	237125\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+0.85	332397.5\\
+1.15	332397.5\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+1.85	301913.5\\
+2.15	301913.5\\
+};
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\node[above, align=center, text=black]
+at (2.869cm,-0.476cm) {1};
+\node[above, align=center, text=black]
+at (8.606cm,-0.476cm) {2};
+\end{axis}
+\end{tikzpicture}%

@@ -1,0 +1,108 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\figW,
+height=0.996\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+clip=false,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=2.5,
+xtick={\empty},
+xlabel={optimization},
+xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymode=log,
+ymin=0.00401483326263359,
+ymax=204714.40001,
+yminorticks=true,
+ymajorgrids,
+yminorgrids,
+axis background/.style={fill=white}
+]
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	73317\\
+1	80436\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	71951\\
+2	73015\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	41378\\
+1	44395\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	68336\\
+2	69229\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.925	80436\\
+1.075	80436\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.925	73015\\
+2.075	73015\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.925	41378\\
+1.075	41378\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.925	68336\\
+2.075	68336\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+0.85	44395\\
+0.85	73317\\
+1.15	73317\\
+1.15	44395\\
+0.85	44395\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+1.85	69229\\
+1.85	71951\\
+2.15	71951\\
+2.15	69229\\
+1.85	69229\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+0.85	57443\\
+1.15	57443\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+1.85	70450.5\\
+2.15	70450.5\\
+};
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+1	186104\\
+};
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+2	90220\\
+};
+\node[above, align=center, text=black]
+at (2.869cm,-0.476cm) {1};
+\node[above, align=center, text=black]
+at (8.606cm,-0.476cm) {2};
+\end{axis}
+\end{tikzpicture}%

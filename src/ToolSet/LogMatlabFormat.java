@@ -64,15 +64,19 @@ public class LogMatlabFormat {
 	
 	public void logSchedulers(Vector<Scheduler> schedulers){
 		int i=0;
-		log+="\nscheduler_logs= char(";
+		log+="\nscheduler_logs= {";
+		String log_tmp = "\nschedulers= {";
 		for(Scheduler scheduler:schedulers){
 			if(i>0) {	//no leading comma at first of list
 				log+=",";
+				log_tmp+=",";
 			}
 			log+="'"+scheduler.getLogfileName("")+"'";
+			log_tmp+="'"+scheduler.getType()+"'";
 			i++;
 		}
-		log+=");\n";
+		log+="};";
+		log+=log_tmp+"};\n";
 	}
 		
 	public void writeLog(String filename){

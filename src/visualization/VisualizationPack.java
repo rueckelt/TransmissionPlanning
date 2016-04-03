@@ -4,7 +4,7 @@ import java.util.Vector;
 
 import schedulers.Scheduler;
 import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.TrafficGenerator;
+import schedulingIOModel.FlowGenerator;
 
 
 
@@ -19,14 +19,14 @@ import schedulingIOModel.TrafficGenerator;
 public class VisualizationPack {
 
 	private NetworkGenerator nets;
-	private TrafficGenerator traff;
+	private FlowGenerator traff;
 	private Scheduler sched0=null;
 	private Scheduler sched1=null;
 	private Scheduler sched2=null;
 	private Scheduler sched3=null;
 
 	
-	public VisualizationPack(NetworkGenerator ng, TrafficGenerator tg, Scheduler s0, Scheduler s1, Scheduler s2, Scheduler s3){
+	public VisualizationPack(NetworkGenerator ng, FlowGenerator tg, Scheduler s0, Scheduler s1, Scheduler s2, Scheduler s3){
 		nets = ng;
 		traff = tg;
 		sched0 = s0;
@@ -35,7 +35,7 @@ public class VisualizationPack {
 		sched3 = s3;
 	}
 	
-	public VisualizationPack(NetworkGenerator ng, TrafficGenerator tg, Vector<Scheduler> sched_vec){
+	public VisualizationPack(NetworkGenerator ng, FlowGenerator tg, Vector<Scheduler> sched_vec){
 		nets=ng;
 		traff=tg;
 		
@@ -53,20 +53,20 @@ public class VisualizationPack {
 		}
 	}
 
-	public VisualizationPack(NetworkGenerator ng, TrafficGenerator tg, Scheduler s0, Scheduler s1, Scheduler s2){
+	public VisualizationPack(NetworkGenerator ng, FlowGenerator tg, Scheduler s0, Scheduler s1, Scheduler s2){
 		this(ng, tg, s0, s1, s2, null);
 	}
 
-	public VisualizationPack(NetworkGenerator ng, TrafficGenerator tg, Scheduler s0, Scheduler s1){
+	public VisualizationPack(NetworkGenerator ng, FlowGenerator tg, Scheduler s0, Scheduler s1){
 		this(ng, tg, s0, s1, null, null);
 	}
 
-	public VisualizationPack(NetworkGenerator ng, TrafficGenerator tg, Scheduler s0){
+	public VisualizationPack(NetworkGenerator ng, FlowGenerator tg, Scheduler s0){
 		this(ng, tg, s0, null, null, null);
 	}
 
 	public NetworkGenerator getNets() { return nets; }
-	public TrafficGenerator getTraffic() { return traff; }	
+	public FlowGenerator getTraffic() { return traff; }	
 	public Scheduler getScheduler0() { return sched0; }
 	public Scheduler getScheduler1() { return sched1; }
 	public Scheduler getScheduler2() { return sched2; }

@@ -6,7 +6,7 @@ import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
 import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.TrafficGenerator;
+import schedulingIOModel.FlowGenerator;
 import ToolSet.LogMatlabFormat;
 
 
@@ -18,7 +18,7 @@ public abstract class Scheduler {
 	 */
 	
 	protected NetworkGenerator ng; 
-	protected TrafficGenerator tg;
+	protected FlowGenerator tg;
 	protected LogMatlabFormat logger;
 	
 	protected CostFunction cf;
@@ -27,7 +27,7 @@ public abstract class Scheduler {
 	private int[][][] schedule_f_t_n_temp;		//may be used during calculation of a schedule
 	
 	
-	public Scheduler(NetworkGenerator ng, TrafficGenerator tg){
+	public Scheduler(NetworkGenerator ng, FlowGenerator tg){
 		boundFlowDeadlines(tg, ng);
 		this.ng=ng;
 		this.tg=tg;
@@ -37,7 +37,7 @@ public abstract class Scheduler {
 	}
 	
 	//set limit for Deadlines of flows to scheduling length
-	private void boundFlowDeadlines(TrafficGenerator tg, NetworkGenerator ng) {
+	private void boundFlowDeadlines(FlowGenerator tg, NetworkGenerator ng) {
 		if(tg!=null && ng!=null)
 		for(Flow f: tg.getFlows()){
 			if(!(f.getDeadline()<ng.getTimeslots())){
