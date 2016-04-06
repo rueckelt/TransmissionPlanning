@@ -5,7 +5,7 @@
 
 in_folder = '..\my_logs\longTest1';% 'logs_time';
 out_folder = [in_folder filesep 'tikz'];
-force_read_data = 1;
+force_read_data = 0;
 
 %get paramters from file
 parameter_file=[in_folder filesep 'parameters_log.m'];

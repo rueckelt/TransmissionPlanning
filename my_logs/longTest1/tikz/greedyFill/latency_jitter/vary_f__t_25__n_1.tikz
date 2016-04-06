@@ -3,26 +3,21 @@
 \begin{tikzpicture}
 
 \begin{axis}[%
-width=\figW,
-height=0.996\figH,
+width=0.951\figW,
+height=\figH,
 at={(0\figW,0\figH)},
 scale only axis,
 unbounded coords=jump,
-clip=false,
-separate axis lines,
-every outer x axis line/.append style={black},
-every x tick label/.append style={font=\color{black}},
 xmin=0.5,
 xmax=2.5,
-xtick={\empty},
+xtick={1,2},
 xlabel={greedyFill},
 xmajorgrids,
-every outer y axis line/.append style={black},
-every y tick label/.append style={font=\color{black}},
 ymode=log,
 ymin=0,
 ymax=1e-05,
 yminorticks=true,
+ylabel={latency\_jitter/ opt latency\_jitter},
 ymajorgrids,
 yminorgrids,
 axis background/.style={fill=white}
@@ -93,17 +88,13 @@ axis background/.style={fill=white}
 1.85	nan\\
 2.15	nan\\
 };
-\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
   table[row sep=crcr]{%
 nan	nan\\
 };
-\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
   table[row sep=crcr]{%
 nan	nan\\
 };
-\node[above, align=center, text=black]
-at (2.869cm,-0.476cm) {1};
-\node[above, align=center, text=black]
-at (8.606cm,-0.476cm) {2};
 \end{axis}
 \end{tikzpicture}%

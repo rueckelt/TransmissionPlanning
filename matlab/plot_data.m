@@ -19,12 +19,15 @@ function [] = plot_data(out_folder, data, vartypes, schedulers)
     for v=1:nof_vartypes
         tmp = squeeze(data(v,:,:,:,:,:));
         [bound_hi, bound_lo] = calculate_bounds(tmp);
-        nof_schedulers
+      %  nof_schedulers
         for s=1:nof_schedulers
             %create path and labels
             %path
-            path = [out_folder filesep schedulers{s} filesep vartypes{v}] 
-            mkdir(path);
+            path = [out_folder filesep schedulers{s} filesep vartypes{v}] ;
+
+            if exist(path, 'dir')==0
+                mkdir(path);
+            end
             %path and ylabel = execution time / realative ... total cost /throughput/ latancy... 
             
             my_ylabel = [];
@@ -33,18 +36,21 @@ function [] = plot_data(out_folder, data, vartypes, schedulers)
                     my_ylabel = vartypes{v};    %only execution time
                 end
             else
-                if(s==2)
-                    my_ylabel = [vartypes{v} '/ opt ' vartypes{v}] ;
-                end
+                    my_ylabel = [vartypes{v} '/ opt ' vartypes{v}] ; %attrib / opt attrib (relative)
             end
             % + scheduler for path
             %xlabel = scheduler (?)
-            my_xlabel = schedulers{s};
+            my_xlabel = schedulers{s}; % show name of scheduler below graph
             
             data_sqeezed = squeeze(data(v, s, :,:,:,:));
 
-            %vary flows in plots
-            tikz_out(path,data_sqeezed , 1, my_xlabel, my_ylabel, bound_hi, bound_lo, logscale);
+            %vary flows(1), time(2) and networks(3) in plots
+           % for vary=1:3
+                tikz_out(path,data_sqeezed , 2, ...%vary
+                 my_xlabel, my_ylabel, bound_hi, bound_lo, logscale);
+            %end
+            
+        state=['plotting done by ' num2str(100*(1+(s-1)+(v-1)*(nof_schedulers))/((nof_vartypes)*(nof_schedulers))) '%']
         end
     end
 

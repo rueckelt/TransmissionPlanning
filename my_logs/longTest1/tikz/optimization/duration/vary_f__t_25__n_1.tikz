@@ -3,25 +3,20 @@
 \begin{tikzpicture}
 
 \begin{axis}[%
-width=\figW,
-height=0.996\figH,
+width=0.951\figW,
+height=\figH,
 at={(0\figW,0\figH)},
 scale only axis,
-clip=false,
-separate axis lines,
-every outer x axis line/.append style={black},
-every x tick label/.append style={font=\color{black}},
 xmin=0.5,
 xmax=2.5,
-xtick={\empty},
+xtick={1,2},
 xlabel={optimization},
 xmajorgrids,
-every outer y axis line/.append style={black},
-every y tick label/.append style={font=\color{black}},
 ymode=log,
 ymin=0.00401483326263359,
 ymax=204714.40001,
 yminorticks=true,
+ylabel={duration/ opt duration},
 ymajorgrids,
 yminorgrids,
 axis background/.style={fill=white}
@@ -92,17 +87,13 @@ axis background/.style={fill=white}
 1.85	70450.5\\
 2.15	70450.5\\
 };
-\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
   table[row sep=crcr]{%
 1	186104\\
 };
-\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
   table[row sep=crcr]{%
 2	90220\\
 };
-\node[above, align=center, text=black]
-at (2.869cm,-0.476cm) {1};
-\node[above, align=center, text=black]
-at (8.606cm,-0.476cm) {2};
 \end{axis}
 \end{tikzpicture}%
