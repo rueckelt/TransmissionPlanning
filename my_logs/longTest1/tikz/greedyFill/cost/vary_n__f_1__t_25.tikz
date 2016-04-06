@@ -1,0 +1,99 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+unbounded coords=jump,
+xmin=0.5,
+xmax=2.5,
+xtick={1,2},
+xlabel={greedyFill},
+xmajorgrids,
+ymode=log,
+ymin=65923.2,
+ymax=564682.80001,
+yminorticks=true,
+ymajorgrids,
+yminorgrids,
+axis background/.style={fill=white}
+]
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	224910\\
+1	247200\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	248776\\
+2	296082\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	123228\\
+1	177120\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	136000\\
+2	165600\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.925	247200\\
+1.075	247200\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.925	296082\\
+2.075	296082\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.925	123228\\
+1.075	123228\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.925	136000\\
+2.075	136000\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+0.85	177120\\
+0.85	224910\\
+1.15	224910\\
+1.15	177120\\
+0.85	177120\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+1.85	165600\\
+1.85	248776\\
+2.15	248776\\
+2.15	165600\\
+1.85	165600\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+0.85	202960\\
+1.15	202960\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+1.85	209550\\
+2.15	209550\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\end{axis}
+\end{tikzpicture}%

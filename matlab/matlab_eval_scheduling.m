@@ -31,13 +31,11 @@ else
 end
 
 state='gathered data'
-dims=size(raw_values)
 
 %calculate relative
 rel_data = relative_to_opt(raw_values);
-dims_rel=size(rel_data)
 %plot
-plot_data(out_folder, rel_data, valuenames, schedulers)
+plot_data(out_folder, rel_data, valuenames, schedulers);
 
 
 

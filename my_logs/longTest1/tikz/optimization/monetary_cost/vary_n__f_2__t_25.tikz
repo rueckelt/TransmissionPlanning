@@ -1,0 +1,101 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+unbounded coords=jump,
+xmin=0.5,
+xmax=2.5,
+xtick={1,2},
+xlabel={optimization},
+xmajorgrids,
+ymode=log,
+ymin=0,
+ymax=1507.00001,
+yminorticks=true,
+ylabel={monetary\_cost/ opt monetary\_cost},
+ymajorgrids,
+yminorgrids,
+axis background/.style={fill=white}
+]
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	875\\
+1	1089\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	300\\
+2	300\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	175\\
+1	200\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	50\\
+2	75\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.925	1089\\
+1.075	1089\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.925	300\\
+2.075	300\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.925	175\\
+1.075	175\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.925	50\\
+2.075	50\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+0.85	200\\
+0.85	875\\
+1.15	875\\
+1.15	200\\
+0.85	200\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+1.85	75\\
+1.85	300\\
+2.15	300\\
+2.15	75\\
+1.85	75\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+0.85	262.5\\
+1.15	262.5\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+1.85	128\\
+2.15	128\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+2	768\\
+2	1370\\
+};
+\end{axis}
+\end{tikzpicture}%

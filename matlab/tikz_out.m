@@ -36,11 +36,14 @@ function [] = tikz_out(out_folder, data, plot_var_ftn, my_xlabel, my_ylabel, bou
     end
     
     %plot
-    fig = figure('visible', 'off'); 
+   % fig = figure('visible', 'off'); 
     [dim1 dim2, dim3, rep] = size(data);   
 
     for d1=1:dim1
         for d2=1:dim2
+            filename = [out_folder filesep f_parts{1} num2str(d1_scale(d1))...
+                        f_parts{2}  num2str(d2_scale(d2)) f_parts{3}];
+           % figure('Name',filename);
             fixed_f_t=squeeze(data(d1,d2,:,:))';    %fix two dimensions
 
             boxplot(fixed_f_t, x_axis(1:dim3));     %plot data and add x-axis dim
@@ -54,17 +57,27 @@ function [] = tikz_out(out_folder, data, plot_var_ftn, my_xlabel, my_ylabel, bou
             end
             if ~isempty(my_ylabel)
                 ylabel(my_ylabel);  %set ylabel and numbers only for first
-                y_tick = get(gca, 'YTick') %get YTick from labeled graph
+                %y_tick = get(gca, 'YTick') %get YTick from labeled graph
             else
 %                 y_tick = get(gca, 'YTick') %get YTick from labeled graph
-%                 set(gca,'YTickLabel',[]); %remove y-axis numbers for others
+                 set(gca,'YTickLabel',[]); %remove y-axis numbers for others
 %                 set(gca, 'YTick', y_tick); %apply old YTick
             end
+            set(gca, 'XTickLabelRotation', 90)
 
            % filename = [out_folder '\' name '__nets_comp__t_' num2str(d1) '__app_' num2str(d1) '__' num2str(type) labels{type}(1:3) '.tikz'];
-           filename = [out_folder filesep f_parts{1} num2str(d1_scale(d1))...
-                        f_parts{2}  num2str(d2_scale(d2)) f_parts{3}];
+           
            matlab2tikz(filename,'width','\figW','height','\figH','showInfo',false);
+           %the library adds a line that destroys YTick representation: YTick=
+           %this line must be deleted / commented out
+           
+            fid  = fopen(filename,'r');
+            f=fread(fid,'*char')';
+            fclose(fid);
+            f = regexprep(f,'ytick={','%ytick={');
+            fid  = fopen(filename,'w');
+            fprintf(fid,'%s',f);
+            fclose(fid);
 
         end           
      end

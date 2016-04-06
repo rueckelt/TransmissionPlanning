@@ -1,0 +1,138 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.958\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+unbounded coords=jump,
+xmin=0.5,
+xmax=3.5,
+xtick={1,2,3},
+xticklabels={{25},{50},{100}},
+xlabel={greedyFill},
+xmajorgrids,
+ymode=log,
+ymin=0,
+ymax=1e-05,
+yminorticks=true,
+ylabel={throughput/ opt throughput},
+ymajorgrids,
+yminorgrids,
+axis background/.style={fill=white}
+]
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	nan\\
+1	nan\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	nan\\
+2	nan\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	nan\\
+3	nan\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	nan\\
+1	nan\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	nan\\
+2	nan\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	nan\\
+3	nan\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.8875	nan\\
+1.1125	nan\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.8875	nan\\
+2.1125	nan\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.8875	nan\\
+3.1125	nan\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.8875	nan\\
+1.1125	nan\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.8875	nan\\
+2.1125	nan\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.8875	nan\\
+3.1125	nan\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+0.775	nan\\
+0.775	nan\\
+1.225	nan\\
+1.225	nan\\
+0.775	nan\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+1.775	nan\\
+1.775	nan\\
+2.225	nan\\
+2.225	nan\\
+1.775	nan\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+2.775	nan\\
+2.775	nan\\
+3.225	nan\\
+3.225	nan\\
+2.775	nan\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+0.775	nan\\
+1.225	nan\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+1.775	nan\\
+2.225	nan\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+2.775	nan\\
+3.225	nan\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\end{axis}
+\end{tikzpicture}%
