@@ -96,8 +96,8 @@ public abstract class Scheduler {
 		startTimer();
 		calculateInstance_internal(path);	//result is stored to schedule_f_t_n_temp
 		long duration = stopTimer();
-		Runtime rt = Runtime.getRuntime();
-		System.out.println("TotalMemory of JVM: "+(rt.totalMemory()-rt.freeMemory())/(1024*1024));
+		//Runtime rt = Runtime.getRuntime();
+		//System.out.println("TotalMemory of JVM: "+(rt.totalMemory()-rt.freeMemory())/(1024*1024));
 		
 		//check if schedule holds required constraints
 		if(verificationOfConstraints(schedule_f_t_n_temp)){
