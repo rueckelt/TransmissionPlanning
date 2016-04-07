@@ -49,12 +49,12 @@ Schedulers:
 Setup:
 - Import project into Eclipse
 - Install IBM OPL Studio and add to PATH to enable Optimization: 
+	#download from https://www.dropbox.com/sh/pnerehn57fgsuy3/AABDZm5qTmiTjzPTUBNckKEYa?dl=0
 
 	**Windows: install and add to Path Variable 
 	[..your_path..]\CPLEX_Studio126\opl\bin\x86-64_win
 	
 	**Linux:
-	#download from https://www.dropbox.com/sh/pnerehn57fgsuy3/AABDZm5qTmiTjzPTUBNckKEYa?dl=0
 	chmod a+x cplex_studio126.linux-x86-64.bin
 	sudo ./cplex_studio126.linux-x86-64.bin
 	#add to Path: /opt/ibm/ILOG/CPLEX_Studio126/opl/bin/x86-64_linux
