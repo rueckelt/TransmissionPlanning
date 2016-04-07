@@ -48,7 +48,23 @@ Schedulers:
 
 Setup:
 - Import project into Eclipse
-- (required?) Install IBM OPL Studio to enable Optimization: https://www.dropbox.com/sh/pnerehn57fgsuy3/AABDZm5qTmiTjzPTUBNckKEYa?dl=0
+- Install IBM OPL Studio and add to PATH to enable Optimization: 
 
+	**Windows: install and add to Path Variable 
+	[..your_path..]\CPLEX_Studio126\opl\bin\x86-64_win
+	
+	**Linux:
+	#download from https://www.dropbox.com/sh/pnerehn57fgsuy3/AABDZm5qTmiTjzPTUBNckKEYa?dl=0
+	chmod a+x cplex_studio126.linux-x86-64.bin
+	sudo ./cplex_studio126.linux-x86-64.bin
+	#add to Path: /opt/ibm/ILOG/CPLEX_Studio126/opl/bin/x86-64_linux
+
+		#did not work for me.. therefore add to java runtime environment:
+
+		#Right-click on project/Properties/Run-Debug Settings/
+		#choose main(1) and klick edit
+		#select Environment / New..
+		#Name: LD_LIBRARY_PATH
+		#Value: /opt/ibm/ILOG/CPLEX_Studio126/opl/bin/x86-64_linux
 
 
