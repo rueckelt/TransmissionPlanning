@@ -1,5 +1,7 @@
 package schedulers;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import optimization.ModelExecutor;
 import schedulingIOModel.NetworkGenerator;
@@ -53,8 +55,11 @@ public class OptimizationScheduler extends Scheduler {
 		//System.out.println("2 "+logpath);
 		new File(logpath).mkdirs();
 		String dataset_path = logpath+dataset_gen;
-		ng.writeOutput(MODELDIR+dataset_dyn, MODELDIR+dataset_net);		//write the file for ILP
-		tg.writeOutput(MODELDIR+dataset_net, dataset_path);			//write the file for ILP
+		ng.writeOutput(MODELDIR+dataset_dyn, logpath+dataset_net);		//write the file for ILP
+		tg.writeOutput(logpath+dataset_net, dataset_path);			//write the file for ILP
+		//delete temporary file
+		new File(logpath+dataset_net).delete();
+
 	}
 	
 	public void testCostFunction(){

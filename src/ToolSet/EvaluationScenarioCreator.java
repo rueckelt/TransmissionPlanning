@@ -1,7 +1,13 @@
 package ToolSet;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 import schedulers.OptimizationScheduler;
 import schedulers.GreedyScheduler;
@@ -22,7 +28,9 @@ public class EvaluationScenarioCreator {
 	private boolean RECALC= false;						//recalculates results, loading network and traffic generators from previous run
 	private final boolean TEST_COST_FUNCTION = false;	//tests cost function implemented in java, comparing all results to optimization output
 	private boolean VISUALIZE = false;	//tests cost function implemented in java, comparing all results to optimization output
-
+	private int PARALLEL=1;
+	
+	List<Callable<Boolean>> taskList = new ArrayList<Callable<Boolean>>();
 	
 	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
 		REPETITIONS=repetitions;
@@ -41,6 +49,12 @@ public class EvaluationScenarioCreator {
 		RECALC=true;
 	}
 	/*
+	 * reads out generated simulation scenarios and recalculates results
+	 */
+	public void parallel(int parallel_workers){
+		PARALLEL=parallel_workers;
+	}
+	/*
 	 * overwrites generated simulation scenarios and results
 	 */
 	public void overwrite(){
@@ -49,6 +63,15 @@ public class EvaluationScenarioCreator {
 	
 	public void visualize(){
 		VISUALIZE=true;
+	}
+	
+	public void start(){
+		ExecutorService executor = Executors.newFixedThreadPool(PARALLEL);
+		try {
+			executor.invokeAll(taskList);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -64,7 +87,7 @@ public class EvaluationScenarioCreator {
 	 * @param tg
 	 * @return list of schedulers
 	 */
-	private Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
+	public static Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
 		schedulers.add(new OptimizationScheduler(ng, tg));
 		schedulers.add(new RandomScheduler(ng, tg, 500));	//500 random runs of this scheduler. Returns average duration and cost
@@ -134,12 +157,19 @@ public class EvaluationScenarioCreator {
 	 * @param overwrite
 	 * @param recalc
 	 */
+	
+	
 	public void calculateInstance_t_n_i(int t, int n, int f, int rep, String folder, boolean overwrite, boolean recalc, boolean decomposition_heuristic){
 		int time = 25*pow(2,t);
 		int nets = pow(2,n);
 		int flows = pow(2,f);
 		String folder_out = folder+f+"_"+t+"_"+n+File.separator;
-		calculateInstance(time, nets, flows, rep, folder_out, overwrite, recalc, decomposition_heuristic);
+//		calculateInstance(time, nets, flows, rep, folder_out, overwrite, recalc, decomposition_heuristic);
+		
+		EvaluationScenarioExecutionWorker worker = new 
+				EvaluationScenarioExecutionWorker(TEST_COST_FUNCTION, VISUALIZE, time, nets, flows, rep, folder_out, overwrite, recalc);
+		taskList.add(worker);
+		
 	}
 	
 	
@@ -185,8 +215,8 @@ public class EvaluationScenarioCreator {
 					sched.testCostFunction();
 					sched.calculateInstance(path);
 				} else {
-					LinkedList<Integer> cost= new LinkedList<Integer>();
-					LinkedList<String> s_name= new LinkedList<String>();
+//					LinkedList<Integer> cost= new LinkedList<Integer>();
+//					LinkedList<String> s_name= new LinkedList<String>();
 					// default case:
 					// run instance for each scheduler which is created in
 					// method "initSchedulers(ng,tg)" above
@@ -197,8 +227,8 @@ public class EvaluationScenarioCreator {
 					for (Scheduler scheduler : scheds) {
 						System.out.print(" "+scheduler.getType());
 						scheduler.calculateInstance(path);
-						cost.add(scheduler.getCost());
-						s_name.add(scheduler.getType());
+//						cost.add(scheduler.getCost());
+//						s_name.add(scheduler.getType());
 						
 						//
 						if(first){
@@ -213,8 +243,8 @@ public class EvaluationScenarioCreator {
 
 					}
 					Scheduler s = new PriorityScheduler(ng, tg);
-					cost.add(s.getCost());
-					s_name.add("empty");
+//					cost.add(s.getCost());
+//					s_name.add("empty");
 //					System.out.println(s_name);
 //					System.out.println("Cost "+cost);
 
