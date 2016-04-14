@@ -36,14 +36,15 @@ function [] = tikz_out(out_folder, data, plot_var_ftn, my_xlabel, my_ylabel, bou
     end
     
     %plot
-   % fig = figure('visible', 'off'); 
+    fig = figure('visible', 'off'); 
     [dim1 dim2, dim3, rep] = size(data);   
 
     for d1=1:dim1
         for d2=1:dim2
             filename = [out_folder filesep f_parts{1} num2str(d1_scale(d1))...
-                        f_parts{2}  num2str(d2_scale(d2)) f_parts{3}];
-           % figure('Name',filename);
+                        f_parts{2}  num2str(d2_scale(d2)) f_parts{3}]
+           % f=figure('Name',filename, 'visible', false);
+            f=figure('Name',filename);
             fixed_f_t=squeeze(data(d1,d2,:,:))';    %fix two dimensions
 
             boxplot(fixed_f_t, x_axis(1:dim3));     %plot data and add x-axis dim
@@ -63,10 +64,14 @@ function [] = tikz_out(out_folder, data, plot_var_ftn, my_xlabel, my_ylabel, bou
                  set(gca,'YTickLabel',[]); %remove y-axis numbers for others
 %                 set(gca, 'YTick', y_tick); %apply old YTick
             end
-            set(gca, 'XTickLabelRotation', 90)
+%            set(gca, 'XTickLabelRotation', 90)
 
            % filename = [out_folder '\' name '__nets_comp__t_' num2str(d1) '__app_' num2str(d1) '__' num2str(type) labels{type}(1:3) '.tikz'];
            
+           if strcmp(filename, '..\my_logs\longTest1\tikz\greedyFill\throughput\vary_t__f_2__n_2.tikz')
+                fixed_f_t
+           end
+
            matlab2tikz(filename,'width','\figW','height','\figH','showInfo',false);
            %the library adds a line that destroys YTick representation: YTick=
            %this line must be deleted / commented out

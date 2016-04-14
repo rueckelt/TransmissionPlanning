@@ -3,28 +3,48 @@
 \begin{tikzpicture}
 
 \begin{axis}[%
-width=0.958\figW,
-height=\figH,
+width=\figW,
+height=0.996\figH,
 at={(0\figW,0\figH)},
 scale only axis,
 unbounded coords=jump,
+clip=false,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
 xmin=0.5,
 xmax=3.5,
-xtick={1,2,3},
-xticklabels={{25},{50},{100}},
+xtick={\empty},
 xlabel={optimization},
 xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
 ymode=log,
-ymin=0.1,
-ymax=1,
+ymin=0,
+ymax=59510.00001,
 yminorticks=true,
-ylabel={latency\_jitter/ opt latency\_jitter},
+ylabel={$\text{latency}_\text{j}\text{itter/ opt latency}_\text{j}\text{itter}$},
 ymajorgrids,
 yminorgrids,
 axis background/.style={fill=white}
 ]
 \addplot [color=black,dashed,forget plot]
   table[row sep=crcr]{%
+1	6800\\
+1	15120\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	6710\\
+2	13440\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	49950\\
+3	54100\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
 1	0\\
 1	0\\
 };
@@ -38,20 +58,20 @@ axis background/.style={fill=white}
 3	0\\
 3	0\\
 };
-\addplot [color=black,dashed,forget plot]
+\addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
-1	0\\
-1	0\\
+0.8875	15120\\
+1.1125	15120\\
 };
-\addplot [color=black,dashed,forget plot]
+\addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
-2	0\\
-2	0\\
+1.8875	13440\\
+2.1125	13440\\
 };
-\addplot [color=black,dashed,forget plot]
+\addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
-3	0\\
-3	0\\
+2.8875	54100\\
+3.1125	54100\\
 };
 \addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
@@ -68,71 +88,62 @@ axis background/.style={fill=white}
 2.8875	0\\
 3.1125	0\\
 };
-\addplot [color=black,solid,forget plot]
-  table[row sep=crcr]{%
-0.8875	0\\
-1.1125	0\\
-};
-\addplot [color=black,solid,forget plot]
-  table[row sep=crcr]{%
-1.8875	0\\
-2.1125	0\\
-};
-\addplot [color=black,solid,forget plot]
-  table[row sep=crcr]{%
-2.8875	0\\
-3.1125	0\\
-};
 \addplot [color=blue,solid,forget plot]
   table[row sep=crcr]{%
 0.775	0\\
-0.775	0\\
-1.225	0\\
+0.775	6800\\
+1.225	6800\\
 1.225	0\\
 0.775	0\\
 };
 \addplot [color=blue,solid,forget plot]
   table[row sep=crcr]{%
 1.775	0\\
-1.775	0\\
-2.225	0\\
+1.775	6710\\
+2.225	6710\\
 2.225	0\\
 1.775	0\\
 };
 \addplot [color=blue,solid,forget plot]
   table[row sep=crcr]{%
 2.775	0\\
-2.775	0\\
-3.225	0\\
+2.775	49950\\
+3.225	49950\\
 3.225	0\\
 2.775	0\\
 };
 \addplot [color=red,solid,forget plot]
   table[row sep=crcr]{%
-0.775	0\\
-1.225	0\\
+0.775	3880\\
+1.225	3880\\
 };
 \addplot [color=red,solid,forget plot]
   table[row sep=crcr]{%
-1.775	0\\
-2.225	0\\
+1.775	1218\\
+2.225	1218\\
 };
 \addplot [color=red,solid,forget plot]
   table[row sep=crcr]{%
-2.775	0\\
-3.225	0\\
+2.775	20204\\
+3.225	20204\\
 };
-\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
   table[row sep=crcr]{%
 nan	nan\\
 };
-\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+2	30800\\
+};
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
   table[row sep=crcr]{%
 nan	nan\\
 };
-\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
-  table[row sep=crcr]{%
-nan	nan\\
-};
+\node[above, align=center, text=black]
+at (1.912cm,-0.476cm) {1};
+\node[above, align=center, text=black]
+at (5.737cm,-0.476cm) {2};
+\node[above, align=center, text=black]
+at (9.562cm,-0.476cm) {3};
 \end{axis}
 \end{tikzpicture}%

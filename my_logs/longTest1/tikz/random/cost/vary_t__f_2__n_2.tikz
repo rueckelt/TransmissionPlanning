@@ -3,21 +3,26 @@
 \begin{tikzpicture}
 
 \begin{axis}[%
-width=0.958\figW,
-height=\figH,
+width=\figW,
+height=0.996\figH,
 at={(0\figW,0\figH)},
 scale only axis,
 unbounded coords=jump,
+clip=false,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
 xmin=0.5,
 xmax=3.5,
-xtick={1,2,3},
-xticklabels={{25},{50},{100}},
+xtick={\empty},
 xlabel={random},
 xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
 ymode=log,
-ymin=58845.6,
-ymax=1045014.30001,
-%ytick={100000,1000000},
+ymin=66648.6,
+ymax=853886.00001,
+%ytick={100000},
 yticklabels={\empty},
 yminorticks=true,
 ymajorgrids,
@@ -26,38 +31,38 @@ axis background/.style={fill=white}
 ]
 \addplot [color=black,dashed,forget plot]
   table[row sep=crcr]{%
-1	379877\\
-1	603384\\
+1	468168\\
+1	650782\\
 };
 \addplot [color=black,dashed,forget plot]
   table[row sep=crcr]{%
-2	436222\\
+2	526422\\
 2	655649\\
 };
 \addplot [color=black,dashed,forget plot]
   table[row sep=crcr]{%
 3	664348\\
-3	869816\\
+3	776260\\
 };
 \addplot [color=black,dashed,forget plot]
   table[row sep=crcr]{%
 1	134661\\
-1	205931\\
+1	237125\\
 };
 \addplot [color=black,dashed,forget plot]
   table[row sep=crcr]{%
-2	69707\\
-2	215230\\
+2	121998\\
+2	235336\\
 };
 \addplot [color=black,dashed,forget plot]
   table[row sep=crcr]{%
-3	151650\\
-3	228954\\
+3	180719\\
+3	351691\\
 };
 \addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
-0.8875	603384\\
-1.1125	603384\\
+0.8875	650782\\
+1.1125	650782\\
 };
 \addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
@@ -66,8 +71,8 @@ axis background/.style={fill=white}
 };
 \addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
-2.8875	869816\\
-3.1125	869816\\
+2.8875	776260\\
+3.1125	776260\\
 };
 \addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
@@ -76,64 +81,70 @@ axis background/.style={fill=white}
 };
 \addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
-1.8875	69707\\
-2.1125	69707\\
+1.8875	121998\\
+2.1125	121998\\
 };
 \addplot [color=black,solid,forget plot]
   table[row sep=crcr]{%
-2.8875	151650\\
-3.1125	151650\\
+2.8875	180719\\
+3.1125	180719\\
 };
 \addplot [color=blue,solid,forget plot]
   table[row sep=crcr]{%
-0.775	205931\\
-0.775	379877\\
-1.225	379877\\
-1.225	205931\\
-0.775	205931\\
+0.775	237125\\
+0.775	468168\\
+1.225	468168\\
+1.225	237125\\
+0.775	237125\\
 };
 \addplot [color=blue,solid,forget plot]
   table[row sep=crcr]{%
-1.775	215230\\
-1.775	436222\\
-2.225	436222\\
-2.225	215230\\
-1.775	215230\\
+1.775	235336\\
+1.775	526422\\
+2.225	526422\\
+2.225	235336\\
+1.775	235336\\
 };
 \addplot [color=blue,solid,forget plot]
   table[row sep=crcr]{%
-2.775	228954\\
+2.775	351691\\
 2.775	664348\\
 3.225	664348\\
-3.225	228954\\
-2.775	228954\\
+3.225	351691\\
+2.775	351691\\
 };
 \addplot [color=red,solid,forget plot]
   table[row sep=crcr]{%
-0.775	284883\\
-1.225	284883\\
+0.775	301913.5\\
+1.225	301913.5\\
 };
 \addplot [color=red,solid,forget plot]
   table[row sep=crcr]{%
-1.775	308126\\
-2.225	308126\\
+1.775	344470.5\\
+2.225	344470.5\\
 };
 \addplot [color=red,solid,forget plot]
   table[row sep=crcr]{%
-2.775	460765\\
-3.225	460765\\
+2.775	546333\\
+3.225	546333\\
 };
-\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
-  table[row sep=crcr]{%
-1	650782\\
-};
-\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
-  table[row sep=crcr]{%
-2	950013\\
-};
-\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
   table[row sep=crcr]{%
 nan	nan\\
 };
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+\addplot [color=blue,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+nan	nan\\
+};
+%\node[above, align=center, text=black]
+%at (1.912cm,-0.476cm) {1};
+%\node[above, align=center, text=black]
+%at (5.737cm,-0.476cm) {2};
+%\node[above, align=center, text=black]
+%at (9.562cm,-0.476cm) {3};
 \end{axis}
 \end{tikzpicture}%
