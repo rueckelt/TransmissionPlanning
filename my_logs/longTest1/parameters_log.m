@@ -1,7 +1,7 @@
 
-% 2016-04-13 16:11:29
+% 2016-04-14 09:15:08
 
-% my_logs\longTest1\
+% my_logs/longTest1/
 max_time = 3;
 max_flows = 2;
 max_nets = 2;
