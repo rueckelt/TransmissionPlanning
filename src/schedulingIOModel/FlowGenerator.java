@@ -171,7 +171,7 @@ public class FlowGenerator implements Serializable{
 			
 			impDeadline+=flow.getImpDeadline();
 			impStartTime+=flow.getImpStartTime();
-			impThroughputMax+=flow.getImpThroughputMax();
+//			impThroughputMax+=flow.getImpThroughputMax();
 			impThroughputMin+=flow.getImpThroughputMin();
 			impUnscheduled+=flow.getImpUnsched();
 			impLatency+=flow.getImpLatency();

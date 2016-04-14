@@ -146,6 +146,19 @@ public class EvaluationScenarioCreator {
 	
 	System.out.println("###############   DONE  ##################");
 	}
+	
+	public void evaluateTimeVariation(){
+		//paramter log
+		writeScenarioLog(1);
+		for(int t= 0; t<=MAX_TIME; t++){
+			for(int rep=0; rep<REPETITIONS;rep++){
+				calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
+			}
+		}
+		
+	
+	System.out.println("###############   DONE  ##################");
+	}
 
 	/**
 	 * calculates maximum values for time slots, networks, and flows from indexes

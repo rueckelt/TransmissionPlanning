@@ -180,10 +180,10 @@ public class Flow implements Serializable, Cloneable{
 		return impThrouthputMax;
 	}
 
-
-	public void setImpThrouthputMax(int impThrouthputMax) {
-		this.impThrouthputMax = impThrouthputMax;
-	}
+//	Hard constraint --> does not exist anymore
+//	public void setImpThrouthputMax(int impThrouthputMax) {
+//		this.impThrouthputMax = impThrouthputMax;
+//	}
 
 
 	public int getImpUnsched() {
@@ -226,9 +226,19 @@ public class Flow implements Serializable, Cloneable{
 	}
 
 
+	/**
+	 * Creates data flow with high minimum throughput importance
+	 * Throughput might be higher (higher voice quality) but importance for scheduling
+	 * these additional tokens is lower
+	 * start time and deadline are important because its real-time traffic
+	 * 
+	 * @param startTime
+	 * @param deadline
+	 * @return
+	 */
 	public static Flow IPCall(int startTime, int deadline){
 		Flow IPCall = new Flow();
-		int chunks_per_slot = 5 + RndInt.get(-1, 1);
+		int chunks_per_slot = 10 + RndInt.get(-2, 2);
 		
 		IPCall.setStartTime(startTime);
 		IPCall.setDeadline(deadline);
@@ -236,20 +246,20 @@ public class Flow implements Serializable, Cloneable{
 		
 		IPCall.setWindowMin(1);
 		IPCall.setChunksMin(5 + RndInt.get(-1, 0));
-		IPCall.setImpThroughputMin(100);		//should deliver all 5 --> high priority (10? more? what should be max?)
+		IPCall.setImpThroughputMin(50);		//should deliver all 5 --> high priority (10? more? what should be max?)
 		IPCall.setImpDeadline(10); 			// call is over after deadline --> high prio
 		
-		IPCall.setReqJitter(3);
-		IPCall.setReqLatency(3);			//low latency, low jitter
+		IPCall.setReqJitter(4);
+		IPCall.setReqLatency(4);			//low latency, low jitter
 		
 		IPCall.setWindowMax(1);
-		IPCall.setChunksMax(5 + RndInt.get(0, 1));
-		IPCall.setImpThrouthputMax(10000);	//cannot deliver more than 5 --> blocking high priority
+		IPCall.setChunksMax(chunks_per_slot);		//higher thourthput possible: higher voice quality!
+//		IPCall.setImpThrouthputMax(10000);	//cannot deliver more than 5 --> blocking high priority
 		IPCall.setImpStartTime(10);			//data not existent before call --> high prio
 		
-		IPCall.setImpUnsched(8 + RndInt.get(-1, 1));		//lower priority for unscheduled than for deadline violation
-		IPCall.setImpJitter(6 + RndInt.get(-1, 2));			//jitter and latency are important
-		IPCall.setImpLatency(7 + RndInt.get(-2, 1));
+		IPCall.setImpUnsched(4 + RndInt.get(-1, 2));		//lower priority for unscheduled than for deadline violation
+		IPCall.setImpJitter(6 + RndInt.get(-1, 1));			//jitter and latency are important
+		IPCall.setImpLatency(6 + RndInt.get(-1, 1));
 		
 		IPCall.setImpUser(9 + RndInt.get(-1, 2));
 		
@@ -257,21 +267,22 @@ public class Flow implements Serializable, Cloneable{
 	}
 	public static Flow BufferableStream(int startTime, int length){
 		Flow stream = new Flow();
-		int chunks_per_slot=15 + RndInt.get(-5, 5);
+		int chunks_per_slot=15 + RndInt.get(-5, 5);	//stream quality may vary
 		
 		stream.setStartTime(startTime);
 		stream.setDeadline(startTime+length);
-		stream.setChunks((length+ RndInt.get(-3, 3))*chunks_per_slot);
+		stream.setChunks(length*chunks_per_slot);
 		
 		//relaxed window
-		stream.setWindowMin(15+ RndInt.get(-5, 5));
-		stream.setChunksMin(15*chunks_per_slot);
-		stream.setImpThroughputMin(5+ RndInt.get(-1, 1));		// soft minimum throughput limit; allowed to be bursty (large window)
+		int min_win_size = 10 + length/RndInt.get(3, 8);				//allowed to be bursty (large window)
+		stream.setWindowMin(min_win_size);
+		stream.setChunksMin(min_win_size*chunks_per_slot/2);	//at least half of the data must pass (low quality video) more data scales quality
+		stream.setImpThroughputMin(7+ RndInt.get(-1, 1));		// soft minimum throughput limit
 		stream.setImpDeadline(7+ RndInt.get(-2, 2)); 			
 		
 		stream.setImpStartTime(2+ RndInt.get(-1, 4));			//later start time is ok 	
 		
-		stream.setImpUnsched(6+ RndInt.get(-1, 1));			//unscheduled chunks are ok for long streams and short scheduling duration
+		stream.setImpUnsched(5+ RndInt.get(-1, 1));			//unscheduled chunks may adapt video quality
 		
 		stream.setImpUser(7+ RndInt.get(-3, 2));
 		
@@ -280,7 +291,7 @@ public class Flow implements Serializable, Cloneable{
 	
 	public static Flow UserRequest(int startTime, int chunks){
 		Flow userRequest = new Flow();
-		int deadline = startTime + chunks/(30+ RndInt.get(-5, 5));	//early deadline, depends on request size
+		int deadline = startTime + chunks/(20+ RndInt.get(-5, 5));	//early deadline, depends on request size
 		
 		userRequest.setStartTime(startTime);
 		userRequest.setDeadline(deadline);
@@ -289,6 +300,7 @@ public class Flow implements Serializable, Cloneable{
 		userRequest.setImpUnsched(15+ RndInt.get(-3, 3));			//all chunks must be scheduled		
 		userRequest.setImpUser(7+ RndInt.get(-1, 3));
 		userRequest.setImpDeadline(8+ RndInt.get(-1, 1));
+		userRequest.setImpStartTime(8+ RndInt.get(-1, 1));
 		
 		return userRequest;
 	}
