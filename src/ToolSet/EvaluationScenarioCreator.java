@@ -1,23 +1,22 @@
 package ToolSet;
 import java.io.File;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
-import schedulers.OptimizationScheduler;
 import schedulers.GreedyScheduler;
+import schedulers.OptimizationScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
-import schedulingIOModel.CostFunction;
-import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.TestCostFunction;
 import schedulingIOModel.FlowGenerator;
+import schedulingIOModel.NetworkGenerator;
 import visualization.Plot;
 import visualization.VisualizationPack;
 
@@ -150,9 +149,9 @@ public class EvaluationScenarioCreator {
 	public void evaluateTimeVariation(){
 		//paramter log
 		writeScenarioLog(1);
-		for(int t= 0; t<=MAX_TIME; t++){
+		for(int t= 3; t<=MAX_TIME; t++){
 			for(int rep=0; rep<REPETITIONS;rep++){
-				calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
+				calculateInstance_t_n_i(t, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
 			}
 		}
 		
@@ -193,6 +192,7 @@ public class EvaluationScenarioCreator {
 		String path=folder+"rep_"+ rep+File.separator;
 		//skip if folder exists
 		if(!new File(path).exists() || overwrite || recalc){
+			
 			System.out.println(path);
 			new File(path).mkdirs();
 //			System.out.println(recalc);
@@ -238,7 +238,9 @@ public class EvaluationScenarioCreator {
 					int c_opt=0;
 					Vector<Scheduler> scheds= initSchedulers(ng, tg);
 					for (Scheduler scheduler : scheds) {
-						System.out.print(" "+scheduler.getType());
+						Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						String date = formatter.format(Calendar.getInstance().getTime());
+						System.out.println(" "+scheduler.getType() +", start at " +date);
 						scheduler.calculateInstance(path);
 //						cost.add(scheduler.getCost());
 //						s_name.add(scheduler.getType());
