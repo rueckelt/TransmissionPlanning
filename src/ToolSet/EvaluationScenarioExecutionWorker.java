@@ -1,6 +1,9 @@
 package ToolSet;
 
 import java.io.File;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -92,7 +95,10 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 					int c_opt=0;
 					Vector<Scheduler> scheds= EvaluationScenarioCreator.initSchedulers(ng, tg);
 					for (Scheduler scheduler : scheds) {
-						System.out.print(" "+scheduler.getType());
+						Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						String date = formatter.format(Calendar.getInstance().getTime());
+						System.out.println(" "+scheduler.getType() + ", starting at "+date);
+
 						scheduler.calculateInstance(path);
 //						cost.add(scheduler.getCost());
 //						s_name.add(scheduler.getType());
@@ -117,10 +123,10 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 					if(VISUALIZE){
 						Plot plot = new Plot(new VisualizationPack(ng, tg, scheds));
 					}
-					
-					if(error){
-						System.exit(0);
-					}
+//					
+//					if(error){
+//						System.exit(0);
+//					}
 				}
 //			}
 		}

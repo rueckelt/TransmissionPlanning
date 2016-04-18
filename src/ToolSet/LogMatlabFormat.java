@@ -34,6 +34,12 @@ public class LogMatlabFormat {
 	 * @return
 	 */
 	
+	public void log(String name, long value){
+		if(!logged_variables.contains(name)){
+			log+=logValue(name, value);
+			logged_variables.add(name);
+		}
+	}	
 	public void log(String name, int value){
 		if(!logged_variables.contains(name)){
 			log+=logValue(name, value);
@@ -103,7 +109,9 @@ public class LogMatlabFormat {
 		}
 	}
 	
-	
+	private String logValue(String name, long value){
+		 return name+" = "+value+";\n";
+	}
 	private String logValue(String name, int value){
 		 return name+" = "+value+";\n";
 	}

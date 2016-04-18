@@ -118,7 +118,7 @@ public abstract class Scheduler {
 	protected void logInstance(String path, long duration) {
 		//write log file for schedule including solve duration, schedule, cost function 
 		logger.comment(getLogfileName(path));
-		logger.log("scheduling_duration_us", (int)(duration/1000));
+		logger.log("scheduling_duration_us", duration/1000);
 		
 		logger.comment("schedule");
 		logger.log("schedule_f_t_n", schedule_f_t_n_temp);

@@ -24,7 +24,8 @@ public class main {
 			eval.overwrite();
 //			eval.evaluateAll();
 
-			eval.evaluateTop();
+//			eval.evaluateTop();
+			eval.evaluateTimeVariation();
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
 			eval.parallel(4);

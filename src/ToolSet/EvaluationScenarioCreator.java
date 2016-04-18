@@ -185,7 +185,18 @@ public class EvaluationScenarioCreator {
 		
 	}
 	
-	
+	/**
+	 * moved to Evaluation Scenario Execution worker for parallelization
+	 * 
+	 * @param time
+	 * @param nets
+	 * @param flows
+	 * @param rep
+	 * @param folder
+	 * @param overwrite
+	 * @param recalc
+	 * @param decomposition_heuristic
+	 *
 	public void calculateInstance(int time, int nets, int flows, int rep, String folder, boolean overwrite, boolean recalc, boolean decomposition_heuristic) {
 		NetworkGenerator ng;
 		FlowGenerator tg;
@@ -272,7 +283,7 @@ public class EvaluationScenarioCreator {
 			}
 		}
 	}
-
+*/
 	
 	private int pow(int v, int exp){
 		return (int)Math.round(Math.pow(v, exp));
