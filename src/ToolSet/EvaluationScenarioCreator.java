@@ -71,7 +71,12 @@ public class EvaluationScenarioCreator {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		executor.
+		try {
+			executor.invokeAll(taskList);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	

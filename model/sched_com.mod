@@ -175,13 +175,13 @@ dvar int+ vioTpMin[Flows, Time];
 
 
 dexpr int vioLcy[f in Flows] = sum(t in Time, n in Networks) (
-						allocatedChunks[f, t, n]*importance[IMP_LCY, f]*			//for allocated chunks
+						(allocatedChunks[f, t, n]!=0)*importance[IMP_LCY, f]*			//for allocated chunks
 						(network_lcy[n]-latency[f])*(network_lcy[n]-latency[f])*	//latency violation square
 						( (network_lcy[n]-latency[f]) >=0)							//sum only if positive
 						);
 
 dexpr int vioJit[f in Flows] = sum(t in Time, n in Networks) (					//similar to latency model
-						allocatedChunks[f,t,n]*importance[IMP_JIT, f]*
+						(allocatedChunks[f, t, n]!=0)*importance[IMP_JIT, f]*
 						(network_jit[n]-jitter[f])*(network_jit[n]-jitter[f])*
 						( (network_jit[n]-jitter[f]) >=0)
 						);

@@ -202,8 +202,8 @@ public class GreedyScheduler extends Scheduler{
 	private int calcVio(Flow flow, Network network){
 
 				//scheduling may lead to jitter and latency cost
-		int c= 	(CostFunction.jitterMatch(flow, network)	//match functions return 0 for match, else strength of violation
-				+ CostFunction.latencyMatch(flow, network)
+		int c= 	((CostFunction.jitterMatch(flow, network)	//match functions return 0 for match, else strength of violation
+				+ CostFunction.latencyMatch(flow, network))/getAvMinTp(flow)
 				//scheduling avoids throughput-violation cost and unsched cost
 				- throughputMatch(flow, network)
 				- flow.getImpUnsched()*flow.getImpUser()	//each unscheduled chunk leads to this cost
@@ -243,9 +243,7 @@ public class GreedyScheduler extends Scheduler{
 		if(slotcount>0){
 			averageTp=Math.round(sum/slotcount);
 		}
-		
-		//get minimum throughput requirement of flow
-		int flow_minTp = (int) Math.ceil(flow.getChunksMin()/flow.getWindowMin());
+		int flow_minTp = getAvMinTp(flow);
 		
 		int tp;
 		if(averageTp<flow_minTp){
@@ -256,6 +254,11 @@ public class GreedyScheduler extends Scheduler{
 		int savedvio =tp*flow.getImpThroughputMin();	
 		return savedvio;	
 		
+	}
+	
+	private int getAvMinTp(Flow flow){
+		//get minimum throughput requirement of flow
+		return (int) Math.ceil(flow.getChunksMin()/flow.getWindowMin());
 	}
 	
 	private int getStartTime(Flow flow){

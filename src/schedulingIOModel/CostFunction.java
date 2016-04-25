@@ -69,8 +69,11 @@ public class CostFunction {
 	public int vioLcy_f_t_n(int[][][] schedule, int f, int t, int n){
 		Flow flow = tg.getFlows().get(f);
 		Network net = ng.getNetworks().get(n);
-		int latencyMatch = latencyMatch(flow, net);
-		return latencyMatch*schedule[f][t][n];
+		if(schedule[f][t][n]>0){
+			return latencyMatch(flow, net);
+		}else{
+			return 0;
+		}
 
 	}
 	/**
@@ -105,8 +108,11 @@ public class CostFunction {
 	public int vioJit_f_t_n(int[][][] schedule, int f, int t, int n){
 		Flow flow = tg.getFlows().get(f);
 		Network net = ng.getNetworks().get(n);
-		int jitterMatch = jitterMatch(flow, net);
-		return jitterMatch*schedule[f][t][n];
+		if(schedule[f][t][n]>0){
+			return jitterMatch(flow, net);
+		}else{
+			return 0;
+		}
 	}
 	
 	public int[] vioJit(int[][][] schedule){
