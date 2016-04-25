@@ -3,7 +3,7 @@
 %stores results.mat file in in_folder for extracted log matrices
 %delete this file to read logs from raw files
 
-in_folder = '..\my_logs\longTest1';% 'logs_time';
+in_folder = '..\my_logs\eval_4_4_3';% 'logs_time';
 out_folder = [in_folder filesep 'tikz'];
 force_read_data = 0;
 
@@ -11,23 +11,29 @@ force_read_data = 0;
 parameter_file=[in_folder filesep 'parameters_log.m'];
 if exist(parameter_file, 'file') ==2    %compare to 2 == is a file?
    run(parameter_file);
+   max_flows=max_flows+1;
+   max_nets=max_nets+1;
+   max_time=max_time+1;
 end
 state = 'read param done'
 %read matrix file if available, else create matrix file from raw log files
-results=[in_folder filesep 'results.mat'];
+data_file=[in_folder filesep 'results.mat'];
+avail_file=[in_folder filesep 'avail.mat'];
 valuenames = {'cost', 'duration', 'time_limits', ...
     'throughput', 'unscheduled', 'latency_jitter', 'monetary_cost'};
 
-if force_read_data <1 && exist(results, 'file') %read values from file if no force to reread and available
-    load(results);
+if force_read_data <1 && exist(data_file, 'file') %read values from file if no force to reread and available
+    load(data_file);
+    load(avail_file);
 else
     %read data from simulation output files
     valuestrings = {'costTotal', 'scheduling_duration_us', 'sum(vioSt)+sum(vioDl)', ...
         'sum(vioTp)', 'sum(vioNon)', 'sum(vioLcy)+sum(vioJit)', 'cost_ch'};
     tic
-    raw_values = readValuesFromFiles( in_folder, valuestrings, max_time, max_nets, max_flows, max_rep, scheduler_logs );
+    [raw_values avail] = readValuesFromFiles( in_folder, valuestrings, max_time, max_nets, max_flows, max_rep, scheduler_logs );
     toc
-    save(results, 'raw_values');
+    save(data_file, 'raw_values');
+    save(avail_file, 'avail');
 end
 
 state='gathered data'
@@ -35,7 +41,7 @@ state='gathered data'
 %calculate relative
 rel_data = relative_to_opt(raw_values);
 %plot
-plot_data(out_folder, rel_data, valuenames, schedulers);
+plot_data(out_folder, rel_data, avail, valuenames, schedulers);
 
 
 

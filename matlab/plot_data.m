@@ -2,7 +2,7 @@
 
 %data is (varnames (=extime, cost,  throughput, ..), schedulers, flows, time, networks, %repetitions)
 
-function [] = plot_data(out_folder, data, vartypes, schedulers)
+function [] = plot_data(out_folder, data, avail, vartypes, schedulers)
 
 [nof_vartypes, nof_schedulers, nof_flows, nof_time, nof_networks, nof_repetitions] = size(data);
     %what to plot?
@@ -15,12 +15,13 @@ function [] = plot_data(out_folder, data, vartypes, schedulers)
        
 
     logscale=1;    
-    %select data
-    for v=1:nof_vartypes
-        tmp = squeeze(data(v,:,:,:,:,:));
-        [bound_hi, bound_lo] = calculate_bounds(tmp);
-      %  nof_schedulers
-        for s=1:nof_schedulers
+
+  %  nof_schedulers
+    for s=1:nof_schedulers
+                %select data
+        for v=1:nof_vartypes
+            tmp = squeeze(data(v,:,:,:,:,:));
+            [bound_hi, bound_lo] = calculate_bounds(tmp);
             %create path and labels
             %path
             path = [out_folder filesep schedulers{s} filesep vartypes{v}] ;
@@ -30,28 +31,47 @@ function [] = plot_data(out_folder, data, vartypes, schedulers)
             end
             %path and ylabel = execution time / realative ... total cost /throughput/ latancy... 
             
-            my_ylabel = [];
-            if(v==1)
-                if(s==1)
-                    my_ylabel = vartypes{v};    %only execution time
-                end
-            else
-                    my_ylabel = [vartypes{v} '/ opt ' vartypes{v}] ; %attrib / opt attrib (relative)
-            end
             % + scheduler for path
             %xlabel = scheduler (?)
-            my_xlabel = schedulers{s}; % show name of scheduler below graph
+            my_xlabel = [];
             
             data_sqeezed = squeeze(data(v, s, :,:,:,:));
-
-            %vary flows(1), time(2) and networks(3) in plots
-           % for vary=1:3
-                tikz_out(path,data_sqeezed , 2, ...%vary
-                 my_xlabel, my_ylabel, bound_hi, bound_lo, logscale);
-            %end
+            avail_squeezed = squeeze(avail(v, s, :,:,:,:));
             
+            
+            my_ylabel = [];
+            if(v==1)
+                my_xlabel = schedulers{s}; % show name of scheduler below graph
+                if(s==1)
+                    my_ylabel = vartypes{v};    %only execution time
+                end    
+                %vary flows(1), time(2) and networks(3) in plots
+                % for vary=1:3
+                tikz_out(path,data_sqeezed , avail_squeezed, 2, ...%vary time only
+                 my_xlabel, my_ylabel, bound_hi, bound_lo, logscale);
+            else if v==2
+            %case of duration plot: compare
+                    my_xlabel = schedulers{s}; % show name of scheduler below graph
+                    my_ylabel = [vartypes{v} '/ opt ' vartypes{v}] ; %attrib / opt attrib (relative) 
+                    %vary flows(1), time(2) and networks(3) in plots
+                    % for vary=1:3
+                    tikz_out(path,data_sqeezed , avail_squeezed, 2, ...%vary time only
+                     my_xlabel, my_ylabel, bound_hi, bound_lo, logscale);
+                else
+                %case of other plots 
+                    my_xlabel = vartypes{v};
+                    if v==3
+                        my_ylabel='violation relative to optimum';
+                    end
+                    tikz_out_detail(path, data_sqeezed, avail_squeezed, 2, ...
+                        my_xlabel, my_ylabel, logscale);
+                end
+            end        
+        end      
+        %barplot: bar(data(scheduler, mean_data for variable)
+        plot_data = squeeze(1
         state=['plotting done by ' num2str(100*(1+(s-1)+(v-1)*(nof_schedulers))/((nof_vartypes)*(nof_schedulers))) '%']
-        end
+
     end
 
 end
