@@ -41,6 +41,7 @@ public class Flow implements Serializable, Cloneable{
 	private int impJitter=0;
 	
 	private int impUser=1;
+	private String flowName="flow";
 
 	//each flow gets a unique ID
 	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
@@ -262,6 +263,7 @@ public class Flow implements Serializable, Cloneable{
 		IPCall.setImpLatency(6 + RndInt.get(-1, 1));
 		
 		IPCall.setImpUser(9 + RndInt.get(-1, 2));
+		IPCall.setFlowName("IPCall");
 		
 		return IPCall;
 	}
@@ -285,6 +287,7 @@ public class Flow implements Serializable, Cloneable{
 		stream.setImpUnsched(5+ RndInt.get(-1, 1));			//unscheduled chunks may adapt video quality
 		
 		stream.setImpUser(7+ RndInt.get(-3, 2));
+		stream.setFlowName("stream");
 		
 		return stream;
 	}
@@ -301,7 +304,7 @@ public class Flow implements Serializable, Cloneable{
 		userRequest.setImpUser(7+ RndInt.get(-1, 3));
 		userRequest.setImpDeadline(8+ RndInt.get(-1, 1));
 		userRequest.setImpStartTime(8+ RndInt.get(-1, 1));
-		
+		userRequest.setFlowName("userRequest");
 		return userRequest;
 	}
 	
@@ -336,11 +339,20 @@ public class Flow implements Serializable, Cloneable{
 			f.startTime=startTime;
 			f.windowMax=windowMax;
 			f.windowMin=windowMin;
+			f.flowName=flowName;
 			return f;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}  
+	}
+
+	public String getFlowName() {
+		return flowName;
+	}
+
+	private void setFlowName(String flowName) {
+		this.flowName = flowName;
 	} 
 
 

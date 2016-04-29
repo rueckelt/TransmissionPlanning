@@ -87,13 +87,9 @@ public class CostFunction {
 		int networks = schedule[0][0].length;
 		
 		int[] vioLcy = new int[flows];
-		for(int f = 0; f<flows; f++){
-//			Flow flow = tg.getFlows().get(f);
-			for(int n = 0; n<networks; n++){
-//				Network net = ng.getNetworks().get(n);
-//				int latencyMatch = latencyMatch(flow, net);
-				for (int t = 0; t < timeslots; t++) {
-//					vioLcy[f]+= latencyMatch*schedule[f][t][n];
+		for(int n = 0; n<networks; n++){
+			for (int t = 0; t < timeslots; t++) {
+				for(int f = 0; f<flows; f++){
 					vioLcy[f]+= vioLcy_f_t_n(schedule, f, t, n);
 				}
 			}
@@ -121,17 +117,14 @@ public class CostFunction {
 		int networks = schedule[0][0].length;
 		
 		int[] vioJit = new int[flows];
-		for(int f = 0; f<flows; f++){
-//			Flow flow = tg.getFlows().get(f);
-			for(int n = 0; n<networks; n++){
-//				Network net = ng.getNetworks().get(n);
-//				int jitterMatch = jitterMatch(flow, net);
-				for (int t = 0; t < timeslots; t++) {
-//					vioJit[f]+= jitterMatch*schedule[f][t][n];
+		for(int n = 0; n<networks; n++){
+			for (int t = 0; t < timeslots; t++) {
+				for(int f = 0; f<flows; f++){
 					vioJit[f]+= vioJit_f_t_n(schedule, f, t, n);
 				}
 			}
 		}
+
 		check(vioJit, "vioJit");
 		if(logger!=null){
 			logger.log("vioJit", vioJit);

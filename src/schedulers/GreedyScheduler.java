@@ -70,10 +70,11 @@ public class GreedyScheduler extends Scheduler{
 		//############## 2. start allocation for each flow #################
 		for(int f= 0; f<tg.getFlows().size(); f++){
 			int f0 = flow_order.get(f);
-//			System.out.println("flow "+f0+" criticality decerasing: "+ flowCriticality.get(f0));
+			System.out.println("flow "+f0+" criticality decerasing: "+ flowCriticality.get(f0));
 			
 			scheduleFlow(f0, false);
 		}
+		System.out.println("greedy done");
 	}
 
 	/**
@@ -89,7 +90,7 @@ public class GreedyScheduler extends Scheduler{
 		
 		//sort networks according to match with flow
 		Vector<Integer> networkIDs = sortNetworkIDs(flow);
-//			System.out.println("Network order: "+networkIDs);
+			System.out.println("Network order: "+networkIDs);
 
 
 //############## 2. Network choice according to flow matching #################
@@ -115,7 +116,7 @@ public class GreedyScheduler extends Scheduler{
 //						System.out.println(chunksToAllocate);
 						chunksToAllocate-=allocated;
 						if(allocated>0){
-//								System.out.println("allocated "+allocated+ " t="+t+" n="+n0 +" remaining "+chunksToAllocate);
+								System.out.println("allocated "+allocated+ " t="+t+" n="+n0 +" remaining "+chunksToAllocate);
 							usedSlots.add(t);	//mark slot as used
 							//remove capacity from network
 							if(!rate){
@@ -183,8 +184,12 @@ public class GreedyScheduler extends Scheduler{
 			public int compare(Integer arg0, Integer arg1) {
 				Network net0 = ng_tmp.getNetworks().get(arg0);
 				Network net1 = ng_tmp.getNetworks().get(arg1);
-				
-				return calcVio(flow, net0)-calcVio(flow,net1);
+				int result=calcVio(flow, net0)-calcVio(flow,net1);
+				//in case of equal match, use ID to create strict order
+				if(result==0){
+					return net0.getId()-net1.getId();
+				}else
+				return result;
 			}
 		}
 		);
@@ -200,10 +205,13 @@ public class GreedyScheduler extends Scheduler{
 	 * @return estimation of cost for scheduling a chunk: negative, if allocation is expected to lead to profit 
 	 */
 	private int calcVio(Flow flow, Network network){
-
+//		if(true)
+//		return network.getId();
 				//scheduling may lead to jitter and latency cost
+		//TODO: violation is not per chunk!! it is for used time slots! normalize it.. but how?!
 		int c= 	((CostFunction.jitterMatch(flow, network)	//match functions return 0 for match, else strength of violation
-				+ CostFunction.latencyMatch(flow, network))/getAvMinTp(flow)
+				+ CostFunction.latencyMatch(flow, network))/(getAvMinTp(flow)+1)	
+				
 				//scheduling avoids throughput-violation cost and unsched cost
 				- throughputMatch(flow, network)
 				- flow.getImpUnsched()*flow.getImpUser()	//each unscheduled chunk leads to this cost

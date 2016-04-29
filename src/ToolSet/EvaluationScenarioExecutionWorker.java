@@ -19,12 +19,12 @@ import visualization.Plot;
 import visualization.VisualizationPack;
 
 public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
-	public boolean TEST_COST_FUNCTION;
-	public boolean VISUALIZE;
-	int time, nets, flows, rep; 
-	String folder; 
-	boolean overwrite; 
-	boolean recalc;
+	private boolean TEST_COST_FUNCTION;
+	private boolean VISUALIZE;
+	private int time, nets, flows, rep; 
+	private String folder; 
+	private boolean overwrite; 
+	private boolean recalc;
 
 
 	public EvaluationScenarioExecutionWorker(boolean tEST_COST_FUNCTION, 
@@ -85,13 +85,9 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 					sched.testCostFunction();
 					sched.calculateInstance(path);
 				} else {
-//					LinkedList<Integer> cost= new LinkedList<Integer>();
-//					LinkedList<String> s_name= new LinkedList<String>();
-					// default case:
-					// run instance for each scheduler which is created in
-					// method "initSchedulers(ng,tg)" above
+
 					
-					boolean first=true, error=false;
+					boolean first=true;
 					int c_opt=0;
 					Vector<Scheduler> scheds= EvaluationScenarioCreator.initSchedulers(ng, tg);
 					for (Scheduler scheduler : scheds) {
@@ -100,33 +96,23 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 						System.out.println(" "+scheduler.getType() + ", starting at "+date);
 
 						scheduler.calculateInstance(path);
-//						cost.add(scheduler.getCost());
-//						s_name.add(scheduler.getType());
 						
+						//debug: check if optimization has lowest cost
 						if(first){
 							c_opt=scheduler.getCost();
 							first=false;
 						}else{
 							if(scheduler.getCost()<c_opt){
 								System.err.println("OPT STILL NOT BEST");
-//								error=true;
 							}
 						}
 
 					}
-//					Scheduler s = new PriorityScheduler(ng, tg);
-//					cost.add(s.getCost());
-//					s_name.add("empty");
-//					System.out.println(s_name);
-//					System.out.println("Cost "+cost);
 
 					if(VISUALIZE){
 						Plot plot = new Plot(new VisualizationPack(ng, tg, scheds));
 					}
-//					
-//					if(error){
-//						System.exit(0);
-//					}
+
 				}
 //			}
 		}

@@ -71,7 +71,7 @@ public abstract class Scheduler {
 		return schedule_f_t_n;
 	}
 	
-	CostFunction getCostFunction(){
+	public CostFunction getCostFunction(){
 		return cf;
 	}
 	
@@ -96,8 +96,8 @@ public abstract class Scheduler {
 		startTimer();
 		calculateInstance_internal(path);	//result is stored to schedule_f_t_n_temp
 		long duration = stopTimer();
-		//Runtime rt = Runtime.getRuntime();
-		//System.out.println("TotalMemory of JVM: "+(rt.totalMemory()-rt.freeMemory())/(1024*1024));
+		Runtime rt = Runtime.getRuntime();
+		System.out.println("TotalMemory of JVM: "+(rt.totalMemory()-rt.freeMemory())/(1024*1024));
 		
 		//check if schedule holds required constraints
 		if(verificationOfConstraints(schedule_f_t_n_temp)){
@@ -213,7 +213,7 @@ public abstract class Scheduler {
 				}
 				if(chunkSum>chunksMax){
 					System.err.println("Upper throughput limit exceeded for flow: "+f +" in time window " + t+" to " + t+winSize +" by "+ (chunkSum-chunksMax));
-//					return false;	//violation of upper tp limit
+					return false;	//violation of upper tp limit
 				}
 			}
 		}

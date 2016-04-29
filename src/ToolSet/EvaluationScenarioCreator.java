@@ -9,6 +9,7 @@ import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import schedulers.GreedyScheduler;
 import schedulers.OptimizationScheduler;
@@ -71,12 +72,8 @@ public class EvaluationScenarioCreator {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		try {
-			executor.invokeAll(taskList);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		executor.shutdown();
 	}
 	
 	
@@ -94,11 +91,11 @@ public class EvaluationScenarioCreator {
 	 */
 	public static Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		schedulers.add(new OptimizationScheduler(ng, tg));
-		schedulers.add(new RandomScheduler(ng, tg, 500));	//500 random runs of this scheduler. Returns average duration and cost
-//		schedulers.add(new PriorityScheduler(ng, tg));
 		schedulers.add(new GreedyScheduler(ng, tg));
-		return schedulers;
+		schedulers.add(new OptimizationScheduler(ng, tg));	
+//		schedulers.add(new PriorityScheduler(ng, tg));
+		schedulers.add(new RandomScheduler(ng, tg, 100));	//500 random runs of this scheduler. Returns average duration and cost
+	return schedulers;
 	}
 	
 	private void writeScenarioLog(int evaluateMax){
@@ -136,8 +133,8 @@ public class EvaluationScenarioCreator {
 				}
 			}
 		}
-	
-	System.out.println("###############   DONE  ##################");
+
+		System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 	
 	public void evaluateTop(){
@@ -148,8 +145,8 @@ public class EvaluationScenarioCreator {
 			calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
 		}
 		
-	
-	System.out.println("###############   DONE  ##################");
+
+		System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 	
 	public void evaluateTimeVariation(){
@@ -162,7 +159,7 @@ public class EvaluationScenarioCreator {
 		}
 		
 	
-	System.out.println("###############   DONE  ##################");
+	System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 
 	/**
