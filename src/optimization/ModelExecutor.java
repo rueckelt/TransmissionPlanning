@@ -122,6 +122,8 @@ public class ModelExecutor {
 //		solve
 		boolean feasible = false;
 		try {
+
+			cplex.setParam(IloCplex.IntParam.Threads, 1);
 			time = System.nanoTime();	
 			feasible = cplex.solve();
 			time = System.nanoTime()-time;

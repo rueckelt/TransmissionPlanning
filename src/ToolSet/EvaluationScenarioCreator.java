@@ -91,10 +91,10 @@ public class EvaluationScenarioCreator {
 	 */
 	public static Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		schedulers.add(new GreedyScheduler(ng, tg));
 		schedulers.add(new OptimizationScheduler(ng, tg));	
 //		schedulers.add(new PriorityScheduler(ng, tg));
-		schedulers.add(new RandomScheduler(ng, tg, 100));	//500 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new RandomScheduler(ng, tg, 200));	//500 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new GreedyScheduler(ng, tg));
 	return schedulers;
 	}
 	
@@ -152,7 +152,7 @@ public class EvaluationScenarioCreator {
 	public void evaluateTimeVariation(){
 		//paramter log
 		writeScenarioLog(1);
-		for(int t= 3; t<=MAX_TIME; t++){
+		for(int t= 0; t<=MAX_TIME; t++){
 			for(int rep=0; rep<REPETITIONS;rep++){
 				calculateInstance_t_n_i(t, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
 			}

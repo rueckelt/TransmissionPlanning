@@ -70,11 +70,11 @@ public class GreedyScheduler extends Scheduler{
 		//############## 2. start allocation for each flow #################
 		for(int f= 0; f<tg.getFlows().size(); f++){
 			int f0 = flow_order.get(f);
-			System.out.println("flow "+f0+" criticality decerasing: "+ flowCriticality.get(f0));
+//			System.out.println("flow "+f0+" criticality decerasing: "+ flowCriticality.get(f0));
 			
 			scheduleFlow(f0, false);
 		}
-		System.out.println("greedy done");
+//		System.out.println("greedy done");
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class GreedyScheduler extends Scheduler{
 		
 		//sort networks according to match with flow
 		Vector<Integer> networkIDs = sortNetworkIDs(flow);
-			System.out.println("Network order: "+networkIDs);
+//			System.out.println("Network order: "+networkIDs);
 
 
 //############## 2. Network choice according to flow matching #################
@@ -116,7 +116,7 @@ public class GreedyScheduler extends Scheduler{
 //						System.out.println(chunksToAllocate);
 						chunksToAllocate-=allocated;
 						if(allocated>0){
-								System.out.println("allocated "+allocated+ " t="+t+" n="+n0 +" remaining "+chunksToAllocate);
+//								System.out.println("allocated "+allocated+ " t="+t+" n="+n0 +" remaining "+chunksToAllocate);
 							usedSlots.add(t);	//mark slot as used
 							//remove capacity from network
 							if(!rate){
