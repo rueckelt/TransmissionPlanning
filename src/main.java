@@ -15,13 +15,13 @@ public class main {
 		int rep=30;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
-		String logpath= "my_logs"+File.separator+"eval_4_4_3_lj";
+		String logpath= "my_logs"+File.separator+"eval_4_4_3_c";
 		
 //		for(int rep1 = 0; rep1<=rep; rep1++){
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
-//			eval.recalc();
+			eval.recalc();
 //			eval.visualize();
-			eval.overwrite();
+//			eval.overwrite();
 //			eval.evaluateAll();
 			eval.evaluateTimeVariation();
 //			eval.evaluateTop();

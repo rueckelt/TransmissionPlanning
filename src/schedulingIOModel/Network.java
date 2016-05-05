@@ -165,20 +165,20 @@ public class Network implements Serializable, Cloneable{
 		Network wifi = new Network(slots*1/2, meanChunks);
 		wifi.addRampUp(slots/4);
 		wifi.addRampDown(slots/4);
-		wifi.delay(delay + RndInt.get(-1, 1));
+		wifi.delay(delay);
 		wifi.setType(1);
-		wifi.setCost(3 + RndInt.get(-1, 1));
-		wifi.setJitter(8 + RndInt.get(-1, 1));
-		wifi.setLatency(2 + RndInt.get(-1, 2));
+		wifi.setCost(RndInt.get(1,3));
+		wifi.setJitter(RndInt.get(4, 8));
+		wifi.setLatency(RndInt.get(1, 3));
 		return wifi;
 	}
 	
 	public static Network getCellular(int slots, int meanChunks){
 		Network cell = new Network(slots, meanChunks);
 		cell.setType(2);
-		cell.setCost(10  + RndInt.get(-3, 3));
-		cell.setJitter(6 + RndInt.get(-2, 2));
-		cell.setLatency(8 + RndInt.get(-2, 2));
+		cell.setCost(RndInt.get(15, 25));
+		cell.setJitter(RndInt.get(3, 8));
+		cell.setLatency(RndInt.get(6, 12));
 		return cell;
 	}
 	

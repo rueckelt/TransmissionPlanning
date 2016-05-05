@@ -62,7 +62,7 @@ public class Flow implements Serializable, Cloneable{
 	}
 
 
-	public void setChunks(int chunks) {
+	public void setTokens(int chunks) {
 		this.chunks = chunks;
 	}
 
@@ -102,7 +102,7 @@ public class Flow implements Serializable, Cloneable{
 	}
 
 
-	public void setChunksMin(int chunksMin) {
+	public void setTokensMin(int chunksMin) {
 		this.chunksMin = chunksMin;
 	}
 
@@ -122,7 +122,7 @@ public class Flow implements Serializable, Cloneable{
 	}
 
 
-	public void setChunksMax(int chunksMax) {
+	public void setTokensMax(int chunksMax) {
 		this.chunksMax = chunksMax;
 	}
 
@@ -237,85 +237,91 @@ public class Flow implements Serializable, Cloneable{
 	 * @param deadline
 	 * @return
 	 */
-	public static Flow IPCall(int startTime, int deadline){
-		Flow IPCall = new Flow();
-		int chunks_per_slot = 10 + RndInt.get(-2, 2);
+	public static Flow LiveStram(int startTime, int deadline, int tokens){
+		Flow liveStram = new Flow();
+		int chunks_per_slot = tokens/(deadline-startTime);
 		
-		IPCall.setStartTime(startTime);
-		IPCall.setDeadline(deadline);
-		IPCall.setChunks((deadline-startTime)*chunks_per_slot);
+		liveStram.setStartTime(startTime);
+		liveStram.setDeadline(deadline);
+		liveStram.setTokens(tokens);
 		
-		IPCall.setWindowMin(1);
-		IPCall.setChunksMin(5 + RndInt.get(-1, 0));
-		IPCall.setImpThroughputMin(50);		//should deliver all 5 --> high priority (10? more? what should be max?)
-		IPCall.setImpDeadline(10); 			// call is over after deadline --> high prio
+		//lower throughput window
+		liveStram.setWindowMin(1);
+		liveStram.setTokensMin(chunks_per_slot/RndInt.get(1,4));
+		liveStram.setImpThroughputMin(50);		//should deliver all tokens --> high priority (10? more? what should be max?)
+		liveStram.setImpDeadline(20); 			// call is over after deadline --> high prio
 		
-		IPCall.setReqJitter(4);
-		IPCall.setReqLatency(4);			//low latency, low jitter
+		liveStram.setReqJitter(4);
+		liveStram.setReqLatency(4);			//low latency, low jitter
 		
-		IPCall.setWindowMax(1);
-		IPCall.setChunksMax(chunks_per_slot);		//higher thourthput possible: higher voice quality!
-//		IPCall.setImpThrouthputMax(10000);	//cannot deliver more than 5 --> blocking high priority
-		IPCall.setImpStartTime(10);			//data not existent before call --> high prio
+		//upper throughput window
+		liveStram.setWindowMax(1);
+		liveStram.setTokensMax(chunks_per_slot);		//higher throughput possible: higher voice quality!
+		liveStram.setImpStartTime(10);			//data not existent before call --> high prio
 		
-		IPCall.setImpUnsched(4 + RndInt.get(-1, 2));		//lower priority for unscheduled than for deadline violation
-		IPCall.setImpJitter(6 + RndInt.get(-1, 1));			//jitter and latency are important
-		IPCall.setImpLatency(6 + RndInt.get(-1, 1));
+		liveStram.setImpUnsched(4 + RndInt.get(-1, 2));		//lower priority for unscheduled than for deadline violation
+		liveStram.setImpJitter(8 + RndInt.get(-1, 1));			//jitter and latency are important
+		liveStram.setImpLatency(8 + RndInt.get(-1, 1));
 		
-		IPCall.setImpUser(9 + RndInt.get(-1, 2));
-		IPCall.setFlowName("IPCall");
+		liveStram.setImpUser(9 + RndInt.get(-1, 2));
+		liveStram.setFlowName("LiveStream");
 		
-		return IPCall;
+		return liveStram;
 	}
-	public static Flow BufferableStream(int startTime, int length){
+	public static Flow BufferableStream(int startTime, int length, int tokens){
 		Flow stream = new Flow();
-		int chunks_per_slot=15 + RndInt.get(-5, 5);	//stream quality may vary
+		int chunks_per_slot=tokens/length;	//stream quality may vary
 		
 		stream.setStartTime(startTime);
 		stream.setDeadline(startTime+length);
-		stream.setChunks(length*chunks_per_slot);
+		stream.setTokens(tokens);
 		
 		//relaxed window
-		int min_win_size = 10 + length/RndInt.get(3, 8);				//allowed to be bursty (large window)
-		stream.setWindowMin(min_win_size);
-		stream.setChunksMin(min_win_size*chunks_per_slot/2);	//at least half of the data must pass (low quality video) more data scales quality
-		stream.setImpThroughputMin(7+ RndInt.get(-1, 1));		// soft minimum throughput limit
+		int win_size = 10 + length/RndInt.get(3, 8);		//allowed to be bursty (large window): window is at least 10 slots wide
+		stream.setWindowMin(win_size);
+		stream.setTokensMin(win_size*chunks_per_slot/4);	//at least one forth of the data must pass (low quality video) more data scales quality
+		stream.setImpThroughputMin(7+ RndInt.get(-1, 1));		//straight minimum throughput limit
 		stream.setImpDeadline(7+ RndInt.get(-2, 2)); 			
 		
-		stream.setImpStartTime(2+ RndInt.get(-1, 4));			//later start time is ok 	
+		stream.setImpStartTime(1+ RndInt.get(0, 4));			//later start time is ok 	
 		
 		stream.setImpUnsched(5+ RndInt.get(-1, 1));			//unscheduled chunks may adapt video quality
 		
-		stream.setImpUser(7+ RndInt.get(-3, 2));
-		stream.setFlowName("stream");
+		stream.setImpUser(7+ RndInt.get(-2, 2));
+		stream.setFlowName("BufferableStream");
 		
 		return stream;
 	}
 	
-	public static Flow UserRequest(int startTime, int chunks){
+	public static Flow Interactive(int startTime, int tokens){
 		Flow userRequest = new Flow();
-		int deadline = startTime + chunks/(20+ RndInt.get(-5, 5));	//early deadline, depends on request size
+		int deadline = startTime + RndInt.get(2,9);//tokens/(20+ RndInt.get(-5, 5));	//early deadline, depends on request size
 		
 		userRequest.setStartTime(startTime);
 		userRequest.setDeadline(deadline);
-		userRequest.setChunks(chunks);	
+		userRequest.setTokens(tokens);	
 		
-		userRequest.setImpUnsched(15+ RndInt.get(-3, 3));			//all chunks must be scheduled		
+		userRequest.setImpUnsched(15+ RndInt.get(-3, 3));			//all chunks should be scheduled within the deadline		
 		userRequest.setImpUser(7+ RndInt.get(-1, 3));
 		userRequest.setImpDeadline(8+ RndInt.get(-1, 1));
 		userRequest.setImpStartTime(8+ RndInt.get(-1, 1));
-		userRequest.setFlowName("userRequest");
+		userRequest.setFlowName("Interactive");
 		return userRequest;
 	}
 	
 	
-	public static Flow Update(int chunks){
-		Flow update = new Flow();
-		update.setChunks(chunks+ RndInt.get(0, 20));
-		update.setImpUnsched(4+ RndInt.get(-2, 1));			//chunks should be scheduled with low priority
+	public static Flow Background(int tokens, int deadline){
+		Flow background = new Flow();
+		background.setTokens(tokens);
+		background.setImpUnsched(RndInt.get(1, 4));			//chunks should be scheduled with low priority
 		
-		update.setImpUser(2+ RndInt.get(-1, 1));
-		return update;
+		background.setImpUser(RndInt.get(1, 3));
+		
+		//set a weak deadline
+		background.setDeadline(deadline);
+//		background.setImpDeadline(RndInt.get(0,4));
+		background.setFlowName("Background");
+		return background;
 	}
 	
 	public Flow clone(){  

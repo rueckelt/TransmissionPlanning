@@ -38,6 +38,7 @@ function [] = plot_data(out_folder, data, avail, vartypes, schedulers)
             data_sqeezed = squeeze(data(v, s, :,:,:,:));
             avail_squeezed = squeeze(avail(v, s, :,:,:,:));
             
+            addpath('matlab2tikz');
             
             my_ylabel = [];
             if(v==1)
@@ -52,7 +53,9 @@ function [] = plot_data(out_folder, data, avail, vartypes, schedulers)
             else if v==2
             %case of duration plot: compare
                     my_xlabel = schedulers{s}; % show name of scheduler below graph
-                    my_ylabel = [vartypes{v} '/ opt ' vartypes{v}] ; %attrib / opt attrib (relative) 
+                    if(s==1)
+                        my_ylabel = [vartypes{v} '/ opt ' vartypes{v}] ; %attrib / opt attrib (relative)
+                    end
                     %vary flows(1), time(2) and networks(3) in plots
                     % for vary=1:3
                     tikz_out(path,data_sqeezed , avail_squeezed, 2, ...%vary time only
@@ -69,7 +72,7 @@ function [] = plot_data(out_folder, data, avail, vartypes, schedulers)
             end        
         end      
         %barplot: bar(data(scheduler, mean_data for variable)
-        plot_data = squeeze(1
+        %plot_data = squeeze(1
         state=['plotting done by ' num2str(100*(1+(s-1)+(v-1)*(nof_schedulers))/((nof_vartypes)*(nof_schedulers))) '%']
 
     end

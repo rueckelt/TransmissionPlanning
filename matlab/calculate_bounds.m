@@ -17,7 +17,9 @@ function [bound_hi, bound_lo] = calculate_bounds(data)
         for n=1:nof_networks
             tmp= squeeze(data(:,:,t,n,:));
             bound_hi(1, t,n)=hi*max(tmp(:));
-            bound_lo(1, t,n)=lo*min(tmp(:));
+            if bound_hi(1, t,n)>0 
+                bound_lo(1, t,n)=lo*min(tmp(tmp(:)>0));
+            end
         end
     end
     
@@ -26,7 +28,9 @@ function [bound_hi, bound_lo] = calculate_bounds(data)
         for n=1:nof_networks
             tmp= squeeze(data(:,f,:,n,:));
             bound_hi(2, f,n)=hi*max(tmp(:));
-            bound_lo(2, f,n)=lo*min(tmp(:));
+            if bound_hi(2, f,n)>0 
+                bound_lo(2, f,n)=lo*min(tmp(tmp(:)>0));
+            end
         end
     end
     
@@ -35,7 +39,9 @@ function [bound_hi, bound_lo] = calculate_bounds(data)
         for f=1:nof_flows
             tmp= squeeze(data(:,f,t,:,:));
             bound_hi(3, f,t)=hi*max(tmp(:));
-            bound_lo(3, f,t)=lo*min(tmp(:));
+            if bound_hi(3, f,t)>0 
+                bound_lo(3, f,t)=lo*min(tmp(tmp(:)>0));
+            end
         end
     end
 end

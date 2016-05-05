@@ -255,7 +255,12 @@ public class CostFunction {
 	}
 
 	public int vioTp_f_t(int[][] vioTpMin, int f, int t){
-		return vioTpMin[f][t]*tg.getFlows().get(f).getImpThroughputMin();
+		Flow flow= tg.getFlows().get(f);
+		return vioTp_weight(vioTpMin[f][t], flow);
+		//return vioTpMin[f][t]*flow.getImpThroughputMin()/(flow.getChunksMin()*flow.getWindowMin());
+	}
+	public int vioTp_weight(int vioTpMin, Flow flow){
+		return vioTpMin*flow.getImpThroughputMin()/(flow.getChunksMin()*flow.getWindowMin());
 	}
 	
 	public int[] vioTp(int[][] cummulated_f_t){
@@ -327,7 +332,7 @@ public class CostFunction {
 			int t0=0;	//lower bound of window
 			int subtract = 0;
 			for(int t=flow.getWindowMin()-1; t<timeslots; t++){		// t is upper bound of window (minus 1 for cplex index starting at 1)
-				if(t0>=flow.getStartTime()-1 && t<=flow.getDeadline()-1){		//TODO -1 after startime added	
+				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){		//TODO -1 after startime added	
 					int tp =  cummulated_f_t[f][t]- subtract;	//get chunks in window
 					if(tp<flow.getChunksMin()){				//if there are too many tokens/chunks scheduled
 						int vio=flow.getChunksMin()-tp;

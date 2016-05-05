@@ -1,13 +1,13 @@
 
-% 2016-04-29 17:44:28
+% 2016-05-04 13:31:59
 
-% my_logs/eval_4_4_3_lj/
-max_time = 4;
-max_flows = 4;
-max_nets = 3;
-max_rep = 30;
+% my_logs\eval_4_4_3_lj\
+max_time = 1;
+max_flows = 2;
+max_nets = 2;
+max_rep = 1;
 evaluate_max_only = 1;
 
-scheduler_logs= {'optimization_log.m','random_log.m','greedyFill_log.m'};
-schedulers= {'optimization','random','greedyFill'};
+scheduler_logs= {'optimization_log.m','random_log.m','greedyFill_log.m','GreedyOnline_log.m'};
+schedulers= {'optimization','random','greedyFill','GreedyOnline'};
 

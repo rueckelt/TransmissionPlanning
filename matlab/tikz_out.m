@@ -17,6 +17,8 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
     if(plot_var_ftn==1) %vary flows for plot
         data = permute(data, [2 3 1 4]);
         avail = permute(avail, [2 3 1 4]);
+%         bound_hi = permute(bound_hi, [2 3 1 4]);
+%         bound_lo = permute(bound_lo, [2 3 1 4]);
         x_axis = scale_f;
         d1_scale = scale_t; 
         d2_scale = scale_n;  
@@ -25,6 +27,8 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
     if(plot_var_ftn==2) %vary time for plot
         data = permute(data, [1 3 2 4]);
         avail = permute(avail, [1 3 2 4]);
+%         bound_hi = permute(bound_hi, [1 3 2 4]);
+%         bound_lo = permute(bound_lo, [1 3 2 4]);
         x_axis = scale_t;
         d1_scale = scale_f; 
         d2_scale = scale_n; 
@@ -53,7 +57,7 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
                 filename
                 boxplot(data_squeezed, x_axis(1:dim3));     %plot data and add x-axis dim
                 xlabel(my_xlabel);
-                ylim=[bound_lo(plot_var_ftn,d1,d2) bound_hi(plot_var_ftn,d1,d2)+0.00001];
+                ylim=[bound_lo(plot_var_ftn,d1,d2) bound_hi(plot_var_ftn,d1,d2)+0.00001]
                 set(gca,'YLim',ylim); 
 
                 grid on
@@ -65,7 +69,7 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
                     %y_tick = get(gca, 'YTick') %get YTick from labeled graph
                 else
     %                 y_tick = get(gca, 'YTick') %get YTick from labeled graph
-                     set(gca,'YTickLabel',[]); %remove y-axis numbers for others
+                    % set(gca,'YTickLabel',[]); %remove y-axis numbers for others
     %                 set(gca, 'YTick', y_tick); %apply old YTick
                 end
     %            set(gca, 'XTickLabelRotation', 90)

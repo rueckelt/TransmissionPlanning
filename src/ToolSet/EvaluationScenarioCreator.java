@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import schedulers.GreedyOnlineScheduler;
 import schedulers.GreedyScheduler;
 import schedulers.OptimizationScheduler;
 import schedulers.PriorityScheduler;
@@ -93,8 +94,9 @@ public class EvaluationScenarioCreator {
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
 		schedulers.add(new OptimizationScheduler(ng, tg));	
 //		schedulers.add(new PriorityScheduler(ng, tg));
-		schedulers.add(new RandomScheduler(ng, tg, 200));	//500 random runs of this scheduler. Returns average duration and cost
+//		schedulers.add(new RandomScheduler(ng, tg, 200));	//500 random runs of this scheduler. Returns average duration and cost
 		schedulers.add(new GreedyScheduler(ng, tg));
+		schedulers.add(new GreedyOnlineScheduler(ng, tg));
 	return schedulers;
 	}
 	
@@ -141,10 +143,10 @@ public class EvaluationScenarioCreator {
 		//paramter log
 		writeScenarioLog(1);
 
-		for(int rep=0; rep<REPETITIONS;rep++){
-			calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
-		}
-		
+		//for(int rep=0; rep<REPETITIONS;rep++){
+			//calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
+		//}
+		calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, REPETITIONS, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
 
 		System.out.println("###############  TASK CREATION DONE  ##################");
 	}
@@ -187,108 +189,6 @@ public class EvaluationScenarioCreator {
 		
 	}
 	
-	/**
-	 * moved to Evaluation Scenario Execution worker for parallelization
-	 * 
-	 * @param time
-	 * @param nets
-	 * @param flows
-	 * @param rep
-	 * @param folder
-	 * @param overwrite
-	 * @param recalc
-	 * @param decomposition_heuristic
-	 *
-	public void calculateInstance(int time, int nets, int flows, int rep, String folder, boolean overwrite, boolean recalc, boolean decomposition_heuristic) {
-		NetworkGenerator ng;
-		FlowGenerator tg;
-		
-		String path=folder+"rep_"+ rep+File.separator;
-		//skip if folder exists
-		if(!new File(path).exists() || overwrite || recalc){
-			
-			System.out.println(path);
-			new File(path).mkdirs();
-//			System.out.println(recalc);
-			if(!recalc){
-//				System.out.println("Creating Networks and Flows..");
-				ng=new NetworkGenerator(nets, time);	//add network input data
-				ng.writeObject(path);
-				tg = new FlowGenerator(time, flows);		//add application traffic input data
-				tg.writeObject(path); 
-			}else{
-//				System.out.println("Loading stored Networks and Flows..");
-//				System.out.println(path);
-				ng=NetworkGenerator.loadNetworkGenerator(path);
-				tg=FlowGenerator.loadTrafficGenerator(path);
-			}
-			
-
-			if(decomposition_heuristic){
-				//TODO test output
-				OptimizationScheduler o = new OptimizationScheduler(ng, tg);
-				o.writeDatFile(path);
-				
-				Decomposer d = new Decomposer(tg, ng);
-				d.decompose();
-				
-			} else {
-				if (TEST_COST_FUNCTION) {
-					// run optimization and compare results to results of the
-					// cost function
-					System.out.println("TEST_COST_FUNCTION active");
-					OptimizationScheduler sched = new OptimizationScheduler(ng,
-							tg);
-					sched.testCostFunction();
-					sched.calculateInstance(path);
-				} else {
-//					LinkedList<Integer> cost= new LinkedList<Integer>();
-//					LinkedList<String> s_name= new LinkedList<String>();
-					// default case:
-					// run instance for each scheduler which is created in
-					// method "initSchedulers(ng,tg)" above
-					
-					boolean first=true, error=false;
-					int c_opt=0;
-					Vector<Scheduler> scheds= initSchedulers(ng, tg);
-					for (Scheduler scheduler : scheds) {
-						Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-						String date = formatter.format(Calendar.getInstance().getTime());
-						System.out.println(" "+scheduler.getType() +", start at " +date);
-						scheduler.calculateInstance(path);
-//						cost.add(scheduler.getCost());
-//						s_name.add(scheduler.getType());
-						
-						//
-						if(first){
-							c_opt=scheduler.getCost();
-							first=false;
-						}else{
-							if(scheduler.getCost()<c_opt){
-								System.err.println("OPT STILL NOT BEST");
-//								error=true;
-							}
-						}
-
-					}
-					Scheduler s = new PriorityScheduler(ng, tg);
-//					cost.add(s.getCost());
-//					s_name.add("empty");
-//					System.out.println(s_name);
-//					System.out.println("Cost "+cost);
-
-					if(VISUALIZE){
-						Plot plot = new Plot(new VisualizationPack(ng, tg, scheds));
-					}
-					
-					if(error){
-						System.exit(0);
-					}
-				}
-			}
-		}
-	}
-*/
 	
 	private int pow(int v, int exp){
 		return (int)Math.round(Math.pow(v, exp));

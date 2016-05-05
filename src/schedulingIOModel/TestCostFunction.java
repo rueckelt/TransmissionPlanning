@@ -25,9 +25,6 @@ public class TestCostFunction extends CostFunction {
 	}
 	protected void check(int[] value, String variable){
 		int[] v = ModelAccess.getArray(model, variable);
-		if(variable.equals("vioThroughput")){
-			System.out.println("vioTP\nopt:"+Arrays.toString(v)+"\n"+Arrays.toString(value));
-		}
 		if(!Arrays.equals(v, value)){
 			System.err.println(variable + " model != cost-function:\n"+Arrays.toString(v)+"\n"+Arrays.toString(value));
 			System.exit(0);

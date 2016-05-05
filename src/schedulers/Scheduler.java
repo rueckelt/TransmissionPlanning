@@ -322,8 +322,20 @@ public abstract class Scheduler {
 		String s=getType()+"\n";
 		for(int n=0; n<ng.getNetworks().size();n++){
 			s+="\n############### Network "+n+" ##############";
+			//print capacity
+			s+="\ncap\t|";
+			Vector<Integer> cap = ng.getNetworks().get(n).getCapacity();
+			for(int t=0; t<ng.getTimeslots();t++){
+				if(t%10==0){
+					s+="["+t+"]";
+				}
+				s+=cap.get(t)+"\t|";
+			}
+				
+			//print each flow which uses the network
 			for(int f=0; f<tg.getFlows().size();f++){
 				boolean used=false;
+				//does the flow use the network?
 				for(int t=0; t<ng.getTimeslots();t++){
 					if(schedule_f_t_n[f][t][n]>0){
 						used=true;

@@ -51,21 +51,7 @@ public class GreedyScheduler extends Scheduler{
 	@Override
 	protected void calculateInstance_internal(String logfile) {
 		
-//		################# 1. sort flows according to decreasing criticality #################
-		List<Integer> flowCriticality= new LinkedList<Integer>();
-		//sort keys of map in descending order
-		List<Integer> flow_order = new LinkedList<Integer>();
-		for(int f=0; f<tg.getFlows().size(); f++){
-			flow_order.add(f);
-			flowCriticality.add(calculateFlowCriticality(tg.getFlows().get(f), ng));
-		}
-		final List<Integer> flowCrit_tmp=flowCriticality;
-		Collections.sort(flow_order, new Comparator<Integer>() {
-			@Override
-			public int compare(Integer i1, Integer i2) {
-				return flowCrit_tmp.get(i2)-flowCrit_tmp.get(i1);
-			}
-		});	 //highest priority first
+		List<Integer> flow_order = sortByFlowCriticality();
 		
 		//############## 2. start allocation for each flow #################
 		for(int f= 0; f<tg.getFlows().size(); f++){
@@ -75,6 +61,28 @@ public class GreedyScheduler extends Scheduler{
 			scheduleFlow(f0, false);
 		}
 //		System.out.println("greedy done");
+	}
+
+	/**
+	 * @return
+	 */
+	protected List<Integer> sortByFlowCriticality() {
+		//		################# 1. sort flows according to decreasing criticality #################
+				List<Integer> flowCriticality= new LinkedList<Integer>();
+				//sort keys of map in descending order
+				List<Integer> flow_order = new LinkedList<Integer>();
+				for(int f=0; f<tg.getFlows().size(); f++){
+					flow_order.add(f);
+					flowCriticality.add(calculateFlowCriticality(tg.getFlows().get(f), ng));
+				}
+				final List<Integer> flowCrit_tmp=flowCriticality;
+				Collections.sort(flow_order, new Comparator<Integer>() {
+					@Override
+					public int compare(Integer i1, Integer i2) {
+						return flowCrit_tmp.get(i2)-flowCrit_tmp.get(i1);
+					}
+				});	 //highest priority first
+		return flow_order;
 	}
 
 	/**
@@ -168,7 +176,7 @@ public class GreedyScheduler extends Scheduler{
 	 * rates for the flow and the remaining capacity of the networks, which networks fit best
 	 * @param flow 
 	 */
-	private Vector<Integer> sortNetworkIDs(final Flow flow){
+	protected Vector<Integer> sortNetworkIDs(final Flow flow){
 		//create sorted list
 		Vector<Integer> netIDs = new Vector<>();
 		for(int n = 0; n<ng_tmp.getNetworks().size(); n++){		//use ng_tmp: remaining capacity of networks
@@ -259,7 +267,7 @@ public class GreedyScheduler extends Scheduler{
 		}else{
 			tp = flow_minTp;
 		}
-		int savedvio =tp*flow.getImpThroughputMin();	
+		int savedvio =cf.vioTp_weight(tp, flow);	
 		return savedvio;	
 		
 	}

@@ -12,6 +12,7 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import ToolSet.PersistentStore;
+import ToolSet.RndInt;
 import optimization.ModelAccess;
 
 /**
@@ -31,8 +32,8 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	public static final String NG_NAME = "NetworkGenerator";
 	private Vector<Network> networks = new Vector<Network>();
 	
-	private int hysteresis = 100;
-	private int cost_imp = 1;	//importance of monetary cost for network use
+	private int hysteresis = 500;
+	private int cost_imp = 25;	//importance of monetary cost for network use
 	
 	public NetworkGenerator(){
 	}
@@ -85,12 +86,13 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		
 		//initialize automatically
 		for (int i=0; i<nofNetworks;i++){
-			if(i%10==0){
-				addNetwork(Network.getCellular(time, 20+r.nextInt(20)));	//cellular available all the time; consant rate (bad model)
+			if(i%4==0){
+				addNetwork(Network.getCellular(time, RndInt.get(20, 60)));	//cellular available all the time; consant rate (bad model)
 			}else{
-				int duration = 10+r.nextInt((int)Math.round(Math.sqrt(time))); //availablity at least 10 slots + extra (depends on sqrt of time)
-				int delay = r.nextInt(time-duration);
-				addNetwork(Network.getWiFi(duration, 30 + r.nextInt(50), delay));
+				int duration = RndInt.get(5, 5+(int)Math.round(Math.sqrt(time))); //availablity at least 10 slots + extra (depends on sqrt of time)
+				int delay = RndInt.get(0, time-duration-1);
+				int tokens = RndInt.get(20,100);
+				addNetwork(Network.getWiFi(duration, tokens , delay));
 			}
 		}
 	}

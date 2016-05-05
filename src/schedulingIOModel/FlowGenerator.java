@@ -12,6 +12,7 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import ToolSet.PersistentStore;
+import ToolSet.RndInt;
 import optimization.ModelAccess;
 
 
@@ -54,26 +55,96 @@ public class FlowGenerator implements Serializable{
 		flows.add(flow);
 	}
 	
-	private void addTraffic(int duration, int requests){
-		Random r=new Random();
-		r.setSeed(System.nanoTime());
-		int tmp=duration/requests;
-		for(int i=0;i<requests;i++){
-			if(i%5==0){			//0		VoIP
-				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+20+i*tmp)); 	//todo
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
-			}else if(i%5==1 || i%5==4){		//4..10		Browsing
-				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
-			}else if(i%5==2){		//3		Download
-				flows.add(Flow.Update(duration/2));
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
-			}else{					//Stream
-				flows.add(Flow.BufferableStream(i*tmp, tmp*5));
-//				System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
-			}
+	
+	/*
+	 * Realistic traffic shaping:
+	 * 
+	 * 
+	 * http://www.cisco.com/c/dam/en/us/solutions/service-provider/vni-service-adoption-forecast/index.html?CAMPAIGN=Mobile+VNI+2016&COUNTRY_SITE=us&POSITION=Press+Release&REFERRING_SITE=PR&CREATIVE=PR+to+infographic
+	 * Cisco report:
+	 * Video 			2015: 55%		2020: 75%
+	 * Overall Traffic	2015: 495MB		2020: 3.3GB / Month		
+	 * 
+	 * Sandvine 2014 Fixed line:
+	 * https://www.sandvine.com/downloads/general/global-internet-phenomena/2014/1h-2014-global-internet-phenomena-report.pdf
+	 * On-demand video: ~45%
+	 * Browsing ~10%
+	 * Downlods: ~10%
+	 * 
+	 * Sandvine 2014 Mobile:
+	 * On-demand video: ~25%
+	 * Browsing: 20%
+	 * 
+	 * ###################################
+	 * OUR MODEL???
+	 * 55% bufferable stream /e.g. video-on-demand or music-on-demand (about average for today)
+	 * 25% background / e.g. app updates, updates of high precision maps, periodic delay-tolerant traffic (average today is <10%, but we expect vehicles to have higher maintenance traffic for highly autonomous driving)
+	 * 15% liveStream  / e.g. live transmission, skype (not used very often; today's average, usually low data rates, usually heavy tailed and plannable)
+	 * 5% interactive /e.g. browsing (used much but usually low data rates; long times without interaction; usually not plannable!!!)
+	 * 
+	 * bufferable and download provide potentials to optimize in time
+	 * 
+	 */
+	
+	//bad method; does only work for flow count multiple of 4. But otherwise the traffic share is not possible
+	//too lazy to implement rest; so parameter 
+	private void addTraffic(int duration, int flows){
+		for(int i=0;i<flows/4;i++){
+			add4(duration);
 		}
 	}
+	
+	private void add4(int duration){
+		int overall_tokens = duration*(15+RndInt.get(0,30));	//random amount of overall traffic, but values 45 and 30 have no deeper reason
+		System.out.println("tokens:"+overall_tokens);
+		int tokens_bufferable 	= (int) (overall_tokens*0.25);
+		int tokens_background 	= (int) (overall_tokens*0.55);
+		int tokens_live 		= (int) (overall_tokens*0.15);
+		int tokens_interactive 	= (int) (overall_tokens*0.5);
+		
+		//bufferable
+		int buf_length=duration/RndInt.get(2, 3);	//scale duration from half length to 20% length
+		int buf_starttime=RndInt.get(1, duration-buf_length)-1;		//random start time in a way that it can finish before end
+		flows.add(Flow.BufferableStream(buf_starttime, buf_length, tokens_bufferable));
+		
+		//background 
+		int back_deadline=RndInt.get(duration*2/3, duration-1);	//deadline not in first half
+		flows.add(Flow.Background(tokens_background, back_deadline));
+		
+		//liveStream
+		int live_start_time= RndInt.get(0,duration/2);
+		int deadline= RndInt.get(live_start_time*3/2, duration-1);
+		flows.add(Flow.LiveStram(live_start_time, deadline, tokens_live));
+		
+		//interactive
+		int interactive_start_time=RndInt.get(0, duration-10);
+		flows.add(Flow.Interactive(interactive_start_time, tokens_interactive));
+		
+	}
+	
+	
+	
+//	private void addTraffic_old(int duration, int requests){
+//		Random r=new Random();
+//		r.setSeed(System.nanoTime());
+//		int tmp=duration/requests;
+//		int m=6;
+//		for(int i=0;i<requests;i++){
+//			if(i%m==0|| i%m==4){					//Stream 0
+//				flows.add(Flow.BufferableStream(i*tmp, tmp*6));
+////				System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
+//			}else if(i%m==3 || i%m==5){		//4..10		Browsing
+//				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
+////				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
+//			}else if(i%m==1 ){		//3		Download
+//				flows.add(Flow.Update(duration));
+////				System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
+//			}else{			//0		VoIP
+//				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+20+i*tmp)); 	//todo
+////				System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
+//			}
+//		}
+//	}
 	
 	/**
 	 * 
@@ -94,7 +165,7 @@ public class FlowGenerator implements Serializable{
 		for(int i=0; i<requests; i++){
 			int start = rnd.nextInt(duration);
 			int chunks = rnd.nextInt(max_request_size);
-			flows.add(Flow.UserRequest(startTime+start, chunks));		
+			flows.add(Flow.Interactive(startTime+start, chunks));		
 		}
 	}
 	
