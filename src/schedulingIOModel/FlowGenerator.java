@@ -96,7 +96,7 @@ public class FlowGenerator implements Serializable{
 	
 	private void add4(int duration){
 		int overall_tokens = duration*(15+RndInt.get(0,30));	//random amount of overall traffic, but values 45 and 30 have no deeper reason
-		System.out.println("tokens:"+overall_tokens);
+//		System.out.println("tokens:"+overall_tokens);
 		int tokens_bufferable 	= (int) (overall_tokens*0.25);
 		int tokens_background 	= (int) (overall_tokens*0.55);
 		int tokens_live 		= (int) (overall_tokens*0.15);
@@ -108,12 +108,12 @@ public class FlowGenerator implements Serializable{
 		flows.add(Flow.BufferableStream(buf_starttime, buf_length, tokens_bufferable));
 		
 		//background 
-		int back_deadline=RndInt.get(duration*2/3, duration-1);	//deadline not in first half
+		int back_deadline=RndInt.get(duration/2, duration-1);	//deadline not in first half
 		flows.add(Flow.Background(tokens_background, back_deadline));
 		
 		//liveStream
 		int live_start_time= RndInt.get(0,duration/2);
-		int deadline= RndInt.get(live_start_time*3/2, duration-1);
+		int deadline= RndInt.get(live_start_time*3/2+1, duration-1);
 		flows.add(Flow.LiveStram(live_start_time, deadline, tokens_live));
 		
 		//interactive

@@ -44,6 +44,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 	}
 	
 	public Boolean call() throws Exception {
+		try{
 		NetworkGenerator ng;
 		FlowGenerator tg;
 		
@@ -117,6 +118,10 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 //			}
 		}
 		return true;
+	
+	}catch(Exception e){
+		e.printStackTrace();
+		return false;
 	}
-
+	}
 }

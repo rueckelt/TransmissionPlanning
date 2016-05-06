@@ -23,7 +23,7 @@ public class Flow implements Serializable, Cloneable{
 	
 	//at least n chunks in t time slots ### lower throughput limit
 	private int windowMin=100000;
-	private int chunksMin=0;
+	private int chunksMin=1;
 	//at most n chunks in t time slots (data is not prduced faster/ slow transmitter) ## upper throughput limit
 	private int windowMax=1;
 	private int chunksMax=100000;

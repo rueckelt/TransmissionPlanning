@@ -260,7 +260,10 @@ public class CostFunction {
 		//return vioTpMin[f][t]*flow.getImpThroughputMin()/(flow.getChunksMin()*flow.getWindowMin());
 	}
 	public int vioTp_weight(int vioTpMin, Flow flow){
-		return vioTpMin*flow.getImpThroughputMin()/(flow.getChunksMin()*flow.getWindowMin());
+		if(flow.getChunksMin()*flow.getWindowMin()<=0){
+			return 0;
+		}
+		return vioTpMin*flow.getImpThroughputMin()*102/(flow.getChunksMin()*flow.getWindowMin());
 	}
 	
 	public int[] vioTp(int[][] cummulated_f_t){
@@ -278,6 +281,7 @@ public class CostFunction {
 				vioTp[f]+= vioTp_f_t(vioTpMin, f, t);
 			}
 		}
+//		System.out.println("vio: "+Arrays.toString(vioTp));
 		check(vioTp, "vioThroughput");
 		if(logger!=null){
 			logger.log("vioTp", vioTp);
@@ -372,8 +376,8 @@ public class CostFunction {
 				}
 			}
 		}
-		costMon*=ng.getCostImportance();	//multiply with cost importance
 		check(costMon,"cost_ch");
+		costMon*=ng.getCostImportance();	//multiply with cost importance
 		if(logger!=null){
 			logger.log("cost_ch", costMon);
 		}
