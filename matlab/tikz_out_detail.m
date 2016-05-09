@@ -7,11 +7,13 @@
 
 %logscale is applied if >0
 
-function [] = tikz_out_detail(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylabel, logscale)
+function [] = tikz_out_detail(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylabel,  bound_hi, bound_lo, logscale)
 
+    [f_max, t_max, n_max, r_max] = size(data); 
     scale_f = [1 2 4 8 16 32 64];
     scale_n = [1 2 4 8 16 32 64];
     scale_t = [25 50 100 200 400 800 1600];
+    scale_s = {'opt' 'gre' 'greOL' 'rnd'};
     
     %arrange data
     if(plot_var_ftn==1) %vary flows for plot
@@ -36,10 +38,17 @@ function [] = tikz_out_detail(out_folder, data, avail, plot_var_ftn, my_xlabel, 
         d2_scale = scale_t; 
         f_parts = {'vary_n__f_', '__t_', '.tikz'}; 
     end
+    if(plot_var_ftn==4)
+       xaxis = (1:4);
+       sched=repmat(scale_s, 1,t_max);
+       d1_scale = scale_f;
+       d2_scale = scale_n;
+       f_parts = {'vary_s__f_', '__n_', '.tikz'}; 
+    end
     
     %plot
    % fig = figure('visible', 'off'); 
-    [dim1 dim2, dim3, rep] = size(data);   
+    [dim1, dim2, dim3, ~] = size(data);   
     
     for d1=1:dim1
         for d2=1:dim2
@@ -49,32 +58,25 @@ function [] = tikz_out_detail(out_folder, data, avail, plot_var_ftn, my_xlabel, 
            % f=figure('Name',filename);
             data_squeezed=squeeze(data(d1,d2,:,:))';    %fix two dimensions
             avail_squeezed = squeeze(avail(d1,d2,:,:))';
-            if sum(avail_squeezed)>0
-                filename
-                boxplot(data_squeezed, x_axis(1:dim3));     %plot data and add x-axis dim
+            if sum(avail_squeezed(:))>0
+                if plot_var_ftn<4
+                    boxplot(data_squeezed, x_axis(1:dim3));     %plot data and add x-axis dim
+                else
+                    boxplot(data_squeezed, scale_s);
+                    
+                end;
                 xlabel(my_xlabel);
-             %   ylim=[bound_lo(plot_var_ftn,d1,d2) bound_hi(plot_var_ftn,d1,d2)+0.00001];
-                set(gca,'YLim',ylim); 
-
+                ylim=[bound_lo(plot_var_ftn,d1,d2) bound_hi(plot_var_ftn,d1,d2)+0.00001]
+              %  set(gca,'YLim',ylim);
+                
                 grid on
                 if logscale>0
                     set(gca,'yscale','log');
                 end
                 if ~isempty(my_ylabel)
                     ylabel(my_ylabel);  %set ylabel and numbers only for first
-                    %y_tick = get(gca, 'YTick') %get YTick from labeled graph
-                else
-    %                 y_tick = get(gca, 'YTick') %get YTick from labeled graph
-                  %   set(gca,'YTickLabel',[]); %remove y-axis numbers for others
-    %                 set(gca, 'YTick', y_tick); %apply old YTick
                 end
-    %            set(gca, 'XTickLabelRotation', 90)
 
-               % filename = [out_folder '\' name '__nets_comp__t_' num2str(d1) '__app_' num2str(d1) '__' num2str(type) labels{type}(1:3) '.tikz'];
-
-    %            if strcmp(filename, '..\my_logs\longTest1\tikz\greedyFill\throughput\vary_t__f_2__n_2.tikz')
-    %                 fixed_f_t
-    %            end
                matlab2tikz(filename,'width','\figW','height','\figH','showInfo',false);
                %the library adds a line that destroys YTick representation: YTick=
                %this line must be deleted / commented out

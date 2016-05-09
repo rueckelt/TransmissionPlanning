@@ -9,8 +9,8 @@ function [bound_hi, bound_lo] = calculate_bounds(data)
     hi=1.1;
     lo=0.9;
     dim_max = max([nof_flows, nof_time, nof_networks]);
-    bound_hi = zeros(3, dim_max, dim_max);
-    bound_lo = zeros(3, dim_max, dim_max);
+    bound_hi = zeros(4, dim_max, dim_max);
+    bound_lo = zeros(4, dim_max, dim_max);
     
     %flows: 1
     for t=1:nof_time
@@ -44,4 +44,8 @@ function [bound_hi, bound_lo] = calculate_bounds(data)
             end
         end
     end
+    
+    %sched: 4
+    bound_hi(4,:,:)=bound_hi(2,:,:);
+    bound_lo(4,:,:)=bound_lo(2,:,:);
 end
