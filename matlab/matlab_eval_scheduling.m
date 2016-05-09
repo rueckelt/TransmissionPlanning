@@ -5,7 +5,7 @@
 
 in_folder = '..\my_logs\eval_4_4_3_c';% 'logs_time';
 out_folder = [in_folder filesep 'tikz'];
-force_read_data = 1;
+force_read_data = 0;
 
 %get paramters from file
 parameter_file=[in_folder filesep 'parameters_log.m'];
@@ -40,9 +40,11 @@ state='gathered data'
 %calculate relative
  rel_data = relative_to_opt(raw_values);
 % %plot
- plot_data2(out_folder, rel_data, avail, valuenames, schedulers);
+plot_data2(out_folder, rel_data, avail, valuenames, schedulers);
 % 
 
+java.lang.Runtime.getRuntime.gc;
+state='done'
 
 
 %The functions you mention return H=0 when a test cannot reject the hypothesis of a normal distribution.

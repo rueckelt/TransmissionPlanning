@@ -20,6 +20,7 @@ function [] = plot_data2(out_folder, data, avail, vartypes, schedulers)
 
   %  nof_schedulers
     for t=1:nof_time
+    %for t=nof_time:nof_time
                 %select data
         for v=1:nof_vartypes
             tmp = squeeze(data(v,:,:,:,:,:));
@@ -40,12 +41,9 @@ function [] = plot_data2(out_folder, data, avail, vartypes, schedulers)
             
             % + scheduler for path
             %xlabel = scheduler (?)
-            DATASIZE=size(data)
+
             data_sqeezed = squeeze(data(v, :, :,t,:,:));
             avail_squeezed = squeeze(avail(v, :, :,t,:,:));
-            
-            DATASIZE=size(data_sqeezed)
-            AVAILSIZE=size(avail_squeezed)
             
             my_ylabel = [];
             if(v==1)

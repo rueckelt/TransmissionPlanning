@@ -8,6 +8,6 @@ max_nets = 3;
 max_rep = 30;
 evaluate_max_only = 1;
 
-scheduler_logs= {'optimization_log.m','random_log.m','greedyFill_log.m','GreedyOnline_log.m'};
+scheduler_logs= {'optimization_log.m','greedyFill_log.m','GreedyOnline_log.m','random_log.m'};
 schedulers= {'optimization','greedyFill','GreedyOnline','random'};
-
+test=1;

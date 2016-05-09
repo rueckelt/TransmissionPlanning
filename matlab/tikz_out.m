@@ -13,7 +13,7 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
     scale_f = [1 2 4 8 16 32 64];
     scale_n = [1 2 4 8 16 32 64];
     scale_t = [25 50 100 200 400 800 1600];
-    scale_s = {'Opt' 'Gre' 'GreOL' 'Rnd'};
+    scale_s = {'Opt' 'Gre' 'GreOl' 'Rnd'};
     %arrange data
     if(plot_var_ftn==1) %vary flows for plot
         data = permute(data, [2 3 1 4]);
@@ -39,8 +39,6 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
     end
     if(plot_var_ftn==4) %t is fixed, vary schedulers
         'plot4_sched'
-%         data = permute(data, [3 1 2 4]);
-%         avail = permute(avail, [3 1 2 4]);
         data = permute(data, [2 3 1 4]);    %former second dimension now on first
         avail = permute(avail, [2 3 1 4]);
        x_axis = scale_s;
@@ -49,7 +47,7 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
        f_parts = {'vary_s__f_', '__n_', '.tikz'}; 
     end
     
-    [dim1, dim2, dim3, ~] = size(data) 
+    [dim1, dim2, dim3, ~] = size(data); 
     %plot
    % fig = figure('visible', 'off');  
     
@@ -61,7 +59,7 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
            % f=figure('Name',filename);
             data_squeezed=squeeze(data(d1,d2,:,:))';    %fix two dimensions
             avail_squeezed = squeeze(avail(d1,d2,:,:))';
-            sum_avail= sum(avail_squeezed(:))
+
             if sum(avail_squeezed(:))>0
                 if plot_var_ftn<4
                     boxplot(data_squeezed, x_axis(1:dim3));     %plot data and add x-axis dim
@@ -97,7 +95,7 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
                 fclose(fid);
                 f = regexprep(f,'ytick={','%ytick={');
                 %rotate xtick labels and adjust xlabel spacing
-                f = regexprep(f, 'xmajorgrids','x label style={at={(axis description cs:0.5,-0.04)},anchor=north},\nxticklabel style={rotate=90},\nxmajorgrids,');
+                f = regexprep(f, 'xmajorgrids','x label style={at={(axis description cs:0.5,-0.09)},anchor=north},\nxticklabel style={rotate=90},\nxmajorgrids,');
                  fid  = fopen(filename,'w');
                 fprintf(fid,'%s',f);
                 fclose(fid);
