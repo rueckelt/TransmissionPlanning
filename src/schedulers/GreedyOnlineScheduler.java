@@ -54,12 +54,14 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 					
 					while(allocated==0 && n0<ng.getNetworks().size()){
 						int n=flowsToNets.get(f).get(n0);
-						if(chunksToAllocate.get(f)<chunksMaxTp){
-							allocated=allocate(f, t, n, chunksToAllocate.get(f)); //do not allocate more chunks than required
-						}else{
-							allocated=allocate(f, t, n, chunksMaxTp);
+						if(calcVio(flow, ng.getNetworks().get(n))<0){
+							if(chunksToAllocate.get(f)<chunksMaxTp){
+								allocated=allocate(f, t, n, chunksToAllocate.get(f)); //do not allocate more chunks than required
+							}else{
+								allocated=allocate(f, t, n, chunksMaxTp);
+							}
+							chunksToAllocate.set(f, chunksToAllocate.get(f)-allocated);
 						}
-						chunksToAllocate.set(f, chunksToAllocate.get(f)-allocated);
 						n0++;
 					}
 					

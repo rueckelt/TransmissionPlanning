@@ -4,7 +4,7 @@
 %delete this file to read logs from raw files
 
 in_folder = '..\my_logs\eval_4_4_3_c';% 'logs_time';
-out_folder = [in_folder filesep 'tikz'];
+out_folder = [in_folder filesep 'tikz3'];
 force_read_data = 0;
 
 %get paramters from file
@@ -38,12 +38,12 @@ end
 
 state='gathered data'
 %calculate relative
- rel_data = relative_to_opt(raw_values);
 % %plot
-plot_data2(out_folder, rel_data, avail, valuenames, schedulers);
-% 
+%rel_data = relative_to_opt(raw_values);
+%save('rel_data.mat', 'rel_data');
+plot_data3(out_folder, raw_values, avail, valuenames, schedulers);
 
-java.lang.Runtime.getRuntime.gc;
+% 
 state='done'
 
 

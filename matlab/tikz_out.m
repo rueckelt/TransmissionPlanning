@@ -71,7 +71,7 @@ function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylab
                 
                 xlabel(my_xlabel);
                 ylim=[bound_lo(plot_var_ftn,d1,d2) bound_hi(plot_var_ftn,d1,d2)+0.00001];
-                %set(gca,'YLim',ylim); 
+                set(gca,'YLim',ylim); 
 
                 grid on
                 if logscale>0

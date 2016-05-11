@@ -7,14 +7,13 @@
 
 %logscale is applied if >0
 
-function [] = tikz_out_detail(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylabel,  bound_hi, bound_lo, logscale)
-
-    [f_max, t_max, n_max, r_max] = size(data); 
+function [] = tikz_out(out_folder, data, avail, plot_var_ftn, my_xlabel, my_ylabel, bound_hi, bound_lo, logscale)
+ 
+    [f_max, t_max, n_max, r_max] = size(data);
     scale_f = [1 2 4 8 16 32 64];
     scale_n = [1 2 4 8 16 32 64];
     scale_t = [25 50 100 200 400 800 1600];
-    scale_s = {'Opt' 'Gre' 'GreOn' 'Rnd'};
-    
+    scale_s = {'Opt' 'Gre' 'GreOl' 'Rnd'};
     %arrange data
     if(plot_var_ftn==1) %vary flows for plot
         data = permute(data, [2 3 1 4]);
@@ -38,7 +37,8 @@ function [] = tikz_out_detail(out_folder, data, avail, plot_var_ftn, my_xlabel, 
         d2_scale = scale_t; 
         f_parts = {'vary_n__f_', '__t_', '.tikz'}; 
     end
-    if(plot_var_ftn==4)
+    if(plot_var_ftn==4) %t is fixed, vary schedulers
+        'plot4_sched'
         data = permute(data, [2 3 1 4]);    %former second dimension now on first
         avail = permute(avail, [2 3 1 4]);
        x_axis = scale_s;
@@ -47,9 +47,9 @@ function [] = tikz_out_detail(out_folder, data, avail, plot_var_ftn, my_xlabel, 
        f_parts = {'vary_s__f_', '__n_', '.tikz'}; 
     end
     
+    [dim1, dim2, dim3, ~] = size(data); 
     %plot
-   % fig = figure('visible', 'off'); 
-    [dim1, dim2, dim3, ~] = size(data);   
+   % fig = figure('visible', 'off');  
     
     for d1=1:dim1
         for d2=1:dim2
@@ -59,23 +59,31 @@ function [] = tikz_out_detail(out_folder, data, avail, plot_var_ftn, my_xlabel, 
            % f=figure('Name',filename);
             data_squeezed=squeeze(data(d1,d2,:,:))';    %fix two dimensions
             avail_squeezed = squeeze(avail(d1,d2,:,:))';
+
             if sum(avail_squeezed(:))>0
                 if plot_var_ftn<4
                     boxplot(data_squeezed, x_axis(1:dim3));     %plot data and add x-axis dim
                 else
-                    boxplot(data_squeezed, scale_s);
-                    
+                    ['plot ' filename]
+                    boxplot(data_squeezed,  x_axis);
+                  %  set(gca,'XTickLabel', scale_s);
                 end;
-                xlabel(my_xlabel);
-                ylim=[bound_lo(plot_var_ftn,d1,d2) bound_hi(plot_var_ftn,d1,d2)+0.00001]
-              %  set(gca,'YLim',ylim);
                 
+                xlabel(my_xlabel);
+                ylim=[bound_lo(plot_var_ftn,d1,d2) bound_hi(plot_var_ftn,d1,d2)+0.00001];
+                %set(gca,'YLim',ylim); 
+
                 grid on
                 if logscale>0
                     set(gca,'yscale','log');
                 end
                 if ~isempty(my_ylabel)
                     ylabel(my_ylabel);  %set ylabel and numbers only for first
+                    %y_tick = get(gca, 'YTick') %get YTick from labeled graph
+                else
+    %                 y_tick = get(gca, 'YTick') %get YTick from labeled graph
+                     set(gca,'YTickLabel',[]); %remove y-axis numbers for others
+    %                 set(gca, 'YTick', y_tick); %apply old YTick
                 end
 
                matlab2tikz(filename,'width','\figW','height','\figH','showInfo',false);
@@ -85,11 +93,10 @@ function [] = tikz_out_detail(out_folder, data, avail, plot_var_ftn, my_xlabel, 
                 fid  = fopen(filename,'r');
                 f=fread(fid,'*char')';
                 fclose(fid);
-                %resolve xytick error
                 f = regexprep(f,'ytick={','%ytick={');
                 %rotate xtick labels and adjust xlabel spacing
-                f = regexprep(f, 'xmajorgrids','x label style={at={(axis description cs:0.5,-0.04)},anchor=north},\nxticklabel style={rotate=90},\nxmajorgrids,');
-                fid  = fopen(filename,'w');
+                f = regexprep(f, 'xmajorgrids','x label style={at={(axis description cs:0.5,-0.09)},anchor=north},\nxticklabel style={rotate=90},\nxmajorgrids,');
+                 fid  = fopen(filename,'w');
                 fprintf(fid,'%s',f);
                 fclose(fid);
             end

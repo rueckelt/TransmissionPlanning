@@ -212,7 +212,7 @@ public class GreedyScheduler extends Scheduler{
 	 * @param network
 	 * @return estimation of cost for scheduling a chunk: negative, if allocation is expected to lead to profit 
 	 */
-	private int calcVio(Flow flow, Network network){
+	protected int calcVio(Flow flow, Network network){
 //		if(true)
 //		return network.getId();
 				//scheduling may lead to jitter and latency cost
