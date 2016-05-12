@@ -57,7 +57,7 @@ public class Flow implements Serializable, Cloneable{
     }
 
 
-	public int getChunks() {
+	public int getTokens() {
 		return chunks;
 	}
 
@@ -97,7 +97,7 @@ public class Flow implements Serializable, Cloneable{
 	}
 
 
-	public int getChunksMin() {
+	public int getTokensMin() {
 		return chunksMin;
 	}
 

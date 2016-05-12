@@ -7,6 +7,7 @@ import schedulingIOModel.Flow;
 import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
 import schedulingIOModel.FlowGenerator;
+import ToolSet.InterfaceLimit;
 import ToolSet.LogMatlabFormat;
 
 
@@ -20,6 +21,7 @@ public abstract class Scheduler {
 	protected NetworkGenerator ng; 
 	protected FlowGenerator tg;
 	protected LogMatlabFormat logger;
+	protected InterfaceLimit interfaceLimit;
 	
 	protected CostFunction cf;
 	private long runtime =0;
@@ -32,7 +34,8 @@ public abstract class Scheduler {
 		this.ng=ng;
 		this.tg=tg;
 		schedule_f_t_n=getEmptySchedule();
-		logger = new LogMatlabFormat();
+		logger = new LogMatlabFormat();	
+		interfaceLimit = new InterfaceLimit(ng);
 		cf=new CostFunction(ng, tg, logger);
 	}
 	
@@ -249,27 +252,28 @@ public abstract class Scheduler {
 	 * @param flow ID
 	 * @param time slot
 	 * @param network ID
-	 * @param chunks to allocate
+	 * @param tokens to allocate
 	 * @return number of allocated chunks
 	 */
-	protected int allocate(int flow, int time, int network, int chunks){
+	protected int allocate(int flow, int time, int network, int tokens){
 		if(!boundsValid(flow, time, network))return 0;
-
+		if(!interfaceLimit.isUsable(network, time))return 0;
 		//calculate remaining capacity of network in this slot
 		int remaining_net_cap=getRemainingNetCap(network, time);
 		int s[][][]=schedule_f_t_n_temp;
-		int scheduled = chunks;
+		int scheduled = tokens;
 		
 		//schedule as much as possible
-		if(chunks>remaining_net_cap){
+		if(tokens>remaining_net_cap){
 			s[flow][time][network]+=remaining_net_cap;
 			scheduled= remaining_net_cap;
 		}else{
-			s[flow][time][network]+=chunks;
+			s[flow][time][network]+=tokens;
 		}
 		//any constraint violated? use if ok, else revert
 		if(verificationOfConstraints(s)){
 			schedule_f_t_n_temp=s;
+			interfaceLimit.useNetwork(network, time);
 			return scheduled;
 		}else{
 			return 0;

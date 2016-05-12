@@ -441,9 +441,9 @@ class PlotGraph extends JPanel{
 							if (firstTime) violations[f][3] += 1;
 						}
 
-						if (sched.getFlow(f).getChunksMin() > s[f][t][netCounter]) {
+						if (sched.getFlow(f).getTokensMin() > s[f][t][netCounter]) {
 							// Throughput violation
-							sViolation += "<br>"+"Throughput("+f+") T:"+sched.getFlow(f).getChunksMin()+" vs A:"+s[f][t][netCounter]+" | Cost: "+vioTp(f, t);
+							sViolation += "<br>"+"Throughput("+f+") T:"+sched.getFlow(f).getTokensMin()+" vs A:"+s[f][t][netCounter]+" | Cost: "+vioTp(f, t);
 							violationFound = true;
 							if (firstTime) violations[f][0] += 1;
 						}

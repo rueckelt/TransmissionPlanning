@@ -5,7 +5,7 @@
 
 in_folder = '..\my_logs\eval_4_4_3_c';% 'logs_time';
 out_folder = [in_folder filesep 'tikz3'];
-force_read_data = 0;
+force_read_data = 1;
 
 %get paramters from file
 parameter_file=[in_folder filesep 'parameters_log.m'];

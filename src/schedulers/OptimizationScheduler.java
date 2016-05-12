@@ -25,7 +25,7 @@ public class OptimizationScheduler extends Scheduler {
 
 	@Override
 	public String getType() {
-		return "optimization";
+		return "Optimization";
 	}
 	
 	public OptimizationScheduler(NetworkGenerator ng, FlowGenerator tg) {

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import ToolSet.InterfaceLimit;
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
 import schedulingIOModel.Network;
@@ -19,7 +20,7 @@ public class GreedyScheduler extends Scheduler{
 
 	@Override
 	public String getType() {
-		return "greedyFill";
+		return "Greedy";
 	}
 	
 	/**
@@ -48,11 +49,12 @@ public class GreedyScheduler extends Scheduler{
 	
 	private NetworkGenerator ng_tmp; //remove scheduled chunks from this ng
 
+
 	@Override
 	protected void calculateInstance_internal(String logfile) {
 		
 		List<Integer> flow_order = sortByFlowCriticality();
-		
+		System.out.println("FlowOrder Gre: "+flow_order.toString());
 		//############## 2. start allocation for each flow #################
 		for(int f= 0; f<tg.getFlows().size(); f++){
 			int f0 = flow_order.get(f);
@@ -94,7 +96,7 @@ public class GreedyScheduler extends Scheduler{
 		Flow flow = tg.getFlows().get(flowId);	
 		Set<Integer> usedSlots = new HashSet<Integer>(); 
 		int chunksMaxTp = (int)(flow.getChunksMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
-		int chunksToAllocate = flow.getChunks();
+		int chunksToAllocate = flow.getTokens();
 		
 		//sort networks according to match with flow
 		Vector<Integer> networkIDs = sortNetworkIDs(flow);
@@ -112,7 +114,7 @@ public class GreedyScheduler extends Scheduler{
 			//allocate in this network between start time and deadline of flow
 			//do not allocate more than once in same time slot
 				
-				for(int t=getStartTime(flow); t<=getDeadline(flow) && chunksToAllocate>0;t++){
+				for(int t=getStartTime(flow); t<getDeadline(flow) && chunksToAllocate>0;t++){
 					if(!usedSlots.contains(t)){
 //					System.out.println("time match "+chunksToAllocate);
 						int allocated=0;
@@ -153,7 +155,7 @@ public class GreedyScheduler extends Scheduler{
 	 * @param ng available networks
 	 * @return criticality
 	 */
-	private int calculateFlowCriticality(Flow f, NetworkGenerator ng){
+	protected int calculateFlowCriticality(Flow f, NetworkGenerator ng){
 		//calculate violation if flow is NOT scheduled (worst case)
 		//TODO: and subtract violation is flow is scheduled alone (best case)
 		FlowGenerator tg_temp= new FlowGenerator();
@@ -274,7 +276,7 @@ public class GreedyScheduler extends Scheduler{
 	
 	private int getAvMinTp(Flow flow){
 		//get minimum throughput requirement of flow
-		return (int) Math.ceil(flow.getChunksMin()/flow.getWindowMin());
+		return (int) Math.ceil(flow.getTokensMin()/flow.getWindowMin());
 	}
 	
 	private int getStartTime(Flow flow){

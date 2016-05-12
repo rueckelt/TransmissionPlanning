@@ -98,7 +98,7 @@ public class Decomposer {
 					f_decomposed.setStartTime(0);
 					f_decomposed.setDeadline(duration);
 					//set chunks of decomposed flow
-					int chunks_split = f.getChunks()*(duration)/(f.getDeadline()-f.getStartTime()+1);	//dreisatz; include deadline => +1
+					int chunks_split = f.getTokens()*(duration)/(f.getDeadline()-f.getStartTime()+1);	//dreisatz; include deadline => +1
 					f_decomposed.setTokens(chunks_split);
 					//add decomposed flow to time frame
 					tg_timeFrame.addFlow(f_decomposed);

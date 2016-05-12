@@ -11,7 +11,7 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, t_max, n_ma
     [nof_values, nof_schedulers, f_max, t_max, n_max,rep_max]
     values = zeros(nof_values, nof_schedulers, f_max, t_max, n_max,rep_max);
     avail = zeros(nof_values, nof_schedulers, f_max, t_max, n_max,rep_max);
-
+    state='start reading values from log data'
     for f=1:f_max
         for t = 1:t_max
             for n = 1:n_max

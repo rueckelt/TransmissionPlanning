@@ -14,7 +14,7 @@ public class RandomScheduler extends Scheduler{
 
 	@Override
 	public String getType() {
-		return "random";
+		return "Random";
 	}
 	
 	/**
@@ -126,7 +126,7 @@ public class RandomScheduler extends Scheduler{
 			int flowTpMax = (int) Math.floor(flow.getChunksMax()/flow.getWindowMax());
 			
 			//allocate chunks
-			int nonAlloChunks = flow.getChunks();
+			int nonAlloChunks = flow.getTokens();
 
 			for(int t=flowSt; t<flowDl && nonAlloChunks>0; t++){	//stop if all chunks allocated or deadline reached
 				//shuffle networks for each flow individually

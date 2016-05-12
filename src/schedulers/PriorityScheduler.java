@@ -68,7 +68,7 @@ public class PriorityScheduler extends Scheduler{
 			Flow flow = tg.getFlows().get(f);
 			Set<Integer> usedSlots = new HashSet<Integer>(); 
 			int chunksMaxTp = (int)(flow.getChunksMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
-			int chunksToAllocate = flow.getChunks();
+			int chunksToAllocate = flow.getTokens();
 			
 			//sort networks according to match with flow
 			Vector<Integer> networkIDs = sortNetworkIDs(flow);
@@ -149,7 +149,7 @@ public class PriorityScheduler extends Scheduler{
 		}
 		int averageTp=Math.round(sum/slotcount);
 		//get minimum throughput requirement of flow
-		int flow_minTp = (int) Math.ceil(flow.getChunksMin()/flow.getWindowMin());
+		int flow_minTp = (int) Math.ceil(flow.getTokensMin()/flow.getWindowMin());
 		int vio=(10*flow_minTp/averageTp);
 		if(averageTp<flow_minTp){
 			vio+=(int)Math.pow(flow_minTp-averageTp, 2)*flow.getImpThroughputMin();		//punish throughput violation quadratically	

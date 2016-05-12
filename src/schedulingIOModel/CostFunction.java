@@ -242,7 +242,7 @@ public class CostFunction {
 		int[] vioNon = new int[flows];
 		for(int f = 0; f<flows; f++){
 			Flow flow = tg.getFlows().get(f);
-				vioNon[f]= (flow.getChunks()-cummulated_f_t[f][timeslots-1])* 
+				vioNon[f]= (flow.getTokens()-cummulated_f_t[f][timeslots-1])* 
 				flow.getImpUnsched()* flow.getImpUser();
 
 		}
@@ -260,10 +260,10 @@ public class CostFunction {
 		//return vioTpMin[f][t]*flow.getImpThroughputMin()/(flow.getChunksMin()*flow.getWindowMin());
 	}
 	public int vioTp_weight(int vioTpMin, Flow flow){
-		if(flow.getChunksMin()*flow.getWindowMin()<=0){
+		if(flow.getTokensMin()*flow.getWindowMin()<=0){
 			return 0;
 		}
-		return vioTpMin*flow.getImpThroughputMin()*102/(flow.getChunksMin()*flow.getWindowMin());
+		return vioTpMin*flow.getImpThroughputMin()*102/(flow.getTokensMin()*flow.getWindowMin());
 	}
 	
 	public int[] vioTp(int[][] cummulated_f_t){
@@ -338,8 +338,8 @@ public class CostFunction {
 			for(int t=flow.getWindowMin()-1; t<timeslots; t++){		// t is upper bound of window (minus 1 for cplex index starting at 1)
 				if(t0>=flow.getStartTime() && t<=flow.getDeadline()-1){		//TODO -1 after startime added	
 					int tp =  cummulated_f_t[f][t]- subtract;	//get chunks in window
-					if(tp<flow.getChunksMin()){				//if there are too many tokens/chunks scheduled
-						int vio=flow.getChunksMin()-tp;
+					if(tp<flow.getTokensMin()){				//if there are too many tokens/chunks scheduled
+						int vio=flow.getTokensMin()-tp;
 						vioTpMin[f][t] +=vio;
 					}
 				}

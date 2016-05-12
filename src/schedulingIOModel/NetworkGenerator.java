@@ -4,6 +4,7 @@ import ilog.opl.IloOplModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.ObjectInputStream.GetField;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
@@ -34,6 +35,8 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	
 	private int hysteresis = 500;
 	private int cost_imp = 25;	//importance of monetary cost for network use
+	//one interface of each type. Only first two are used 
+	private int[] interfacesOftype = {0,1,1};	//default: (index: 0 = NONE, 1 = #wifi, 2 = #mobile network) 
 	
 	public NetworkGenerator(){
 	}
@@ -48,6 +51,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			if(new File(path+NG_NAME).exists()){
 				ng= (NetworkGenerator) PersistentStore.loadObject(path+NG_NAME);
 //				System.out.println("NG: load \""+path+NG_NAME+"\"");
+				ng.setNofInterfacesOfType(new int[]{0,1,1});
 			}else{
 				System.err.println("Loading "+path+NG_NAME+" failed!");
 			}
@@ -160,7 +164,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 				clientInterfaces+=", ";
 			}
 			//add list item
-			clientInterfaces+="1";
+			clientInterfaces+=""+interfacesOftype[i];
 		}
 		
 		content=content.replace("[clientInterfaces]", clientInterfaces);
@@ -251,6 +255,21 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		ModelAccess.set(fac, model, "ChannelType", type);
 		ModelAccess.set(fac, model, "nInterfaceTypes", getNofInterfaceTypes());
 		
+	}
+	
+	public void setNofInterfacesOfType(int[] interfaces){
+		interfacesOftype=interfaces;
+	}
+	
+	public int[] getNofInterfacesOfType(){
+		return interfacesOftype;
+	}
+	
+	public int getNofInterfacesOfType(int type){
+		if(type>=interfacesOftype.length)
+			return 0;
+		else
+			return interfacesOftype[type];
 	}
 	
 	public void setHysteresis(int value){

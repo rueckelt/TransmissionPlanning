@@ -230,13 +230,13 @@ public class FlowGenerator implements Serializable{
 				impUser+=", ";
 			}
 			//add list items
-			chunks+=flow.getChunks();
+			chunks+=flow.getTokens();
 			deadline+=flow.getDeadline();
 			startTime+=flow.getStartTime();
 			windowMax+=flow.getWindowMax();
 			throughputMax+=flow.getChunksMax();
 			windowMin+=flow.getWindowMin();
-			throughputMin+=flow.getChunksMin();
+			throughputMin+=flow.getTokensMin();
 			reqLatency+=flow.getReqLatency();
 			reqJitter+=flow.getReqJitter();
 			
@@ -308,13 +308,13 @@ public class FlowGenerator implements Serializable{
 		//set values of arrays
 		int i=0;
 		for(Flow flow:flows){
-			chunks[i]		=flow.getChunks();
+			chunks[i]		=flow.getTokens();
 			deadline[i]		=flow.getDeadline();
 			startTime[i]	=flow.getStartTime();
 			windowMax[i]	=flow.getWindowMax();
 			throughputMax[i]=flow.getChunksMax();
 			windowMin[i]	=flow.getWindowMin();
-			throughputMin[i]=flow.getChunksMin();
+			throughputMin[i]=flow.getTokensMin();
 			reqLatency[i]	=flow.getReqLatency();
 			reqJitter[i]	=flow.getReqJitter();
 			
