@@ -35,7 +35,8 @@ public abstract class Scheduler {
 		this.tg=tg;
 		schedule_f_t_n=getEmptySchedule();
 		logger = new LogMatlabFormat();	
-		interfaceLimit = new InterfaceLimit(ng);
+		if(ng!=null)
+			interfaceLimit = new InterfaceLimit(ng);
 		cf=new CostFunction(ng, tg, logger);
 	}
 	

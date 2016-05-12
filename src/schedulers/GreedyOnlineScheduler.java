@@ -41,7 +41,7 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 		}
 
 		List<Integer> flow_order = sortByFlowCriticality();
-		System.out.println("FlowOrder GreOn: "+flow_order.toString());
+		//System.out.println("FlowOrder GreOn: "+flow_order.toString());
 		for (int t=0; t<ng.getTimeslots(); t++){
 			//assign each active flow to best matching network
 			for(int f0=0;f0<tg.getFlows().size();f0++){
@@ -56,7 +56,7 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 					while(allocated==0 && n0<ng.getNetworks().size()){
 						int n=flowsToNets.get(f).get(n0);
 						//oppertunistic scheduling: use benefit estimation to decide whether to use network or not
-						if(calcVio(flow, ng.getNetworks().get(n))<0){
+						if(scheduleDecision(flow, n)){
 							if(chunksToAllocate.get(f)<chunksMaxTp){
 								allocated=allocate(f, t, n, chunksToAllocate.get(f)); //do not allocate more chunks than required
 							}else{
@@ -72,6 +72,11 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 			
 		}
 
+	}
+
+
+	protected boolean scheduleDecision(Flow flow, int n) {
+		return true;//calcVio(flow, ng.getNetworks().get(n))<0;
 	}
 
 	/**

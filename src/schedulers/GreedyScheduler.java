@@ -54,7 +54,7 @@ public class GreedyScheduler extends Scheduler{
 	protected void calculateInstance_internal(String logfile) {
 		
 		List<Integer> flow_order = sortByFlowCriticality();
-		System.out.println("FlowOrder Gre: "+flow_order.toString());
+		//System.out.println("FlowOrder Gre: "+flow_order.toString());
 		//############## 2. start allocation for each flow #################
 		for(int f= 0; f<tg.getFlows().size(); f++){
 			int f0 = flow_order.get(f);
