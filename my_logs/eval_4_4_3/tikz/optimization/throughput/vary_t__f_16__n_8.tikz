@@ -1,0 +1,216 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0.5,
+xmax=5.5,
+xtick={1,2,3,4,5},
+xticklabels={{25},{50},{100},{200},{400}},
+xlabel={throughput},
+x label style={at={(axis description cs:0.5,-0.04)},anchor=north},
+xticklabel style={rotate=90},
+xmajorgrids,,
+ymode=log,
+ymin=-2465.95721651278,
+ymax=33377.2360579292,
+yminorticks=true,
+ymajorgrids,
+yminorgrids,
+axis background/.style={fill=white}
+]
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	700\\
+1	750\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	711\\
+2	780\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	1313\\
+3	1810\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+4	2513\\
+4	4697\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+5	7086.5\\
+5	15293\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+1	200\\
+1	450\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+2	650\\
+2	650\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+3	449\\
+3	675\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+4	650\\
+4	700\\
+};
+\addplot [color=black,dashed,forget plot]
+  table[row sep=crcr]{%
+5	168\\
+5	550\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.875	750\\
+1.125	750\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.875	780\\
+2.125	780\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.875	1810\\
+3.125	1810\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+3.875	4697\\
+4.125	4697\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+4.875	15293\\
+5.125	15293\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+0.875	200\\
+1.125	200\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1.875	650\\
+2.125	650\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+2.875	449\\
+3.125	449\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+3.875	650\\
+4.125	650\\
+};
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+4.875	168\\
+5.125	168\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+0.75	450\\
+0.75	700\\
+1.25	700\\
+1.25	450\\
+0.75	450\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+1.75	650\\
+1.75	711\\
+2.25	711\\
+2.25	650\\
+1.75	650\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+2.75	675\\
+2.75	1313\\
+3.25	1313\\
+3.25	675\\
+2.75	675\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+3.75	700\\
+3.75	2513\\
+4.25	2513\\
+4.25	700\\
+3.75	700\\
+};
+\addplot [color=blue,solid,forget plot]
+  table[row sep=crcr]{%
+4.75	550\\
+4.75	7086.5\\
+5.25	7086.5\\
+5.25	550\\
+4.75	550\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+0.75	600\\
+1.25	600\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+1.75	700\\
+2.25	700\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+2.75	745.5\\
+3.25	745.5\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+3.75	871.5\\
+4.25	871.5\\
+};
+\addplot [color=red,solid,forget plot]
+  table[row sep=crcr]{%
+4.75	1458\\
+5.25	1458\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+1	0\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+2	200\\
+2	200\\
+2	450\\
+2	450\\
+2	948\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+3	2840\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+4	7813\\
+};
+\addplot [color=black,only marks,mark=+,mark options={solid,draw=red},forget plot]
+  table[row sep=crcr]{%
+5	31748\\
+};
+\end{axis}
+\end{tikzpicture}%

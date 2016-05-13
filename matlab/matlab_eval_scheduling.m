@@ -4,8 +4,8 @@
 %delete this file to read logs from raw files
 
 in_folder = '..\my_logs\eval_4_4_3_c';% 'logs_time';
-out_folder = [in_folder filesep 'tikz3'];
-force_read_data = 1;
+out_folder = [in_folder filesep 'tikz'];
+force_read_data = 0;
 
 %get paramters from file
 parameter_file=[in_folder filesep 'parameters_log.m'];
@@ -35,7 +35,7 @@ else
     save(data_file, 'raw_values');
     save(avail_file, 'avail');
 end
-
+raw_values(2,:,:,:,:,:)=raw_values(2,:,:,:,:,:)./(1000*1000);     %time: µs to seconds
 state='gathered data'
 %calculate relative
 % %plot

@@ -18,21 +18,22 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
     scale_f = [1 2 4 8 16 32 64];
     scale_n = [1 2 4 8 16 32 64];
     scale_t = [25 50 100 200 400 800 1600];
-    scale_s = {'Opt' 'Gre' 'GreOn' 'Rnd'};
+    scale_s = {'Opt' 'Gre' 'GreOnOpp' 'GreOn' 'Rnd'};
     
+    addpath('matlab2tikz'); 
     
-    addpath('matlab2tikz');  
-    legendlabels2={'Opt','Gre','GreOn','Rnd'};
-    legendlabels=vartypes(3:7);
+    legendlabels2=scale_s;
+    legendlabels=vartypes(3:nof_vartypes);
+    
     %path
     path = [out_folder];
     if exist(path, 'dir')==0
         mkdir(path);
     end
     
-    check_this=squeeze(data(3,:,5,1,4,:))
+    %check_this=squeeze(data(3,:,5,1,4,:))
     data_rel=relative_to_opt(data);
-    check_this2=squeeze(data_rel(3,:,5,1,4,:))
+    %check_this2=squeeze(data_rel(3,:,5,1,4,:))
   %  nof_schedulers
                 %select data
   for f=1:nof_flows
@@ -49,40 +50,72 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                 filename = [out_folder filesep 'vary_t__f_' num2str(scale_f(f)) ...
                     '_n_' num2str(scale_n(n)) '__' vartypes{v} '.tikz']
                 
-                my_ylabel=vartypes{v};
-                tikz_out_errorbar(filename, data_sq, my_ylabel,legendlabels2, 1,0);
+                labels = {'cost function value','execution duration in s'};
+                my_ylabel=labels{v};
+                tikz_out_errorbar(filename, data_sq, my_ylabel,legendlabels2,0, 1,0);
+                
+                %  v_rnd - v_x
+                % -------------
+                % v_rnd - v_opt
+                data_score = data_sq(2:end-1,:,:);
+                for s=1:nof_schedulers-2
+                    data_score(s,:,:) = (data_sq(end,:,:)-data_sq(s+1,:,:)) ./ (data_sq(end,:,:)-data_sq(1,:,:));
+                end
+                %potential of scheduling in last line 
+                % v_rnd,t0 - v_opt,t0
+                %---------------------
+                % v_rnd,ti - v_opt,ti
+               % data_score(end,:,:) = 
+                
+                filename = [out_folder filesep 'vary_t__f_' num2str(scale_f(f)) ...
+                    '_n_' num2str(scale_n(n)) '__' vartypes{v} '_rel.tikz'];
+                
+                legendlabels3=schedulers(2:end-1);
+                my_ylabel='cost score';
+                tikz_out_errorbar(filename, data_score, my_ylabel,legendlabels3,1, 0,0);
             end
         end
 
          %detail plots
-         
-         for s=2:3
-                 data_rel_sq=squeeze(data_rel(3:end,s,f,:,n,:));
-                 avail_sq=squeeze(avail(3:end,s,f,:,n,:));
+         for s=2:(nof_schedulers-1)
+             %init
+             detail_cost_share=squeeze(data(3:end, s, f,:,n,:));
+             for v=1:nof_vartypes-2
+                 detail_cost_share(v,:,:) = (squeeze(detail_cost_share(v,:,:))-squeeze(data(v+2,1,f,:,n,:))) ./ ...
+                                            (squeeze(data(1+2,s,f,:,n,:))-squeeze(data(1+2,1,f,:,n,:)));
+             end
+             detail_cost_share
+             %get relevant data for plot
+             %data_rel_sq=squeeze(data_rel(3:end,s,f,:,n,:));    %3:end means for all detail variables of the cost function
+             avail_sq=squeeze(avail(3:end,s,f,:,n,:));
+             
+             %plot only if data is available
              if sum(avail_sq(:))>0
-                 ['plot for n:' num2str(n) ' f:' num2str(f)]
-                 squeezed_data=squeeze(data_rel_sq(s,:,:))
+                 ['plot for n:' num2str(n) ' f:' num2str(f)];
+                 %squeezed_data=squeeze(data_rel_sq(s,:,:));
                  filename = [out_folder filesep 'vary_t__f_' num2str(scale_f(f)) ...
                 '_n_' num2str(scale_n(n)) '__detail_' schedulers{s} '.tikz']
 
-                my_ylabel=[schedulers{s} ' detail cost relative to optimal schedule']
-                tikz_out_errorbar(filename, data_rel_sq, my_ylabel,legendlabels, 0,1);
+               % my_ylabel=[schedulers{s} ' detail cost relative to optimal schedule'];
+               % tikz_out_errorbar(filename, data_rel_sq, my_ylabel,legendlabels, 0,1);
+                my_ylabel = ['waste of optimization potential by detail cost of' schedulers{s}];
+                tikz_out_errorbar(filename, detail_cost_share, my_ylabel,legendlabels,0, 0,1);
              end
          end
       end
   end
    %opt cost pie chart
-figure;
- for s=1:nof_schedulers-1  
-     for t=1:nof_time
-         pie_title=['detail cost share optimal schedule, #time slots: ' num2str(scale_t(t))];
-        subplot(nof_schedulers, nof_time, s*nof_time+t);
-        title(pie_title);
-        pie_data=mean(squeeze(data(3:end,s,nof_flows,t,nof_networks,:)),2);
-        pie1=pie(pie_data);
-        if s*t==1
-            legend(vartypes(3:end));
-        end
-     end
- end
+% figure;
+%  for s=1:nof_schedulers-1  
+%      for t=1:nof_time
+%          pie_title=['detail cost share optimal schedule, #time slots: ' num2str(scale_t(t))];
+%         subplot(nof_schedulers, nof_time, s*nof_time+t);
+%         title(pie_title);
+%         pie_data=mean(squeeze(data(3:end,s,nof_flows,t,nof_networks,:)),2);
+%         pie1=pie(pie_data);
+%         if s*t==1
+%             legend(vartypes(3:end));
+%         end
+%      end
+%  end
 end

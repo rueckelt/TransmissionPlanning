@@ -1,0 +1,163 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,1.00000,1.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={\# time slots},
+every outer y axis line/.append style={white!90!black},
+every y tick label/.append style={font=\color{white!90!black}},
+ymin=-600,
+ymax=100,
+ylabel={waste of optimization potential by detail cost ofGreedyOnline},
+ymajorgrids,
+axis background/.style={fill=white},
+axis x line*=bottom,
+axis y line*=left,
+legend style={legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=black,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	1	0	0\\
+2	1	0	0\\
+3	1	0	0\\
+4	1	0	0\\
+5	1	0	0\\
+};
+\addlegendentry{$\text{time}_\text{l}\text{imits}$};
+
+\addplot [color=blue,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-24.8891490658521	49.1941958971048	49.1941958971048\\
+2	-11.6659564254442	11.075451493735	11.075451493735\\
+3	-15.777798382359	11.7237468784167	11.7237468784167\\
+4	-25.5490958479999	16.6415329069606	16.6415329069606\\
+5	-41.5937217627426	50.6969528243487	50.6969528243487\\
+};
+\addlegendentry{throughput};
+
+\addplot [color=red,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-34.4755315642425	64.8883392011832	64.8883392011832\\
+2	-7.74216174896249	2.98783223561384	2.98783223561384\\
+3	-4.45395528751272	2.23283552359673	2.23283552359673\\
+4	0.662712650506009	4.96154844882062	4.96154844882062\\
+5	8.37426331668223	11.4609596345181	11.4609596345181\\
+};
+\addlegendentry{unscheduled};
+
+\addplot [color=green,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-0.0240781904244196	0.552831335555495	0.552831335555495\\
+2	0.000698321410592177	0.469490135420652	0.469490135420652\\
+3	0.252114819449971	0.508124812227442	0.508124812227442\\
+4	0.594257794827613	1.04975125389131	1.04975125389131\\
+5	0.949868875889548	3.20184412980925	3.20184412980925\\
+};
+\addlegendentry{$\text{latency}_\text{j}\text{itter}$};
+
+\addplot [color=mycolor1,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-56.326492055163	104.539653198211	104.539653198211\\
+2	-25.3179684683357	30.0151865642911	30.0151865642911\\
+3	-57.5495314750006	42.533884165205	42.533884165205\\
+4	-133.54565536256	107.988749528933	107.988749528933\\
+5	-299.794803083254	248.803580050376	248.803580050376\\
+};
+\addlegendentry{$\text{monetary}_\text{c}\text{ost}$};
+
+\addplot [color=lightgray,solid]
+  table[row sep=crcr]{%
+0.5	0\\
+5.5	0\\
+};
+\addlegendentry{Ref Opt};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={\# time slots},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-600,
+ymax=100,
+ylabel={waste of optimization potential by detail cost ofGreedyOnline},
+axis x line*=bottom,
+axis y line*=left
+]
+\addplot [color=black,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	1	0	0\\
+2	1	0	0\\
+3	1	0	0\\
+4	1	0	0\\
+5	1	0	0\\
+};
+\addplot [color=blue,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-24.8891490658521	49.1941958971048	49.1941958971048\\
+2	-11.6659564254442	11.075451493735	11.075451493735\\
+3	-15.777798382359	11.7237468784167	11.7237468784167\\
+4	-25.5490958479999	16.6415329069606	16.6415329069606\\
+5	-41.5937217627426	50.6969528243487	50.6969528243487\\
+};
+\addplot [color=red,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-34.4755315642425	64.8883392011832	64.8883392011832\\
+2	-7.74216174896249	2.98783223561384	2.98783223561384\\
+3	-4.45395528751272	2.23283552359673	2.23283552359673\\
+4	0.662712650506009	4.96154844882062	4.96154844882062\\
+5	8.37426331668223	11.4609596345181	11.4609596345181\\
+};
+\addplot [color=green,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-0.0240781904244196	0.552831335555495	0.552831335555495\\
+2	0.000698321410592177	0.469490135420652	0.469490135420652\\
+3	0.252114819449971	0.508124812227442	0.508124812227442\\
+4	0.594257794827613	1.04975125389131	1.04975125389131\\
+5	0.949868875889548	3.20184412980925	3.20184412980925\\
+};
+\addplot [color=mycolor1,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-56.326492055163	104.539653198211	104.539653198211\\
+2	-25.3179684683357	30.0151865642911	30.0151865642911\\
+3	-57.5495314750006	42.533884165205	42.533884165205\\
+4	-133.54565536256	107.988749528933	107.988749528933\\
+5	-299.794803083254	248.803580050376	248.803580050376\\
+};
+\addplot [color=lightgray,solid,forget plot]
+  table[row sep=crcr]{%
+0.5	0\\
+5.5	0\\
+};
+\end{axis}
+\end{tikzpicture}%

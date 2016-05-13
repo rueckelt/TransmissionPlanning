@@ -34,7 +34,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	private Vector<Network> networks = new Vector<Network>();
 	
 	private int hysteresis = 500;
-	private int cost_imp = 25;	//importance of monetary cost for network use
+	private int cost_imp = 10;	//importance of monetary cost for network use
 	//one interface of each type. Only first two are used 
 	private int[] interfacesOftype = {0,1,1};	//default: (index: 0 = NONE, 1 = #wifi, 2 = #mobile network) 
 	

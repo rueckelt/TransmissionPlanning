@@ -1,0 +1,109 @@
+% This file was created by matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={\# time slots},
+every outer y axis line/.append style={white!90!black},
+every y tick label/.append style={font=\color{white!90!black}},
+ymin=-0.005,
+ymax=0.02,
+ylabel={cost score},
+ymajorgrids,
+axis background/.style={fill=white},
+axis x line*=bottom,
+axis y line*=left,
+legend style={legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=blue,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.00831149969014957	0.010411592258587	0.010411592258587\\
+2	-0.00111321172942961	0.000546321984457327	0.000546321984457327\\
+3	-0.000925357551836274	0.000414300763224042	0.000414300763224042\\
+4	-0.000180976096375716	9.86244262126763e-05	9.86244262126763e-05\\
+5	-4.08128177787661e-05	1.30134886738976e-05	1.30134886738976e-05\\
+};
+\addlegendentry{Greedy};
+
+\addplot [color=red,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.0103390544229817	0.00940660190184667	0.00940660190184667\\
+2	0.00243915868715269	0.00095761773949787	0.00095761773949787\\
+3	-0.000225981092302054	0.00118274467816628	0.00118274467816628\\
+4	-0.000175709735294473	8.57497684480365e-05	8.57497684480365e-05\\
+5	-4.35979500081242e-05	1.54735652566552e-05	1.54735652566552e-05\\
+};
+\addlegendentry{GreedyOnlineOpp};
+
+\addplot [color=green,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.00372569388723833	0.00345858764715407	0.00345858764715407\\
+2	0.00779758953281856	0.00295015961979899	0.00295015961979899\\
+3	0.00165197498452909	0.0018751440104153	0.0018751440104153\\
+4	1.40001632693234e-05	5.56946188827414e-05	5.56946188827414e-05\\
+5	1.6504041165414e-06	9.35943377329967e-06	9.35943377329967e-06\\
+};
+\addlegendentry{GreedyOnline};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={\# time slots},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-0.005,
+ymax=0.02,
+ylabel={cost score},
+axis x line*=bottom,
+axis y line*=left
+]
+\addplot [color=blue,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.00831149969014957	0.010411592258587	0.010411592258587\\
+2	-0.00111321172942961	0.000546321984457327	0.000546321984457327\\
+3	-0.000925357551836274	0.000414300763224042	0.000414300763224042\\
+4	-0.000180976096375716	9.86244262126763e-05	9.86244262126763e-05\\
+5	-4.08128177787661e-05	1.30134886738976e-05	1.30134886738976e-05\\
+};
+\addplot [color=red,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.0103390544229817	0.00940660190184667	0.00940660190184667\\
+2	0.00243915868715269	0.00095761773949787	0.00095761773949787\\
+3	-0.000225981092302054	0.00118274467816628	0.00118274467816628\\
+4	-0.000175709735294473	8.57497684480365e-05	8.57497684480365e-05\\
+5	-4.35979500081242e-05	1.54735652566552e-05	1.54735652566552e-05\\
+};
+\addplot [color=green,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.00372569388723833	0.00345858764715407	0.00345858764715407\\
+2	0.00779758953281856	0.00295015961979899	0.00295015961979899\\
+3	0.00165197498452909	0.0018751440104153	0.0018751440104153\\
+4	1.40001632693234e-05	5.56946188827414e-05	5.56946188827414e-05\\
+5	1.6504041165414e-06	9.35943377329967e-06	9.35943377329967e-06\\
+};
+\end{axis}
+\end{tikzpicture}%
