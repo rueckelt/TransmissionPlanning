@@ -20,7 +20,7 @@ public class GreedyScheduler extends Scheduler{
 
 	@Override
 	public String getType() {
-		return "Greedy";
+		return new String("Greedy_"+schedule_decision_limit).replace("-", "m");
 	}
 	
 	/**
@@ -48,6 +48,7 @@ public class GreedyScheduler extends Scheduler{
 	
 	
 	private NetworkGenerator ng_tmp; //remove scheduled chunks from this ng
+	protected int schedule_decision_limit =0;
 
 
 	@Override
@@ -105,12 +106,12 @@ public class GreedyScheduler extends Scheduler{
 
 //############## 2. Network choice according to flow matching #################
 		//try to allocate in networks in descending order according to match
-		for(int n =0; n<ng.getNetworks().size() && chunksToAllocate>0; n++){
-			int n0=networkIDs.get(n);
-			Network net = ng_tmp.getNetworks().get(n0);
+		for(int n1 =0; n1<ng.getNetworks().size() && chunksToAllocate>0; n1++){
+			int n=networkIDs.get(n1);
+			Network net = ng_tmp.getNetworks().get(n);
 			
 			//do only allocate if allocation leads to cost reduction
-			if(calcVio(flow, net)<0){
+			if(scheduleDecision(flow, n)){
 			//allocate in this network between start time and deadline of flow
 			//do not allocate more than once in same time slot
 				
@@ -119,9 +120,9 @@ public class GreedyScheduler extends Scheduler{
 //					System.out.println("time match "+chunksToAllocate);
 						int allocated=0;
 						if(chunksToAllocate<chunksMaxTp){
-							allocated=allocate(flowId, t, n0, chunksToAllocate); //do not allocate more chunks than required
+							allocated=allocate(flowId, t, n, chunksToAllocate); //do not allocate more chunks than required
 						}else{
-							allocated=allocate(flowId, t, n0, chunksMaxTp);
+							allocated=allocate(flowId, t, n, chunksMaxTp);
 						}	
 //						System.out.println(chunksToAllocate);
 						chunksToAllocate-=allocated;
@@ -131,9 +132,9 @@ public class GreedyScheduler extends Scheduler{
 							//remove capacity from network
 							if(!rate){
 								//rate=false
-								int remaining_chunks=ng_tmp.getNetworks().get(n0).getCapacity().get(t)-allocated;
+								int remaining_chunks=ng_tmp.getNetworks().get(n).getCapacity().get(t)-allocated;
 	//							System.out.println(remaining_chunks+" rem, alloc "+ allocated);
-								ng_tmp.getNetworks().get(n0).getCapacity().set(t,remaining_chunks);
+								ng_tmp.getNetworks().get(n).getCapacity().set(t,remaining_chunks);
 							}else{
 								//rate=true
 								int[][][] sched = getTempSchedule();	//hold schedule
@@ -147,6 +148,16 @@ public class GreedyScheduler extends Scheduler{
 			}
 		}
 		return 0;
+	}
+	
+	protected boolean scheduleDecision(Flow flow, int n) {
+//		System.out.println("DECISION_VIO "+calcVio(flow, ng.getNetworks().get(n)));
+		return calcVio(flow, ng.getNetworks().get(n))<schedule_decision_limit;
+	}
+	
+	public Scheduler setScheduleDecisionLimit(int limit){
+		schedule_decision_limit=limit;
+		return this;
 	}
 
 	/**

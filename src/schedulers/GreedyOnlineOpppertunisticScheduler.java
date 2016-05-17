@@ -12,13 +12,13 @@ public class GreedyOnlineOpppertunisticScheduler extends GreedyOnlineScheduler {
 	}
 	
 	protected boolean scheduleDecision(Flow flow, int n) {
-		return calcVio(flow, ng.getNetworks().get(n))<0;
+		return calcVio(flow, ng.getNetworks().get(n))<schedule_decision_limit;
 	}
 	
 	@Override
 	public String getType() {
 		// TODO Auto-generated method stub
-		return "GreedyOnlineOpp";
+		return new String("GreedyOnlineOpp_"+schedule_decision_limit).replace("-", "m");
 	}
 
 }
