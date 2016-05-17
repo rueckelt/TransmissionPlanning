@@ -95,7 +95,7 @@ public class EvaluationScenarioCreator {
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
 //		schedulers.add(new OptimizationScheduler(ng, tg));	
 //		schedulers.add(new PriorityScheduler(ng, tg));
-		for(int i=-3000; i<=1000;i=i+100){
+		for(int i=-3000; i<=2000;i=i+100){
 			schedulers.add(new GreedyScheduler(ng, tg).setScheduleDecisionLimit(i));
 	//		schedulers.add(new GreedyScheduler(ng, tg));
 		}
