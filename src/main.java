@@ -15,7 +15,7 @@ public class main {
 		int rep=30;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
-		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
+		String logpath= "my_logs"+File.separator+"eval_4_4_3_c10";
 		
 //		for(int rep1 = 0; rep1<=rep; rep1++){
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
