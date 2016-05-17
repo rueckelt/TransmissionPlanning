@@ -19,7 +19,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
     scale_n = [1 2 4 8 16 32 64];
     scale_t = [25 50 100 200 400 800 1600];
     scale_s = {'Opt' 'Gre' 'GreOnOpp' 'GreOn' 'Rnd'};
-    
+   
     addpath('matlab2tikz'); 
     
     legendlabels2=scale_s;
@@ -62,6 +62,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                     data_score(s,:,:) = (data_sq(end,:,:)-data_sq(s+1,:,:)) ./ (data_sq(end,:,:)-data_sq(1,:,:));
                 end
                 %potential of scheduling in last line 
+                %Scheduler Rating Score (SRS)
                 % v_rnd,t0 - v_opt,t0
                 %---------------------
                 % v_rnd,ti - v_opt,ti
@@ -69,36 +70,40 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                 
                 filename = [out_folder filesep 'vary_t__f_' num2str(scale_f(f)) ...
                     '_n_' num2str(scale_n(n)) '__' vartypes{v} '_rel.tikz'];
-                
-                legendlabels3=schedulers(2:end-1);
-                my_ylabel='cost score';
-                tikz_out_errorbar(filename, data_score, my_ylabel,legendlabels3,1, 0,0);
+
+                my_ylabel='Normalized Rating Score (NRS)';
+                tikz_out_errorbar(filename, data_score, my_ylabel,scale_s(2:end-1),1, 0,0);
             end
         end
 
          %detail plots
          for s=2:(nof_schedulers-1)
              %init
+             %Relative Detail Score (RDS) of criterion v
+             %detail cost
+            % v_x - v_opt   detail cost difference
+            %-------------
+            % c_x - c_opt   total cost difference
              detail_cost_share=squeeze(data(3:end, s, f,:,n,:));
              for v=1:nof_vartypes-2
                  detail_cost_share(v,:,:) = (squeeze(detail_cost_share(v,:,:))-squeeze(data(v+2,1,f,:,n,:))) ./ ...
-                                            (squeeze(data(1+2,s,f,:,n,:))-squeeze(data(1+2,1,f,:,n,:)));
+                                            (squeeze(data(1,s,f,:,n,:))-squeeze(data(1,1,f,:,n,:)));
              end
-             detail_cost_share
+             %detail_cost_share
              %get relevant data for plot
              %data_rel_sq=squeeze(data_rel(3:end,s,f,:,n,:));    %3:end means for all detail variables of the cost function
              avail_sq=squeeze(avail(3:end,s,f,:,n,:));
              
              %plot only if data is available
              if sum(avail_sq(:))>0
-                 ['plot for n:' num2str(n) ' f:' num2str(f)];
+                 %['plot for n:' num2str(n) ' f:' num2str(f)]
                  %squeezed_data=squeeze(data_rel_sq(s,:,:));
                  filename = [out_folder filesep 'vary_t__f_' num2str(scale_f(f)) ...
                 '_n_' num2str(scale_n(n)) '__detail_' schedulers{s} '.tikz']
 
                % my_ylabel=[schedulers{s} ' detail cost relative to optimal schedule'];
                % tikz_out_errorbar(filename, data_rel_sq, my_ylabel,legendlabels, 0,1);
-                my_ylabel = ['waste of optimization potential by detail cost of' schedulers{s}];
+                my_ylabel = ['Relative Detail Score RDS(' scale_s{s} ')'];
                 tikz_out_errorbar(filename, detail_cost_share, my_ylabel,legendlabels,0, 0,1);
              end
          end

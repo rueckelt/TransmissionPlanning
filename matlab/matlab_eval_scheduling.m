@@ -3,7 +3,7 @@
 %stores results.mat file in in_folder for extracted log matrices
 %delete this file to read logs from raw files
 
-in_folder = '..\my_logs\eval_4_4_3_c';% 'logs_time';
+in_folder = '..\my_logs\eval_limit_opp';% 'logs_time';
 out_folder = [in_folder filesep 'tikz'];
 force_read_data = 0;
 
@@ -19,8 +19,10 @@ state = 'read param done'
 %read matrix file if available, else create matrix file from raw log files
 data_file=[in_folder filesep 'results.mat'];
 avail_file=[in_folder filesep 'avail.mat'];
-valuenames = {'cost', 'duration', 'time_limits', ...
-    'throughput', 'unscheduled', 'latency_jitter', 'monetary_cost'};
+valuenames = {'violation cost', 'execution duration', 'time limits',...
+     'min. throughput','unscheduled tokens', 'latency jitter','monetary cost'};
+% valuenames = {'cost', 'duration', 'time_limits', ...
+%     'throughput', 'unscheduled', 'latency_jitter', 'monetary_cost'};
 
 if force_read_data <1 && exist(data_file, 'file') %read values from file if no force to reread and available
     load(data_file);
@@ -41,7 +43,7 @@ state='gathered data'
 % %plot
 %rel_data = relative_to_opt(raw_values);
 %save('rel_data.mat', 'rel_data');
-plot_data3(out_folder, raw_values, avail, valuenames, schedulers);
+%plot_data3(out_folder, raw_values, avail, valuenames, schedulers);
 
 % 
 state='done'
