@@ -3,9 +3,11 @@
 %stores results.mat file in in_folder for extracted log matrices
 %delete this file to read logs from raw files
 
-in_folder = '..\my_logs\eval_limit_opp';% 'logs_time';
+in_folder = '..\my_logs\eval_4_4_3_c';% 'logs_time';
+%in_folder = '..\my_logs\eval_4_4_3_c10';% 'logs_time';
 out_folder = [in_folder filesep 'tikz'];
-force_read_data = 0;
+force_read_data = 1;
+max_only=1;
 
 %get paramters from file
 parameter_file=[in_folder filesep 'parameters_log.m'];
@@ -32,7 +34,8 @@ else
     valuestrings = {'costTotal', 'scheduling_duration_us', 'sum(vioSt)+sum(vioDl)', ...
         'sum(vioTp)', 'sum(vioNon)', 'sum(vioLcy)+sum(vioJit)', 'cost_ch'};
     tic
-    [raw_values avail] = readValuesFromFiles( in_folder, valuestrings, max_time, max_nets, max_flows, max_rep, scheduler_logs );
+    [raw_values avail] = readValuesFromFiles( in_folder, valuestrings,...
+        max_time, max_nets, max_flows, max_rep, scheduler_logs, max_only);
     toc
     save(data_file, 'raw_values');
     save(avail_file, 'avail');

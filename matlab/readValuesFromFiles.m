@@ -3,14 +3,22 @@
 
 %get schedulers from scheduler_logs (read from parameter_file.m)
 
-function [values, avail] = readValuesFromFiles( in_folder, varnames, t_max, n_max, f_max, rep_max, scheduler_logs )
+function [values, avail] = readValuesFromFiles( in_folder, varnames, t_max, n_max, f_max, rep_max, scheduler_logs, max_only )
 %READVALUESFROMFILES Summary of this function goes here
 %   Detailed explanation goes here
     [len, nof_schedulers] =size(scheduler_logs);  %length is unused
     [len, nof_values] = size(varnames);
+   
+    %reduce matrix size to avoid out of memory
+    if max_only>0
+        values = zeros(nof_values, nof_schedulers, 1, 1, 1,rep_max);
+        avail = zeros(nof_values, nof_schedulers, 1, 1, 1,rep_max);
+    else
+        values = zeros(nof_values, nof_schedulers, f_max, t_max, n_max,rep_max);
+        avail = zeros(nof_values, nof_schedulers, f_max, t_max, n_max,rep_max);
+    end
+    
     [nof_values, nof_schedulers, f_max, t_max, n_max,rep_max]
-    values = zeros(nof_values, nof_schedulers, f_max, t_max, n_max,rep_max);
-    avail = zeros(nof_values, nof_schedulers, f_max, t_max, n_max,rep_max);
     state='start reading values from log data'
     for f=1:f_max
         for t = 1:t_max
@@ -28,8 +36,13 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, t_max, n_ma
                                %store values to matrix[scheduler, flow,timeslot, network, repetition]
                                for val=1:nof_values    %skip non-existing values
                                    try
-                                        values(val,s,f,t,n,rep) = eval(varnames{val});
-                                        avail(val,s,f,t,n,rep) = 1;
+                                       if max_only>0
+                                            values(val,s,1,1,1,rep) = eval(varnames{val});
+                                            avail(val,s,1,1,1,rep) = 1;
+                                       else
+                                            values(val,s,f,t,n,rep) = eval(varnames{val});
+                                            avail(val,s,f,t,n,rep) = 1;
+                                       end
                                    catch
     %                                    values(val, s,f,t,n,rep) = 0;
     %                                    ['failed to read: ' fname ': ' varnames{val}]

@@ -93,12 +93,12 @@ public class EvaluationScenarioCreator {
 	 */
 	public static Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-//		schedulers.add(new OptimizationScheduler(ng, tg));	
+		schedulers.add(new OptimizationScheduler(ng, tg));	
 //		schedulers.add(new PriorityScheduler(ng, tg));
-		for(int i=-3000; i<=2000;i=i+100){
-			schedulers.add(new GreedyScheduler(ng, tg).setScheduleDecisionLimit(i));
-	//		schedulers.add(new GreedyScheduler(ng, tg));
-		}
+//		for(int i=-3000; i<=2000;i=i+100){
+//			schedulers.add(new GreedyScheduler(ng, tg).setScheduleDecisionLimit(i));
+//	//		schedulers.add(new GreedyScheduler(ng, tg));
+//		}
 		for(int i=-65000; i<=5000;i=i+1000){
 			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
 		}
@@ -107,7 +107,7 @@ public class EvaluationScenarioCreator {
 //		}
 //		schedulers.add(new GreedyScheduler(ng, tg));
 //		schedulers.add(new GreedyOnlineScheduler(ng, tg));
-//		schedulers.add(new RandomScheduler(ng, tg, 200));	//200 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new RandomScheduler(ng, tg, 200));	//200 random runs of this scheduler. Returns average duration and cost
 	return schedulers;
 	}
 	
