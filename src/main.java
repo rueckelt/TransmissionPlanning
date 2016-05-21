@@ -10,7 +10,7 @@ public class main {
 	public static void main(String[] args) {
 		boolean decomp = false;
 		int f=4;
-		int t=3;
+		int t=4;
 		int n=3;
 		int rep=30;
 //		String logpath= "my_logs"+File.separator+"short_test";

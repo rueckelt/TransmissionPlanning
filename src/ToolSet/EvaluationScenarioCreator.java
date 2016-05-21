@@ -92,21 +92,22 @@ public class EvaluationScenarioCreator {
 	 * @return list of schedulers
 	 */
 	public static Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
-		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		schedulers.add(new OptimizationScheduler(ng, tg));	
+		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 //		schedulers.add(new PriorityScheduler(ng, tg));
 //		for(int i=-3000; i<=2000;i=i+100){
 //			schedulers.add(new GreedyScheduler(ng, tg).setScheduleDecisionLimit(i));
 //	//		schedulers.add(new GreedyScheduler(ng, tg));
 //		}
-		for(int i=-65000; i<=5000;i=i+1000){
-			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
-		}
+//		for(int i=-65000; i<=5000;i=i+1000){
+//			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
+//		}
 //		for(int i=-12000; i>-20000;i=i-2000){
 //			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
 //		}
-//		schedulers.add(new GreedyScheduler(ng, tg));
-//		schedulers.add(new GreedyOnlineScheduler(ng, tg));
+		schedulers.add(new OptimizationScheduler(ng, tg));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg));
+		schedulers.add(new GreedyScheduler(ng, tg));
+		schedulers.add(new GreedyOnlineScheduler(ng, tg));
 		schedulers.add(new RandomScheduler(ng, tg, 200));	//200 random runs of this scheduler. Returns average duration and cost
 	return schedulers;
 	}
