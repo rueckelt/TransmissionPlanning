@@ -62,7 +62,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                     data_score(s,:,:) = (data_sq(end,:,:)-data_sq(s+1,:,:)) ./ (data_sq(end,:,:)-data_sq(1,:,:));
                 end
                 %potential of scheduling in last line 
-                %Scheduler Rating Score (SRS)
+                %Scheduler Rating Score (NRS)
                 % v_rnd,t0 - v_opt,t0
                 %---------------------
                 % v_rnd,ti - v_opt,ti

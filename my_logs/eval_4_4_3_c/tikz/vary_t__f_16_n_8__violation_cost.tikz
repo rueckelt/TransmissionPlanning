@@ -47,7 +47,7 @@ legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=le
 4	16175288.6333333	3699171.43621218	3699171.43621218\\
 5	32544110.4333333	7052970.57262362	7052970.57262362\\
 };
-\addlegendentry{Gre};
+\addlegendentry{TP};
 
 \addplot [color=blue,dashdotted,line width=1.5pt]
  plot [error bars/.cd, y dir = both, y explicit]
@@ -58,7 +58,7 @@ legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=le
 4	17783347.7	4248408.16606208	4248408.16606208\\
 5	34390599.9	7354912.0036708	7354912.0036708\\
 };
-\addlegendentry{GreOnOpp};
+\addlegendentry{ONS};
 
 \addplot [color=red,dotted,line width=1.5pt]
  plot [error bars/.cd, y dir = both, y explicit]
@@ -69,7 +69,7 @@ legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=le
 4	20957692.2	4494399.02461562	4494399.02461562\\
 5	39445948.8	8994121.50347039	8994121.50347039\\
 };
-\addlegendentry{GreOn};
+\addlegendentry{NS};
 
 \addplot [color=green,solid,line width=1.5pt]
  plot [error bars/.cd, y dir = both, y explicit]

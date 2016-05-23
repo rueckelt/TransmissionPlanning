@@ -29,16 +29,15 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, t_max, n_ma
     for f=f_start:f_max
         for t = t_start:t_max
             for n = n_start:n_max
-               for rep=1:2%rep_max
+               for rep=1:rep_max
                    in_path = [in_folder filesep  num2str(f-1) '_' num2str(t-1) '_' ...
-                       num2str(n-1) filesep 'rep_' num2str(rep-1) filesep];
+                       num2str(n-1) filesep 'rep_' num2str(rep-1) filesep]
                    if exist(in_path,'dir')==7
                        addpath(in_path);    %make path accessible
 
                         for s=1:nof_schedulers
-                           fname = [in_path scheduler_logs{s}]
+                           fname = [in_path scheduler_logs{s}];
                            if exist(fname, 'file') == 2 %skip non-existing files
-                               'exists'
                                run(fname);  %run script to get values
                                %store values to matrix[scheduler, flow,timeslot, network, repetition]
                                for val=1:nof_values    %skip non-existing values
@@ -58,7 +57,7 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, t_max, n_ma
                            else
                                err=['file not found' fname]
                            end
-                           clearvars -except in_path values avail max_only varnames t n f s rep t_max n_max f_max rep_max scheduler_logs nof_values nof_schedulers in_folder out_folder
+                           clearvars -except in_path values avail max_only n_start f_start t_start varnames t n f s rep t_max n_max f_max rep_max scheduler_logs nof_values nof_schedulers in_folder out_folder
                         end
                        rmpath(in_path);
                    end
