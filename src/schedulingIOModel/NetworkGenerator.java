@@ -34,9 +34,9 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	private Vector<Network> networks = new Vector<Network>();
 	
 	private int hysteresis = 500;
-	private int cost_imp = 1;	//importance of monetary cost for network use
+	private int cost_imp = 15;	//importance of monetary cost for network use
 	//one interface of each type. Only first two are used 
-	private int[] interfacesOftype = {0,1,1};	//default: (index: 0 = NONE, 1 = #wifi, 2 = #mobile network) 
+	private int[] interfacesOftype = {1,1};	//default: (index: 0 = NONE, 1 = #wifi, 2 = #mobile network) 
 	
 	public NetworkGenerator(){
 	}
@@ -51,7 +51,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			if(new File(path+NG_NAME).exists()){
 				ng= (NetworkGenerator) PersistentStore.loadObject(path+NG_NAME);
 //				System.out.println("NG: load \""+path+NG_NAME+"\"");
-				ng.setNofInterfacesOfType(new int[]{0,1,1});
+				ng.setNofInterfacesOfType(new int[]{1,1});
 			}else{
 				System.err.println("Loading "+path+NG_NAME+" failed!");
 			}
@@ -109,14 +109,14 @@ public class NetworkGenerator implements Serializable, Cloneable {
 				interfaceTypes = network.getType();
 			}
 		}
-		return interfaceTypes+1;	//to address Interface with ID 3, we need 4 array elements, therefore +1
+		return interfaceTypes;
 	}
 	
 	public int[] getNofInterfacesByType(){
 		int[] intByType= new int[getNofInterfaceTypes()];
 		
 		for(Network network: networks){
-			intByType[network.getType()]++;
+			intByType[network.getType()-1]++;	//indexing needs -1, because client interface numbers start at 1
 		}
 		return intByType;
 	}
@@ -230,21 +230,21 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		int[] jitter = new int[n];
 		
 		//fill arrays
-		int i =0;
+		int n0 =0;
 		for(Network net: networks){
 			for(int t=0; t<time; t++){
 				if(t<net.capacity.size()){
-					availBW[i][t]=net.capacity.get(t);
+					availBW[n0][t]=net.capacity.get(t);
 				}else{
-					availBW[i][t]=0;
+					availBW[n0][t]=0;
 				}
 			}
-			type[i]=net.getType();
-			cost[i]=net.getCost();
-			latency[i]=net.getLatency();
-			jitter[i]=net.getJitter();
+			type[n0]=net.getType();
+			cost[n0]=net.getCost();
+			latency[n0]=net.getLatency();
+			jitter[n0]=net.getJitter();
 			
-			i++;
+			n0++;
 		}
 		
 		//set data

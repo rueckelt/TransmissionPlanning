@@ -12,11 +12,11 @@ public class main {
 		int f=4;
 		int t=4;
 		int n=3;
-		int rep=30;
+		int rep=29;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
 
-		String logpath= "my_logs"+File.separator+"eval_4_4_3_c1";
+		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 		
 //		for(int rep1 = 0; rep1<=rep; rep1++){
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);

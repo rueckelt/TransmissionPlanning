@@ -21,7 +21,7 @@ public abstract class Scheduler {
 	protected NetworkGenerator ng; 
 	protected FlowGenerator tg;
 	protected LogMatlabFormat logger;
-	protected InterfaceLimit interfaceLimit;
+	protected InterfaceLimit interfaceLimit;	//ensures interface constraint during scheduling with allocate(..)
 	
 	protected CostFunction cf;
 	private long runtime =0;
@@ -169,7 +169,7 @@ public abstract class Scheduler {
 					network_use+=schedule_f_t_n[f][t][n];	//overuse of resources (1)
 					
 					if(!network_used[n]){	//do not count parallel use of the same network (2)
-						network_used_by_type[networks.get(n).getType()]++; //Do not exceed available number of used Link Interfaces (2)
+						network_used_by_type[networks.get(n).getType()-1]++; //Do not exceed available number of used Link Interfaces (2)
 						network_used[n]=true;
 					}
 				}

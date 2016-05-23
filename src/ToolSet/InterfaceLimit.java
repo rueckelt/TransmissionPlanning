@@ -40,7 +40,7 @@ public class InterfaceLimit {
 	 */
 	public boolean isUsable(int netID, int timeslot){
 		//if(true)return true;	//switch check off
-		int ifType=ng.getNetworks().get(netID).getType();
+		int ifType=ng.getNetworks().get(netID).getType()-1;
 		//values in limits?
 		if(ifType>=ng.getNofInterfaceTypes() || timeslot>=ng.getTimeslots()){
 			System.err.println("InterfaceLimit.java: Scheduler checks interface availability for invalid interface type or time slot");
@@ -57,7 +57,7 @@ public class InterfaceLimit {
 	}
 	
 	public boolean useNetwork(int netID, int timeslot){
-		int ifType=ng.getNetworks().get(netID).getType();
+		int ifType=ng.getNetworks().get(netID).getType()-1;
 		boolean usable=isUsable(netID, timeslot);
 		if (usable){
 			used_interfaces[ifType][timeslot]++;
