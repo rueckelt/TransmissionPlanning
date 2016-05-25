@@ -34,8 +34,11 @@ public class FlowGenerator implements Serializable{
 	
 	public static FlowGenerator loadTrafficGenerator(String path){
 		FlowGenerator tg=null;
+		
 		try{
-			tg= (FlowGenerator) PersistentStore.loadObject(path+TG_NAME);
+			if(new File(path+TG_NAME).exists()){
+				tg= (FlowGenerator) PersistentStore.loadObject(path+TG_NAME);
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -105,8 +105,8 @@ public class EvaluationScenarioCreator {
 //			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
 //		}
 		schedulers.add(new OptimizationScheduler(ng, tg));
-		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg));
 		schedulers.add(new GreedyScheduler(ng, tg));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg));
 		schedulers.add(new GreedyOnlineScheduler(ng, tg));
 		schedulers.add(new RandomScheduler(ng, tg, 200));	//200 random runs of this scheduler. Returns average duration and cost
 	return schedulers;

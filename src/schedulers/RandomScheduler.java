@@ -55,9 +55,9 @@ public class RandomScheduler extends Scheduler{
 	 * runs instance multiple (RUNS) times
 	 */
 	@Override
-	public void calculateInstance(String path){
+	public void calculateInstance(String path, boolean recalc){
 		for(run_counter=RUNS-1; run_counter>= 0; run_counter--){
-			super.calculateInstance(path);
+			super.calculateInstance(path, recalc);
 			//System.out.println("calc_run "+run_counter);
 		}
 	}

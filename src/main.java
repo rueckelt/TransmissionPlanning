@@ -9,10 +9,14 @@ public class main {
 	
 	public static void main(String[] args) {
 		boolean decomp = false;
+//		int f=2;
+//		int t=1;
+//		int n=2;
+//		int rep=3;
 		int f=4;
 		int t=4;
 		int n=3;
-		int rep=29;
+		int rep=30;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
 

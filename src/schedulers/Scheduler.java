@@ -1,4 +1,5 @@
 package schedulers;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -95,23 +96,20 @@ public abstract class Scheduler {
 	 * @param tg
 	 * @param logfile
 	 */
-	public void calculateInstance(String path){
-		initTempSchedule();
-		startTimer();
-		calculateInstance_internal(path);	//result is stored to schedule_f_t_n_temp
-		long duration = stopTimer();
-//		Runtime rt = Runtime.getRuntime();
-//		System.out.println("TotalMemory of JVM: "+(rt.totalMemory()-rt.freeMemory())/(1024*1024));
+	public void calculateInstance(String path, boolean recalc){
+		if((!new File(getLogfileName(path)).exists())||recalc){
 		
-		//check if schedule holds required constraints
-//		if(verificationOfConstraints(schedule_f_t_n_temp)){
+			initTempSchedule();
+			startTimer();
+			calculateInstance_internal(path);	//result is stored to schedule_f_t_n_temp
+			long duration = stopTimer();
+		//		Runtime rt = Runtime.getRuntime();
+		//		System.out.println("TotalMemory of JVM: "+(rt.totalMemory()-rt.freeMemory())/(1024*1024));
 			schedule_f_t_n=schedule_f_t_n_temp;	//store to schedule_f_t_n if constraints hold
 			
 			logInstance(path, duration);
 
-//		}else{
-//			System.err.println(getType()+" Scheduler: calculated schedule violates constraints: "+path);
-//		}
+		}
 	}
 
 	/**

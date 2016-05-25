@@ -50,10 +50,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		try{
 			if(new File(path+NG_NAME).exists()){
 				ng= (NetworkGenerator) PersistentStore.loadObject(path+NG_NAME);
-//				System.out.println("NG: load \""+path+NG_NAME+"\"");
-				ng.setNofInterfacesOfType(new int[]{1,1});
-			}else{
-				System.err.println("Loading "+path+NG_NAME+" failed!");
+//				ng.setNofInterfacesOfType(new int[]{1,1});
 			}
 		}catch(Exception e){
 			e.printStackTrace();

@@ -26,7 +26,10 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 	private boolean overwrite; 
 	private boolean recalc;
 
-
+	//overwrite means: Create new scenario (ng+tg) even if it exists in this folder and calculate all schedules
+	//recalc means: Keep ng+tg but recalculate all schedules
+	
+	
 	public EvaluationScenarioExecutionWorker(boolean tEST_COST_FUNCTION, 
 			boolean vISUALIZE, int time, int nets, int flows, int rep, 
 			String folder, boolean overwrite, boolean recalc){
@@ -50,21 +53,33 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 		
 		String path=folder+"rep_"+ rep+File.separator;
 		//skip if folder exists
-		if(!new File(path).exists() || overwrite || recalc){
+//		if(!new File(path).exists() || overwrite || recalc){
 			System.out.println(path);
 			new File(path).mkdirs();
 //			System.out.println(recalc);
-			if(!recalc){
+			if(overwrite){	//overwrite ng+tg even if existing
 //				System.out.println("Creating Networks and Flows..");
 				ng=new NetworkGenerator(nets, time);	//add network input data
 				ng.writeObject(path);
 				tg = new FlowGenerator(time, flows);		//add application traffic input data
 				tg.writeObject(path); 
 			}else{
-//				System.out.println("Loading stored Networks and Flows..");
-//				System.out.println(path);
+				//try to load ng and tg configurations from files (recalc or not existing yet
 				ng=NetworkGenerator.loadNetworkGenerator(path);
 				tg=FlowGenerator.loadTrafficGenerator(path);
+				
+				//create if not existing; if one is missing calculate all schedules new (recalc=true)!
+				if(ng==null){
+					ng=new NetworkGenerator(nets, time);	//add network input data
+					ng.writeObject(path);
+					recalc=true;
+				}
+				if(tg==null){
+					tg = new FlowGenerator(time, flows);		//add application traffic input data
+					tg.writeObject(path);
+					recalc=true;
+				}
+					
 			}
 			
 
@@ -84,7 +99,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 					OptimizationScheduler sched = new OptimizationScheduler(ng,
 							tg);
 					sched.testCostFunction();
-					sched.calculateInstance(path);
+					sched.calculateInstance(path, recalc||overwrite);
 				} else {
 
 					
@@ -96,17 +111,17 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 						String date = formatter.format(Calendar.getInstance().getTime());
 						System.out.println(" "+scheduler.getType() + ", starting at "+date);
 
-						scheduler.calculateInstance(path);
+						scheduler.calculateInstance(path, recalc||overwrite);
 						
 						//debug: check if optimization has lowest cost
-						if(first){
-							c_opt=scheduler.getCost();
-							first=false;
-						}else{
-							if(scheduler.getCost()<c_opt){
-								System.err.println("OPT STILL NOT BEST");
-							}
-						}
+//						if(first){
+//							c_opt=scheduler.getCost();
+//							first=false;
+//						}else{
+//							if(scheduler.getCost()<c_opt){
+//								System.err.println("FIRST(OPT?) STILL NOT BEST");
+//							}
+//						}
 
 					}
 
@@ -116,7 +131,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 
 				}
 //			}
-		}
+//		}
 		return true;
 	
 	}catch(Exception e){
@@ -124,4 +139,5 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 		return false;
 	}
 	}
+	
 }
