@@ -2,6 +2,7 @@
 
 %data is (varnames (=extime, cost,  throughput, ..), schedulers, flows, time, networks, %repetitions)
 
+%varies number of time slots on x-axis
 function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
 
 [nof_vartypes, nof_schedulers, nof_flows, nof_time, nof_networks, nof_repetitions] = size(data);
@@ -18,7 +19,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
     scale_f = [1 2 4 8 16 32 64];
     scale_n = [1 2 4 8 16 32 64];
     scale_t = [25 50 100 200 400 800 1600];
-    scale_s = {'Opt' 'Gre' 'GreOnOpp' 'GreOn' 'Rnd'};
+    scale_s = {'Opt' 'TS' 'ONS' 'NS' 'Rnd'};
    
     addpath('matlab2tikz'); 
     
@@ -32,7 +33,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
     end
     
     %check_this=squeeze(data(3,:,5,1,4,:))
-    data_rel=relative_to_opt(data);
+   % data_rel=relative_to_opt(data);
     %check_this2=squeeze(data_rel(3,:,5,1,4,:))
   %  nof_schedulers
                 %select data
@@ -52,7 +53,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                 
                 labels = {'cost function value','execution duration in s'};
                 my_ylabel=labels{v};
-                tikz_out_errorbar(filename, data_sq, my_ylabel,legendlabels2,0, 1,0);
+                tikz_out_errorbar(filename, data_sq, my_ylabel,legendlabels2,0, 1,0,0);
                 
                 %  v_rnd - v_x
                 % -------------
@@ -72,7 +73,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                     '_n_' num2str(scale_n(n)) '__' vartypes{v} '_rel.tikz'];
 
                 my_ylabel='Normalized Rating Score (NRS)';
-                tikz_out_errorbar(filename, data_score, my_ylabel,scale_s(2:end-1),1, 0,0);
+                tikz_out_errorbar(filename, data_score, my_ylabel,scale_s(2:end-1),1, 0,0,0);
             end
         end
 
@@ -104,7 +105,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                % my_ylabel=[schedulers{s} ' detail cost relative to optimal schedule'];
                % tikz_out_errorbar(filename, data_rel_sq, my_ylabel,legendlabels, 0,1);
                 my_ylabel = ['Relative Detail Score RDS(' scale_s{s} ')'];
-                tikz_out_errorbar(filename, detail_cost_share, my_ylabel,legendlabels,0, 0,1);
+                tikz_out_errorbar(filename, detail_cost_share, my_ylabel,legendlabels,0, 0,1,0);
              end
          end
       end

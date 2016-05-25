@@ -1,4 +1,4 @@
-function tikz_out_errorbar(filename, data, my_ylabel, legendlabels, style_skip, logscale, zeroline)
+function tikz_out_errorbar(filename, data, my_ylabel, legendlabels, style_skip, logscale, zeroline, time0_net1)
 %filename for export
 %data is matrix with dimensions (scheduler, time, repetitions)
 %ylabel is string
@@ -19,8 +19,14 @@ linestyles = {'-','--','-.',':'};
 linecolors = {'black','magenta','blue','red','green','cyan','yellow'};
 %colors = [0,0,0; 0,0,1; 0,1,0; 1,0,0; 0,1,1; 1,0,1; 1,1,0]; %same colors in rgb
 % Create axes
-axes1 = axes('Parent',figure1,'YMinorTick','on',...%'YScale','log',...
-    'XTickLabel',{'','25','','50','','100','','200','','400',''});
+if time0_net1==0
+    axes1 = axes('Parent',figure1,'YMinorTick','on',...%'YScale','log',...
+        'XTickLabel',{'','25','','50','','100','','200','','400',''});
+else
+    axes1 = axes('Parent',figure1,'YMinorTick','on',...%'YScale','log',...
+        'XTickLabel',{'','1','','2','','4','','8','','16',''});
+    
+end
 hold(axes1,'on');
 
 % Create multiple error bars using matrix input to errorbar
@@ -42,7 +48,11 @@ if zeroline>0
 end
 
 % Create xlabel
-xlabel('# time slots');
+if time0_net1==0
+    xlabel('# time slots');
+else
+    xlabel('# networks');
+end
 
 % Create ylabel
 ylabel(my_ylabel);

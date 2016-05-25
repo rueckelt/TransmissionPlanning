@@ -14,7 +14,7 @@ scale only axis,
 separate axis lines,
 every outer x axis line/.append style={black},
 every x tick label/.append style={font=\color{black}},
-xmin=-65,
+xmin=-58,%-65,
 xmax=5,
 xlabel={${p}_{lim}$},%plim},%
 every outer y axis line/.append style={black},
@@ -26,13 +26,13 @@ axis background/.style={fill=white}
 ]
 \addplot [color=black,solid,line width=1.5pt,forget plot]
   table[row sep=crcr]{%
--65	2320865.06666667\\
--64	2320865.06666667\\
--63	2320865.06666667\\
--62	2320865.06666667\\
--61	2320865.06666667\\
--60	2320865.06666667\\
--59	2320865.06666667\\
+%-65	2320865.06666667\\
+%-64	2320865.06666667\\
+%-63	2320865.06666667\\
+%-62	2320865.06666667\\
+%-61	2320865.06666667\\
+%-60	2320865.06666667\\
+%-59	2320865.06666667\\
 -58	2320865.06666667\\
 -57	2320865.06666667\\
 -56	2320865.06666667\\

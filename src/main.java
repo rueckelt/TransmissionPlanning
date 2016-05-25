@@ -14,9 +14,9 @@ public class main {
 //		int n=2;
 //		int rep=3;
 		int f=4;
-		int t=4;
-		int n=3;
-		int rep=30;
+		int t=1;
+		int n=4;
+		int rep=10;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
 
@@ -28,11 +28,12 @@ public class main {
 //			eval.visualize();
 //			eval.overwrite();
 //			eval.evaluateAll();
-			eval.evaluateTimeVariation();
+//			eval.evaluateTimeVariation();
+			eval.evaluateNetworkVariation();
 //			eval.evaluateTop();
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
-			eval.parallel(15);
+			eval.parallel(1);
 			eval.start();
 //		}
 		

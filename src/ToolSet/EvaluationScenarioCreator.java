@@ -175,6 +175,20 @@ public class EvaluationScenarioCreator {
 	
 	System.out.println("###############  TASK CREATION DONE  ##################");
 	}
+	
+	public void evaluateNetworkVariation(){
+		//paramter log
+		writeScenarioLog(1);
+		for(int n= 0; n<=MAX_NETS; n++){
+			for(int rep=0; rep<REPETITIONS;rep++){
+				calculateInstance_t_n_i(MAX_TIME, n, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
+			}
+		}
+		
+	
+	System.out.println("###############  TASK CREATION DONE  ##################");
+	}
+
 
 	/**
 	 * calculates maximum values for time slots, networks, and flows from indexes

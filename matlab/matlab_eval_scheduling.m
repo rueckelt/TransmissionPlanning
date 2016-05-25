@@ -3,9 +3,9 @@
 %stores results.mat file in in_folder for extracted log matrices
 %delete this file to read logs from raw files
 
-in_folder = '..\my_logs\eval_4_4_3_c10';% 'logs_time';
+in_folder = '..\my_logs\eval_4_4_3_c15';% 'logs_time';
 %in_folder = '..\my_logs\eval_4_4_3_c10';% 'logs_time';
-out_folder = [in_folder filesep 'tikz'];
+out_folder = [in_folder filesep 'tikz_n'];
 force_read_data = 1;
 max_only=0;
 
@@ -46,8 +46,9 @@ state='gathered data'
 % %plot
 %rel_data = relative_to_opt(raw_values);
 %save('rel_data.mat', 'rel_data');
-plot_data3(out_folder, raw_values, avail, valuenames, schedulers);
+%plot_data3(out_folder, raw_values, avail, valuenames, schedulers);  %vary time
 
+plot_data4(out_folder, raw_values, avail, valuenames, schedulers);  %vary networks
 % 
 state='done'
 
