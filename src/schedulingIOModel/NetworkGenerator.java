@@ -215,44 +215,46 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		}
 	}
 
-	public void setNetworkData(IloOplModel model, IloOplFactory fac) {
-		//init arrays
-		int n=networks.size();	//networks
-		int time=getNofTimeSlots();	//time slots
-		
-		int[][] availBW = new int[n][time];
-		int[] type = new int[n];
-		int[] cost = new int[n];
-		int[] latency = new int[n];
-		int[] jitter = new int[n];
-		
-		//fill arrays
-		int n0 =0;
-		for(Network net: networks){
-			for(int t=0; t<time; t++){
-				if(t<net.capacity.size()){
-					availBW[n0][t]=net.capacity.get(t);
-				}else{
-					availBW[n0][t]=0;
-				}
-			}
-			type[n0]=net.getType();
-			cost[n0]=net.getCost();
-			latency[n0]=net.getLatency();
-			jitter[n0]=net.getJitter();
-			
-			n0++;
-		}
-		
-		//set data
-		ModelAccess.set(fac, model, "availBW", availBW);
-		ModelAccess.set(fac, model, "channel_cost", cost);
-		ModelAccess.set(fac, model, "channel_lcy", latency);
-		ModelAccess.set(fac, model, "channel_jit", jitter);
-		ModelAccess.set(fac, model, "ChannelType", type);
-		ModelAccess.set(fac, model, "nInterfaceTypes", getNofInterfaceTypes());
-		
-	}
+//It did not work to insert data directly into the model. Therefore use method via file write and read above
+
+//	public void setNetworkData(IloOplModel model, IloOplFactory fac) {
+//		//init arrays
+//		int n=networks.size();	//networks
+//		int time=getNofTimeSlots();	//time slots
+//		
+//		int[][] availBW = new int[n][time];
+//		int[] type = new int[n];
+//		int[] cost = new int[n];
+//		int[] latency = new int[n];
+//		int[] jitter = new int[n];
+//		
+//		//fill arrays
+//		int n0 =0;
+//		for(Network net: networks){
+//			for(int t=0; t<time; t++){
+//				if(t<net.capacity.size()){
+//					availBW[n0][t]=net.capacity.get(t);
+//				}else{
+//					availBW[n0][t]=0;
+//				}
+//			}
+//			type[n0]=net.getType();
+//			cost[n0]=net.getCost();
+//			latency[n0]=net.getLatency();
+//			jitter[n0]=net.getJitter();
+//			
+//			n0++;
+//		}
+//		
+//		//set data
+//		ModelAccess.set(fac, model, "availBW", availBW);
+//		ModelAccess.set(fac, model, "channel_cost", cost);
+//		ModelAccess.set(fac, model, "channel_lcy", latency);
+//		ModelAccess.set(fac, model, "channel_jit", jitter);
+//		ModelAccess.set(fac, model, "ChannelType", type);
+//		ModelAccess.set(fac, model, "nInterfaceTypes", getNofInterfaceTypes());
+//		
+//	}
 	
 	public void setNofInterfacesOfType(int[] interfaces){
 		interfacesOftype=interfaces;

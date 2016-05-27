@@ -5,7 +5,7 @@
 
 in_folder = '..\my_logs\eval_4_4_3_c15';% 'logs_time';
 %in_folder = '..\my_logs\eval_4_4_3_c10';% 'logs_time';
-out_folder = [in_folder filesep 'tikz_n'];
+out_folder = [in_folder filesep 'tikz_n20'];
 force_read_data = 1;
 max_only=0;
 

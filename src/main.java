@@ -16,7 +16,7 @@ public class main {
 		int f=4;
 		int t=1;
 		int n=4;
-		int rep=10;
+		int rep=20;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
 

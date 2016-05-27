@@ -290,65 +290,67 @@ public class FlowGenerator implements Serializable{
 		}
 	}
 
-	public void setTrafficData(IloOplModel model, IloOplFactory fac) {
-		//initialize arrays
-		int[] chunks = new int[flows.size()];
-		int[] deadline = new int[flows.size()];
-		int[] startTime = new int[flows.size()];
-		int[] windowMax = new int[flows.size()];
-		int[] throughputMax = new int[flows.size()];
-		int[] windowMin = new int[flows.size()];
-		int[] throughputMin = new int[flows.size()];
-		int[] reqLatency = new int[flows.size()];
-		int[] reqJitter = new int[flows.size()];
-		
-		int[][] importance = new int[7][flows.size()];
-
-		int[] impUser = new int[flows.size()];
-		//nRequests does not change..does it?
-		
-		
-		//set values of arrays
-		int i=0;
-		for(Flow flow:flows){
-			chunks[i]		=flow.getTokens();
-			deadline[i]		=flow.getDeadline();
-			startTime[i]	=flow.getStartTime();
-			windowMax[i]	=flow.getWindowMax();
-			throughputMax[i]=flow.getChunksMax();
-			windowMin[i]	=flow.getWindowMin();
-			throughputMin[i]=flow.getTokensMin();
-			reqLatency[i]	=flow.getReqLatency();
-			reqJitter[i]	=flow.getReqJitter();
-			
-			importance[0][i]	=	flow.getImpDeadline();
-			importance[1][i]	=	flow.getImpStartTime();
-			importance[2][i]	=	flow.getImpThroughputMin();
-			importance[3][i]	=	flow.getImpThroughputMax();
-			importance[4][i]	=	flow.getImpUnsched();
-			importance[5][i]	=	flow.getImpLatency();
-			importance[6][i]	=	flow.getImpJitter();
-			
-			impUser[i]		=		flow.getImpUser();
-			
-			i++;
-		}
-		
-		//set values in Model
-		ModelAccess.set(fac, model, "nChunks", chunks);
-		ModelAccess.set(fac, model, "deadline", deadline);
-		ModelAccess.set(fac, model, "prefStartTime", startTime);
-		ModelAccess.set(fac, model, "minTimeBetweenChunks", windowMax);
-		ModelAccess.set(fac, model, "stretch_max", throughputMax);
-		ModelAccess.set(fac, model, "maxTimeBetweenChunks", windowMin);
-		ModelAccess.set(fac, model, "compress_min", throughputMin);
-		ModelAccess.set(fac, model, "latency", reqLatency);
-		ModelAccess.set(fac, model, "jitter", reqJitter);
-		
-		ModelAccess.set(fac, model, "importance", importance);
-		ModelAccess.set(fac, model, "userImportance", impUser);
-		
-	}
+	//It did not work to insert data directly into the model. Therefore use method via file write and read above
 	
+//	public void setTrafficData(IloOplModel model, IloOplFactory fac) {
+//		//initialize arrays
+//		int[] chunks = new int[flows.size()];
+//		int[] deadline = new int[flows.size()];
+//		int[] startTime = new int[flows.size()];
+//		int[] windowMax = new int[flows.size()];
+//		int[] throughputMax = new int[flows.size()];
+//		int[] windowMin = new int[flows.size()];
+//		int[] throughputMin = new int[flows.size()];
+//		int[] reqLatency = new int[flows.size()];
+//		int[] reqJitter = new int[flows.size()];
+//		
+//		int[][] importance = new int[7][flows.size()];
+//
+//		int[] impUser = new int[flows.size()];
+//		//nRequests does not change..does it?
+//		
+//		
+//		//set values of arrays
+//		int i=0;
+//		for(Flow flow:flows){
+//			chunks[i]		=flow.getTokens();
+//			deadline[i]		=flow.getDeadline();
+//			startTime[i]	=flow.getStartTime();
+//			windowMax[i]	=flow.getWindowMax();
+//			throughputMax[i]=flow.getChunksMax();
+//			windowMin[i]	=flow.getWindowMin();
+//			throughputMin[i]=flow.getTokensMin();
+//			reqLatency[i]	=flow.getReqLatency();
+//			reqJitter[i]	=flow.getReqJitter();
+//			
+//			importance[0][i]	=	flow.getImpDeadline();
+//			importance[1][i]	=	flow.getImpStartTime();
+//			importance[2][i]	=	flow.getImpThroughputMin();
+//			importance[3][i]	=	flow.getImpThroughputMax();
+//			importance[4][i]	=	flow.getImpUnsched();
+//			importance[5][i]	=	flow.getImpLatency();
+//			importance[6][i]	=	flow.getImpJitter();
+//			
+//			impUser[i]		=		flow.getImpUser();
+//			
+//			i++;
+//		}
+//		
+//		//set values in Model
+//		ModelAccess.set(fac, model, "nChunks", chunks);
+//		ModelAccess.set(fac, model, "deadline", deadline);
+//		ModelAccess.set(fac, model, "prefStartTime", startTime);
+//		ModelAccess.set(fac, model, "minTimeBetweenChunks", windowMax);
+//		ModelAccess.set(fac, model, "stretch_max", throughputMax);
+//		ModelAccess.set(fac, model, "maxTimeBetweenChunks", windowMin);
+//		ModelAccess.set(fac, model, "compress_min", throughputMin);
+//		ModelAccess.set(fac, model, "latency", reqLatency);
+//		ModelAccess.set(fac, model, "jitter", reqJitter);
+//		
+//		ModelAccess.set(fac, model, "importance", importance);
+//		ModelAccess.set(fac, model, "userImportance", impUser);
+//		
+//	}
+//	
 	
 }
