@@ -15,7 +15,7 @@ if exist(parameter_file, 'file') ==2    %compare to 2 == is a file?
    run(parameter_file);
    max_flows=max_flows+1;
    max_nets=max_nets+1;
-   max_time=max_time+1;
+   max_time=max_time+1;4
 end
 state = 'read param done'
 %read matrix file if available, else create matrix file from raw log files
