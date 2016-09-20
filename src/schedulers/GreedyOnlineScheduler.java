@@ -31,6 +31,10 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 	
 	@Override
 	protected void calculateInstance_internal(String logfile) {
+		if(NEW_RATING_ESTIMATOR){
+			initCostSeparation();
+		}
+		
 		//initialize network preference vector
 		Vector<Vector<Integer>> flowsToNets = new Vector<Vector<Integer>>();
 		//initialize counter for remaining tokens of flows
@@ -47,7 +51,7 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 			for(int f0=0;f0<tg.getFlows().size();f0++){
 				int f=flow_order.get(f0);
 				Flow flow= tg.getFlows().get(f);
-				int chunksMaxTp = (int)(flow.getChunksMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
+				int chunksMaxTp = (int)(flow.getTokensMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
 				//assign only within preferred time frame of flow
 				if(flow.getStartTime()<=t && flow.getDeadline()>t){
 					int n0=0;					
@@ -63,6 +67,9 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 								allocated=allocate(f, t, n, chunksMaxTp);
 							}
 							chunksToAllocate.set(f, chunksToAllocate.get(f)-allocated);
+							if(NEW_RATING_ESTIMATOR){
+								cs.updateStatefulReward(f0, t, allocated);
+							}
 						}
 						n0++;
 					}
@@ -76,7 +83,7 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 
 
 	protected boolean scheduleDecision(Flow flow, int n) {
-		return true;//calcVio(flow, ng.getNetworks().get(n))<0;
+		return true;
 	}
 
 	/**
@@ -103,7 +110,7 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 	@Override
 	public String getType() {
 		// TODO Auto-generated method stub
-		return "GreedyOnline";
+		return "GreedyOnline"+(NEW_RATING_ESTIMATOR?"_H2":"");
 	}
 
 }

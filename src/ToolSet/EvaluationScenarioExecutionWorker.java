@@ -64,7 +64,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 				tg = new FlowGenerator(time, flows);		//add application traffic input data
 				tg.writeObject(path); 
 			}else{
-				//try to load ng and tg configurations from files (recalc or not existing yet
+				//try to load ng and tg configurations from files (recalc or not existing yet)
 				ng=NetworkGenerator.loadNetworkGenerator(path);
 				tg=FlowGenerator.loadTrafficGenerator(path);
 				
@@ -79,7 +79,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 					tg.writeObject(path);
 					recalc=true;
 				}
-					
+				tg.setFlowIndices();	
 			}
 			
 

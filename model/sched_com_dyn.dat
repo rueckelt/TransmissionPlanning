@@ -40,6 +40,7 @@ latency = 				[[reqLatency]];
 jitter = 				[[reqJitter]];
 
 hysteresis = [hysteresis];
+tpMinAmp = [tpMinAmp];
 importance = [
 	[[impDeadline]],	//deadline
 	[[impStartTime]],	//start time

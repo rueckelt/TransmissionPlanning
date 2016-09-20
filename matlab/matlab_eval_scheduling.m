@@ -14,7 +14,7 @@ parameter_file=[in_folder filesep 'parameters_log.m'];
 if exist(parameter_file, 'file') ==2    %compare to 2 == is a file?
    run(parameter_file);
    max_flows=max_flows+1;
-   max_nets=max_nets+1;
+   max_nets=max_nets+2;
    max_time=max_time+1;
 end
 state = 'read param done'
@@ -46,8 +46,9 @@ state='gathered data'
 % %plot
 %rel_data = relative_to_opt(raw_values);
 %save('rel_data.mat', 'rel_data');
-plot_data3(out_folder, raw_values, avail, valuenames, schedulers);  %vary time
 
+
+plot_data3(out_folder, raw_values, avail, valuenames, schedulers);  %vary time
 %plot_data4(out_folder, raw_values, avail, valuenames, schedulers);  %vary networks
 % 
 state='done'

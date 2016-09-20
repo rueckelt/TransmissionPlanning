@@ -23,10 +23,10 @@ public class Flow implements Serializable, Cloneable{
 	
 	//at least n chunks in t time slots ### lower throughput limit
 	private int windowMin=100000;
-	private int chunksMin=1;
+	private int tokensMin=1;
 	//at most n chunks in t time slots (data is not prduced faster/ slow transmitter) ## upper throughput limit
 	private int windowMax=1;
-	private int chunksMax=100000;
+	private int tokensMax=100000;
 	
 	private int reqJitter=10;		//low value if low jitter required
 	private int reqLatency=10;		//low value if low latency required
@@ -46,10 +46,19 @@ public class Flow implements Serializable, Cloneable{
 	//each flow gets a unique ID
 	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
     int id = NEXT_ID.getAndIncrement();
+    
+    private int index=-1;	//not set
 
     //set ID externally
     public void setId(int id) {
     	this.id = id;
+    }
+    
+    public void setIndex(int i){
+    	index=i;
+    }
+    public int getIndex(){
+    	return index;
     }
     
     public int getId() {
@@ -98,12 +107,12 @@ public class Flow implements Serializable, Cloneable{
 
 
 	public int getTokensMin() {
-		return chunksMin;
+		return tokensMin;
 	}
 
 
-	public void setTokensMin(int chunksMin) {
-		this.chunksMin = chunksMin;
+	public void setTokensMin(int tokensMin) {
+		this.tokensMin = tokensMin;
 	}
 
 
@@ -117,13 +126,13 @@ public class Flow implements Serializable, Cloneable{
 	}
 
 
-	public int getChunksMax() {
-		return chunksMax;
+	public int getTokensMax() {
+		return tokensMax;
 	}
 
 
-	public void setTokensMax(int chunksMax) {
-		this.chunksMax = chunksMax;
+	public void setTokensMax(int tokensMax) {
+		this.tokensMax = tokensMax;
 	}
 
 
@@ -328,8 +337,8 @@ public class Flow implements Serializable, Cloneable{
 		try {
 			Flow f = new Flow();
 			f.chunks=chunks;
-			f.chunksMax=chunksMax;
-			f.chunksMin=chunksMin;
+			f.tokensMax=tokensMax;
+			f.tokensMin=tokensMin;
 			f.deadline=deadline;
 			f.id=id;
 			f.impDeadline=impDeadline;

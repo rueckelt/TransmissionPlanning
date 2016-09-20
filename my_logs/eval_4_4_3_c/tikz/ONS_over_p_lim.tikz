@@ -16,7 +16,7 @@ every outer x axis line/.append style={black},
 every x tick label/.append style={font=\color{black}},
 xmin=-58,%-65,
 xmax=5,
-xlabel={${p}_{lim}$},%plim},%
+xlabel={${c}_{lim}$},%plim},%
 every outer y axis line/.append style={black},
 every y tick label/.append style={font=\color{black}},
 ymin=1000000,

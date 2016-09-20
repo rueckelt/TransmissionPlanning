@@ -20,12 +20,12 @@ xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
 xlabel={\# time slots},
 every outer y axis line/.append style={white!85!black},
 every y tick label/.append style={font=\color{white!85!black}},
-ymin=-0.21, %-0.218220568092976,
-ymax=0.5, %0.314925801134218,
+ymin=-0.218220568092976,
+ymax=0.314925801134218,
 ylabel={Relative Detail Score RDS(TS)},
 ymajorgrids,
 axis background/.style={fill=white},
-legend style={at={(1.03,1)},anchor=north west,legend cell align=left,align=left,draw=black}
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=black}
 ]
 \addplot [color=black,solid,line width=1.5pt]
  plot [error bars/.cd, y dir = both, y explicit]
@@ -106,8 +106,8 @@ xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
 xlabel={\# time slots},
 every outer y axis line/.append style={black},
 every y tick label/.append style={font=\color{black}},
-ymin=-0.21, %-0.218220568092976,
-ymax=0.5, %0.314925801134218,
+ymin=-0.218220568092976,
+ymax=0.314925801134218,
 ylabel={Relative Detail Score RDS(TS)}
 ]
 \addplot [color=black,solid,line width=1.5pt,forget plot]

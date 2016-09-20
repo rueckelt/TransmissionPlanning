@@ -67,7 +67,7 @@ public class PriorityScheduler extends Scheduler{
 			
 			Flow flow = tg.getFlows().get(f);
 			Set<Integer> usedSlots = new HashSet<Integer>(); 
-			int chunksMaxTp = (int)(flow.getChunksMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
+			int chunksMaxTp = (int)(flow.getTokensMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
 			int chunksToAllocate = flow.getTokens();
 			
 			//sort networks according to match with flow

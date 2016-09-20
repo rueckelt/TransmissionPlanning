@@ -24,7 +24,7 @@ if time0_net1==0
         'XTickLabel',{'','25','','50','','100','','200','','400',''});
 else
     axes1 = axes('Parent',figure1,'YMinorTick','on',...%'YScale','log',...
-        'XTickLabel',{'','1','','2','','4','','8','','16',''});
+        'XTickLabel',{'','1','','2','','4','','8','','16','', '32', ''});
     
 end
 hold(axes1,'on');
@@ -59,7 +59,7 @@ ylabel(my_ylabel);
 
 %set y-limits of plot to 10% margin
 y_lim=[ min(min(YMatrix1-EMatrix1))-0.1*abs(min(min(YMatrix1-EMatrix1))),...
-        max(max(YMatrix1+EMatrix1))+y_lim_margin*abs(max(max(YMatrix1+EMatrix1)))]
+        max(max(YMatrix1+EMatrix1))+y_lim_margin*abs(max(max(YMatrix1+EMatrix1)))];
 if ~isnan(y_lim)
     set(gca,'ylim',y_lim);
 end

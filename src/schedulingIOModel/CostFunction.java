@@ -20,6 +20,7 @@ public class CostFunction {
 	
 	private NetworkGenerator ng;
 	private FlowGenerator tg;
+	private int minTpAmplifier = 100;
 	protected LogMatlabFormat logger = null;
 	
 	public CostFunction(NetworkGenerator ng, FlowGenerator tg){
@@ -62,6 +63,16 @@ public class CostFunction {
 		}
 	}
 
+	public int monetary(Network net){
+		return ng.getCostImportance()*net.getCost();
+	}
+	
+	public static int vioTimeLimits(Flow flow, int t){
+		return (int) ( 
+				Math.pow(Math.max(t-flow.getDeadline(),0), 2)*flow.getImpDeadline()+
+				Math.pow(Math.max(flow.getStartTime()-t,0), 2)*flow.getImpStartTime()
+				);
+	}
 	
 
 	///////////////////// VIOLATIONS /////////////////////
@@ -263,7 +274,7 @@ public class CostFunction {
 		if(flow.getTokensMin()*flow.getWindowMin()<=0){
 			return 0;
 		}
-		return vioTpMin*flow.getImpThroughputMin()*102/(flow.getTokensMin()*flow.getWindowMin());
+		return vioTpMin*flow.getImpThroughputMin()*(int)(minTpAmplifier*1.02)/(flow.getTokensMin()*flow.getWindowMin());
 	}
 	
 	public int[] vioTp(int[][] cummulated_f_t){
@@ -485,6 +496,10 @@ public class CostFunction {
 
 	private static Scheduler getScheduler(FlowGenerator tg, NetworkGenerator ng){
 		return new PriorityScheduler(ng, tg);	//this could be a dummy scheduler.. only need empty schedule from it
+	}
+
+	public int getMinTpAmplifier() {
+		return minTpAmplifier;
 	}
 
 }

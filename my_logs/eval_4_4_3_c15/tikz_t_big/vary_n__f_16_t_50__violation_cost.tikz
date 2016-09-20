@@ -9,14 +9,12 @@ width=0.951\figW,
 height=\figH,
 at={(0\figW,0\figH)},
 scale only axis,
-separate axis lines,
-every outer x axis line/.append style={black},
-every x tick label/.append style={font=\color{black}},
 xmin=0.5,
 xmax=5.5,
 xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
-xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{}},
+xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{},{32},{}},
 xlabel={\# networks},
+separate axis lines,
 every outer y axis line/.append style={white!85!black},
 every y tick label/.append style={font=\color{white!85!black}},
 ymode=log,
@@ -25,14 +23,14 @@ ymax=9381709.54865952,
 ylabel={cost function value},
 ymajorgrids,
 axis background/.style={fill=white},
-legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=black}
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=white!15!black}
 ]
 \addplot [color=black,solid,line width=1.5pt]
  plot [error bars/.cd, y dir = both, y explicit]
  table[row sep=crcr, y error plus index=2, y error minus index=3]{%
 1	2083790.4	1608366.68057962	1608366.68057962\\
 2	2193949.43333333	1733758.23682494	1733758.23682494\\
-3	1879942.26666667	1502045.43244836	1502045.43244837\\
+3	1879942.26666667	1502045.43244837	1502045.43244837\\
 4	2216576.1	657519.095585183	657519.095585183\\
 5	1407584.46666667	1348728.67422351	1348728.67422351\\
 };
@@ -95,14 +93,13 @@ every x tick label/.append style={font=\color{black}},
 xmin=0.5,
 xmax=5.5,
 xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
-xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{}},
+xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{},{32},{}},
 xlabel={\# networks},
 every outer y axis line/.append style={black},
 every y tick label/.append style={font=\color{black}},
 ymode=log,
 ymin=52970.2131988383,
 ymax=9381709.54865952,
-yminorticks=true,
 ylabel={cost function value}
 ]
 \addplot [color=black,solid,line width=1.5pt,forget plot]
@@ -110,7 +107,7 @@ ylabel={cost function value}
  table[row sep=crcr, y error plus index=2, y error minus index=3]{%
 1	2083790.4	1608366.68057962	1608366.68057962\\
 2	2193949.43333333	1733758.23682494	1733758.23682494\\
-3	1879942.26666667	1502045.43244836	1502045.43244837\\
+3	1879942.26666667	1502045.43244837	1502045.43244837\\
 4	2216576.1	657519.095585183	657519.095585183\\
 5	1407584.46666667	1348728.67422351	1348728.67422351\\
 };

@@ -22,6 +22,8 @@ public class Decomposer {
 		this.tg=tg;
 	}
 	
+	//split problem at start times and deadlines of flows. schedule homogeneous flow set
+	
 	
 	public void decompose(){
 		boundFlowDeadlines(tg, ng);

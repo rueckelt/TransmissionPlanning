@@ -10,14 +10,12 @@ height=\figH,
 at={(0\figW,0\figH)},
 scale only axis,
 unbounded coords=jump,
-separate axis lines,
-every outer x axis line/.append style={black},
-every x tick label/.append style={font=\color{black}},
-xmin=3.97,
-xmax=4.04,
-xtick={3.97,3.98,3.99,4,4.01,4.02,4.03,4.04},
-xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{},{32},{}},
 xlabel={\# networks},
+separate axis lines,
 every outer y axis line/.append style={white!85!black},
 every y tick label/.append style={font=\color{white!85!black}},
 ymin=0.449332954920917,
@@ -25,7 +23,7 @@ ymax=1.08041720154478,
 ylabel={Normalized Rating Score (NRS)},
 ymajorgrids,
 axis background/.style={fill=white},
-legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=black}
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=white!15!black}
 ]
 \addplot [color=mycolor1,dashed,line width=1.5pt]
  plot [error bars/.cd, y dir = both, y explicit]
@@ -33,7 +31,8 @@ legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=le
 1	nan	nan	nan\\
 2	nan	nan	nan\\
 3	nan	nan	nan\\
-4	0.900004159399839	0.0821932965499577	0.0821932965499577\\
+4	0.900004159399839	0.0821932965499576	0.0821932965499576\\
+5	nan	nan	nan\\
 };
 \addlegendentry{TS};
 
@@ -44,6 +43,7 @@ legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=le
 2	nan	nan	nan\\
 3	nan	nan	nan\\
 4	0.754488227021084	0.156955477327611	0.156955477327611\\
+5	nan	nan	nan\\
 };
 \addlegendentry{ONS};
 
@@ -54,6 +54,7 @@ legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=le
 2	nan	nan	nan\\
 3	nan	nan	nan\\
 4	0.660263962573303	0.161005123772285	0.161005123772285\\
+5	nan	nan	nan\\
 };
 \addlegendentry{NS};
 
@@ -68,10 +69,10 @@ unbounded coords=jump,
 separate axis lines,
 every outer x axis line/.append style={black},
 every x tick label/.append style={font=\color{black}},
-xmin=3.97,
-xmax=4.04,
-xtick={3.97,3.98,3.99,4,4.01,4.02,4.03,4.04},
-xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{},{32},{}},
 xlabel={\# networks},
 every outer y axis line/.append style={black},
 every y tick label/.append style={font=\color{black}},
@@ -85,7 +86,8 @@ ylabel={Normalized Rating Score (NRS)}
 1	nan	nan	nan\\
 2	nan	nan	nan\\
 3	nan	nan	nan\\
-4	0.900004159399839	0.0821932965499577	0.0821932965499577\\
+4	0.900004159399839	0.0821932965499576	0.0821932965499576\\
+5	nan	nan	nan\\
 };
 \addplot [color=blue,dashdotted,line width=1.5pt,forget plot]
  plot [error bars/.cd, y dir = both, y explicit]
@@ -94,6 +96,7 @@ ylabel={Normalized Rating Score (NRS)}
 2	nan	nan	nan\\
 3	nan	nan	nan\\
 4	0.754488227021084	0.156955477327611	0.156955477327611\\
+5	nan	nan	nan\\
 };
 \addplot [color=red,dotted,line width=1.5pt,forget plot]
  plot [error bars/.cd, y dir = both, y explicit]
@@ -102,6 +105,7 @@ ylabel={Normalized Rating Score (NRS)}
 2	nan	nan	nan\\
 3	nan	nan	nan\\
 4	0.660263962573303	0.161005123772285	0.161005123772285\\
+5	nan	nan	nan\\
 };
 \end{axis}
 \end{tikzpicture}%

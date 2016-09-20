@@ -123,7 +123,7 @@ public class RandomScheduler extends Scheduler{
 			//get flow parameters
 			int flowSt= flow.getStartTime();
 			int flowDl= flow.getDeadline();
-			int flowTpMax = (int) Math.floor(flow.getChunksMax()/flow.getWindowMax());
+			int flowTpMax = (int) Math.floor(flow.getTokensMax()/flow.getWindowMax());
 			
 			//allocate chunks
 			int nonAlloChunks = flow.getTokens();

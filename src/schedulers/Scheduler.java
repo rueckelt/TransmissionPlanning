@@ -205,7 +205,7 @@ public abstract class Scheduler {
 		for(int f=0;f<flows.size();f++){
 			Flow flow = tg.getFlows().get(f);
 			int winSize = flow.getWindowMax();
-			int chunksMax = flow.getChunksMax();
+			int chunksMax = flow.getTokensMax();
 			for(int t=0;t<(ng.getTimeslots()-winSize); t++){
 				int chunkSum=0;	//sum of chunks in this window
 				for(int tw=t;tw<t+winSize;tw++){
@@ -257,24 +257,28 @@ public abstract class Scheduler {
 	protected int allocate(int flow, int time, int network, int tokens){
 		if(!boundsValid(flow, time, network))return 0;
 		if(!interfaceLimit.isUsable(network, time))return 0;
+//		System.out.println("Scheduler::allocate. validity checks passed");
 		//calculate remaining capacity of network in this slot
 		int remaining_net_cap=getRemainingNetCap(network, time);
 		int s[][][]=schedule_f_t_n_temp;
-		int scheduled = tokens;
-		
+		int scheduled = Math.min(tokens, remaining_net_cap);
+		System.out.println("Scheduler::allocate. f,t,n "+flow+","+time+","+network+" tokens: "+tokens+
+				"; remaining cap = "+remaining_net_cap+"; scheduled = "+scheduled);
 		//schedule as much as possible
-		if(tokens>remaining_net_cap){
-			s[flow][time][network]+=remaining_net_cap;
-			scheduled= remaining_net_cap;
-		}else{
-			s[flow][time][network]+=tokens;
-		}
+//		if(tokens>remaining_net_cap){
+//			s[flow][time][network]+=remaining_net_cap;
+//			scheduled= remaining_net_cap;
+//		}else{
+//			s[flow][time][network]+=tokens;
+//		}
+		s[flow][time][network]+=scheduled;
 		//any constraint violated? use if ok, else revert
 		if(verificationOfConstraints(s)){
 			schedule_f_t_n_temp=s;
 			interfaceLimit.useNetwork(network, time);
 			return scheduled;
 		}else{
+			System.out.println("Scheduler::allocate. constraint check NOT passed");
 			return 0;
 		}
 		

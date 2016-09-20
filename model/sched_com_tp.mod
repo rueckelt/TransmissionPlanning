@@ -155,6 +155,7 @@ int latency[Flows] = ...;
 int jitter[Flows] = ...;
 	//weights/importance
 int hysteresis = ...;	
+int tpMinAmp = ...;
 int importance[ImportanceTypes, Flows] = ...; 
 
 //user profiles
@@ -286,12 +287,14 @@ subject to{
 		
 	//upper throughput limit: commented out vioTpMax --> upper throughput limit is a hard constraint now
 	forall(f in Flows, t1 in Time)(
-		(t1>=prefStartTime[f]+tpMaxWindow[f])*(t1<=deadline[f])*(t1==tpMaxWindow[f])<=(cummulatedChunks[f, t1]<=tpMaxChunks[f])//+vioTpMax[f, t1])
+		//(t1>=prefStartTime[f]+tpMaxWindow[f])*(t1<=deadline[f])*
+		(t1==tpMaxWindow[f])<=(cummulatedChunks[f, t1]<=tpMaxChunks[f])//+vioTpMax[f, t1])
 		//for first timeslot: the number of commulated chunks for a request in t1 must be less than the minimum
 	);	
 	//time span equal to window and within startTime/Deadline limits ===implies==> number of chunks in window less or equal to max+vio
 	forall(f in Flows, t0 in Time, t1 in Time)(
-		(t0>=prefStartTime[f])*(t1<=deadline[f])*(t1-t0==tpMaxWindow[f])<=(cummulatedChunks[f, t1]-cummulatedChunks[f, t0]<=tpMaxChunks[f])//+vioTpMax[f, t1])
+		//(t0>=prefStartTime[f])*(t1<=deadline[f])*
+		(t1-t0==tpMaxWindow[f])<=(cummulatedChunks[f, t1]-cummulatedChunks[f, t0]<=tpMaxChunks[f])//+vioTpMax[f, t1])
 		//in a certain timespan, there must be less than tpMaxChunks chunks
 	);
 	
@@ -306,10 +309,10 @@ subject to{
 	);
 	/* Quadratic impact: function is not linear!! cplex cannot solve it efficiently
 	forall(f in Flows) (
-		vioThroughput[f]*tpMinWindow[f]*tpMinChunks[f]*tpMinChunks[f] >= 100*importance[IMP_TP_MIN, f] * (sum(t in Time) (vioTpMin[f,t]*vioTpMin[f,t]))
+		vioThroughput[f]*tpMinWindow[f]*tpMinChunks[f]*tpMinChunks[f] >= tpMinAmp*importance[IMP_TP_MIN, f] * (sum(t in Time) (vioTpMin[f,t]*vioTpMin[f,t]))
 	);*/
 	forall(f in Flows) (
-		vioThroughput[f]*tpMinWindow[f]*tpMinChunks[f] >= 100*importance[IMP_TP_MIN, f] * (sum(t in Time)(vioTpMin[f,t]))
+		vioThroughput[f]*tpMinWindow[f]*tpMinChunks[f] >= tpMinAmp*importance[IMP_TP_MIN, f] * (sum(t in Time)(vioTpMin[f,t]))
 	);
 }
 

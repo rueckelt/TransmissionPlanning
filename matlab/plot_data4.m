@@ -2,7 +2,9 @@
 
 %data is (varnames (=extime, cost,  throughput, ..), schedulers, flows, time, networks, %repetitions)
 
-%this file varies number of networks on x axis
+%####################################################
+% this file varies number of networks on x axis
+%####################################################
 function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
 
 [nof_vartypes, nof_schedulers, nof_flows, nof_time, nof_networks, nof_repetitions] = size(data);
@@ -44,6 +46,8 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
             avail_sq= squeeze(avail(v,:,f,t,:,:));
 
             if v<2 && sum(avail_sq(:))>0%==nof_repetitions*nof_networks*nof_schedulers
+                
+                %squeezed data dimensions: scheduler, networks, repetitions
                 data_sq = squeeze(data(v,:,f,t,:,:));
 
                 %create path and labels
@@ -55,6 +59,7 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
                 my_ylabel=labels{v};
                 tikz_out_errorbar(filename, data_sq, my_ylabel,legendlabels2,0, 1,0,1);
                 
+                %Normalized Rating score (NRS)
                 %  v_rnd - v_x
                 % -------------
                 % v_rnd - v_opt
@@ -62,6 +67,8 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
                 for s=1:nof_schedulers-2
                     data_score(s,:,:) = (data_sq(end,:,:)-data_sq(s+1,:,:)) ./ (data_sq(end,:,:)-data_sq(1,:,:));
                 end
+                
+                
                 %potential of scheduling in last line 
                 %Scheduler Rating Score (NRS)
                 % v_rnd,t0 - v_opt,t0
@@ -96,7 +103,7 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
              avail_sq=squeeze(avail(3:end,s,f,t,:,:));
              
              %plot only if data is available
-             if sum(avail_sq(:))>0
+             if sum(avail_sq(:))==nof_repetitions*nof_time*nof_schedulers%>0
                  %['plot for n:' num2str(n) ' f:' num2str(f)]
                  %squeezed_data=squeeze(data_rel_sq(s,:,:));
                  filename = [out_folder filesep 'vary_n__f_' num2str(scale_f(f)) ...
@@ -110,6 +117,14 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
          end
       end
   end
+  
+ %do t-test for number of networks 
+ for n=1:nof_networks
+     nets=scale_n(n)
+    [h,p]=ttest2(data_score(1,n,:), data_score(3,n,:))
+ end
+ 
+ 
    %opt cost pie chart
 % figure;
 %  for s=1:nof_schedulers-1  

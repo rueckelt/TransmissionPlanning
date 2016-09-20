@@ -1,8 +1,9 @@
 %out folder is basic output folder
 
 %data is (varnames (=extime, cost,  throughput, ..), schedulers, flows, time, networks, %repetitions)
-
+%####################################################
 %varies number of time slots on x-axis
+%####################################################
 function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
 
 [nof_vartypes, nof_schedulers, nof_flows, nof_time, nof_networks, nof_repetitions] = size(data);
@@ -53,7 +54,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                 
                 labels = {'cost function value','execution duration in s'};
                 my_ylabel=labels{v};
-                tikz_out_errorbar(filename, data_sq, my_ylabel,legendlabels2,0, 1,0,0);
+  %              tikz_out_errorbar(filename, data_sq, my_ylabel,legendlabels2,0, 1,0,0);
                 
                 %  v_rnd - v_x
                 % -------------
@@ -73,7 +74,7 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                     '_n_' num2str(scale_n(n)) '__' vartypes{v} '_rel.tikz'];
 
                 my_ylabel='Normalized Rating Score (NRS)';
-                tikz_out_errorbar(filename, data_score, my_ylabel,scale_s(2:end-1),1, 0,0,0);
+%                tikz_out_errorbar(filename, data_score, my_ylabel,scale_s(2:end-1),1, 0,0,0);
             end
         end
 
@@ -105,11 +106,20 @@ function [] = plot_data3(out_folder, data, avail, vartypes, schedulers)
                % my_ylabel=[schedulers{s} ' detail cost relative to optimal schedule'];
                % tikz_out_errorbar(filename, data_rel_sq, my_ylabel,legendlabels, 0,1);
                 my_ylabel = ['Relative Detail Score RDS(' scale_s{s} ')'];
-                tikz_out_errorbar(filename, detail_cost_share, my_ylabel,legendlabels,0, 0,1,0);
+%                tikz_out_errorbar(filename, detail_cost_share, my_ylabel,legendlabels,0, 0,1,0);
              end
          end
       end
   end
+  
+ for t=1:nof_time
+     time=scale_t(t)
+    [h,p]=ttest2(data_score(1,t,:), data_score(3,t,:))
+    vector=squeeze([data_score(1,t,:),data_score(2,t,:),data_score(3,t,:)])
+    anova_p=anovan(squeeze([data_score(1,t,:),data_score(2,t,:),data_score(3,t,:)]), ...
+            [ones(1,nof_repetitions), 2*ones(1,nof_repetitions), 3*ones(1,nof_repetitions)])
+ end
+  
    %opt cost pie chart
 % figure;
 %  for s=1:nof_schedulers-1  
