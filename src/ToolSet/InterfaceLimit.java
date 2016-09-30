@@ -43,7 +43,7 @@ public class InterfaceLimit {
 		int ifType=ng.getNetworks().get(netID).getType()-1;
 		//values in limits?
 		if(ifType>=ng.getNofInterfaceTypes() || timeslot>=ng.getTimeslots()){
-			System.err.println("InterfaceLimit.java: Scheduler checks interface availability for invalid interface type or time slot");
+//			System.err.println("InterfaceLimit.java: Scheduler checks interface availability for invalid interface type or time slot");
 			return false;
 		}
 
@@ -53,6 +53,7 @@ public class InterfaceLimit {
 			return true;
 		}
 		//(2) interface is free
+//		System.out.println("InterfaceLimit::isUsable(net "+netID+", time "+timeslot+");;   #used IF is "+used_interfaces[ifType][timeslot]);
 		return used_interfaces[ifType][timeslot]<ng.getNofInterfacesOfType(ifType);
 	}
 	

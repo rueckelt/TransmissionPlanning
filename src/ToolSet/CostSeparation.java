@@ -67,12 +67,12 @@ public class CostSeparation {
 		int f=0;
 		for(Flow flow:tg.getFlows()){
 
-			System.out.print("Time Match flow "+f+": ");
+//			System.out.print("Time Match flow "+f+": ");
 			for(int t=0; t<ng.getTimeslots(); t++){
 				timeMatch[f][t] = CostFunction.vioTimeLimits(flow, t)*flow.getImpUser();
-				System.out.print(timeMatch[f][t]+", ");
+//				System.out.print(timeMatch[f][t]+", ");
 			}
-			System.out.println("");
+//			System.out.println("");
 			f++;
 			
 		}
@@ -100,7 +100,7 @@ public class CostSeparation {
 			}
 			f++;
 		}
-		System.out.println("stateful_reward = "+Arrays.deepToString(statefulReward));
+//		System.out.println("stateful_reward = "+Arrays.deepToString(statefulReward));
 	}
 	
 	private void setFlowReward(){
@@ -150,6 +150,10 @@ public class CostSeparation {
 	 * @return the mismatch (pos cost value) if one token of flow f is scheduled to network n
 	 */
 	public int getNetworkMatch(int f, int n){
+		if(f>=networkMatch.length || n>=networkMatch[0].length){
+			System.err.println("CostSeparation::getNetworkMatch - request exceeded range of matrix");
+			return Integer.MAX_VALUE;	//invalid request - return worst case
+		}
 		return networkMatch[f][n];
 	}
 	/**

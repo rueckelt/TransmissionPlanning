@@ -51,7 +51,7 @@ public class GreedyScheduler extends Scheduler{
 	
 	private NetworkGenerator ng_tmp; //remove scheduled chunks from this ng
 	protected int schedule_decision_limit =0;
-	protected int tl_offset =3;	//allowed offset for which violation is allowed
+	protected int tl_offset =0;	//allowed time offset for which violation is allowed
 	
 	protected boolean NEW_RATING_ESTIMATOR=true;
 	protected CostSeparation cs;
@@ -63,6 +63,7 @@ public class GreedyScheduler extends Scheduler{
 	 */
 	public Scheduler newRating(boolean NEW_RATING){
 		NEW_RATING_ESTIMATOR=NEW_RATING;
+		tl_offset=4;	//allow the new metric to violoate time limit constraints
 		return this;
 	}
 	
@@ -119,12 +120,12 @@ public class GreedyScheduler extends Scheduler{
 	private int scheduleFlow(int flowIndex, boolean rate) {
 		Flow flow = tg.getFlows().get(flowIndex);	
 		Set<Integer> usedSlots = new HashSet<Integer>(); 	//each flow can use only one network in each time slot
-		int chunksMaxTp = 1000;//(int)(flow.getTokensMax());///flow.getWindowMax());	//get average maximum throughput for later allocation
+		int chunksMaxTp = (int)(flow.getTokensMax());///flow.getWindowMax());	//get average maximum throughput for later allocation
 		int chunksToAllocate = flow.getTokens();
 		
 		//sort networks according to match with flow
 		Vector<Integer> networkIDs = sortNetworkIDs(flow);
-			System.out.println("Flow "+flowIndex+"; Network order: "+networkIDs);
+//			System.out.println("##################################  Flow "+flowIndex+"; Network order: "+networkIDs);
 
 
 //############## 2. Network choice according to flow matching #################
@@ -132,6 +133,7 @@ public class GreedyScheduler extends Scheduler{
 		for(int n1 =0; n1<ng.getNetworks().size() && chunksToAllocate>0; n1++){
 			int n=networkIDs.get(n1);
 			//Network net = ng_tmp.getNetworks().get(n);
+//			System.out.println("########### Flow "+flowIndex +"   Network "+n);
 
 			for(int t=Math.max(0, getStartTime(flow)-tl_offset); 
 					t<Math.min(ng.getTimeslots(), getDeadline(flow)+tl_offset) && chunksToAllocate>0;
@@ -143,14 +145,25 @@ public class GreedyScheduler extends Scheduler{
 					if(!usedSlots.contains(t)){
 //					System.out.println("remaining chunks "+chunksToAllocate);
 						int allocated=0;
-						System.out.println("chunks maxTP: "+chunksMaxTp+"; chunksToAllocate: "+chunksToAllocate);
+//						System.out.println("chunks maxTP: "+chunksMaxTp+"; chunksToAllocate: "+chunksToAllocate);
+						int chunks=chunksMaxTp;
+						if(NEW_RATING_ESTIMATOR){
+							int rating = 	calcVio(flowIndex, n)+	//stateless reward + network match
+//											cs.getStatefulReward(f, t)+
+											cs.getTimeMatch(flowIndex, t)/getAvMinTp(tg.getFlows().get(flowIndex));	
+							if(rating>schedule_decision_limit){
+								chunks=flow.getTokensMin();
+							}
+						}
 //						if(chunksToAllocate<chunksMaxTp){
-							allocated=allocate(flowIndex, t, n, Math.min(chunksToAllocate, chunksMaxTp)); //do not allocate more chunks than required and flow can provide
+							allocated=allocate(flowIndex, t, n, Math.min(chunksToAllocate, chunks)); //do not allocate more chunks than required and flow can provide
 //						}else{
 //							allocated=allocate(flowIndex, t, n, chunksMaxTp); //do not allocate more than flow can provide 
 //						}	
-						System.out.println("remaining tokens "+chunksToAllocate+"; allocated: "+allocated);
+//						System.out.println("remaining tokens "+chunksToAllocate+"; allocated: "+allocated);
 						chunksToAllocate-=allocated;
+						
+						//update internal state of allocation
 						if(allocated>0){
 							if(NEW_RATING_ESTIMATOR){
 								cs.updateStatefulReward(flowIndex, t, allocated);
@@ -184,14 +197,14 @@ public class GreedyScheduler extends Scheduler{
 		if(NEW_RATING_ESTIMATOR){
 			int rating = 	calcVio(f, n)+	//stateless reward + network match
 							cs.getStatefulReward(f, t)+
-							cs.getTimeMatch(f, t)/getAvMinTp(tg.getFlows().get(f));	
+							cs.getTimeMatch(f, t)/getAvMinTp(tg.getFlows().get(f));		//time limit violation is only counted for used slot. not for token amount
 			
 			if(rating!=temp){
-				System.out.println("Rating change f,t,n "+f+","+t+","+n+": "+rating +
-							"; time match: "+(cs.getTimeMatch(f, t)/getAvMinTp(tg.getFlows().get(f)))+
-							"; network match: "+cs.getNetworkMatch(f, n) +
-							"; stateless reward: "+cs.getStatelessReward(f)+ 
-							"; stateful reward: "+cs.getStatefulReward(f, t));
+//				System.out.println("Rating change f,t,n "+f+","+t+","+n+": "+rating +
+//							"; time match: "+(cs.getTimeMatch(f, t)/getAvMinTp(tg.getFlows().get(f)))+
+//							"; network match: "+cs.getNetworkMatch(f, n) +
+//							"; stateless reward: "+cs.getStatelessReward(f)+ 
+//							"; stateful reward: "+cs.getStatefulReward(f, t));
 				temp=rating;
 			}
 			

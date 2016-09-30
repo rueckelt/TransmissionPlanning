@@ -173,14 +173,14 @@ public abstract class Scheduler {
 				}
 				//check overuse of resources (1)
 				if(network_use>networks.get(n).getCapacity().get(t)){
-					System.err.println("Net use error: "+network_use+ " > "+networks.get(n).getCapacity().get(t)+", network "+n+" time "+t);
+					System.err.println("Scheduler::constraintCheck - Net use error: "+network_use+ " > "+networks.get(n).getCapacity().get(t)+", network "+n+" time "+t);
 					return false;	//violation if used capacity of network in this time slot is larger than available capacity in this time slot
 				}
 			}
 			//check: Do not exceed available number of Link Interfaces (2)
 			for (int i = 0; i < network_used_by_type.length; i++) {
 				if(network_used_by_type[i]>ng.getNofInterfacesByType()[i]){ //check if sum is larger than available interfaces
-					System.err.println("Parallel link interface error : "+ network_used_by_type[i] +" > "+ng.getNofInterfacesByType()[i]);
+					System.err.println("Scheduler::constraintCheck - Parallel link interface error : "+ network_used_by_type[i] +" > "+ng.getNofInterfacesByType()[i]);
 					System.out.println(Arrays.toString(ng.getNofInterfacesByType()));
 					return false;
 				}
@@ -194,7 +194,7 @@ public abstract class Scheduler {
 						if(flow_is_scheduled==false){
 							flow_is_scheduled=true;	//set true if flow is scheduled in this time slot
 						}else{
-							System.err.println("Parallel channel use for same flow: "+f +" in time slot " + t);
+							System.err.println("Scheduler::constraintCheck - Parallel channel use for same flow: "+f +" in time slot " + t);
 							return false;	//violation if flow scheduled to a second network
 						}
 					}
@@ -214,7 +214,7 @@ public abstract class Scheduler {
 					}
 				}
 				if(chunkSum>chunksMax){
-					System.err.println("Upper throughput limit exceeded for flow: "+f +" in time window " + t+" to " + t+winSize +" by "+ (chunkSum-chunksMax));
+					System.err.println("Scheduler::constraintCheck - Upper throughput limit exceeded for flow: "+f +" in time window " + t+" to " + t+winSize +" by "+ (chunkSum-chunksMax));
 					return false;	//violation of upper tp limit
 				}
 			}
@@ -257,13 +257,14 @@ public abstract class Scheduler {
 	protected int allocate(int flow, int time, int network, int tokens){
 		if(!boundsValid(flow, time, network))return 0;
 		if(!interfaceLimit.isUsable(network, time))return 0;
+//		System.out.println("interface_limit_ok");
 //		System.out.println("Scheduler::allocate. validity checks passed");
 		//calculate remaining capacity of network in this slot
 		int remaining_net_cap=getRemainingNetCap(network, time);
 		int s[][][]=schedule_f_t_n_temp;
 		int scheduled = Math.min(tokens, remaining_net_cap);
-		System.out.println("Scheduler::allocate. f,t,n "+flow+","+time+","+network+" tokens: "+tokens+
-				"; remaining cap = "+remaining_net_cap+"; scheduled = "+scheduled);
+//		System.out.println("Scheduler::allocate. f,t,n "+flow+","+time+","+network+" tokens: "+tokens+
+//				"; remaining cap = "+remaining_net_cap+"; scheduled = "+scheduled);
 		//schedule as much as possible
 //		if(tokens>remaining_net_cap){
 //			s[flow][time][network]+=remaining_net_cap;
@@ -271,16 +272,19 @@ public abstract class Scheduler {
 //		}else{
 //			s[flow][time][network]+=tokens;
 //		}
-		s[flow][time][network]+=scheduled;
-		//any constraint violated? use if ok, else revert
-		if(verificationOfConstraints(s)){
-			schedule_f_t_n_temp=s;
-			interfaceLimit.useNetwork(network, time);
-			return scheduled;
-		}else{
-			System.out.println("Scheduler::allocate. constraint check NOT passed");
-			return 0;
+		if(scheduled>0){
+			s[flow][time][network]+=scheduled;
+			//any constraint violated? use if ok, else revert
+			if(verificationOfConstraints(s)){
+				schedule_f_t_n_temp=s;
+				interfaceLimit.useNetwork(network, time);
+				return scheduled;
+			}else{
+				System.err.println("Scheduler::allocate. constraint check NOT passed");
+				return 0;
+			}
 		}
+		return 0;
 		
 		//calculate remaining capacity of network in this slot
 //		int remaining_net_cap=getRemainingNetCap(network, time);
@@ -301,11 +305,13 @@ public abstract class Scheduler {
 	 */
 	protected int getRemainingNetCap(int network,int time){
 		if(!boundsValid(0,time,network))return 0;
-		
-		int remaining_net_cap =ng.getNetworks().get(network).getCapacity().get(time);;		
+		int remaining_net_cap =ng.getNetworks().get(network).getCapacity().get(time);
+		if(remaining_net_cap<=0)return 0;
+		//System.out.println("-------------remaining cap bounds are valid;; net / time "+network+" / "+time+"  cap ="+remaining_net_cap);
 		for(int f = 0; f<tg.getFlows().size();f++){
 			remaining_net_cap-=schedule_f_t_n_temp[f][time][network];
 		}
+//		System.out.println("-------------remaining cap bounds are valid;; net cap ="+remaining_net_cap);
 		return remaining_net_cap;
 	}
 	

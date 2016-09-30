@@ -18,14 +18,15 @@ public class main {
 	
 	public static void main(String[] args) {
 		boolean decomp = false;
+		//logfile is logpath/f_t_n/rep..
 //		int f=2;
 //		int t=1;
 //		int n=2;
 //		int rep=3;
-		int f=2;
-		int t=2;
-		int n=2;//5;
-		int rep=1;
+		int f=4;
+		int t=4;
+		int n=3;//5;
+		int rep=30;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
 
@@ -44,24 +45,24 @@ public class main {
 //			eval.visualize();
 //			eval.overwrite();
 //			eval.evaluateAll();
-//			eval.evaluateTimeVariation();
+			eval.evaluateTimeVariation();
 //			eval.evaluateNetworkVariation();
 //			eval.evaluateTop();
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
-			eval.parallel(1);
-//			eval.start();
+			eval.parallel(4);
+			eval.start();
 //		}
 		
 		//testing uncertainty models
-		int timeslots=80;
-	
-		FlowGenerator fg= new FlowGenerator(timeslots, 8);
-		fg.addUncertainty((float)0.2, (float)0.3, timeslots);	//probAddCancel, probContinue, timesteps
-	
-		NetworkGenerator ng = new NetworkGenerator(4,80);
-		ng.addPositionUncertainty((float) 0.3,(float)0.1, false);
-		ng.addNetworkUncertainty((float)0.3, 5);		//param1: change characteristics (tp, lcy, jit) --> [0..1]; param 2: change range
+//		int timeslots=80;
+//	
+//		FlowGenerator fg= new FlowGenerator(timeslots, 8);
+//		fg.addUncertainty((float)0.2, (float)0.3, timeslots);	//probAddCancel, probContinue, timesteps
+//	
+//		NetworkGenerator ng = new NetworkGenerator(4,80);
+//		ng.addPositionUncertainty((float) 0.3,(float)0.1, false);
+//		ng.addNetworkUncertainty((float)0.3, 5);		//param1: change characteristics (tp, lcy, jit) --> [0..1]; param 2: change range
 		
 //		for(Network net: ng.getNetworks()){
 //			System.out.println(net.toString());
