@@ -98,6 +98,110 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param strength_charactieristics - modifies throughput (capacity), latency, jitter. [0..1]
+	 * @param strength_range - modifies range of wifi networks. 
+	 */
+	public void addNetworkUncertainty(float strength_charactieristics, float strength_range){
+		for(Network net: networks){
+			net.addNetworkUncertainty(strength_charactieristics, strength_range);
+		}
+	}
+	
+	/**
+	 * Vehicle driving model. With certain probability, the car drives faster/slower than expected.
+	 * For the model, this means that network slots are present longer/shorter.
+	 * Therefore we shrink or extend slots
+	 * @param strength - influences the distribution of the error. should be between 0 [no error] and 1 [huge error]
+	 * @param offset - gives an offset to the mean of the distribution. Car drives faster/slower in average. Use 0 for NO offset; range [0..1]
+	 */
+	public void addPositionUncertainty(float strength, float offset, boolean motorwayModel){
+		Vector<Integer> slotChange = calculateSlotChange(strength, offset, motorwayModel);		
+//		System.out.println("\nslotChange= "+slotChange.toString());
+		for(Network net: networks){
+			net.addPositionUncertainty(slotChange);
+		}
+	}
+	
+	/**
+	 * Vehicle driving model - faster or slower (offset) and random behavior which averages out (strength); 
+	 * as well as distributions for motorway and urban
+	 * 
+	 * @param strength		scales the sigma for the distribution
+	 * @param offset		[0..1] select 1 for no offset
+	 * @param motorwayModel	set true for motorway, false for urban distribution model
+	 * 
+	 * motorway model covers normal distribution of speed deviation. Target speed is held for 1-15 time slots, low alpha for low pass filter of speed
+	 * urban model has tighter distribution. Target speed is held for 1-10 time slots. High alpha for low pass filter leads to fast reaction and high dynamics
+	 * in addition, target speed is 0 with probability of 10%
+	 * 
+	 */
+	private Vector<Integer> calculateSlotChange(float strength, float offset, boolean motorwayModel){
+		// make offset a random parameter in range +/-offset
+		float rndFloat = (float)RndInt.getGauss(-(int)(1000*offset), (int)(1000*offset))/1000;
+		float rndOffset = 1+(float)rndFloat;
+//		System.out.println("rndfloat= "+rndFloat+"  rndOffset= "+rndOffset +"   neg_int "+(-(int)(1000*offset)));
+		
+		//generate speed characteristic over time slots.
+		Vector<Integer> slotChange = new Vector<Integer>();
+		//motorway: we assume gaussian distribution for deviation from expected speed on trip segment
+
+		int index = 0;
+		
+		float alpha=0;
+		float sum = 1;
+
+		int keep=0;				//counter. keep target speed for n time steps
+		float target_speed=1;	//relative value. 1 means equal to expected speed. <1 means slower by this factor
+		float speed=1;
+		for(int t = 0; t<getTimeslots(); t++ ){
+			//set new target speed randomly with scenario-dependent distribution and random duration
+			if(keep==0){
+				if(motorwayModel){
+//					target_speed= (float)RndInt.getGauss(0, 1000, (int)(500*offset), (int)(250*strength))/500;		//fixed offset
+					target_speed= (float)RndInt.getGauss(0, 1000, (int)(500*rndOffset), (int)(250*strength))/500;		//random offset
+					alpha=(float) 0.2;	//smoother acceleration on motorway
+					keep = RndInt.get(1, 15); 
+					//System.out.println("\nNew target speed at slot "+t+" is "+target_speed);
+				}else{
+					//TODO: how to create random numbers with own distribution??
+//					target_speed= (float)RndInt.getGauss(0, 1000, (int)(750*offset), (int)(250*strength))/675;	//tighter distribution around target speed
+					target_speed= (float)RndInt.getGauss(0, 1000, (int)(750*rndOffset), (int)(250*strength))/675;	//tighter distribution around target speed
+					//in addition, stops are more common in city
+					if(RndInt.get(0,9)==1){
+						target_speed=0;
+					}
+					alpha=(float) 0.35;	//lots of acceleration in city
+					keep = RndInt.get(1, 10);	//faster target speed changes in city 
+					//System.out.println("\nNew target speed at slot "+t+" is "+target_speed);
+				}
+			}
+			//simple low pass to approach target speed smoothly (digressive behavior)
+			speed = (1-alpha)*speed + alpha*target_speed;
+			keep--;
+			sum=sum+speed-1;	//adds a value if car is faster; substracts if car is slower.
+
+//			System.out.print(speed+"("+sum+"), ");
+			//correct: car too slow. Take same time slot again.
+			if(sum<0.5){
+				sum=sum+1;
+			}else	
+			//correct: car too fast. Skip one time slot.
+			if(sum>1.5){
+				index=index+2;
+				sum=sum-1;
+			}
+			else{	//as expected. Take next time slot
+				index++;
+			}
+			slotChange.add(index);
+		}
+			
+		
+		return slotChange;
+	}
+	
 	
 	public int getNofInterfaceTypes(){
 		int interfaceTypes=0;	
@@ -215,46 +319,6 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		}
 	}
 
-//It did not work to insert data directly into the model. Therefore use method via file write and read above
-
-//	public void setNetworkData(IloOplModel model, IloOplFactory fac) {
-//		//init arrays
-//		int n=networks.size();	//networks
-//		int time=getNofTimeSlots();	//time slots
-//		
-//		int[][] availBW = new int[n][time];
-//		int[] type = new int[n];
-//		int[] cost = new int[n];
-//		int[] latency = new int[n];
-//		int[] jitter = new int[n];
-//		
-//		//fill arrays
-//		int n0 =0;
-//		for(Network net: networks){
-//			for(int t=0; t<time; t++){
-//				if(t<net.capacity.size()){
-//					availBW[n0][t]=net.capacity.get(t);
-//				}else{
-//					availBW[n0][t]=0;
-//				}
-//			}
-//			type[n0]=net.getType();
-//			cost[n0]=net.getCost();
-//			latency[n0]=net.getLatency();
-//			jitter[n0]=net.getJitter();
-//			
-//			n0++;
-//		}
-//		
-//		//set data
-//		ModelAccess.set(fac, model, "availBW", availBW);
-//		ModelAccess.set(fac, model, "channel_cost", cost);
-//		ModelAccess.set(fac, model, "channel_lcy", latency);
-//		ModelAccess.set(fac, model, "channel_jit", jitter);
-//		ModelAccess.set(fac, model, "ChannelType", type);
-//		ModelAccess.set(fac, model, "nInterfaceTypes", getNofInterfaceTypes());
-//		
-//	}
 	
 	public void setNofInterfacesOfType(int[] interfaces){
 		interfacesOftype=interfaces;

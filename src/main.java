@@ -1,6 +1,15 @@
 import java.io.File;
+import java.util.Vector;
 
+import schedulers.GreedyScheduler;
+import schedulers.Scheduler;
+import schedulingIOModel.FlowGenerator;
+import schedulingIOModel.Network;
+import schedulingIOModel.NetworkGenerator;
+import visualization.Plot;
+import visualization.VisualizationPack;
 import ToolSet.EvaluationScenarioCreator;
+import ToolSet.RndInt;
 
 
 
@@ -21,6 +30,7 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"test";
 
 		String logpath= "my_logs"+File.separator+"tester";
+
 		
 //		for(int rep1 = 0; rep1<=rep; rep1++){
 		
@@ -37,13 +47,34 @@ public class main {
 //			eval.evaluateTimeVariation();
 //			eval.evaluateNetworkVariation();
 //			eval.evaluateTop();
-			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
+//			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
 			eval.parallel(1);
-			eval.start();
+//			eval.start();
 //		}
 		
-
+		//testing uncertainty models
+		int timeslots=80;
+	
+		FlowGenerator fg= new FlowGenerator(timeslots, 8);
+		fg.addUncertainty((float)0.2, (float)0.3, timeslots);	//probAddCancel, probContinue, timesteps
+	
+		NetworkGenerator ng = new NetworkGenerator(4,80);
+		ng.addPositionUncertainty((float) 0.3,(float)0.1, false);
+		ng.addNetworkUncertainty((float)0.3, 5);		//param1: change characteristics (tp, lcy, jit) --> [0..1]; param 2: change range
+		
+//		for(Network net: ng.getNetworks()){
+//			System.out.println(net.toString());
+//
+//			System.out.println("\nnet lcy / jit="+net.getLatency()+" / "+net.getJitter());
+//		}
+//		
+//		
+//		for(Network net: ng.getNetworks()){
+//			System.out.println(net.toString());
+//			System.out.println("\nnet lcy / jit="+net.getLatency()+" / "+net.getJitter());
+//		}
+			
 		System.out.println("done");
 	}
 }

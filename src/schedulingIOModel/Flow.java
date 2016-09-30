@@ -17,7 +17,7 @@ public class Flow implements Serializable, Cloneable{
 	 * 
 	 */
 	private static final long serialVersionUID = 5197541708853992326L;
-	private int chunks=0;
+	private int tokens=0;
 	private int deadline=100000;
 	private int startTime=0;
 	
@@ -49,9 +49,13 @@ public class Flow implements Serializable, Cloneable{
     
     private int index=-1;	//not set
 
-    //set ID externally
+    //set ID externally; use -1 to create new id
     public void setId(int id) {
-    	this.id = id;
+    	if(id<0){
+    		id=NEXT_ID.getAndIncrement();
+    	}else{
+    		this.id = id;
+    	}	
     }
     
     public void setIndex(int i){
@@ -67,12 +71,12 @@ public class Flow implements Serializable, Cloneable{
 
 
 	public int getTokens() {
-		return chunks;
+		return tokens;
 	}
 
 
-	public void setTokens(int chunks) {
-		this.chunks = chunks;
+	public void setTokens(int tokens) {
+		this.tokens = tokens;
 	}
 
 
@@ -302,9 +306,10 @@ public class Flow implements Serializable, Cloneable{
 		return stream;
 	}
 	
+	//a burst of interaction
 	public static Flow Interactive(int startTime, int tokens){
 		Flow userRequest = new Flow();
-		int deadline = startTime + RndInt.get(2,9);//tokens/(20+ RndInt.get(-5, 5));	//early deadline, depends on request size
+		int deadline = startTime + RndInt.getGauss(2,25); //interaction "bursts" covering 2-25 time slots
 		
 		userRequest.setStartTime(startTime);
 		userRequest.setDeadline(deadline);
@@ -314,6 +319,15 @@ public class Flow implements Serializable, Cloneable{
 		userRequest.setImpUser(7+ RndInt.get(-1, 3));
 		userRequest.setImpDeadline(8+ RndInt.get(-1, 1));
 		userRequest.setImpStartTime(8+ RndInt.get(-1, 1));
+		
+		//we model interactive traffic as burst of interactions that
+		//must be transmitted quite steadily
+		int win_size=3;
+		int chunks_per_win=Math.min(1, win_size*tokens/(deadline-startTime));
+		userRequest.setWindowMin(win_size);
+		userRequest.setTokensMin(chunks_per_win);	
+		userRequest.setImpThroughputMin(3+ RndInt.get(-1, 1));		//soft minimum throughput limit
+		
 		userRequest.setFlowName("Interactive");
 		return userRequest;
 	}
@@ -336,7 +350,7 @@ public class Flow implements Serializable, Cloneable{
 	public Flow clone(){  
 		try {
 			Flow f = new Flow();
-			f.chunks=chunks;
+			f.tokens=tokens;
 			f.tokensMax=tokensMax;
 			f.tokensMin=tokensMin;
 			f.deadline=deadline;
@@ -370,6 +384,15 @@ public class Flow implements Serializable, Cloneable{
 		this.flowName = flowName;
 	} 
 
+	public String toString(){
+		String s = flowName;
+		
+		s+="\tst "+startTime+"\tdl "+deadline+"\ttokens "+tokens+"\twin_min "+windowMin+"\ttok_min "+tokensMin;
+		
+		return s;
+		
+		
+	}
 
 		
 }

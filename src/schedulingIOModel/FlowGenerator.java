@@ -106,31 +106,40 @@ public class FlowGenerator implements Serializable{
 	}
 	
 	private void add4(int duration){
-		int overall_tokens = duration*(15+RndInt.get(0,30));	//random amount of overall traffic, but values 45 and 30 have no deeper reason
-//		System.out.println("tokens:"+overall_tokens);
-		int tokens_bufferable 	= (int) (overall_tokens*0.25);
-		int tokens_background 	= (int) (overall_tokens*0.55);
-		int tokens_live 		= (int) (overall_tokens*0.15);
-		int tokens_interactive 	= (int) (overall_tokens*0.5);
-		
+		addBufferable(duration);
+		addBackground(duration);
+		addLive(duration);
+		addInteractive(duration);
+	}
+	
+	private int getOverallTokens(int duration){
+		return duration*(15+RndInt.get(0,30)); //random amount of overall traffic, but values 45 and 30 have no deeper reason
+	}
+	private void addBufferable(int duration){
+		int tokens_bufferable 	= (int) (getOverallTokens(duration)*0.25);
 		//bufferable
 		int buf_length=duration/RndInt.get(2, 3);	//scale duration from half length to 20% length
 		int buf_starttime=RndInt.get(1, duration-buf_length)-1;		//random start time in a way that it can finish before end
 		flows.add(Flow.BufferableStream(buf_starttime, buf_length, tokens_bufferable));
-		
+	}
+	private void addBackground(int duration){
+		int tokens_background 	= (int) (getOverallTokens(duration)*0.55);
 		//background 
 		int back_deadline=RndInt.get(duration/2, duration-1);	//deadline not in first half
 		flows.add(Flow.Background(tokens_background, back_deadline));
-		
+	}
+	private void addLive(int duration){
+		int tokens_live 		= (int) (getOverallTokens(duration)*0.15);
 		//liveStream
 		int live_start_time= RndInt.get(0,duration/2);
 		int deadline= RndInt.get(live_start_time*3/2+1, duration-1);
-		flows.add(Flow.LiveStram(live_start_time, deadline, tokens_live));
-		
-		//interactive
+		flows.add(Flow.LiveStram(live_start_time, deadline, tokens_live));	
+	}
+	private void addInteractive(int duration){		
+		int tokens_interactive 	= (int) (getOverallTokens(duration)*0.05);
+		//interactive burst
 		int interactive_start_time=RndInt.get(0, duration-10);
 		flows.add(Flow.Interactive(interactive_start_time, tokens_interactive));
-		
 	}
 	
 	
@@ -180,7 +189,114 @@ public class FlowGenerator implements Serializable{
 		}
 	}
 	
+	
+	/**
+	 * Uncertainty model: Uncertainty comes from user interaction
+	 * flows can be canceled ; flows can be added. 
+	 * a pause/continue of a flow is modeled as flow canceled and added later with "same" characteristics
+	 */
+	public void addUncertainty(float probAddCancel, float probContinue, int timesteps){
+		
+		
+		addFlows(probAddCancel, timesteps);
+		//avoid concurrent modification
+//		System.out.println("######## Before cancel");
+//		for(Flow f: flows){
+//			System.out.println(f);
+//		}
+		
+		float probCancel = 1/(1+probAddCancel);		//should result in equal amount of traffic
+		cancelFlows(probCancel, probContinue, timesteps);
 
+	}
+
+	//cancel flows with certain probability 
+	private void cancelFlows(float probCancel, float probContinue, int timesteps) {
+		//do not iterate over list that is modified; add later
+		Vector<Flow> toContinue = new Vector<Flow>();
+		Vector<Flow> toRemove = new Vector<Flow>();
+		for(Flow flow : flows){
+			//cancel flow during transmission with certain probability
+			float rndCancel = (float)RndInt.get(0, 1000)/1000;
+			if(rndCancel<probCancel){
+//				System.out.println("Cancel if "+rndCancel+"<"+probCancel);
+				
+				//cancel flow completely with certain probability (20%)
+				if(RndInt.get(0,9)<2){
+					toRemove.add(flow);
+				}else{
+//					System.out.println("##canceled "+flow+";; ");
+					//determine slot for cancellation during running transmission
+					int cancelSlot = RndInt.get(flow.getStartTime()+1, flow.getDeadline());//(int)(RndInt.getGauss(flow.getStartTime()+1, flow.getDeadline()));
+					int cutLength = flow.getDeadline()-cancelSlot;
+	
+//					System.out.print(" Continue..");
+					//set new flow properties
+					int newAmountOfTokens=flow.getTokens()*(cancelSlot-flow.getStartTime())/(flow.getDeadline()-flow.getStartTime());
+					int remainingTokens= flow.getTokens()-newAmountOfTokens;	
+					
+					flow.setTokens(newAmountOfTokens);
+					flow.setDeadline(cancelSlot);
+	
+//					System.out.print(" Continue..");
+					
+					//continue flow with certain probability
+					float rndCont = ((float)RndInt.get(0, 1000)/1000);
+//					System.out.println("Continue if "+rndCont+"<"+probContinue);
+					if(rndCont<probContinue){
+						//flow will be continued.
+						int startTime = (int)RndInt.get(cancelSlot+2, timesteps-1);
+						int deadline = Math.max(startTime+cutLength-1, timesteps-1);
+	
+						Flow contFlow = flow.clone();
+						contFlow.setId(-1);	//generate new id for cloned flow
+						contFlow.setStartTime(startTime);
+						contFlow.setDeadline(deadline);
+						contFlow.setTokens(remainingTokens);
+						toContinue.add(contFlow);
+					}
+				}
+			}
+		}
+
+		flows.removeAll(toRemove);
+//		System.out.println("######## after cancel of \n"+toRemove);
+//		for(Flow f: flows){
+//			System.out.println(f);
+//		}
+		flows.addAll(toContinue);
+//		System.out.println("######## after continue \n"+toContinue);
+//		for(Flow f: flows){
+//			System.out.println(f);
+//		}
+//		System.out.println("finished cancelling");
+	}
+	
+	private void addFlows(float probAdd, int duration) {
+
+		int tries=flows.size();
+		for(int i=0; i<tries; i++){
+			float rndAdd = (float)RndInt.get(0, 1000)/1000;
+//			System.out.println("Add if "+rndAdd+"<"+probAdd);
+			if(rndAdd<probAdd){
+				
+				int category = RndInt.getGauss(1, 4, 3, 3);		//gauss between 1 and 4. Center is at 3, std-deviation is 1
+//				System.out.println("add category "+ category);
+				//add interactive and life stream with higher probability
+				if(category==1){
+					addLive(duration);
+				}else if(category==2){
+					addBufferable(duration);
+				}else if(category==3){
+					addInteractive(duration);
+				}else if(category==4){
+					addBackground(duration);
+				}
+			}
+		}
+//		System.out.println("finished adding flows");
+	}
+	
 	public void writeOutput(String source, String dest){
 				
 		//read source
