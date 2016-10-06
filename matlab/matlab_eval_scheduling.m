@@ -3,18 +3,18 @@
 %stores results.mat file in in_folder for extracted log matrices
 %delete this file to read logs from raw files
 
-in_folder = '..\my_logs\eval_4_4_3_c15';% 'logs_time';
+in_folder = '..\my_logs\jakob';% 'logs_time';
 %in_folder = '..\my_logs\eval_4_4_3_c10';% 'logs_time';
-out_folder = [in_folder filesep 'tikz_t_big'];
+out_folder = [in_folder filesep 'test_plotting'];
 force_read_data = 0;
-max_only=0;
+max_only=1;
 
 %get paramters from file
 parameter_file=[in_folder filesep 'parameters_log.m'];
 if exist(parameter_file, 'file') ==2    %compare to 2 == is a file?
    run(parameter_file);
    max_flows=max_flows+1;
-   max_nets=max_nets+2;
+   max_nets=max_nets+1;
    max_time=max_time+1;
 end
 state = 'read param done'
@@ -48,9 +48,10 @@ state='gathered data'
 %save('rel_data.mat', 'rel_data');
 
 
-plot_data3(out_folder, raw_values, avail, valuenames, schedulers);  %vary time
+%plot_data3(out_folder, raw_values, avail, valuenames, schedulers);  %vary time
 %plot_data4(out_folder, raw_values, avail, valuenames, schedulers);  %vary networks
-% 
+plot_data5(out_folder, raw_values, avail, valuenames, schedulers);  %vary networks
+ 
 state='done'
 
 

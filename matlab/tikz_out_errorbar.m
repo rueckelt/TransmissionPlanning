@@ -1,4 +1,4 @@
-function tikz_out_errorbar(filename, data, my_ylabel, legendlabels, style_skip, logscale, zeroline, time0_net1)
+function tikz_out_errorbar(filename, data, my_ylabel, legendlabels, style_skip, logscale, zeroline, time0_net1_single2)
 %filename for export
 %data is matrix with dimensions (scheduler, time, repetitions)
 %ylabel is string
@@ -6,26 +6,45 @@ function tikz_out_errorbar(filename, data, my_ylabel, legendlabels, style_skip, 
 %CREATEFIGURE(YMATRIX1, EMATRIX1)
 %  YMATRIX1:  errorbar y matrix
 %  EMATRIX1:  errorbar e matrix
+data
 
-YMatrix1=mean(data,3)';
-EMatrix1=std(data,1,3)';
 
 y_lim_margin=0.1;
 %neg=YMatrix1-EMatrix1
-[dim1, dim2]=size(YMatrix1);
 % Create figure
 figure1 = figure('visible', 'on');
 linestyles = {'-','--','-.',':'};
 linecolors = {'black','magenta','blue','red','green','cyan','yellow'};
 %colors = [0,0,0; 0,0,1; 0,1,0; 1,0,0; 0,1,1; 1,0,1; 1,1,0]; %same colors in rgb
 % Create axes
-if time0_net1==0
+if time0_net1_single2==0
+    
+    YMatrix1=mean(data,3)';
+    EMatrix1=std(data,1,3)';
+    [dim1, dim2]=size(YMatrix1);
+    
     axes1 = axes('Parent',figure1,'YMinorTick','on',...%'YScale','log',...
         'XTickLabel',{'','25','','50','','100','','200','','400',''});
-else
+elseif time0_net1_single2==1
+    YMatrix1=mean(data,3)';
+    EMatrix1=std(data,1,3)';
+    [dim1, dim2]=size(YMatrix1);
     axes1 = axes('Parent',figure1,'YMinorTick','on',...%'YScale','log',...
         'XTickLabel',{'','1','','2','','4','','8','','16','', '32', ''});
+else
+    YMatrix1=mean(data,2)';
+    EMatrix1=std(data,1,2)';
+    [dim1, dim2]=size(YMatrix1)
+    lab= {'','','','','','','','','','','', '', ''};
+    for i=1:dim2
+        lab{2*i}=legendlabels{i};
+    end
     
+    axes1 = axes('Parent',figure1,'YMinorTick','off',...%'YScale','log',...
+        'XTickLabel',lab);
+    legendlabels{1}=my_ylabel;
+    
+    dim2=1; %plot single line one and put dim2 on x axis instead
 end
 hold(axes1,'on');
 
@@ -48,17 +67,19 @@ if zeroline>0
 end
 
 % Create xlabel
-if time0_net1==0
+if time0_net1_single2==0
     xlabel('# time slots');
-else
+elseif time0_net1_single2==1
     xlabel('# networks');
+else
+    xlabel('schedulers');
 end
 
 % Create ylabel
 ylabel(my_ylabel);
 
 %set y-limits of plot to 10% margin
-y_lim=[ min(min(YMatrix1-EMatrix1))-0.1*abs(min(min(YMatrix1-EMatrix1))),...
+y_lim=[ min(min(YMatrix1-EMatrix1))-y_lim_margin*abs(min(min(YMatrix1-EMatrix1))),...
         max(max(YMatrix1+EMatrix1))+y_lim_margin*abs(max(max(YMatrix1+EMatrix1)))];
 if ~isnan(y_lim)
     set(gca,'ylim',y_lim);
