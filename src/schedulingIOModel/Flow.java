@@ -17,16 +17,16 @@ public class Flow implements Serializable, Cloneable{
 	 * 
 	 */
 	private static final long serialVersionUID = 5197541708853992326L;
-	private int tokens=0;
+	private int chunks=0;
 	private int deadline=100000;
 	private int startTime=0;
 	
 	//at least n chunks in t time slots ### lower throughput limit
 	private int windowMin=100000;
-	private int tokensMin=1;
+	private int chunksMin=1;
 	//at most n chunks in t time slots (data is not prduced faster/ slow transmitter) ## upper throughput limit
 	private int windowMax=1;
-	private int tokensMax=100000;
+	private int chunksMax=100000;
 	
 	private int reqJitter=10;		//low value if low jitter required
 	private int reqLatency=10;		//low value if low latency required
@@ -71,12 +71,12 @@ public class Flow implements Serializable, Cloneable{
 
 
 	public int getTokens() {
-		return tokens;
+		return chunks;
 	}
 
 
 	public void setTokens(int tokens) {
-		this.tokens = tokens;
+		this.chunks = tokens;
 	}
 
 
@@ -111,12 +111,12 @@ public class Flow implements Serializable, Cloneable{
 
 
 	public int getTokensMin() {
-		return tokensMin;
+		return chunksMin;
 	}
 
 
 	public void setTokensMin(int tokensMin) {
-		this.tokensMin = tokensMin;
+		this.chunksMin = tokensMin;
 	}
 
 
@@ -131,12 +131,12 @@ public class Flow implements Serializable, Cloneable{
 
 
 	public int getTokensMax() {
-		return tokensMax;
+		return chunksMax;
 	}
 
 
 	public void setTokensMax(int tokensMax) {
-		this.tokensMax = tokensMax;
+		this.chunksMax = tokensMax;
 	}
 
 
@@ -350,9 +350,9 @@ public class Flow implements Serializable, Cloneable{
 	public Flow clone(){  
 		try {
 			Flow f = new Flow();
-			f.tokens=tokens;
-			f.tokensMax=tokensMax;
-			f.tokensMin=tokensMin;
+			f.chunks=chunks;
+			f.chunksMax=chunksMax;
+			f.chunksMin=chunksMin;
 			f.deadline=deadline;
 			f.id=id;
 			f.impDeadline=impDeadline;
@@ -387,7 +387,7 @@ public class Flow implements Serializable, Cloneable{
 	public String toString(){
 		String s = flowName;
 		
-		s+="\tst "+startTime+"\tdl "+deadline+"\ttokens "+tokens+"\twin_min "+windowMin+"\ttok_min "+tokensMin;
+		s+="\tst "+startTime+"\tdl "+deadline+"\ttokens "+chunks+"\twin_min "+windowMin+"\ttok_min "+chunksMin;
 		
 		return s;
 		
