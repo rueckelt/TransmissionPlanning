@@ -192,41 +192,8 @@ public class FlowGenerator implements Serializable{
 		}
 	}
 	
-	private float getFlowUncertaintyError(Vector<Flow> predicted){
-		//1. Collect all Flows and . Required if flow was canceled or split.
-		HashMap<Integer, Integer> act_nof_tokens = new HashMap<Integer,Integer>();
-		HashMap<Integer, Integer> act_deadline = new HashMap<Integer, Integer>();
-		
-		for(Flow f: flows){
-			//combine tokens of continued flows
-			if(act_nof_tokens.containsKey(f.getId())){
-				//is continued flow, second part.
-				act_nof_tokens.put(f.getId(), act_nof_tokens.get(f.getId())+f.getTokens());		//add tokens
-			}else{
-				act_nof_tokens.put(f.getId(), f.getTokens());	
-			}
-			//combine deadline of continued flows.
-			if(act_deadline.containsKey(f.getId())){
-				//is continued flow, second part.
-				act_deadline.put(f.getId(), Math.max(act_deadline.get(f.getId()), f.getDeadline()));		//add tokens
-			}else{
-				act_deadline.put(f.getId(), f.getDeadline());	
-			}
-		}
-		
-		//we start with predicted, because each ID is only once in it.
-		for(Flow pred:predicted){
-			
-			for(Flow act : flows){
-				
-			}
-			
-		}
-		
-		
-		
-		return 0;
-	}
+	
+	
 	
 	/**
 	 * Uncertainty model: Uncertainty comes from user interaction
@@ -247,8 +214,9 @@ public class FlowGenerator implements Serializable{
 			addFlows(probAddCancel, timesteps);
 			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
 			cancelFlows(probCancel, probContinue, timesteps);
-			
-			adapt = error/getFlowUncertaintyError(backup);
+			float act_error = new UncertaintyErrorCalculation().getFlowUncertaintyError(backup, flows);
+			adapt = error/act_error;
+			System.out.println("act_error = "+act_error+", adapt = "+adapt+", probAddCancel = "+ probAddCancel);
 		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
 				adapt>(1+ALLOWED_ERROR_OFFSET));
 	}

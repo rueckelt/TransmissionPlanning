@@ -59,13 +59,14 @@ public class main {
 		//testing uncertainty models
 		int timeslots=100;
 //	
-//		FlowGenerator fg= new FlowGenerator(timeslots, 8);
+		FlowGenerator fg= new FlowGenerator(timeslots, 8);
+		fg.addUncertainty((float) 0.3, timeslots);
 //		fg.addUncertainty((float)0.2, (float)0.3, timeslots);	//probAddCancel, probContinue, timesteps
 //
-		
-		NetworkGenerator ng = new NetworkGenerator(8,timeslots);
-		
-		ng.addNetworkUncertainty((float) 0.4);
+//		
+//		NetworkGenerator ng = new NetworkGenerator(8,timeslots);
+//		
+//		ng.addNetworkUncertainty((float) 0.4);
 //		ng.addPositionUncertainty((float) 0.5);
 		
 //		ng.addPositionUncertainty((float) 0.3,(float)0.1, false);
