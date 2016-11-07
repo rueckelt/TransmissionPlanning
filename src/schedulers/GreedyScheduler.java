@@ -126,14 +126,16 @@ public class GreedyScheduler extends Scheduler{
 		//sort networks according to match with flow
 		Vector<Integer> networkIDs = sortNetworkIDs(flow);
 //			System.out.println("##################################  Flow "+flowIndex+"; Network order: "+networkIDs);
-
+		System.out.println(flow.toString());
 
 //############## 2. Network choice according to flow matching #################
 		//try to allocate in networks in descending order according to match
+
+		System.out.println("Wird ausgefuehrt; chunks: "+chunksToAllocate+" networks size "+ng.getNetworks().size());
 		for(int n1 =0; n1<ng.getNetworks().size() && chunksToAllocate>0; n1++){
 			int n=networkIDs.get(n1);
 			//Network net = ng_tmp.getNetworks().get(n);
-//			System.out.println("########### Flow "+flowIndex +"   Network "+n);
+			System.out.println("########### Flow "+flowIndex +"   Network "+n);
 
 			for(int t=Math.max(0, getStartTime(flow)-tl_offset); 
 					t<Math.min(ng.getTimeslots(), getDeadline(flow)+tl_offset) && chunksToAllocate>0;
@@ -143,7 +145,7 @@ public class GreedyScheduler extends Scheduler{
 					
 					//do not allocate more than once in same time slot
 					if(!usedSlots.contains(t)){
-//					System.out.println("remaining chunks "+chunksToAllocate);
+					System.out.println("remaining chunks "+chunksToAllocate);
 						int allocated=0;
 //						System.out.println("chunks maxTP: "+chunksMaxTp+"; chunksToAllocate: "+chunksToAllocate);
 						int chunks=chunksMaxTp;

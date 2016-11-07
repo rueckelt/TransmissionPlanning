@@ -249,12 +249,11 @@ public class Network implements Serializable, Cloneable{
 	private void addRangeUncertainty(float w_range){
 		//vary range. This is only applicable at WiFis
 				if(type==1){
-					int varyRange = (int) ((float)RndInt.getGauss(-1000, 1000)*w_range/1000.0);
+					int varyRange = (int) (((float)RndInt.getGauss(-1000, 1000))*w_range/1000.0);
 //					System.out.println("Vary range by "+varyRange);
-					
 					//find slot to insert/remove items in capacity vector
 					//TODO: this works only for the generated WiFi throughput characteristics.
-					int max =0;
+					int max = 0;
 					int index =0;
 					for(int t=0; t<capacity.size(); t++){
 						if(max<capacity.get(t)){
@@ -301,10 +300,32 @@ public class Network implements Serializable, Cloneable{
 				}
 	}
 	
+	public float smapeNetwork(Network predicted){
+		float sum_tp=0;
+		for(int t=0;t<capacity.size(); t++){
+			sum_tp+=smape(capacity.get(t), predicted.getCapacity().get(t));
+		}
+		float smape_tp = sum_tp/capacity.size();
+		float smape_lcy = smape(getLatency(), predicted.getLatency());
+		float smape_jit = smape(getJitter(), predicted.getJitter());
+	
+		
+		return (float) (0.2*smape_lcy + 0.2*smape_jit + 0.6*smape_tp);
+	}
+	
+	private float smape(int actual, int predicted){
+		if(actual==predicted) return 0;
+		float smape = ((float)2*Math.abs(predicted-actual))/(Math.abs(predicted)+Math.abs(actual));
+//		System.out.println("smape = "+smape);
+//		System.out.flush();
+		return smape;
+		
+	}
+	
 	public Network clone(){  
 		try {
 			Network n = new Network();
-			n.setCapacity((Vector<Integer>)capacity.clone());
+			n.setCapacity(deepCopy(capacity));
 			n.jitter=jitter;
 			n.cost=cost;
 			n.id=id;
@@ -317,5 +338,13 @@ public class Network implements Serializable, Cloneable{
 			return null;
 		}  
 	} 
+	
+	private Vector<Integer> deepCopy(Vector<Integer> v){
+		Vector<Integer> copy= new Vector<Integer>();
+		for(int i:v){
+			copy.add(new Integer(i));
+		}
+		return copy;
+	}
 	
 }

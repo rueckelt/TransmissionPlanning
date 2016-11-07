@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
@@ -24,6 +25,8 @@ public class FlowGenerator implements Serializable{
 	private static final long serialVersionUID = 8184271622466363691L;
 	public static final String TG_NAME = "TrafficGenerator";
 	private Vector<Flow> flows = new Vector<Flow>();
+
+	private final float ALLOWED_ERROR_OFFSET = (float) 0.05;
 	
 	public FlowGenerator(){
 		
@@ -189,25 +192,65 @@ public class FlowGenerator implements Serializable{
 		}
 	}
 	
+	private float getFlowUncertaintyError(Vector<Flow> predicted){
+		//1. Collect all Flows and . Required if flow was canceled or split.
+		HashMap<Integer, Integer> act_nof_tokens = new HashMap<Integer,Integer>();
+		HashMap<Integer, Integer> act_deadline = new HashMap<Integer, Integer>();
+		
+		for(Flow f: flows){
+			//combine tokens of continued flows
+			if(act_nof_tokens.containsKey(f.getId())){
+				//is continued flow, second part.
+				act_nof_tokens.put(f.getId(), act_nof_tokens.get(f.getId())+f.getTokens());		//add tokens
+			}else{
+				act_nof_tokens.put(f.getId(), f.getTokens());	
+			}
+			//combine deadline of continued flows.
+			if(act_deadline.containsKey(f.getId())){
+				//is continued flow, second part.
+				act_deadline.put(f.getId(), Math.max(act_deadline.get(f.getId()), f.getDeadline()));		//add tokens
+			}else{
+				act_deadline.put(f.getId(), f.getDeadline());	
+			}
+		}
+		
+		//we start with predicted, because each ID is only once in it.
+		for(Flow pred:predicted){
+			
+			for(Flow act : flows){
+				
+			}
+			
+		}
+		
+		
+		
+		return 0;
+	}
 	
 	/**
 	 * Uncertainty model: Uncertainty comes from user interaction
 	 * flows can be canceled ; flows can be added. 
 	 * a pause/continue of a flow is modeled as flow canceled and added later with "same" characteristics
 	 */
-	public void addUncertainty(float probAddCancel, float probContinue, int timesteps){
+	public void addUncertainty(float error, int timesteps){
+		Vector<Flow> backup = cloneFlows(flows);
 		
-		
-		addFlows(probAddCancel, timesteps);
-		//avoid concurrent modification
-//		System.out.println("######## Before cancel");
-//		for(Flow f: flows){
-//			System.out.println(f);
-//		}
-		
-		float probCancel = 1/(1+probAddCancel);		//should result in equal amount of traffic
-		cancelFlows(probCancel, probContinue, timesteps);
-
+		float probAddCancel=error;
+		float adapt =1;
+		do{
+			probAddCancel = (float) (probAddCancel*(0.5+0.5*adapt));
+			float probContinue = (float) (0.3*probAddCancel);
+			
+			flows = cloneFlows(backup);		//reset flows in each iteration without prior success
+			
+			addFlows(probAddCancel, timesteps);
+			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
+			cancelFlows(probCancel, probContinue, timesteps);
+			
+			adapt = error/getFlowUncertaintyError(backup);
+		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
+				adapt>(1+ALLOWED_ERROR_OFFSET));
 	}
 
 	//cancel flows with certain probability 
@@ -249,7 +292,7 @@ public class FlowGenerator implements Serializable{
 						int deadline = Math.max(startTime+cutLength-1, timesteps-1);
 	
 						Flow contFlow = flow.clone();
-						contFlow.setId(-1);	//generate new id for cloned flow
+						//contFlow.setId(-1);	//generate new id for cloned flow
 						contFlow.setStartTime(startTime);
 						contFlow.setDeadline(deadline);
 						contFlow.setTokens(remainingTokens);
@@ -415,4 +458,12 @@ public class FlowGenerator implements Serializable{
 		}
 	}
 	
+	private Vector<Flow> cloneFlows(Vector<Flow> toClone){
+		Vector<Flow> cloned_flows = new Vector<Flow>();
+		for(Flow flow:toClone){
+			cloned_flows.add(flow.clone());
+		}
+		return cloned_flows;
+	}
+
 }
