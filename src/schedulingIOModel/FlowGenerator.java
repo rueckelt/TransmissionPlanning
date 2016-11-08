@@ -206,16 +206,21 @@ public class FlowGenerator implements Serializable{
 		float probAddCancel=error;
 		float adapt =1;
 		do{
-			probAddCancel = (float) (probAddCancel*(0.5+0.5*adapt));
-			float probContinue = (float) (0.3*probAddCancel);
+			probAddCancel = (float) (probAddCancel*(0.85+0.15*adapt));
+			float probContinue = (float) (0.3);//*probAddCancel);
 			
 			flows = cloneFlows(backup);		//reset flows in each iteration without prior success
 			
 			addFlows(probAddCancel, timesteps);
 			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
-			cancelFlows(probCancel, probContinue, timesteps);
+			cancelFlows(probAddCancel, probContinue, timesteps);
+			
 			float act_error = new UncertaintyErrorCalculation().getFlowUncertaintyError(backup, flows);
-			adapt = error/act_error;
+			
+			
+			adapt = Math.min(2, error/act_error);	//upper limit for adaption step. Uncertainty may have huge random influence which lead to giant (unwanted) adaption.
+			
+			
 			System.out.println("act_error = "+act_error+", adapt = "+adapt+", probAddCancel = "+ probAddCancel);
 		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
 				adapt>(1+ALLOWED_ERROR_OFFSET));
