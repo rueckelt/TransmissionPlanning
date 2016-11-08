@@ -148,23 +148,34 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 */
 	public void addPositionUncertainty(float error){
 
-		boolean motorwayModel=RndInt.get(0, 1)>0;
+		//take motorway model for <0.2. Urban leads to higher orders whenever the car stops at least once. stops convergence.
+		//else, select randomly.
+		boolean motorwayModel=error<0.2 || RndInt.get(0, 1)>0;
+		motorwayModel=false;
+//		System.out.println("isMotorway "+motorwayModel);
 		float strength=error;
 		Vector<Integer> slotChange;
 		
 		//adapt parameters for uncertainty automatically if the resulting error was out of bounds.
 		float adapt=1;
+		int counter = 1000;
 		do{
+			if(counter<0){
+				motorwayModel=RndInt.get(0, 1)>0;
+			}else{
+				counter--;
+			}
+			
 			strength=(float) ((float) strength*(0.7+0.3*adapt));
 			float offset=(float) (0.2*strength);
 			slotChange = calculateSlotChange(strength, offset, motorwayModel);
-			adapt = error/getPositionError(slotChange);
+//			System.out.println(slotChange);
+			adapt = Math.min(2, error/getPositionError(slotChange));
 //			System.out.println("Pos Error is "+getPositionError(slotChange)+", adapt ="+adapt+", strength = "+strength);
 		}	
 		while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
 				adapt>(1+ALLOWED_ERROR_OFFSET));	
 		
-//		System.out.println("\nslotChange= "+slotChange.toString());
 		for(Network net: networks){
 			net.addPositionUncertainty(slotChange);
 		}
@@ -182,6 +193,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			sum_change+= 2*Math.abs(prev_value+1-value);
 			prev_value = value;
 		}
+//		System.out.println(sum_change);
 		return ((float)sum_change)/getTimeslots();
 	}
 	
@@ -200,7 +212,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 */
 	private Vector<Integer> calculateSlotChange(float strength, float offset, boolean motorwayModel){
 		// make offset a random parameter in range +/-offset
-		float rndFloat = (float)RndInt.getGauss(-(int)(1000*offset), (int)(1000*offset))/1000;
+		float rndFloat = (float)RndInt.getGauss(-(int)(1000000*offset), (int)(1000000*offset))/1000000;
 		float rndOffset = 1+(float)rndFloat;
 //		System.out.println("rndfloat= "+rndFloat+"  rndOffset= "+rndOffset +"   neg_int "+(-(int)(1000*offset)));
 		
@@ -221,14 +233,14 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			if(keep==0){
 				if(motorwayModel){
 //					target_speed= (float)RndInt.getGauss(0, 1000, (int)(500*offset), (int)(250*strength))/500;		//fixed offset
-					target_speed= (float)RndInt.getGauss(0, 1000, (int)(500*rndOffset), (int)(250*strength))/500;		//random offset
+					target_speed= (float)RndInt.getGauss(0, 100000, (int)(50000*rndOffset), (int)(25000*strength))/50000;		//random offset
 					alpha=(float) 0.2;	//smoother acceleration on motorway
 					keep = RndInt.get(1, 15); 
 					//System.out.println("\nNew target speed at slot "+t+" is "+target_speed);
 				}else{
 					//TODO: how to create random numbers with own distribution??
 //					target_speed= (float)RndInt.getGauss(0, 1000, (int)(750*offset), (int)(250*strength))/675;	//tighter distribution around target speed
-					target_speed= (float)RndInt.getGauss(0, 1000, (int)(750*rndOffset), (int)(250*strength))/675;	//tighter distribution around target speed
+					target_speed= (float)RndInt.getGauss(0, 100000, (int)(75000*rndOffset), (int)(25000*strength))/67500;	//tighter distribution around target speed
 					//in addition, stops are more common in city
 					if(RndInt.get(0,9)==1){
 						target_speed=0;
