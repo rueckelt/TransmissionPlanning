@@ -60,6 +60,7 @@ public class FlowGenerator implements Serializable{
 	
 	public void addFlow(Flow flow){
 		flows.add(flow);
+		setFlowIndices();
 	}
 	
 	public void setFlowIndices(){
@@ -123,26 +124,26 @@ public class FlowGenerator implements Serializable{
 		//bufferable
 		int buf_length=duration/RndInt.get(2, 3);	//scale duration from half length to 20% length
 		int buf_starttime=RndInt.get(1, duration-buf_length)-1;		//random start time in a way that it can finish before end
-		flows.add(Flow.BufferableStream(buf_starttime, buf_length, tokens_bufferable));
+		addFlow(Flow.BufferableStream(buf_starttime, buf_length, tokens_bufferable));
 	}
 	private void addBackground(int duration){
 		int tokens_background 	= (int) (getOverallTokens(duration)*0.55);
 		//background 
 		int back_deadline=RndInt.get(duration/2, duration-1);	//deadline not in first half
-		flows.add(Flow.Background(tokens_background, back_deadline));
+		addFlow(Flow.Background(tokens_background, back_deadline));
 	}
 	private void addLive(int duration){
 		int tokens_live 		= (int) (getOverallTokens(duration)*0.15);
 		//liveStream
 		int live_start_time= RndInt.get(0,duration/2);
 		int deadline= RndInt.get(live_start_time*3/2+1, duration-1);
-		flows.add(Flow.LiveStram(live_start_time, deadline, tokens_live));	
+		addFlow(Flow.LiveStram(live_start_time, deadline, tokens_live));	
 	}
 	private void addInteractive(int duration){		
 		int tokens_interactive 	= (int) (getOverallTokens(duration)*0.05);
 		//interactive burst
 		int interactive_start_time=RndInt.get(0, duration-10);
-		flows.add(Flow.Interactive(interactive_start_time, tokens_interactive));
+		addFlow(Flow.Interactive(interactive_start_time, tokens_interactive));
 	}
 	
 	
@@ -154,16 +155,16 @@ public class FlowGenerator implements Serializable{
 //		int m=6;
 //		for(int i=0;i<requests;i++){
 //			if(i%m==0|| i%m==4){					//Stream 0
-//				flows.add(Flow.BufferableStream(i*tmp, tmp*6));
+//				addFlow(Flow.BufferableStream(i*tmp, tmp*6));
 ////				System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
 //			}else if(i%m==3 || i%m==5){		//4..10		Browsing
-//				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
+//				addFlow(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
 ////				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
 //			}else if(i%m==1 ){		//3		Download
-//				flows.add(Flow.Update(duration));
+//				addFlow(Flow.Update(duration));
 ////				System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
 //			}else{			//0		VoIP
-//				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+20+i*tmp)); 	//todo
+//				addFlow(Flow.IPCall(i*tmp, r.nextInt(tmp)+20+i*tmp)); 	//todo
 ////				System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
 //			}
 //		}
@@ -188,7 +189,7 @@ public class FlowGenerator implements Serializable{
 		for(int i=0; i<requests; i++){
 			int start = rnd.nextInt(duration);
 			int chunks = rnd.nextInt(max_request_size);
-			flows.add(Flow.Interactive(startTime+start, chunks));		
+			addFlow(Flow.Interactive(startTime+start, chunks));		
 		}
 	}
 	
@@ -281,6 +282,7 @@ public class FlowGenerator implements Serializable{
 //			System.out.println(f);
 //		}
 		flows.addAll(toContinue);
+		setFlowIndices();
 //		System.out.println("######## after continue \n"+toContinue);
 //		for(Flow f: flows){
 //			System.out.println(f);

@@ -355,6 +355,7 @@ public class Flow implements Serializable, Cloneable{
 			f.chunksMin=chunksMin;
 			f.deadline=deadline;
 			f.id=id;
+			f.index=index;
 			f.impDeadline=impDeadline;
 			f.impJitter=impJitter;
 			f.impLatency=impLatency;

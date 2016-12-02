@@ -3,11 +3,11 @@
 %stores results.mat file in in_folder for extracted log matrices
 %delete this file to read logs from raw files
 
-in_folder = '..\my_logs\jakob';% 'logs_time';
-%in_folder = '..\my_logs\eval_4_4_3_c10';% 'logs_time';
-out_folder = [in_folder filesep 'test_plotting'];
+%in_folder = '..\my_logs\jakob';% 'logs_time';
+in_folder = '..\my_logs\eval_4_4_3_c15new';% 'logs_time';
+out_folder = [in_folder filesep 'test_newRE'];
 force_read_data = 0;
-max_only=1;
+max_only=0;
 
 %get paramters from file
 parameter_file=[in_folder filesep 'parameters_log.m'];
@@ -49,8 +49,8 @@ state='gathered data'
 
 
 %plot_data3(out_folder, raw_values, avail, valuenames, schedulers);  %vary time
-%plot_data4(out_folder, raw_values, avail, valuenames, schedulers);  %vary networks
-plot_data5(out_folder, raw_values, avail, valuenames, schedulers);  %vary networks
+plot_data4(out_folder, raw_values, avail, valuenames, schedulers);  %vary networks
+%plot_data5(out_folder, raw_values, avail, valuenames, schedulers);  %vary schedulers
  
 state='done'
 

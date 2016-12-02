@@ -258,13 +258,13 @@ public abstract class Scheduler {
 		if(!boundsValid(flow, time, network))return 0;
 		if(!interfaceLimit.isUsable(network, time))return 0;
 //		System.out.println("interface_limit_ok");
-		System.out.println("Scheduler::allocate. validity checks passed");
+//		System.out.println("Scheduler::allocate. validity checks passed");
 		//calculate remaining capacity of network in this slot
 		int remaining_net_cap=getRemainingNetCap(network, time);
 		int s[][][]=schedule_f_t_n_temp.clone();
 		int scheduled = Math.min(tokens, remaining_net_cap);
-		System.out.println("Scheduler::allocate. f,t,n "+flow+","+time+","+network+" tokens: "+tokens+
-				"; remaining cap = "+remaining_net_cap+"; scheduled = "+scheduled);
+//		System.out.println("Scheduler::allocate. f,t,n "+flow+","+time+","+network+" tokens: "+tokens+
+//				"; remaining cap = "+remaining_net_cap+"; scheduled = "+scheduled);
 		//schedule as much as possible
 //		if(tokens>remaining_net_cap){
 //			s[flow][time][network]+=remaining_net_cap;
