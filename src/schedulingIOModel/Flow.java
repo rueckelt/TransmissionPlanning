@@ -36,7 +36,7 @@ public class Flow implements Serializable, Cloneable{
 	private int impStartTime=0;
 	private int impThroughputMin=0;
 	private int impThrouthputMax=0;
-	private int impUnsched=5;
+	private int impUnsched=3;
 	private int impLatency=0;
 	private int impJitter=0;
 	
@@ -261,7 +261,7 @@ public class Flow implements Serializable, Cloneable{
 		//lower throughput window
 		liveStram.setWindowMin(1);
 		liveStram.setTokensMin(chunks_per_slot/RndInt.get(1,4));
-		liveStram.setImpThroughputMin(50);		//should deliver all tokens --> high priority (10? more? what should be max?)
+		liveStram.setImpThroughputMin(50);//50		//should deliver all tokens --> high priority (10? more? what should be max?)
 		liveStram.setImpDeadline(20); 			// call is over after deadline --> high prio
 		
 		liveStram.setReqJitter(4);
@@ -272,11 +272,11 @@ public class Flow implements Serializable, Cloneable{
 		liveStram.setTokensMax(chunks_per_slot);		//higher throughput possible: higher voice quality!
 		liveStram.setImpStartTime(10);			//data not existent before call --> high prio
 		
-		liveStram.setImpUnsched(4 + RndInt.get(-1, 2));		//lower priority for unscheduled than for deadline violation
-		liveStram.setImpJitter(8 + RndInt.get(-1, 1));			//jitter and latency are important
-		liveStram.setImpLatency(8 + RndInt.get(-1, 1));
+		liveStram.setImpUnsched(20 + RndInt.get(0, 10));//8		//lower priority for unscheduled than for deadline violation
+		liveStram.setImpJitter(8 + RndInt.get(-1, 1)); //8			//jitter and latency are important
+		liveStram.setImpLatency(8 + RndInt.get(-1, 1)); //8
 		
-		liveStram.setImpUser(9 + RndInt.get(-1, 2));
+		liveStram.setImpUser(9 + RndInt.get(-1, 2));//9
 		liveStram.setFlowName("LiveStream");
 		
 		return liveStram;
@@ -292,15 +292,15 @@ public class Flow implements Serializable, Cloneable{
 		//relaxed window
 		int win_size = 10 + length/RndInt.get(3, 8);		//allowed to be bursty (large window): window is at least 10 slots wide
 		stream.setWindowMin(win_size);
-		stream.setTokensMin(win_size*chunks_per_slot/4);	//at least one forth of the data must pass (low quality video) more data scales quality
+		stream.setTokensMin(win_size*chunks_per_slot/2);	//at least one half of the data must pass (low quality video) more data scales quality
 		stream.setImpThroughputMin(7+ RndInt.get(-1, 1));		//straight minimum throughput limit
 		stream.setImpDeadline(7+ RndInt.get(-2, 2)); 			
 		
 		stream.setImpStartTime(1+ RndInt.get(0, 4));			//later start time is ok 	
 		
-		stream.setImpUnsched(5+ RndInt.get(-1, 1));			//unscheduled chunks may adapt video quality
+		stream.setImpUnsched(20+ RndInt.get(0,5));//5			//unscheduled chunks may adapt video quality
 		
-		stream.setImpUser(7+ RndInt.get(-2, 2));
+		stream.setImpUser(8+ RndInt.get(-2, 2));//7
 		stream.setFlowName("BufferableStream");
 		
 		return stream;
@@ -315,8 +315,8 @@ public class Flow implements Serializable, Cloneable{
 		userRequest.setDeadline(deadline);
 		userRequest.setTokens(tokens);	
 		
-		userRequest.setImpUnsched(15+ RndInt.get(-3, 3));			//all chunks should be scheduled within the deadline		
-		userRequest.setImpUser(7+ RndInt.get(-1, 3));
+		userRequest.setImpUnsched(50+ RndInt.get(-3, 3));	//15		//all chunks should be scheduled within the deadline		
+		userRequest.setImpUser(15+ RndInt.get(0, 5));//7
 		userRequest.setImpDeadline(8+ RndInt.get(-1, 1));
 		userRequest.setImpStartTime(8+ RndInt.get(-1, 1));
 		
@@ -334,15 +334,16 @@ public class Flow implements Serializable, Cloneable{
 	
 	
 	public static Flow Background(int tokens, int deadline){
+		int with_deadline=RndInt.get(0,3)/3;		//is 1 for 25% of flows
 		Flow background = new Flow();
 		background.setTokens(tokens);
-		background.setImpUnsched(RndInt.get(1, 4));			//chunks should be scheduled with low priority
+		background.setImpUnsched(10+RndInt.get(0, 5) +with_deadline*10);			//chunks should be scheduled with low priority
 		
-		background.setImpUser(RndInt.get(1, 3));
+		background.setImpUser(RndInt.get(2, 4)+with_deadline*2);
 		
 		//set a weak deadline
 		background.setDeadline(deadline);
-//		background.setImpDeadline(RndInt.get(0,4));
+		background.setImpDeadline(3*with_deadline);
 		background.setFlowName("Background");
 		return background;
 	}

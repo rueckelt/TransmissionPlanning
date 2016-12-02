@@ -92,7 +92,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			if(i%4==0){
 				addNetwork(Network.getCellular(time, RndInt.get(20, 60)));	//cellular available all the time; consant rate (bad model)
 			}else{
-				int duration = RndInt.get(5, 5+(int)Math.round(Math.sqrt(time))); //availablity at least 10 slots + extra (depends on sqrt of time)
+				int duration = RndInt.get(5, 5+2*(int)Math.round(Math.sqrt(time))); //availablity at least 10 slots + extra (depends on sqrt of time)
 				int delay = RndInt.get(0, time-duration-1);
 				int tokens = RndInt.get(20,100);
 				addNetwork(Network.getWiFi(duration, tokens , delay));

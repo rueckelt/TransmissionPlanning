@@ -87,30 +87,9 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 		return true;
 	}
 
-	/**
-	 * GreedyOnline has no knowledge on networks (ng) and should only rely on flow parameters
-	 * @param f
-	 * @param ng
-	 * @return abstract value for prioritizing flows amongst others
-	 */
-	@Override
-	protected int calculateFlowCriticality(Flow f, NetworkGenerator ng){
-		
-		return f.getImpUser()*(
-				//attracting factors: important because cost rises fast if not scheduled
-				f.getTokensMin()/f.getWindowMin() *f.getImpThroughputMin()	//average number of min tokens to schedule
-				+f.getImpUnsched())*f.getTokens()/(f.getDeadline()-f.getStartTime())	//average number of tokens to schedule
-				
-				//repelling factors: important because cost rises fast if wrongly scheduled
-				+f.getReqJitter()*f.getImpJitter()
-				+f.getReqLatency()*f.getImpLatency()
-				;
-		
-	}
 	
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
 		return "GreedyOnline"+(NEW_RATING_ESTIMATOR?"_H2":"");
 	}
 

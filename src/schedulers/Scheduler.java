@@ -133,6 +133,8 @@ public abstract class Scheduler {
 		
 		logger.comment(showSchedule(schedule_f_t_n_temp));
 		
+		logFlowDrop();
+		
 		//finish logging and write to file
 		logger.writeLog(getLogfileName(path));
 	}
@@ -380,6 +382,24 @@ public abstract class Scheduler {
 	
 	public Flow getFlow(int pos) {
 		return tg.getFlows().get(pos);
+	}
+	
+	public void logFlowDrop(){
+		String s = "Flow Drop Rate:\n";
+		for(int f =0; f<tg.getFlows().size(); f++){
+			Flow flow = tg.getFlows().get(f);
+			int sched_flow_tokens=0;
+			
+			for(int n = 0; n<ng.getNetworks().size(); n++){
+				for(int t = 0; t<ng.getTimeslots(); t++){
+					sched_flow_tokens+=schedule_f_t_n[f][t][n];
+				}
+			}
+			if(flow.getTokens()>0)
+				s+="Flow "+f+": "+(100-100*sched_flow_tokens/flow.getTokens())+"%, type: "+flow.getFlowName()+"\n";
+			
+		}
+		logger.comment(s);
 	}
 	
 }

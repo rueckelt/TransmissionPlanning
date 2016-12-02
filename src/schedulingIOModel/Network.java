@@ -236,7 +236,8 @@ public class Network implements Serializable, Cloneable{
 				int rnd = (int) ((float)RndInt.getGauss(-c, c)*w_char);
 				filtered = (int)((float)filtered*(1-alpha)+rnd*alpha);
 //				System.out.print(filtered+", ");
-				capacity.set(t, c+filtered);
+				int newCap = Math.max(0, c+filtered);
+				capacity.set(t, newCap);
 			}
 		}
 		
@@ -282,15 +283,18 @@ public class Network implements Serializable, Cloneable{
 					}else{
 					//reduce network range
 						varyRange=-varyRange;	//make it positive for easier application
-						
+						int varyRange_tmp=0;
 						//remove items
 						for(int i = 0;i<varyRange;i++){
-							capacity.remove(index);
+							if(index<capacity.size()){
+								capacity.remove(index);
+								varyRange_tmp++;
+							}
 						}
 						
 						//add elements at start and end
-						for(int v=0;v<varyRange;v++){
-							if(v<varyRange/2){
+						for(int v=0;v<varyRange_tmp;v++){
+							if(v<varyRange_tmp/2){
 								capacity.add(0, capacity.get(0));	//insert first element again
 							}else{
 								capacity.add(capacity.size()-1, capacity.get(capacity.size()-1));	//insert last element

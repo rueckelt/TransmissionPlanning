@@ -25,6 +25,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 	private String folder; 
 	private boolean overwrite; 
 	private boolean recalc;
+	private float uncertaintyLevel = (float)0.4;
 
 	//overwrite means: Create new scenario (ng+tg) even if it exists in this folder and calculate all schedules
 	//recalc means: Keep ng+tg but recalculate all schedules
@@ -60,8 +61,11 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 			if(overwrite){	//overwrite ng+tg even if existing
 //				System.out.println("Creating Networks and Flows..");
 				ng=new NetworkGenerator(nets, time);	//add network input data
+				ng.addNetworkUncertainty(uncertaintyLevel);
+				ng.addPositionUncertainty(uncertaintyLevel);
 				ng.writeObject(path);
 				tg = new FlowGenerator(time, flows);		//add application traffic input data
+				tg.addUncertainty(uncertaintyLevel, ng.getTimeslots());
 				tg.writeObject(path); 
 			}else{
 				//try to load ng and tg configurations from files (recalc or not existing yet)
@@ -71,16 +75,20 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 				//create if not existing; if one is missing calculate all schedules new (recalc=true)!
 				if(ng==null){
 					ng=new NetworkGenerator(nets, time);	//add network input data
+					ng.addNetworkUncertainty(uncertaintyLevel);
+					ng.addPositionUncertainty(uncertaintyLevel);
 					ng.writeObject(path);
 					recalc=true;
 				}
 				if(tg==null){
 					tg = new FlowGenerator(time, flows);		//add application traffic input data
+					tg.addUncertainty(uncertaintyLevel, ng.getTimeslots());
 					tg.writeObject(path);
 					recalc=true;
 				}
 				tg.setFlowIndices();	
 			}
+			
 			
 
 //			if(decomposition_heuristic){
