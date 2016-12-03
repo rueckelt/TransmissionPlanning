@@ -34,16 +34,24 @@ public class EvaluationScenarioCreator {
 	
 	List<Callable<Boolean>> taskList = new ArrayList<Callable<Boolean>>();
 	
-	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
+	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, boolean uncertainty, String logpath){
 		REPETITIONS=repetitions;
 		MAX_TIME=time;
 		MAX_FLOWS=apps;
 		MAX_NETS=nets;
 		LOG=logpath+File.separator;
+		UNCERTAINTY = uncertainty;
 		
 		//evaluate();
 	}
 	
+	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
+		this(time, nets, apps, repetitions, false, logpath);
+	}
+
+
+	
+
 	/*
 	 * reads out generated simulation scenarios and recalculates results
 	 */
@@ -84,6 +92,7 @@ public class EvaluationScenarioCreator {
 	private final int MAX_FLOWS;
 	private final int MAX_NETS;
 	private final String LOG;
+	private final boolean UNCERTAINTY;
 
 	/**
 	 * get list of all schedulers which shall calculate a schedule
@@ -110,7 +119,7 @@ public class EvaluationScenarioCreator {
 		
 		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(true));
 		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(true));
-//		schedulers.add(new RandomScheduler(ng, tg, 200));	//200 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new RandomScheduler(ng, tg, 3));	//200 random runs of this scheduler. Returns average duration and cost
 	return schedulers;
 	}
 	
@@ -166,9 +175,10 @@ public class EvaluationScenarioCreator {
 		//paramter log
 		writeScenarioLog(1);
 
-		for(int rep=0; rep<REPETITIONS;rep++){
+//		for(int rep=0; rep<REPETITIONS;rep++){
+		int rep=5;
 			calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
-		}
+//		}
 //		calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, REPETITIONS, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
 
 		System.out.println("###############  TASK CREATION DONE  ##################");

@@ -109,6 +109,7 @@ public class GreedyScheduler extends Scheduler{
 						return flowCrit_tmp.get(i2)-flowCrit_tmp.get(i1);
 					}
 				});	 //highest priority first
+				System.out.println(flow_order);
 		return flow_order;
 	}
 
@@ -122,7 +123,6 @@ public class GreedyScheduler extends Scheduler{
 		Set<Integer> usedSlots = new HashSet<Integer>(); 	//each flow can use only one network in each time slot
 		int chunksMaxTp = (int)(flow.getTokensMax());///flow.getWindowMax());	//get average maximum throughput for later allocation
 		int chunksToAllocate = flow.getTokens();
-		
 		//sort networks according to match with flow
 		Vector<Integer> networkIDs = sortNetworkIDs(flow);
 //			System.out.println("##################################  Flow "+flowIndex+"; Network order: "+networkIDs);
@@ -201,7 +201,7 @@ public class GreedyScheduler extends Scheduler{
 			int statefulReward = cs.getStatefulReward(f, t);
 			int tp=cs.getTimeMatch(f, t)*tg.getFlows().get(f).getImpUser();
 			int sum = calcVio+statefulReward+tp;
-			System.out.println("Greedy: calcVio="+calcVio+", statefulR="+statefulReward+", tp="+tp+", timeMatch="+cs.getTimeMatch(f, t)+", sum="+sum+", < limit? ="+schedule_decision_limit);
+			
 			return  sum	< schedule_decision_limit;
 
 		}else
@@ -230,8 +230,11 @@ public class GreedyScheduler extends Scheduler{
 		CostFunction cf = new CostFunction(ng, tg_temp);
 		//get cost with empty schedule (worst case, flow is unscheduled)
 		int cost_wc = cf.costViolation(getEmptySchedule(tg_temp, ng));
+		int loglen = (int)Math.log(f.getDeadline()-f.getStartTime())+1;
+//		System.out.println("loglen f"+f.getId()+": "+loglen);
+//		System.out.println("crit f"+f.getId()+": "+cost_wc/f.getTokens()+", corr "+cost_wc/(loglen*f.getTokens()));
 		if(f.getTokens()>0)
-			return cost_wc/f.getTokens();//-cost_bc;
+			return cost_wc/(loglen*f.getTokens());//-cost_bc;
 		else
 			return 0;
 	}

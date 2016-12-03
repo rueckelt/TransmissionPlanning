@@ -121,7 +121,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 				net.addNetworkUncertainty(strength_charactieristics, strength_range);
 			}
 			adapt = error/getNetworkError(backup);
-			System.out.println("NetGen124: adapt = "+adapt+", strength = "+strength_charactieristics);
+			//System.out.println("NetGen124: adapt = "+adapt+", strength = "+strength_charactieristics);
 		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
 				adapt>(1+ALLOWED_ERROR_OFFSET));	
 	}
@@ -135,7 +135,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 //			System.out.println("smape of n="+n+" is "+act.smapeNetwork(pred));
 		}
 		float result = sum/networks.size();
-		System.out.println("result is "+result);
+		//System.out.println("result is "+result);
 		return result;
 	}
 	

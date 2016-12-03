@@ -12,7 +12,7 @@ public class GreedyOnlineOpppertunisticScheduler extends GreedyOnlineScheduler {
 	
 	@Override
 	protected boolean scheduleDecision(int f, int n, int t) {
-		schedule_decision_limit=-50;
+		schedule_decision_limit=0;
 		return oppScheduleDecision(f, n, t);
 	}
 	

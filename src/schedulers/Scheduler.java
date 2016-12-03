@@ -108,7 +108,7 @@ public abstract class Scheduler {
 			schedule_f_t_n=schedule_f_t_n_temp;	//store to schedule_f_t_n if constraints hold
 			
 			logInstance(path, duration);
-
+			System.err.println(getType()+": \t"+ cf.costTotal(schedule_f_t_n));
 		}
 	}
 
@@ -388,8 +388,17 @@ public abstract class Scheduler {
 		String s = "Flow Drop Rate:\n";
 		for(int f =0; f<tg.getFlows().size(); f++){
 			Flow flow = tg.getFlows().get(f);
-			s+="Flow "+f+": "+getFlowDrop(f)+"%, type: "+flow.getFlowName()+"\n";
-					;
+			s+="Flow "+f+": "+getFlowDrop(f)+"%, type: "+flow.getFlowName()
+					+", st "+flow.getStartTime()
+					+", dl "+flow.getDeadline()
+					+", UserImp "+flow.getImpUser()
+					+", ImpUnsch "+flow.getImpUnsched()
+					+", ImpLcy " +flow.getImpLatency()
+					+", ImpJit "+flow.getImpJitter()
+					+", ImpTp "+flow.getImpThroughputMin()
+					+", Tokens "+flow.getTokens()
+					+"\n";
+					
 		}
 		logger.comment(s);
 	}

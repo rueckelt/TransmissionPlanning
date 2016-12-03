@@ -40,7 +40,7 @@ public class Flow implements Serializable, Cloneable{
 	private int impLatency=0;
 	private int impJitter=0;
 	
-	private int impUser=1;
+	private int impUser=10;
 	private String flowName="flow";
 
 	//each flow gets a unique ID
@@ -334,10 +334,10 @@ public class Flow implements Serializable, Cloneable{
 	
 	
 	public static Flow Background(int tokens, int deadline){
-		int with_deadline=RndInt.get(0,3)/3;		//is 1 for 25% of flows
+		int with_deadline=RndInt.get(0,1);		//is 1 for 50% of flows
 		Flow background = new Flow();
 		background.setTokens(tokens);
-		background.setImpUnsched(8+RndInt.get(0, 5) +with_deadline*10);			//chunks should be scheduled with low priority
+		background.setImpUnsched(10+RndInt.get(0, 5) +with_deadline*10);			//chunks should be scheduled with low priority
 		
 		background.setImpUser(RndInt.get(2, 4)+with_deadline*2);
 		

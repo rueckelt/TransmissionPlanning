@@ -25,7 +25,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 	private String folder; 
 	private boolean overwrite; 
 	private boolean recalc;
-	private float uncertaintyLevel = (float)0.4;
+	private float uncertaintyLevel = (float)0.2;
 
 	//overwrite means: Create new scenario (ng+tg) even if it exists in this folder and calculate all schedules
 	//recalc means: Keep ng+tg but recalculate all schedules
