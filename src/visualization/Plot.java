@@ -542,21 +542,22 @@ class PlotGraph extends JPanel{
 						"cyan", "green", "light blue", "light pink", "dark grey", "light magenta", "light orange",
 						"light yellow", "light cyan", "light green"};
 				
-				textArea.append("\nFlow " +f +": "+flow.getFlowName()+"\n  "+colors[f]+"\n");
+				textArea.append("\nFlow " +f +": "+flow.getFlowName()+"\n DR= "+sched.getFlowDrop(f)+"%, "+colors[f%16]+"\n");
 				if (violations[f][0] != 0)
-					textArea.append("Throughput: " +violations[f][0] +"\n");
+					textArea.append(" TP: " +violations[f][0] +",");
 		
 				if (violations[f][1] != 0)
-					textArea.append("Jitter: " +violations[f][1] +"\n");
+					textArea.append(" Jit: " +violations[f][1] +",");
 		
 				if (violations[f][2] != 0)
-					textArea.append("Latency: " +violations[f][2] +"\n");
+					textArea.append(" Lcy: " +violations[f][2] +",");
 		
 				if (violations[f][3] != 0)
-					textArea.append("Starttime: " +violations[f][3] +"\n");
+					textArea.append(" St: " +violations[f][3] +",");
 		
 				if (violations[f][4] != 0)
-					textArea.append("Deadline: " +violations[f][4] +"\n");
+					textArea.append(" Dl: " +violations[f][4] +",");
+				textArea.append("\n");
 			}
 		}
 		

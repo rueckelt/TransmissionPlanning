@@ -383,11 +383,19 @@ public abstract class Scheduler {
 	public Flow getFlow(int pos) {
 		return tg.getFlows().get(pos);
 	}
-	
+
 	public void logFlowDrop(){
 		String s = "Flow Drop Rate:\n";
 		for(int f =0; f<tg.getFlows().size(); f++){
 			Flow flow = tg.getFlows().get(f);
+			s+="Flow "+f+": "+getFlowDrop(f)+"%, type: "+flow.getFlowName()+"\n";
+					;
+		}
+		logger.comment(s);
+	}
+	
+	public int getFlowDrop(int f){
+		Flow flow = tg.getFlows().get(f);
 			int sched_flow_tokens=0;
 			
 			for(int n = 0; n<ng.getNetworks().size(); n++){
@@ -396,10 +404,9 @@ public abstract class Scheduler {
 				}
 			}
 			if(flow.getTokens()>0)
-				s+="Flow "+f+": "+(100-100*sched_flow_tokens/flow.getTokens())+"%, type: "+flow.getFlowName()+"\n";
-			
-		}
-		logger.comment(s);
+				return (100-100*sched_flow_tokens/flow.getTokens());
+			else
+				return 0;
 	}
 	
 }

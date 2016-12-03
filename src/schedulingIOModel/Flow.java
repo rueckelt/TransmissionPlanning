@@ -260,7 +260,7 @@ public class Flow implements Serializable, Cloneable{
 		
 		//lower throughput window
 		liveStram.setWindowMin(1);
-		liveStram.setTokensMin(chunks_per_slot/RndInt.get(1,4));
+		liveStram.setTokensMin(chunks_per_slot*3/4);	//should deliver 75% of data to receive full QoS
 		liveStram.setImpThroughputMin(50);//50		//should deliver all tokens --> high priority (10? more? what should be max?)
 		liveStram.setImpDeadline(20); 			// call is over after deadline --> high prio
 		
@@ -272,12 +272,12 @@ public class Flow implements Serializable, Cloneable{
 		liveStram.setTokensMax(chunks_per_slot);		//higher throughput possible: higher voice quality!
 		liveStram.setImpStartTime(10);			//data not existent before call --> high prio
 		
-		liveStram.setImpUnsched(20 + RndInt.get(0, 10));//8		//lower priority for unscheduled than for deadline violation
+		liveStram.setImpUnsched(20 + RndInt.get(0, 5));//8		//lower priority for unscheduled than for deadline violation
 		liveStram.setImpJitter(8 + RndInt.get(-1, 1)); //8			//jitter and latency are important
 		liveStram.setImpLatency(8 + RndInt.get(-1, 1)); //8
 		
 		liveStram.setImpUser(9 + RndInt.get(-1, 2));//9
-		liveStram.setFlowName("LiveStream");
+		liveStram.setFlowName("Conversational");
 		
 		return liveStram;
 	}
@@ -293,14 +293,14 @@ public class Flow implements Serializable, Cloneable{
 		int win_size = 10 + length/RndInt.get(3, 8);		//allowed to be bursty (large window): window is at least 10 slots wide
 		stream.setWindowMin(win_size);
 		stream.setTokensMin(win_size*chunks_per_slot/2);	//at least one half of the data must pass (low quality video) more data scales quality
-		stream.setImpThroughputMin(7+ RndInt.get(-1, 1));		//straight minimum throughput limit
+		stream.setImpThroughputMin(20+ RndInt.get(0,5));		//straight minimum throughput limit
 		stream.setImpDeadline(7+ RndInt.get(-2, 2)); 			
 		
 		stream.setImpStartTime(1+ RndInt.get(0, 4));			//later start time is ok 	
 		
 		stream.setImpUnsched(20+ RndInt.get(0,5));//5			//unscheduled chunks may adapt video quality
 		
-		stream.setImpUser(8+ RndInt.get(-2, 2));//7
+		stream.setImpUser(7+ RndInt.get(-2, 2));//7
 		stream.setFlowName("BufferableStream");
 		
 		return stream;
@@ -315,7 +315,7 @@ public class Flow implements Serializable, Cloneable{
 		userRequest.setDeadline(deadline);
 		userRequest.setTokens(tokens);	
 		
-		userRequest.setImpUnsched(50+ RndInt.get(-3, 3));	//15		//all chunks should be scheduled within the deadline		
+		userRequest.setImpUnsched(20+ RndInt.get(-3, 3));	//15		//all chunks should be scheduled within the deadline		
 		userRequest.setImpUser(15+ RndInt.get(0, 5));//7
 		userRequest.setImpDeadline(8+ RndInt.get(-1, 1));
 		userRequest.setImpStartTime(8+ RndInt.get(-1, 1));
@@ -326,7 +326,7 @@ public class Flow implements Serializable, Cloneable{
 		int chunks_per_win=Math.min(1, win_size*tokens/(deadline-startTime));
 		userRequest.setWindowMin(win_size);
 		userRequest.setTokensMin(chunks_per_win);	
-		userRequest.setImpThroughputMin(3+ RndInt.get(-1, 1));		//soft minimum throughput limit
+		userRequest.setImpThroughputMin(50+ RndInt.get(-1, 1));		//soft minimum throughput limit
 		
 		userRequest.setFlowName("Interactive");
 		return userRequest;
@@ -337,14 +337,15 @@ public class Flow implements Serializable, Cloneable{
 		int with_deadline=RndInt.get(0,3)/3;		//is 1 for 25% of flows
 		Flow background = new Flow();
 		background.setTokens(tokens);
-		background.setImpUnsched(10+RndInt.get(0, 5) +with_deadline*10);			//chunks should be scheduled with low priority
+		background.setImpUnsched(8+RndInt.get(0, 5) +with_deadline*10);			//chunks should be scheduled with low priority
 		
 		background.setImpUser(RndInt.get(2, 4)+with_deadline*2);
 		
 		//set a weak deadline
 		background.setDeadline(deadline);
 		background.setImpDeadline(3*with_deadline);
-		background.setFlowName("Background");
+		String s = (with_deadline>0)?" (DL)":"";
+		background.setFlowName("Background"+s);
 		return background;
 	}
 	

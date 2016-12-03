@@ -193,8 +193,8 @@ public class GreedyScheduler extends Scheduler{
 		return 0;
 	}
 	
-	int temp=0;
-	protected boolean scheduleDecision(int f, int n, int t) {
+	
+	protected boolean oppScheduleDecision(int f, int n, int t) {
 //		System.out.println("DECISION_VIO "+calcVio(flow, ng.getNetworks().get(n)));
 		if(NEW_RATING_ESTIMATOR){
 			int calcVio = calcVio(f,n);
@@ -206,6 +206,10 @@ public class GreedyScheduler extends Scheduler{
 
 		}else
 			return calcVio(f, n)<schedule_decision_limit;
+	}
+	
+	protected boolean scheduleDecision(int f, int n, int t) {
+		return oppScheduleDecision(f, n, t);
 	}
 	
 	public Scheduler setScheduleDecisionLimit(int limit){
