@@ -42,8 +42,14 @@ public class RndInt {
 			return min;
 		}
 		//repeat random if result is of range [min,max] to cut without changing the distribution
-		while(r>max||r<min){
+		int i=1000;
+		while(r>max||r<min||i<=0){
 			r= (int)(new Random().nextGaussian()*deviation)+ mean;
+			i--;
+		}
+
+		if(i<2){
+			System.err.println("Random Int getGauss: did not succeed for 1000 runs to return a proper result between (min, max):("+min+", "+max+"). Returned "+r);
 		}
 		return r;
 	}

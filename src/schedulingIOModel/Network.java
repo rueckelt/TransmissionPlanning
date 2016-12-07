@@ -169,16 +169,18 @@ public class Network implements Serializable, Cloneable{
 		wifi.setType(1);
 		wifi.setCost(RndInt.get(1,3));
 		wifi.setJitter(RndInt.get(4, 8));
-		wifi.setLatency(RndInt.get(1, 3));
+		wifi.setLatency(RndInt.get(1, 4));
 		return wifi;
 	}
 	
 	public static Network getCellular(int slots, int meanChunks){
-		Network cell = new Network(slots, meanChunks);
-		cell.setType(2);
-		cell.setCost(RndInt.get(15, 25));
-		cell.setJitter(RndInt.get(3, 8));
-		cell.setLatency(RndInt.get(6, 12));
+		int type = RndInt.get(2, 4);	//2G, 3G, 4G
+		Network cell = new Network(slots, type*meanChunks/2);
+		cell.setType(2);	//set cellular
+		
+		cell.setCost(2+type*RndInt.get(2, 3)/2);	//higher technology, more expensive
+		cell.setJitter((5-type)*RndInt.get(1, 3));
+		cell.setLatency((5-type)*RndInt.get(3, 5));
 		return cell;
 	}
 	
@@ -236,7 +238,8 @@ public class Network implements Serializable, Cloneable{
 				int rnd = (int) ((float)RndInt.getGauss(-c, c)*w_char);
 				filtered = (int)((float)filtered*(1-alpha)+rnd*alpha);
 //				System.out.print(filtered+", ");
-				capacity.set(t, c+filtered);
+				int newCap = Math.max(0, c+filtered);
+				capacity.set(t, newCap);
 			}
 		}
 		
@@ -249,12 +252,11 @@ public class Network implements Serializable, Cloneable{
 	private void addRangeUncertainty(float w_range){
 		//vary range. This is only applicable at WiFis
 				if(type==1){
-					int varyRange = (int) ((float)RndInt.getGauss(-1000, 1000)*w_range/1000.0);
+					int varyRange = (int) (((float)RndInt.getGauss(-1000, 1000))*w_range/1000.0);
 //					System.out.println("Vary range by "+varyRange);
-					
 					//find slot to insert/remove items in capacity vector
 					//TODO: this works only for the generated WiFi throughput characteristics.
-					int max =0;
+					int max = 0;
 					int index =0;
 					for(int t=0; t<capacity.size(); t++){
 						if(max<capacity.get(t)){
@@ -283,15 +285,18 @@ public class Network implements Serializable, Cloneable{
 					}else{
 					//reduce network range
 						varyRange=-varyRange;	//make it positive for easier application
-						
+						int varyRange_tmp=0;
 						//remove items
 						for(int i = 0;i<varyRange;i++){
-							capacity.remove(index);
+							if(index<capacity.size()){
+								capacity.remove(index);
+								varyRange_tmp++;
+							}
 						}
 						
 						//add elements at start and end
-						for(int v=0;v<varyRange;v++){
-							if(v<varyRange/2){
+						for(int v=0;v<varyRange_tmp;v++){
+							if(v<varyRange_tmp/2){
 								capacity.add(0, capacity.get(0));	//insert first element again
 							}else{
 								capacity.add(capacity.size()-1, capacity.get(capacity.size()-1));	//insert last element
@@ -301,10 +306,32 @@ public class Network implements Serializable, Cloneable{
 				}
 	}
 	
+	public float smapeNetwork(Network predicted){
+		float sum_tp=0;
+		for(int t=0;t<capacity.size(); t++){
+			sum_tp+=smape(capacity.get(t), predicted.getCapacity().get(t));
+		}
+		float smape_tp = sum_tp/capacity.size();
+		float smape_lcy = smape(getLatency(), predicted.getLatency());
+		float smape_jit = smape(getJitter(), predicted.getJitter());
+	
+		
+		return (float) (0.2*smape_lcy + 0.2*smape_jit + 0.6*smape_tp);
+	}
+	
+	private float smape(int actual, int predicted){
+		if(actual==predicted) return 0;
+		float smape = ((float)2*Math.abs(predicted-actual))/(Math.abs(predicted)+Math.abs(actual));
+//		System.out.println("smape = "+smape);
+//		System.out.flush();
+		return smape;
+		
+	}
+	
 	public Network clone(){  
 		try {
 			Network n = new Network();
-			n.setCapacity((Vector<Integer>)capacity.clone());
+			n.setCapacity(deepCopy(capacity));
 			n.jitter=jitter;
 			n.cost=cost;
 			n.id=id;
@@ -317,5 +344,13 @@ public class Network implements Serializable, Cloneable{
 			return null;
 		}  
 	} 
+	
+	private Vector<Integer> deepCopy(Vector<Integer> v){
+		Vector<Integer> copy= new Vector<Integer>();
+		for(int i:v){
+			copy.add(new Integer(i));
+		}
+		return copy;
+	}
 	
 }

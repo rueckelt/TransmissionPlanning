@@ -21,7 +21,7 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
     scale_f = [1 2 4 8 16 32 64];
     scale_n = [1 2 4 8 16 32 64];
     scale_t = [25 50 100 200 400 800 1600];
-    scale_s = {'Opt' 'TS' 'ONS' 'NS' 'Rnd'};
+    scale_s = schedulers; %{'Opt' 'TS' 'ONS' 'NS' 'Rnd'};
    
     addpath('matlab2tikz'); 
     
@@ -44,7 +44,7 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
          %compareing plots
         for v=1:nof_vartypes
             avail_sq= squeeze(avail(v,:,f,t,:,:));
-
+            
             if v<2 && sum(avail_sq(:))>0%==nof_repetitions*nof_networks*nof_schedulers
                 
                 %squeezed data dimensions: scheduler, networks, repetitions
@@ -57,7 +57,7 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
                 
                 labels = {'cost function value','execution time in s'};
                 my_ylabel=labels{v};
-                tikz_out_errorbar(filename, data_sq, my_ylabel,legendlabels2,0, 1,0,1);
+%                tikz_out_errorbar(filename, data_sq, my_ylabel,legendlabels2,0, 1,0,1);
                 
                 %Normalized Rating score (NRS)
                 %  v_rnd - v_x
@@ -119,10 +119,10 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers)
   end
   
  %do t-test for number of networks 
- for n=1:nof_networks
-     nets=scale_n(n)
-    [h,p]=ttest2(data_score(1,n,:), data_score(3,n,:))
- end
+ %for n=1:nof_networks
+ %    nets=scale_n(n)
+ %   [h,p]=ttest2(data_score(1,n,:), data_score(3,n,:))
+ %end
  
  
    %opt cost pie chart

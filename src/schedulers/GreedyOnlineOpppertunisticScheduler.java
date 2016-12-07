@@ -1,6 +1,5 @@
 package schedulers;
 
-import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
 
@@ -11,17 +10,10 @@ public class GreedyOnlineOpppertunisticScheduler extends GreedyOnlineScheduler {
 		super(ng, tg);
 	}
 	
+	@Override
 	protected boolean scheduleDecision(int f, int n, int t) {
-//		System.out.println("DECISION_VIO "+calcVio(flow, ng.getNetworks().get(n)));
-		if(NEW_RATING_ESTIMATOR){
-		return  (
-					calcVio(f, n)+
-					cs.getStatefulReward(f, t)+
-					cs.getTimeMatch(f, t)/getAvMinTp(tg.getFlows().get(f))
-				)
-				< schedule_decision_limit;
-		}else
-			return calcVio(f, n)<schedule_decision_limit;
+//		schedule_decision_limit=1000;
+		return oppScheduleDecision(f, n, t);
 	}
 	
 	@Override

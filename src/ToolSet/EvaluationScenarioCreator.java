@@ -8,6 +8,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import schedulers.GreedyScheduler;
+<<<<<<< HEAD
+=======
+import schedulers.OptimizationScheduler;
+import schedulers.PriorityScheduler;
+import schedulers.RandomScheduler;
+import schedulers.RandomScheduler;
+>>>>>>> f7915e11e583c9fb19411a30e0c014ee76820c1f
 import schedulers.Scheduler;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
@@ -23,16 +30,24 @@ public class EvaluationScenarioCreator {
 	
 	List<Callable<Boolean>> taskList = new ArrayList<Callable<Boolean>>();
 	
-	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
+	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, boolean uncertainty, String logpath){
 		REPETITIONS=repetitions;
 		MAX_TIME=time;
 		MAX_FLOWS=apps;
 		MAX_NETS=nets;
 		LOG=logpath+File.separator;
+		UNCERTAINTY = uncertainty;
 		
 		//evaluate();
 	}
 	
+	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
+		this(time, nets, apps, repetitions, false, logpath);
+	}
+
+
+	
+
 	/*
 	 * reads out generated simulation scenarios and recalculates results
 	 */
@@ -73,6 +88,7 @@ public class EvaluationScenarioCreator {
 	private final int MAX_FLOWS;
 	private final int MAX_NETS;
 	private final String LOG;
+	private final boolean UNCERTAINTY;
 
 	/**
 	 * get list of all schedulers which shall calculate a schedule
@@ -81,6 +97,8 @@ public class EvaluationScenarioCreator {
 	 * @return list of schedulers
 	 */
 	public static Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
+		
+		boolean newRating = true;
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 //		schedulers.add(new PriorityScheduler(ng, tg));
 //		for(int i=-3000; i<=2000;i=i+100){
@@ -93,13 +111,21 @@ public class EvaluationScenarioCreator {
 //		for(int i=-12000; i>-20000;i=i-2000){
 //			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
 //		}
-//		schedulers.add(new OptimizationScheduler(ng, tg));
-		schedulers.add(new GreedyScheduler(ng, tg).newRating(true));
-		schedulers.add(new GreedyScheduler(ng, tg).newRating(false));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(true));
-//		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(true));
-//		schedulers.add(new RandomScheduler(ng, tg, 200));	//200 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new OptimizationScheduler(ng, tg));
+		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
+		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
+		schedulers.add(new RandomScheduler(ng, tg, 3));	//200 random runs of this scheduler. Returns average duration and cost
 	return schedulers;
+	}
+	
+	private Vector<Scheduler> initWithUncertainty(NetworkGenerator ng, FlowGenerator fg){
+		Vector<Scheduler> schedulers = new Vector<Scheduler>();
+		
+		
+		
+		
+		return schedulers;
 	}
 	
 	private void writeScenarioLog(int evaluateMax){
@@ -146,6 +172,7 @@ public class EvaluationScenarioCreator {
 		writeScenarioLog(1);
 
 		for(int rep=0; rep<REPETITIONS;rep++){
+//		int rep=2;
 			calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
 		}
 //		calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, REPETITIONS, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO

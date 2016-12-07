@@ -33,6 +33,8 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	public static final String NG_NAME = "NetworkGenerator";
 	private Vector<Network> networks = new Vector<Network>();
 	
+	private final float ALLOWED_ERROR_OFFSET = (float) 0.01;	//part of error/uncertainty model. 
+	
 	private int hysteresis = 500;
 	private int cost_imp = 15;	//importance of monetary cost for network use
 	//one interface of each type. Only first two are used 
@@ -90,8 +92,8 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			if(i%4==0){
 				addNetwork(Network.getCellular(time, RndInt.get(20, 60)));	//cellular available all the time; consant rate (bad model)
 			}else{
-				int duration = RndInt.get(5, 5+(int)Math.round(Math.sqrt(time))); //availablity at least 10 slots + extra (depends on sqrt of time)
-				int delay = RndInt.get(0, time-duration-1);
+				int duration = RndInt.get(5, 5+2*(int)Math.round(Math.sqrt(time))); //availablity at least 10 slots + extra (depends on sqrt of time)
+				int delay = RndInt.get(duration/10, time-duration-1);
 				int tokens = RndInt.get(20,100);
 				addNetwork(Network.getWiFi(duration, tokens , delay));
 			}
@@ -99,14 +101,42 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	}
 	
 	/**
+	 * error: gives the SMAPE error which uncertainty should produce. 
 	 * 
-	 * @param strength_charactieristics - modifies throughput (capacity), latency, jitter. [0..1]
-	 * @param strength_range - modifies range of wifi networks. 
+	 * strength_charactieristics - modifies throughput (capacity), latency, jitter. [0..1]
+	 * strength_range - modifies range of wifi networks. 
 	 */
-	public void addNetworkUncertainty(float strength_charactieristics, float strength_range){
-		for(Network net: networks){
-			net.addNetworkUncertainty(strength_charactieristics, strength_range);
+	public void addNetworkUncertainty(float error){
+		Vector<Network> backup = cloneNetworks(networks);
+		
+		float strength_charactieristics=error; 
+		
+		float adapt=1;
+		do{
+			strength_charactieristics=(float) (strength_charactieristics*(0.5+0.5*adapt)); 
+			float strength_range=(float) (strength_charactieristics*getTimeslots()/15);
+
+			networks=cloneNetworks(backup);	//reset networks for each new try
+			for(Network net: networks){
+				net.addNetworkUncertainty(strength_charactieristics, strength_range);
+			}
+			adapt = error/getNetworkError(backup);
+			//System.out.println("NetGen124: adapt = "+adapt+", strength = "+strength_charactieristics);
+		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
+				adapt>(1+ALLOWED_ERROR_OFFSET));	
+	}
+	
+	private float getNetworkError(Vector<Network> predicted){
+		float sum=0;
+		for(int n=0; n<networks.size(); n++){
+			Network act=networks.get(n);
+			Network pred = predicted.get(n);
+			sum+=act.smapeNetwork(pred);
+//			System.out.println("smape of n="+n+" is "+act.smapeNetwork(pred));
 		}
+		float result = sum/networks.size();
+		//System.out.println("result is "+result);
+		return result;
 	}
 	
 	/**
@@ -116,12 +146,55 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 * @param strength - influences the distribution of the error. should be between 0 [no error] and 1 [huge error]
 	 * @param offset - gives an offset to the mean of the distribution. Car drives faster/slower in average. Use 0 for NO offset; range [0..1]
 	 */
-	public void addPositionUncertainty(float strength, float offset, boolean motorwayModel){
-		Vector<Integer> slotChange = calculateSlotChange(strength, offset, motorwayModel);		
-//		System.out.println("\nslotChange= "+slotChange.toString());
+	public void addPositionUncertainty(float error){
+
+		//take motorway model for <0.2. Urban leads to higher orders whenever the car stops at least once. stops convergence.
+		//else, select randomly.
+		boolean motorwayModel=error<0.2 || RndInt.get(0, 1)>0;
+		motorwayModel=false;
+//		System.out.println("isMotorway "+motorwayModel);
+		float strength=error;
+		Vector<Integer> slotChange;
+		
+		//adapt parameters for uncertainty automatically if the resulting error was out of bounds.
+		float adapt=1;
+		int counter = 1000;
+		do{
+			if(counter<0){
+				motorwayModel=RndInt.get(0, 1)>0;
+			}else{
+				counter--;
+			}
+			
+			strength=(float) ((float) strength*(0.7+0.3*adapt));
+			float offset=(float) (0.2*strength);
+			slotChange = calculateSlotChange(strength, offset, motorwayModel);
+//			System.out.println(slotChange);
+			adapt = Math.min(2, error/getPositionError(slotChange));
+//			System.out.println("Pos Error is "+getPositionError(slotChange)+", adapt ="+adapt+", strength = "+strength);
+		}	
+		while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
+				adapt>(1+ALLOWED_ERROR_OFFSET));	
+		
 		for(Network net: networks){
 			net.addPositionUncertainty(slotChange);
 		}
+	}
+	
+	/**
+	 * SMAPE (Symmetrical mean absolute percentage error) of position. Each shift contributes to the error with 2/T.
+	 * @param slotChange
+	 */
+	public float getPositionError(Vector<Integer> slotChange){
+		int sum_change=0;
+		
+		int prev_value=0;
+		for(int value:slotChange){
+			sum_change+= 2*Math.abs(prev_value+1-value);
+			prev_value = value;
+		}
+//		System.out.println(sum_change);
+		return ((float)sum_change)/getTimeslots();
 	}
 	
 	/**
@@ -139,7 +212,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 */
 	private Vector<Integer> calculateSlotChange(float strength, float offset, boolean motorwayModel){
 		// make offset a random parameter in range +/-offset
-		float rndFloat = (float)RndInt.getGauss(-(int)(1000*offset), (int)(1000*offset))/1000;
+		float rndFloat = (float)RndInt.getGauss(-(int)(1000000*offset), (int)(1000000*offset))/1000000;
 		float rndOffset = 1+(float)rndFloat;
 //		System.out.println("rndfloat= "+rndFloat+"  rndOffset= "+rndOffset +"   neg_int "+(-(int)(1000*offset)));
 		
@@ -160,14 +233,14 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			if(keep==0){
 				if(motorwayModel){
 //					target_speed= (float)RndInt.getGauss(0, 1000, (int)(500*offset), (int)(250*strength))/500;		//fixed offset
-					target_speed= (float)RndInt.getGauss(0, 1000, (int)(500*rndOffset), (int)(250*strength))/500;		//random offset
+					target_speed= (float)RndInt.getGauss(0, 100000, (int)(50000*rndOffset), (int)(25000*strength))/50000;		//random offset
 					alpha=(float) 0.2;	//smoother acceleration on motorway
 					keep = RndInt.get(1, 15); 
 					//System.out.println("\nNew target speed at slot "+t+" is "+target_speed);
 				}else{
 					//TODO: how to create random numbers with own distribution??
 //					target_speed= (float)RndInt.getGauss(0, 1000, (int)(750*offset), (int)(250*strength))/675;	//tighter distribution around target speed
-					target_speed= (float)RndInt.getGauss(0, 1000, (int)(750*rndOffset), (int)(250*strength))/675;	//tighter distribution around target speed
+					target_speed= (float)RndInt.getGauss(0, 100000, (int)(75000*rndOffset), (int)(25000*strength))/67500;	//tighter distribution around target speed
 					//in addition, stops are more common in city
 					if(RndInt.get(0,9)==1){
 						target_speed=0;
@@ -184,18 +257,20 @@ public class NetworkGenerator implements Serializable, Cloneable {
 
 //			System.out.print(speed+"("+sum+"), ");
 			//correct: car too slow. Take same time slot again.
-			if(sum<0.5){
-				sum=sum+1;
-			}else	
-			//correct: car too fast. Skip one time slot.
-			if(sum>1.5){
-				index=index+2;
-				sum=sum-1;
-			}
-			else{	//as expected. Take next time slot
-				index++;
-			}
-			slotChange.add(index);
+			do{
+				if(sum<0.5){
+					sum=sum+1;
+				}else	
+				//correct: car too fast. Skip one time slot.
+				if(sum>1.5){
+					index=index+2;
+					sum=sum-1;
+				}
+				else{	//as expected. Take next time slot
+					index++;
+				}
+				slotChange.add(index);
+			}while(sum<0.5 || sum > 1.5);
 		}
 			
 		
@@ -364,4 +439,11 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			return null;
 		}  
 	} 
+	private Vector<Network> cloneNetworks(Vector<Network> toClone){
+		Vector<Network> nets = new Vector<Network>();
+		for(Network net:toClone){
+			nets.add(net.clone());
+		}
+		return nets;
+	}
 }

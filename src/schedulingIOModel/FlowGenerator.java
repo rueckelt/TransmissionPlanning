@@ -1,7 +1,4 @@
 package schedulingIOModel;
-import ilog.opl.IloOplFactory;
-import ilog.opl.IloOplModel;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -13,7 +10,6 @@ import java.util.Vector;
 
 import ToolSet.PersistentStore;
 import ToolSet.RndInt;
-import optimization.ModelAccess;
 
 
 public class FlowGenerator implements Serializable{
@@ -24,6 +20,9 @@ public class FlowGenerator implements Serializable{
 	private static final long serialVersionUID = 8184271622466363691L;
 	public static final String TG_NAME = "TrafficGenerator";
 	private Vector<Flow> flows = new Vector<Flow>();
+
+	private final float ALLOWED_ERROR_OFFSET = (float) 0.05;	//part of error/uncertainty model
+	private int data_amount = 5;	//amount of data: usually between 1 and 10. can be higher.
 	
 	public FlowGenerator(){
 		
@@ -57,6 +56,7 @@ public class FlowGenerator implements Serializable{
 	
 	public void addFlow(Flow flow){
 		flows.add(flow);
+		setFlowIndices();
 	}
 	
 	public void setFlowIndices(){
@@ -67,6 +67,12 @@ public class FlowGenerator implements Serializable{
 		}
 	}
 	
+	public void setDataAmount(int amount){
+		data_amount=amount;
+	}
+	public int getDataAmount(){
+		return data_amount;
+	}
 	/*
 	 * Realistic traffic shaping:
 	 * 
@@ -113,33 +119,33 @@ public class FlowGenerator implements Serializable{
 	}
 	
 	private int getOverallTokens(int duration){
-		return duration*(15+RndInt.get(0,30)); //random amount of overall traffic, but values 45 and 30 have no deeper reason
+		return data_amount*duration*(15+RndInt.get(0,30))/10; //random amount of overall traffic, but values 45 and 30 have no deeper reason
 	}
 	private void addBufferable(int duration){
 		int tokens_bufferable 	= (int) (getOverallTokens(duration)*0.25);
 		//bufferable
 		int buf_length=duration/RndInt.get(2, 3);	//scale duration from half length to 20% length
 		int buf_starttime=RndInt.get(1, duration-buf_length)-1;		//random start time in a way that it can finish before end
-		flows.add(Flow.BufferableStream(buf_starttime, buf_length, tokens_bufferable));
+		addFlow(Flow.BufferableStream(buf_starttime, buf_length, tokens_bufferable));
 	}
 	private void addBackground(int duration){
 		int tokens_background 	= (int) (getOverallTokens(duration)*0.55);
 		//background 
 		int back_deadline=RndInt.get(duration/2, duration-1);	//deadline not in first half
-		flows.add(Flow.Background(tokens_background, back_deadline));
+		addFlow(Flow.Background(tokens_background, back_deadline));
 	}
 	private void addLive(int duration){
 		int tokens_live 		= (int) (getOverallTokens(duration)*0.15);
 		//liveStream
 		int live_start_time= RndInt.get(0,duration/2);
 		int deadline= RndInt.get(live_start_time*3/2+1, duration-1);
-		flows.add(Flow.LiveStram(live_start_time, deadline, tokens_live));	
+		addFlow(Flow.LiveStram(live_start_time, deadline, tokens_live));	
 	}
 	private void addInteractive(int duration){		
 		int tokens_interactive 	= (int) (getOverallTokens(duration)*0.05);
 		//interactive burst
 		int interactive_start_time=RndInt.get(0, duration-10);
-		flows.add(Flow.Interactive(interactive_start_time, tokens_interactive));
+		addFlow(Flow.Interactive(interactive_start_time, tokens_interactive));
 	}
 	
 	
@@ -151,16 +157,16 @@ public class FlowGenerator implements Serializable{
 //		int m=6;
 //		for(int i=0;i<requests;i++){
 //			if(i%m==0|| i%m==4){					//Stream 0
-//				flows.add(Flow.BufferableStream(i*tmp, tmp*6));
+//				addFlow(Flow.BufferableStream(i*tmp, tmp*6));
 ////				System.out.println("ADD FLOW ("+i+"/"+requests+"): BufStream");
 //			}else if(i%m==3 || i%m==5){		//4..10		Browsing
-//				flows.add(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
+//				addFlow(Flow.UserRequest(i*tmp, (int)Math.round(20+Math.sqrt(duration))));
 ////				System.out.println("ADD FLOW ("+i+"/"+requests+"): UserRequest "+(int)Math.round(30+Math.sqrt(duration)));
 //			}else if(i%m==1 ){		//3		Download
-//				flows.add(Flow.Update(duration));
+//				addFlow(Flow.Update(duration));
 ////				System.out.println("ADD FLOW ("+i+"/"+requests+"): Update");
 //			}else{			//0		VoIP
-//				flows.add(Flow.IPCall(i*tmp, r.nextInt(tmp)+20+i*tmp)); 	//todo
+//				addFlow(Flow.IPCall(i*tmp, r.nextInt(tmp)+20+i*tmp)); 	//todo
 ////				System.out.println("ADD FLOW ("+i+"/"+requests+"): IPCall");
 //			}
 //		}
@@ -185,9 +191,11 @@ public class FlowGenerator implements Serializable{
 		for(int i=0; i<requests; i++){
 			int start = rnd.nextInt(duration);
 			int chunks = rnd.nextInt(max_request_size);
-			flows.add(Flow.Interactive(startTime+start, chunks));		
+			addFlow(Flow.Interactive(startTime+start, chunks));		
 		}
 	}
+	
+	
 	
 	
 	/**
@@ -195,19 +203,30 @@ public class FlowGenerator implements Serializable{
 	 * flows can be canceled ; flows can be added. 
 	 * a pause/continue of a flow is modeled as flow canceled and added later with "same" characteristics
 	 */
-	public void addUncertainty(float probAddCancel, float probContinue, int timesteps){
+	public void addUncertainty(float error, int timesteps){
+		Vector<Flow> backup = cloneFlows(flows);
 		
-		
-		addFlows(probAddCancel, timesteps);
-		//avoid concurrent modification
-//		System.out.println("######## Before cancel");
-//		for(Flow f: flows){
-//			System.out.println(f);
-//		}
-		
-		float probCancel = 1/(1+probAddCancel);		//should result in equal amount of traffic
-		cancelFlows(probCancel, probContinue, timesteps);
-
+		float probAddCancel=error;
+		float adapt =1;
+		do{
+			probAddCancel = (float) (probAddCancel*(0.85+0.15*adapt));
+			float probContinue = (float) (0.3);//*probAddCancel);
+			
+			flows = cloneFlows(backup);		//reset flows in each iteration without prior success
+			
+			addFlows(probAddCancel, timesteps);
+			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
+			cancelFlows(probAddCancel, probContinue, timesteps);
+			
+			float act_error = new UncertaintyErrorCalculation().getFlowUncertaintyError(backup, flows);
+			
+			
+			adapt = Math.min(2, error/act_error);	//upper limit for adaption step. Uncertainty may have huge random influence which lead to giant (unwanted) adaption.
+			
+			
+//			System.out.println("act_error = "+act_error+", adapt = "+adapt+", probAddCancel = "+ probAddCancel);
+		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
+				adapt>(1+ALLOWED_ERROR_OFFSET));
 	}
 
 	//cancel flows with certain probability 
@@ -249,7 +268,7 @@ public class FlowGenerator implements Serializable{
 						int deadline = Math.max(startTime+cutLength-1, timesteps-1);
 	
 						Flow contFlow = flow.clone();
-						contFlow.setId(-1);	//generate new id for cloned flow
+						//contFlow.setId(-1);	//generate new id for cloned flow
 						contFlow.setStartTime(startTime);
 						contFlow.setDeadline(deadline);
 						contFlow.setTokens(remainingTokens);
@@ -265,6 +284,7 @@ public class FlowGenerator implements Serializable{
 //			System.out.println(f);
 //		}
 		flows.addAll(toContinue);
+		setFlowIndices();
 //		System.out.println("######## after continue \n"+toContinue);
 //		for(Flow f: flows){
 //			System.out.println(f);
@@ -415,4 +435,12 @@ public class FlowGenerator implements Serializable{
 		}
 	}
 	
+	private Vector<Flow> cloneFlows(Vector<Flow> toClone){
+		Vector<Flow> cloned_flows = new Vector<Flow>();
+		for(Flow flow:toClone){
+			cloned_flows.add(flow.clone());
+		}
+		return cloned_flows;
+	}
+
 }

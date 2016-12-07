@@ -95,10 +95,12 @@ public class CostSeparation {
 				if(t>=flow.getDeadline()-flow.getWindowMin() && t<=flow.getDeadline()){
 					reward-=step;
 				}
-				statefulReward[f][t] = reward;
+
+				statefulReward[f][t] = Math.max(0, reward);
 //				System.out.println(reward);
 			}
 			f++;
+	
 		}
 //		System.out.println("stateful_reward = "+Arrays.deepToString(statefulReward));
 	}
@@ -119,6 +121,7 @@ public class CostSeparation {
 		for(int i=Math.max(0,t-flow.getWindowMin()); i<=Math.min(ng.getTimeslots()-1,t+flow.getWindowMin()); i++){
 			statefulReward[f][i]=Math.max(0, statefulReward[f][i]-step);	//no negative values
 		}
+		
 	}
 
 	//getters

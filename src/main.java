@@ -25,12 +25,24 @@ public class main {
 //		int rep=3;
 		int f=4;
 		int t=2;
+<<<<<<< HEAD
 		int n=5;//5;
 		int rep=30;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
 
 		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
+=======
+		int n=4;//5;
+		int rep=5;
+		boolean eval_uncertainty = true;
+//		String logpath= "my_logs"+File.separator+"short_test";
+//		String logpath= "my_logs"+File.separator+"test";
+
+		//String logpath= "my_logs"+File.separator+"tester";
+//		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
+		String logpath= "my_logs"+File.separator+"eval_";
+>>>>>>> f7915e11e583c9fb19411a30e0c014ee76820c1f
 
 		
 //		for(int rep1 = 0; rep1<=rep; rep1++){
@@ -40,6 +52,7 @@ public class main {
 		//if recalc, then keep generated scenario, keep all files and recalculate only specified schedules; overwrite their files
 		//if nothing of the two, create new scenario if none available; calculate schedules if no logs available for scheduler.
 		
+<<<<<<< HEAD
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 			eval.recalc();
 //			eval.visualize();
@@ -48,19 +61,35 @@ public class main {
 //			eval.evaluateTimeVariation();
 			eval.evaluateNetworkVariation();
 //			eval.evaluateTop();
+=======
+			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,eval_uncertainty,logpath);
+			eval.recalc();
+			eval.visualize();
+			eval.overwrite();
+//			eval.evaluateAll();
+//			eval.evaluateTimeVariation();
+//			eval.evaluateNetworkVariation();
+			eval.evaluateTop();
+>>>>>>> f7915e11e583c9fb19411a30e0c014ee76820c1f
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
-			eval.parallel(4);
+			eval.parallel(3);
 			eval.start();
 //		}
 		
 		//testing uncertainty models
-//		int timeslots=80;
+//		int timeslots=100;
 //	
 //		FlowGenerator fg= new FlowGenerator(timeslots, 8);
+//		fg.addUncertainty((float) 0.5, timeslots);
 //		fg.addUncertainty((float)0.2, (float)0.3, timeslots);	//probAddCancel, probContinue, timesteps
-//	
-//		NetworkGenerator ng = new NetworkGenerator(4,80);
+//
+//		
+//		NetworkGenerator ng = new NetworkGenerator(8,timeslots);
+//		
+//		ng.addNetworkUncertainty((float) 0.4);
+//		ng.addPositionUncertainty((float) 0.2);
+		
 //		ng.addPositionUncertainty((float) 0.3,(float)0.1, false);
 //		ng.addNetworkUncertainty((float)0.3, 5);		//param1: change characteristics (tp, lcy, jit) --> [0..1]; param 2: change range
 		
