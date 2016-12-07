@@ -53,7 +53,7 @@ public class main {
 			eval.evaluateTop();
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
-			eval.parallel(1);
+			eval.parallel(3);
 			eval.start();
 //		}
 		
