@@ -23,9 +23,9 @@ public class main {
 //		int t=1;
 //		int n=2;
 //		int rep=3;
-		int f=3;
+		int f=4;
 		int t=2;
-		int n=3;//5;
+		int n=4;//5;
 		int rep=5;
 		boolean eval_uncertainty = true;
 //		String logpath= "my_logs"+File.separator+"short_test";
@@ -46,7 +46,7 @@ public class main {
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,eval_uncertainty,logpath);
 			eval.recalc();
 			eval.visualize();
-//			eval.overwrite();
+			eval.overwrite();
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();
 //			eval.evaluateNetworkVariation();
@@ -58,14 +58,14 @@ public class main {
 //		}
 		
 		//testing uncertainty models
-		int timeslots=100;
+//		int timeslots=100;
 //	
 //		FlowGenerator fg= new FlowGenerator(timeslots, 8);
 //		fg.addUncertainty((float) 0.5, timeslots);
 //		fg.addUncertainty((float)0.2, (float)0.3, timeslots);	//probAddCancel, probContinue, timesteps
 //
 //		
-		NetworkGenerator ng = new NetworkGenerator(8,timeslots);
+//		NetworkGenerator ng = new NetworkGenerator(8,timeslots);
 //		
 //		ng.addNetworkUncertainty((float) 0.4);
 //		ng.addPositionUncertainty((float) 0.2);

@@ -17,6 +17,7 @@ import schedulers.GreedyScheduler;
 import schedulers.OptimizationScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.RandomScheduler;
+import schedulers.RandomScheduler;
 import schedulers.Scheduler;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
@@ -101,6 +102,8 @@ public class EvaluationScenarioCreator {
 	 * @return list of schedulers
 	 */
 	public static Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
+		
+		boolean newRating = true;
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 //		schedulers.add(new PriorityScheduler(ng, tg));
 //		for(int i=-3000; i<=2000;i=i+100){
@@ -114,11 +117,11 @@ public class EvaluationScenarioCreator {
 //			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
 //		}
 //		schedulers.add(new OptimizationScheduler(ng, tg));
-		schedulers.add(new GreedyScheduler(ng, tg).newRating(true));
+		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));
 //		schedulers.add(new GreedyScheduler(ng, tg).newRating(false));
 		
-		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(true));
-		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(true));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
+		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
 		schedulers.add(new RandomScheduler(ng, tg, 3));	//200 random runs of this scheduler. Returns average duration and cost
 	return schedulers;
 	}
@@ -175,10 +178,10 @@ public class EvaluationScenarioCreator {
 		//paramter log
 		writeScenarioLog(1);
 
-//		for(int rep=0; rep<REPETITIONS;rep++){
-		int rep=5;
+		for(int rep=0; rep<REPETITIONS;rep++){
+//		int rep=2;
 			calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
-//		}
+		}
 //		calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, REPETITIONS, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
 
 		System.out.println("###############  TASK CREATION DONE  ##################");

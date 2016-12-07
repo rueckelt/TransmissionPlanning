@@ -193,7 +193,6 @@ public class GreedyScheduler extends Scheduler{
 		return 0;
 	}
 	
-	
 	protected boolean oppScheduleDecision(int f, int n, int t) {
 //		System.out.println("DECISION_VIO "+calcVio(flow, ng.getNetworks().get(n)));
 		if(NEW_RATING_ESTIMATOR){
@@ -201,7 +200,10 @@ public class GreedyScheduler extends Scheduler{
 			int statefulReward = cs.getStatefulReward(f, t);
 			int tp=cs.getTimeMatch(f, t)*tg.getFlows().get(f).getImpUser();
 			int sum = calcVio+statefulReward+tp;
-			
+//			if(sum-1000<schedule_decision_limit && sum>schedule_decision_limit){
+//				System.out.println("Flow "+f+"\tat Time "+t+"\ton Net "+n+":\t"+(sum-schedule_decision_limit)+
+//						",\t vio: "+calcVio+",\t stateful: "+statefulReward+",\t tp: "+tp+"\tnet-match: "+cs.getNetworkMatch(f, n));
+//			}
 			return  sum	< schedule_decision_limit;
 
 		}else
@@ -287,7 +289,7 @@ public class GreedyScheduler extends Scheduler{
 	protected int calcVio(int f, int n){
 		if(NEW_RATING_ESTIMATOR){
 			int c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);
-			
+			//System.out.print("stateless: "+cs.getStatelessReward(f)+"\t");
 			return c;
 		}else{
 			//old cost function estimation

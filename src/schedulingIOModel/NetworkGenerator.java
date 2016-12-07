@@ -33,7 +33,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	public static final String NG_NAME = "NetworkGenerator";
 	private Vector<Network> networks = new Vector<Network>();
 	
-	private final float ALLOWED_ERROR_OFFSET = (float) 0.01;
+	private final float ALLOWED_ERROR_OFFSET = (float) 0.01;	//part of error/uncertainty model. 
 	
 	private int hysteresis = 500;
 	private int cost_imp = 15;	//importance of monetary cost for network use
@@ -93,7 +93,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 				addNetwork(Network.getCellular(time, RndInt.get(20, 60)));	//cellular available all the time; consant rate (bad model)
 			}else{
 				int duration = RndInt.get(5, 5+2*(int)Math.round(Math.sqrt(time))); //availablity at least 10 slots + extra (depends on sqrt of time)
-				int delay = RndInt.get(0, time-duration-1);
+				int delay = RndInt.get(duration/10, time-duration-1);
 				int tokens = RndInt.get(20,100);
 				addNetwork(Network.getWiFi(duration, tokens , delay));
 			}

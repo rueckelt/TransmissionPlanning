@@ -67,9 +67,11 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 							}else{
 								allocated=allocate(f, t, n, chunksMaxTp);
 							}
-							chunksToAllocate.set(f, chunksToAllocate.get(f)-allocated);
-							if(NEW_RATING_ESTIMATOR){
-								cs.updateStatefulReward(f0, t, allocated);
+							if(allocated>0){
+								chunksToAllocate.set(f, chunksToAllocate.get(f)-allocated);
+								if(NEW_RATING_ESTIMATOR){
+									cs.updateStatefulReward(f0, t, allocated);
+								}
 							}
 						}
 						n0++; //Try next preferred if allocation failed. 
