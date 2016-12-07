@@ -230,11 +230,84 @@ public class EvaluationScenarioCreator {
 		int flows = pow(2,f);
 		String folder_out = folder+f+"_"+t+"_"+n+File.separator;
 //		calculateInstance(time, nets, flows, rep, folder_out, overwrite, recalc, decomposition_heuristic);
+
+		NetworkGenerator ng = getNetworkGenerator();	//do not change order of ng and fg! There's a bad dependence for optimization 
+		FlowGenerator fg = getFlowGenerator();
 		
 		EvaluationScenarioExecutionWorker worker = new 
-				EvaluationScenarioExecutionWorker(TEST_COST_FUNCTION, VISUALIZE, time, nets, flows, rep, folder_out, overwrite, recalc);
+				EvaluationScenarioExecutionWorker(ng, fg, TEST_COST_FUNCTION, VISUALIZE, folder_out, overwrite||recalc);
 		taskList.add(worker);
 		
+	}
+	
+	
+	public NetworkGenerator getNetworkGenerator(String folder, boolean overwrite, int nets, int time, 
+			float netUncertainty, float movementUncertainty){
+		String path=folder+File.separator;
+		System.out.println(path);
+		new File(path).mkdirs();
+
+		//try to load ng configurations from files
+		NetworkGenerator ng= NetworkGenerator.loadNetworkGenerator(path);
+
+
+		if(ng == null || overwrite){	//overwrite ng even if existing
+//				System.out.println("Creating Networks and Flows..");
+			
+			if(netUncertainty>0 ^ movementUncertainty>0){
+				//if one of the two is equal zero, then load NG from file where both are zero and modify
+				ng=getNetworkGenerator(folder, false, nets, time, 0, 0);
+			}else if(netUncertainty>0 && movementUncertainty>0){
+				//if both are different from zero, add movement uncertainty first. Load from movement uncertainty.
+				ng=getNetworkGenerator(folder, false, nets, time, 0, movementUncertainty);
+			}
+			ng=new NetworkGenerator(nets, time);	//add network input data
+			
+			ng.addNetworkUncertainty(netUncertainty);
+			ng.addMovementUncertainty(movementUncertainty);
+			ng.writeObject(path);
+		}
+		
+		return ng;		
+	}
+	
+	public FlowGenerator getFlowGenerator(){
+		
+		String path=folder+File.separator;
+		
+		System.out.println(path);
+		new File(path).mkdirs();
+//			System.out.println(recalc);
+		if(overwrite){	//overwrite ng+tg even if existing
+//				System.out.println("Creating Networks and Flows..");
+			ng=new NetworkGenerator(nets, time);	//add network input data
+			ng.addNetworkUncertainty(uncertaintyLevel);
+			ng.addMovementUncertainty(uncertaintyLevel);
+			ng.writeObject(path);
+			tg = new FlowGenerator(time, flows);		//add application traffic input data
+			tg.addUncertainty(uncertaintyLevel, ng.getTimeslots());
+			tg.writeObject(path); 
+		}else{
+			//try to load ng and tg configurations from files (recalc or not existing yet)
+			ng=NetworkGenerator.loadNetworkGenerator(path);
+			tg=FlowGenerator.loadTrafficGenerator(path);
+			
+			//create if not existing; if one is missing calculate all schedules new (recalc=true)!
+			if(ng==null){
+				ng=new NetworkGenerator(nets, time);	//add network input data
+				ng.addNetworkUncertainty(uncertaintyLevel);
+				ng.addMovementUncertainty(uncertaintyLevel);
+				ng.writeObject(path);
+				recalc=true;
+			}
+			if(tg==null){
+				tg = new FlowGenerator(time, flows);		//add application traffic input data
+				tg.addUncertainty(uncertaintyLevel, ng.getTimeslots());
+				tg.writeObject(path);
+				recalc=true;
+			}
+			tg.setFlowIndices();	
+		}
 	}
 	
 	

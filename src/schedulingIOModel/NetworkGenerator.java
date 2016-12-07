@@ -146,7 +146,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 * @param strength - influences the distribution of the error. should be between 0 [no error] and 1 [huge error]
 	 * @param offset - gives an offset to the mean of the distribution. Car drives faster/slower in average. Use 0 for NO offset; range [0..1]
 	 */
-	public void addPositionUncertainty(float error){
+	public void addMovementUncertainty(float error){
 
 		//take motorway model for <0.2. Urban leads to higher orders whenever the car stops at least once. stops convergence.
 		//else, select randomly.
