@@ -23,17 +23,17 @@ public class main {
 //		int t=1;
 //		int n=2;
 //		int rep=3;
-		int f=4;
+		int f=3;
 		int t=2;
-		int n=4;//5;
-		int rep=5;
+		int n=3;//5;
+		int rep=1;
 		boolean eval_uncertainty = true;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
 
 		//String logpath= "my_logs"+File.separator+"tester";
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
-		String logpath= "my_logs"+File.separator+"eval_";
+		String logpath= "my_logs"+File.separator+"eval_unc";
 
 		
 //		for(int rep1 = 0; rep1<=rep; rep1++){
@@ -43,17 +43,18 @@ public class main {
 		//if recalc, then keep generated scenario, keep all files and recalculate only specified schedules; overwrite their files
 		//if nothing of the two, create new scenario if none available; calculate schedules if no logs available for scheduler.
 		
-			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,eval_uncertainty,logpath);
+			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 			eval.recalc();
+			eval.addUncertainty((float)0.4, (float)0.4, (float)0.4);
 			eval.visualize();
-			eval.overwrite();
+//			eval.overwrite();
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();
 //			eval.evaluateNetworkVariation();
 			eval.evaluateTop();
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
-			eval.parallel(3);
+			eval.parallel(4);
 			eval.start();
 //		}
 		

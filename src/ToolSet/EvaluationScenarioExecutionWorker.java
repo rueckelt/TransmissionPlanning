@@ -55,7 +55,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 			OptimizationScheduler sched = new OptimizationScheduler(ng,
 					fg);
 			sched.testCostFunction();
-			sched.calculateInstance(path, recalc); //or when overwrite
+			sched.calculateInstance(folder, recalc); //or when overwrite
 		} else {
 
 			
@@ -67,12 +67,12 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 				String date = formatter.format(Calendar.getInstance().getTime());
 				System.out.println(" "+scheduler.getType() + ", starting at "+date);
 
-				scheduler.calculateInstance(path, recalc); //or when overwrite
+				scheduler.calculateInstance(folder, recalc); //or when overwrite
 
 			}
 
 			if(VISUALIZE){
-				Plot plot = new Plot(new VisualizationPack(ng, tg, scheds));
+				Plot plot = new Plot(new VisualizationPack(ng, fg, scheds));
 			}
 
 		}
