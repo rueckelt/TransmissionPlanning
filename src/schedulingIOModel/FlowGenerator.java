@@ -4,9 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import ToolSet.PersistentStore;
 import ToolSet.RndInt;
@@ -25,14 +27,17 @@ public class FlowGenerator implements Serializable{
 	private int data_amount = 5;	//amount of data: usually between 1 and 10. can be higher.
 	
 	public FlowGenerator(){
-		
+		Flow.setNextId(new AtomicInteger(0));
 	}
+	
 	public FlowGenerator(int duration, int requests){
+		Flow.setNextId(new AtomicInteger(0));
 		addTraffic(duration,requests);
 	}
 	
 	public static FlowGenerator loadTrafficGenerator(String path){
 		FlowGenerator tg=null;
+		Flow.setNextId(new AtomicInteger(0));
 		
 		try{
 			if(new File(path+TG_NAME).exists()){
@@ -44,8 +49,7 @@ public class FlowGenerator implements Serializable{
 		}
 		return tg;
 	}
-	
-	//write this object to file
+
 	public void writeObject(String dest){
 		PersistentStore.storeObject(dest+TG_NAME, this);
 	}
@@ -209,13 +213,14 @@ public class FlowGenerator implements Serializable{
 		float probAddCancel=error;
 		float adapt =1;
 		do{
+			Flow.setNextId(new AtomicInteger(0));	
 			probAddCancel = (float) (probAddCancel*(0.85+0.15*adapt));
 			float probContinue = (float) (0.3);//*probAddCancel);
 			
 			flows = cloneFlows(backup);		//reset flows in each iteration without prior success
 			
 			addFlows(probAddCancel, timesteps);
-			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
+//			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
 			cancelFlows(probAddCancel, probContinue, timesteps);
 			
 			float act_error = new UncertaintyErrorCalculation().getFlowUncertaintyError(backup, flows);
@@ -242,7 +247,8 @@ public class FlowGenerator implements Serializable{
 				
 				//cancel flow completely with certain probability (20%)
 				if(RndInt.get(0,9)<2){
-					toRemove.add(flow);
+					//toRemove.add(flow);
+					flow.setTokens(0); // if we remove the flow from the list, the executor cannot follow the original schedule plan with rowindex
 				}else{
 //					System.out.println("##canceled "+flow+";; ");
 					//determine slot for cancellation during running transmission
@@ -325,6 +331,9 @@ public class FlowGenerator implements Serializable{
 			content = new Scanner(new File(source)).useDelimiter("\\Z").next();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchElementException e){
+			System.err.println("FlowGenerator writeOutput (Opt) line 320: could not write file.\nsource: "+source +"\ndest: "+dest);
 			e.printStackTrace();
 		}
 		

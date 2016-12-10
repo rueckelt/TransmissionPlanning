@@ -7,17 +7,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import ToolSet.CostSeparation;
-import ToolSet.InterfaceLimit;
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
+import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.FlowGenerator;
+import ToolSet.CostSeparation;
 
 
 public class GreedyScheduler extends Scheduler{
-	private final boolean RELAX_TIME_LIMITS = false;
+//	private final boolean RELAX_TIME_LIMITS = false;
 
 	@Override
 	public String getType() {

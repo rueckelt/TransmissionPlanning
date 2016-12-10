@@ -1,10 +1,6 @@
 package schedulingIOModel;
-import ilog.opl.IloOplFactory;
-import ilog.opl.IloOplModel;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.ObjectInputStream.GetField;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
@@ -14,7 +10,6 @@ import java.util.Vector;
 
 import ToolSet.PersistentStore;
 import ToolSet.RndInt;
-import optimization.ModelAccess;
 
 /**
  * Firstly creates Network objects defining capacity to each time slot
@@ -33,7 +28,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	public static final String NG_NAME = "NetworkGenerator";
 	private Vector<Network> networks = new Vector<Network>();
 	
-	private final float ALLOWED_ERROR_OFFSET = (float) 0.01;	//part of error/uncertainty model. 
+	private final float ALLOWED_ERROR_OFFSET = (float) 0.02;	//part of error/uncertainty model. 
 	
 	private int hysteresis = 500;
 	private int cost_imp = 15;	//importance of monetary cost for network use
@@ -64,7 +59,6 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		return networks.get(0).getSlots();
 	}
 	
-	//write this object to file
 	public void writeObject(String dest){
 		PersistentStore.storeObject(dest+NG_NAME, this);
 	}
@@ -120,7 +114,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			for(Network net: networks){
 				net.addNetworkUncertainty(strength_charactieristics, strength_range);
 			}
-			adapt = error/getNetworkError(backup);
+			adapt = Math.max((float)0.00001, error/getNetworkError(backup));
 			//System.out.println("NetGen124: adapt = "+adapt+", strength = "+strength_charactieristics);
 		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
 				adapt>(1+ALLOWED_ERROR_OFFSET));	
@@ -146,12 +140,12 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 * @param strength - influences the distribution of the error. should be between 0 [no error] and 1 [huge error]
 	 * @param offset - gives an offset to the mean of the distribution. Car drives faster/slower in average. Use 0 for NO offset; range [0..1]
 	 */
-	public void addPositionUncertainty(float error){
+	public void addMovementUncertainty(float error){
 
 		//take motorway model for <0.2. Urban leads to higher orders whenever the car stops at least once. stops convergence.
 		//else, select randomly.
 		boolean motorwayModel=error<0.2 || RndInt.get(0, 1)>0;
-		motorwayModel=false;
+//		motorwayModel=false;
 //		System.out.println("isMotorway "+motorwayModel);
 		float strength=error;
 		Vector<Integer> slotChange;
@@ -170,12 +164,12 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			float offset=(float) (0.2*strength);
 			slotChange = calculateSlotChange(strength, offset, motorwayModel);
 //			System.out.println(slotChange);
-			adapt = Math.min(2, error/getPositionError(slotChange));
+			adapt = Math.max((float)0.00001,Math.min(2, error/getPositionError(slotChange)));
 //			System.out.println("Pos Error is "+getPositionError(slotChange)+", adapt ="+adapt+", strength = "+strength);
 		}	
 		while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
 				adapt>(1+ALLOWED_ERROR_OFFSET));	
-		
+		System.out.println("NetworkGenerator: addMovementUncertainty("+error+") ="+slotChange);
 		for(Network net: networks){
 			net.addPositionUncertainty(slotChange);
 		}

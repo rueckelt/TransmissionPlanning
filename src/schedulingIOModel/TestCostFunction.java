@@ -26,14 +26,14 @@ public class TestCostFunction extends CostFunction {
 	protected void check(int[] value, String variable){
 		int[] v = ModelAccess.getArray(model, variable);
 		if(!Arrays.equals(v, value)){
-			System.err.println(variable + " model != cost-function:\n"+Arrays.toString(v)+"\n"+Arrays.toString(value));
+			System.err.println(variable + " model != cost-function:\nopt: "+Arrays.toString(v)+"\ncf:  "+Arrays.toString(value));
 			System.exit(0);
 		}
 	}
 	protected void check(int[][] value, String variable){
 		int[][] v = ModelAccess.getArray2(model, variable);
 		if(!Arrays.deepEquals(v, value)){
-			System.err.println(variable + " model != cost-function:\n"+Arrays.deepToString(v)+"\n"+Arrays.deepToString(value));
+			System.err.println(variable + " model != cost-function:\nopt: "+Arrays.deepToString(v)+"\ncf:  "+Arrays.deepToString(value));
 			System.exit(0);
 		}
 	}

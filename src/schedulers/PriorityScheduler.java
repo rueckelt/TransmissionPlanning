@@ -4,16 +4,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Vector;
 
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
+import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
-import schedulingIOModel.FlowGenerator;
 
 
 public class PriorityScheduler extends Scheduler{

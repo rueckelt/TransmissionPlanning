@@ -1,12 +1,10 @@
 package schedulers;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import optimization.ModelExecutor;
+import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
 import schedulingIOModel.TestCostFunction;
-import schedulingIOModel.FlowGenerator;
 
 
 public class OptimizationScheduler extends Scheduler {
