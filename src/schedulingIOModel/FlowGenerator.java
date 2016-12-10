@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import ToolSet.PersistentStore;
 import ToolSet.RndInt;
@@ -26,14 +27,17 @@ public class FlowGenerator implements Serializable{
 	private int data_amount = 5;	//amount of data: usually between 1 and 10. can be higher.
 	
 	public FlowGenerator(){
-		
+		Flow.setNextId(new AtomicInteger(0));
 	}
+	
 	public FlowGenerator(int duration, int requests){
+		Flow.setNextId(new AtomicInteger(0));
 		addTraffic(duration,requests);
 	}
 	
 	public static FlowGenerator loadTrafficGenerator(String path){
 		FlowGenerator tg=null;
+		Flow.setNextId(new AtomicInteger(0));
 		
 		try{
 			if(new File(path+TG_NAME).exists()){
@@ -209,6 +213,7 @@ public class FlowGenerator implements Serializable{
 		float probAddCancel=error;
 		float adapt =1;
 		do{
+			Flow.setNextId(new AtomicInteger(0));	
 			probAddCancel = (float) (probAddCancel*(0.85+0.15*adapt));
 			float probContinue = (float) (0.3);//*probAddCancel);
 			
@@ -242,7 +247,8 @@ public class FlowGenerator implements Serializable{
 				
 				//cancel flow completely with certain probability (20%)
 				if(RndInt.get(0,9)<2){
-					toRemove.add(flow);
+					//toRemove.add(flow);
+					flow.setTokens(0); // if we remove the flow from the list, the executor cannot follow the original schedule plan with rowindex
 				}else{
 //					System.out.println("##canceled "+flow+";; ");
 					//determine slot for cancellation during running transmission

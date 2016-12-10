@@ -40,11 +40,14 @@ public class Flow implements Serializable, Cloneable{
 	private String flowName="flow";
 
 	//each flow gets a unique ID
-	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
+	static AtomicInteger NEXT_ID = new AtomicInteger(0);
     int id = NEXT_ID.getAndIncrement();
     
     private int index=-1;	//not set
-
+    public Flow() {
+    	////System.out.println(id);
+    	setIndex(id);
+    }
     //set ID externally; use -1 to create new id
     public void setId(int id) {
     	if(id<0){
@@ -386,12 +389,17 @@ public class Flow implements Serializable, Cloneable{
 	public String toString(){
 		String s = flowName;
 		
-		s+="\tst "+startTime+"\tdl "+deadline+"\ttokens "+chunks+"\twin_min "+windowMin+"\ttok_min "+chunksMin;
+		s+="\tid: " + id + " index: " + index + " st "+startTime+"\tdl "+deadline+"\ttokens "+chunks+"\twin_min "+windowMin+"\ttok_min "+chunksMin;
 		
 		return s;
 		
 		
 	}
+	
+	
+	public static void setNextId(AtomicInteger atomInt) {
+		NEXT_ID = atomInt;
+	} 
 
 		
 }
