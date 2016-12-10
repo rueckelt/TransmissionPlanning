@@ -17,6 +17,7 @@ import schedulers.GreedyScheduler;
 import schedulers.OptimizationScheduler;
 import schedulers.PriorityScheduler;
 import schedulers.RandomScheduler;
+import schedulers.RandomScheduler;
 import schedulers.Scheduler;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
@@ -32,6 +33,17 @@ public class EvaluationScenarioCreator {
 	private boolean VISUALIZE = false;	//tests cost function implemented in java, comparing all results to optimization output
 	private int PARALLEL=1;
 	
+	private final int REPETITIONS;
+	private final int MAX_TIME;
+	private final int MAX_FLOWS;
+	private final int MAX_NETS;
+	private final String LOG;
+	
+	private float NET_UNCERTAINTY=(float)0.0;
+	private float MOVE_UNCERTAINTY=(float)0.0;
+	private float FLOW_UNCERTAINTY=(float)0.0;
+	
+	
 	List<Callable<Boolean>> taskList = new ArrayList<Callable<Boolean>>();
 	
 	public EvaluationScenarioCreator(int time, int nets, int apps, int repetitions, String logpath){
@@ -39,11 +51,17 @@ public class EvaluationScenarioCreator {
 		MAX_TIME=time;
 		MAX_FLOWS=apps;
 		MAX_NETS=nets;
-		LOG=logpath+File.separator;
-		
+		LOG=logpath+File.separator;		
 		//evaluate();
 	}
-	
+
+
+	public void addUncertainty(float move, float net, float flow){
+		NET_UNCERTAINTY=net;
+		MOVE_UNCERTAINTY=move;
+		FLOW_UNCERTAINTY=flow;
+	}
+
 	/*
 	 * reads out generated simulation scenarios and recalculates results
 	 */
@@ -78,12 +96,6 @@ public class EvaluationScenarioCreator {
 		executor.shutdown();
 	}
 	
-	
-	private final int REPETITIONS;
-	private final int MAX_TIME;
-	private final int MAX_FLOWS;
-	private final int MAX_NETS;
-	private final String LOG;
 
 	/**
 	 * get list of all schedulers which shall calculate a schedule
@@ -92,6 +104,8 @@ public class EvaluationScenarioCreator {
 	 * @return list of schedulers
 	 */
 	public static Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
+		
+		boolean newRating = true;
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 //		schedulers.add(new PriorityScheduler(ng, tg));
 //		for(int i=-3000; i<=2000;i=i+100){
@@ -105,12 +119,10 @@ public class EvaluationScenarioCreator {
 //			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
 //		}
 //		schedulers.add(new OptimizationScheduler(ng, tg));
-		schedulers.add(new GreedyScheduler(ng, tg).newRating(true));
-//		schedulers.add(new GreedyScheduler(ng, tg).newRating(false));
-		
-		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(true));
-		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(true));
-//		schedulers.add(new RandomScheduler(ng, tg, 200));	//200 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
+//		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
+//		schedulers.add(new RandomScheduler(ng, tg, 3));	//200 random runs of this scheduler. Returns average duration and cost
 	return schedulers;
 	}
 	
@@ -132,7 +144,11 @@ public class EvaluationScenarioCreator {
 		logger.log("max_flows", MAX_FLOWS);
 		logger.log("max_nets", MAX_NETS);
 		logger.log("max_rep", REPETITIONS);
-		logger.log("evaluate_max_only", evaluateMax);			//is 1 if simulation did not ran from 0 to max, but only max
+		logger.log("move_uncertainty", MOVE_UNCERTAINTY);
+		logger.log("net_uncertainty", NET_UNCERTAINTY);
+		logger.log("flow_uncertainty", FLOW_UNCERTAINTY);
+		
+		//logger.log("evaluate_max_only", evaluateMax);			//is 1 if simulation did not ran from 0 to max, but only max
 		logger.logSchedulers(initSchedulers(null, null));	//save which schedulers are available for evaluation
 		
 		logger.writeLog(LOG+"parameters_log.m");
@@ -152,13 +168,12 @@ public class EvaluationScenarioCreator {
 				for(int req=0;req<=MAX_FLOWS;req++){
 					//repetitions of optimization
 					for(int rep=0; rep<REPETITIONS;rep++){
-						calculateInstance_t_n_i(t, net, req, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
+						evaluateUncertainty(t, net, req, rep);
 					}
 					
 				}
 			}
 		}
-
 		System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 	
@@ -167,10 +182,10 @@ public class EvaluationScenarioCreator {
 		writeScenarioLog(1);
 
 		for(int rep=0; rep<REPETITIONS;rep++){
-			calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
+//		int rep=2;
+			evaluateUncertainty(MAX_TIME, MAX_NETS, MAX_FLOWS, rep);
 		}
-//		calculateInstance_t_n_i(MAX_TIME, MAX_NETS, MAX_FLOWS, REPETITIONS, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
-
+		
 		System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 	
@@ -179,11 +194,9 @@ public class EvaluationScenarioCreator {
 		writeScenarioLog(1);
 		for(int t= 0; t<=MAX_TIME; t++){
 			for(int rep=0; rep<REPETITIONS;rep++){
-				calculateInstance_t_n_i(t, MAX_NETS, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
+				evaluateUncertainty(t,  MAX_NETS, MAX_FLOWS, rep);
 			}
 		}
-		
-	
 	System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 	
@@ -192,14 +205,30 @@ public class EvaluationScenarioCreator {
 		writeScenarioLog(1);
 		for(int n= 0; n<=MAX_NETS; n++){
 			for(int rep=0; rep<REPETITIONS;rep++){
-				calculateInstance_t_n_i(MAX_TIME, n, MAX_FLOWS, rep, LOG, LOG_OVERWRITE, RECALC, false);	//false=decomposition heuristic TODO
+				evaluateUncertainty(MAX_TIME, n, MAX_FLOWS, rep);
 			}
 		}
-		
-	
 	System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 
+	public void evaluateUncertainty(int t, int n, int f, int rep){
+		calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, 0, 0);	
+	
+//		for(float move_unc=(float)0.1; move_unc<=MOVE_UNCERTAINTY; move_unc+=(float)0.1){
+//			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, move_unc, 0);
+//		}
+//		for(float net_unc=(float)0.1; net_unc<=NET_UNCERTAINTY; net_unc+=(float)0.1){
+//			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, net_unc, 0, 0);
+//		}
+//		for(float flow_unc=(float)0.1; flow_unc<=FLOW_UNCERTAINTY; flow_unc+=(float)0.1){
+//			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, 0, flow_unc);	
+//		}
+		if(FLOW_UNCERTAINTY>0 && MOVE_UNCERTAINTY>0 && FLOW_UNCERTAINTY>0){
+			for(float unc=(float)0.0; unc<=FLOW_UNCERTAINTY; unc+=(float)0.1){
+				calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, unc, unc, unc);
+			}
+		}
+	}
 
 	/**
 	 * calculates maximum values for time slots, networks, and flows from indexes
@@ -213,17 +242,105 @@ public class EvaluationScenarioCreator {
 	 */
 	
 	
-	public void calculateInstance_t_n_i(int t, int n, int f, int rep, String folder, boolean overwrite, boolean recalc, boolean decomposition_heuristic){
+	public void calculateInstance_t_n_i(int t, int n, int f, int rep, String folder, boolean overwrite, 
+			boolean recalc, float netUncertainty, float movementUncertainty, float flowUncertainty){
 		int time = 25*pow(2,t);
 		int nets = pow(2,n);
 		int flows = pow(2,f);
-		String folder_out = folder+f+"_"+t+"_"+n+File.separator;
+		String folder_out = folder+f+"_"+t+"_"+n+File.separator+rep+File.separator;
 //		calculateInstance(time, nets, flows, rep, folder_out, overwrite, recalc, decomposition_heuristic);
+
+		NetworkGenerator ng = getNetworkGenerator(folder_out, overwrite, nets, time, netUncertainty, movementUncertainty);	//do not change order of ng and fg! There's a bad dependence for optimization 
+		FlowGenerator fg = getFlowGenerator(folder_out, flowUncertainty>0 && overwrite, nets, time, flowUncertainty);
+		
+		if(netUncertainty>0 && movementUncertainty>0 && flowUncertainty>0){
+			folder_out+="comb_"+movementUncertainty+File.separator;
+		}else if(netUncertainty>0){
+			folder_out+="net_"+netUncertainty+File.separator;
+		}else if(movementUncertainty>0){
+			folder_out+="move_"+movementUncertainty+File.separator;
+		}else if(flowUncertainty>0){
+			folder_out+="flow_"+flowUncertainty+File.separator;
+		}
+		
+		
 		
 		EvaluationScenarioExecutionWorker worker = new 
-				EvaluationScenarioExecutionWorker(TEST_COST_FUNCTION, VISUALIZE, time, nets, flows, rep, folder_out, overwrite, recalc);
+				EvaluationScenarioExecutionWorker(ng, fg, TEST_COST_FUNCTION, VISUALIZE, folder_out, overwrite||recalc);
 		taskList.add(worker);
 		
+	}
+	
+		
+	public NetworkGenerator getNetworkGenerator(String folder, boolean overwrite, int nets, int time, 
+			float netUncertainty, float movementUncertainty){
+		String path=folder;
+		if(movementUncertainty>0 && netUncertainty>0){
+			path+="comb_"+movementUncertainty+File.separator;
+		}else if(movementUncertainty>0){
+			path+="move_"+movementUncertainty+File.separator;
+		}else if(netUncertainty>0){
+			path+="net_"+netUncertainty+File.separator;
+		}
+
+//		System.out.println(path);
+		new File(path).mkdirs();
+
+		//try to load ng configurations from file
+		NetworkGenerator ng= NetworkGenerator.loadNetworkGenerator(path);
+
+		//if file does not exist, create scenario (or overwrite if desired)
+		if(ng == null || overwrite){	//overwrite ng even if existing
+//				System.out.println("Creating Networks and Flows..");
+			if(netUncertainty>0 && movementUncertainty>0){
+				//if both are different from zero, add movement uncertainty first. Load from movement uncertainty.
+				ng=getNetworkGenerator(folder, false, nets, time, 0, movementUncertainty);
+				ng.addNetworkUncertainty(netUncertainty);
+			}else if(movementUncertainty>0){
+				//if one of the two is equal zero, then load NG from file where both are zero and modify
+				ng=getNetworkGenerator(folder, false, nets, time, 0, 0);
+				ng.addMovementUncertainty(movementUncertainty);
+			}else if(netUncertainty>0){
+				//if one of the two is equal zero, then load NG from file where both are zero and modify
+				ng=getNetworkGenerator(folder, false, nets, time, 0, 0);
+				ng.addNetworkUncertainty(netUncertainty);
+			}else{
+				ng=new NetworkGenerator(nets, time);
+			}
+			
+			ng.writeObject(path);
+		}
+		
+		return ng;		
+	}
+	
+	public FlowGenerator getFlowGenerator(String folder, boolean overwrite, int flows, int time,
+			float flowUncertainty){
+		String path=folder;
+		if(flowUncertainty>0){
+			path+="flow_"+flowUncertainty+File.separator;
+		}
+		
+		new File(path).mkdirs();
+
+		//try to load ng configurations from file
+		FlowGenerator fg= FlowGenerator.loadTrafficGenerator(path);
+
+		//if file does not exist, create scenario (or overwrite if desired)
+		if(fg == null || overwrite){	//overwrite ng even if existing
+//				System.out.println("Creating Networks and Flows..");
+			if(flowUncertainty>0){
+				fg=getFlowGenerator(folder, false, flows, time, 0);	//get initial flowGenerator without uncertainty
+				//add uncertainty
+				fg.addUncertainty(flowUncertainty, time);
+			}else{
+				fg=new FlowGenerator(time, flows);
+			}
+
+//			System.out.println("write FlowGen to: "+path);	
+			fg.writeObject(path);
+		}
+		return fg;
 	}
 	
 	

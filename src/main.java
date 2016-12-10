@@ -23,16 +23,17 @@ public class main {
 //		int t=1;
 //		int n=2;
 //		int rep=3;
-		int f=4;
+		int f=3;
 		int t=2;
-		int n=4;//5;
-		int rep=30;
+		int n=3;//5;
+		int rep=1;
+		boolean eval_uncertainty = true;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
 
 		//String logpath= "my_logs"+File.separator+"tester";
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
-		String logpath= "my_logs"+File.separator+"eval_";
+		String logpath= "my_logs"+File.separator+"eval_unc";
 
 		
 //		for(int rep1 = 0; rep1<=rep; rep1++){
@@ -44,12 +45,13 @@ public class main {
 		
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 			eval.recalc();
-//			eval.visualize();
+			eval.addUncertainty((float)0.4, (float)0.4, (float)0.4);
+			eval.visualize();
 //			eval.overwrite();
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();
-			eval.evaluateNetworkVariation();
-//			eval.evaluateTop();
+//			eval.evaluateNetworkVariation();
+			eval.evaluateTop();
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
 //			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
 			eval.parallel(4);
@@ -57,14 +59,14 @@ public class main {
 //		}
 		
 		//testing uncertainty models
-		int timeslots=100;
+//		int timeslots=100;
 //	
 //		FlowGenerator fg= new FlowGenerator(timeslots, 8);
 //		fg.addUncertainty((float) 0.5, timeslots);
 //		fg.addUncertainty((float)0.2, (float)0.3, timeslots);	//probAddCancel, probContinue, timesteps
 //
 //		
-		NetworkGenerator ng = new NetworkGenerator(8,timeslots);
+//		NetworkGenerator ng = new NetworkGenerator(8,timeslots);
 //		
 //		ng.addNetworkUncertainty((float) 0.4);
 //		ng.addPositionUncertainty((float) 0.2);

@@ -63,7 +63,7 @@ public class GreedyScheduler extends Scheduler{
 	 */
 	public Scheduler newRating(boolean NEW_RATING){
 		NEW_RATING_ESTIMATOR=NEW_RATING;
-		tl_offset=4;	//allow the new metric to violoate time limit constraints
+		tl_offset=0;	//allow the new metric to violoate time limit constraints
 		return this;
 	}
 	
@@ -109,6 +109,7 @@ public class GreedyScheduler extends Scheduler{
 						return flowCrit_tmp.get(i2)-flowCrit_tmp.get(i1);
 					}
 				});	 //highest priority first
+				System.out.println(flow_order);
 		return flow_order;
 	}
 
@@ -122,7 +123,6 @@ public class GreedyScheduler extends Scheduler{
 		Set<Integer> usedSlots = new HashSet<Integer>(); 	//each flow can use only one network in each time slot
 		int chunksMaxTp = (int)(flow.getTokensMax());///flow.getWindowMax());	//get average maximum throughput for later allocation
 		int chunksToAllocate = flow.getTokens();
-		
 		//sort networks according to match with flow
 		Vector<Integer> networkIDs = sortNetworkIDs(flow);
 //			System.out.println("##################################  Flow "+flowIndex+"; Network order: "+networkIDs);
@@ -137,8 +137,8 @@ public class GreedyScheduler extends Scheduler{
 			//Network net = ng_tmp.getNetworks().get(n);
 //			System.out.println("########### Flow "+flowIndex +"   Network "+n);
 
-			for(int t=Math.max(0, getStartTime(flow)-tl_offset); 
-					t<Math.min(ng.getTimeslots(), getDeadline(flow)+tl_offset) && chunksToAllocate>0;
+			for(int t=Math.max(0, flow.getStartTime()-1-tl_offset); 
+					t<Math.min(ng.getTimeslots(), flow.getDeadline()+tl_offset) && chunksToAllocate>0;
 					t++){
 				//do only allocate if allocation leads to cost reduction
 				if(scheduleDecision(flowIndex, n, t)){
@@ -149,14 +149,14 @@ public class GreedyScheduler extends Scheduler{
 						int allocated=0;
 //						System.out.println("chunks maxTP: "+chunksMaxTp+"; chunksToAllocate: "+chunksToAllocate);
 						int chunks=chunksMaxTp;
-						if(NEW_RATING_ESTIMATOR){
-							int rating = 	calcVio(flowIndex, n)+	//stateless reward + network match
-//											cs.getStatefulReward(f, t)+
-											cs.getTimeMatch(flowIndex, t)/getAvMinTp(tg.getFlows().get(flowIndex));	
-							if(rating>schedule_decision_limit){
-								chunks=flow.getTokensMin();
-							}
-						}
+//						if(NEW_RATING_ESTIMATOR){
+//							int rating = 	calcVio(flowIndex, n)+	//stateless reward + network match
+////											cs.getStatefulReward(f, t)+
+//											cs.getTimeMatch(flowIndex, t)/getAvMinTp(tg.getFlows().get(flowIndex));	
+//							if(rating>schedule_decision_limit){
+//								chunks=flow.getTokensMin();
+//							}
+//						}
 //						if(chunksToAllocate<chunksMaxTp){
 							allocated=allocate(flowIndex, t, n, Math.min(chunksToAllocate, chunks)); //do not allocate more chunks than required and flow can provide
 //						}else{
@@ -193,26 +193,25 @@ public class GreedyScheduler extends Scheduler{
 		return 0;
 	}
 	
-	int temp=0;
-	protected boolean scheduleDecision(int f, int n, int t) {
+	protected boolean oppScheduleDecision(int f, int n, int t) {
 //		System.out.println("DECISION_VIO "+calcVio(flow, ng.getNetworks().get(n)));
 		if(NEW_RATING_ESTIMATOR){
-			int rating = 	calcVio(f, n)+	//stateless reward + network match
-							cs.getStatefulReward(f, t)+
-							cs.getTimeMatch(f, t)/getAvMinTp(tg.getFlows().get(f));		//time limit violation is only counted for used slot. not for token amount
-			
-			if(rating!=temp){
-//				System.out.println("Rating change f,t,n "+f+","+t+","+n+": "+rating +
-//							"; time match: "+(cs.getTimeMatch(f, t)/getAvMinTp(tg.getFlows().get(f)))+
-//							"; network match: "+cs.getNetworkMatch(f, n) +
-//							"; stateless reward: "+cs.getStatelessReward(f)+ 
-//							"; stateful reward: "+cs.getStatefulReward(f, t));
-				temp=rating;
-			}
-			
-			return  rating < schedule_decision_limit;
+			int calcVio = calcVio(f,n);
+			int statefulReward = cs.getStatefulReward(f, t);
+			int tp=cs.getTimeMatch(f, t)*tg.getFlows().get(f).getImpUser();
+			int sum = calcVio+statefulReward+tp;
+//			if(sum-1000<schedule_decision_limit && sum>schedule_decision_limit){
+//				System.out.println("Flow "+f+"\tat Time "+t+"\ton Net "+n+":\t"+(sum-schedule_decision_limit)+
+//						",\t vio: "+calcVio+",\t stateful: "+statefulReward+",\t tp: "+tp+"\tnet-match: "+cs.getNetworkMatch(f, n));
+//			}
+			return  sum	< schedule_decision_limit;
+
 		}else
 			return calcVio(f, n)<schedule_decision_limit;
+	}
+	
+	protected boolean scheduleDecision(int f, int n, int t) {
+		return oppScheduleDecision(f, n, t);
 	}
 	
 	public Scheduler setScheduleDecisionLimit(int limit){
@@ -221,23 +220,25 @@ public class GreedyScheduler extends Scheduler{
 	}
 
 	/**
-	 * criticality is worst case schedule cost (flow NOT scheduled) 
+	 * criticality is worst case schedule cost (flow NOT scheduled) devided by the number of tokens 
 	 * @param f flow
 	 * @param ng available networks
 	 * @return criticality
 	 */
 	protected int calculateFlowCriticality(Flow f, NetworkGenerator ng){
 		//calculate violation if flow is NOT scheduled (worst case)
-		//TODO: and subtract violation is flow is scheduled alone (best case)
 		FlowGenerator tg_temp= new FlowGenerator();
 		tg_temp.addFlow(f);
 		CostFunction cf = new CostFunction(ng, tg_temp);
 		//get cost with empty schedule (worst case, flow is unscheduled)
 		int cost_wc = cf.costViolation(getEmptySchedule(tg_temp, ng));
-		//cost_wc*=f.getImpUser();
-		//System.out.println("criticality:cost of flow "+getId()+" worst: "+cost_wc);
-		int cost_bc = 0;
-		return cost_wc;//-cost_bc;
+		int loglen = (int)Math.log(f.getDeadline()-f.getStartTime())+1;
+//		System.out.println("loglen f"+f.getId()+": "+loglen);
+//		System.out.println("crit f"+f.getId()+": "+cost_wc/f.getTokens()+", corr "+cost_wc/(loglen*f.getTokens()));
+		if(f.getTokens()>0)
+			return cost_wc/(loglen*f.getTokens());//-cost_bc;
+		else
+			return 0;
 	}
 	
 
@@ -288,7 +289,7 @@ public class GreedyScheduler extends Scheduler{
 	protected int calcVio(int f, int n){
 		if(NEW_RATING_ESTIMATOR){
 			int c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);
-			
+			//System.out.print("stateless: "+cs.getStatelessReward(f)+"\t");
 			return c;
 		}else{
 			//old cost function estimation
@@ -331,7 +332,7 @@ public class GreedyScheduler extends Scheduler{
 		int slotcount=0;
 		int sum =0;
 	
-		for(int t = getStartTime(flow); t<getDeadline(flow); t++){	//only analyze throughput in time frame of flow
+		for(int t = flow.getStartTime(); t<flow.getDeadline(); t++){	//only analyze throughput in time frame of flow
 			int slotCapacity=net.getCapacity().get(t);
 			if(slotCapacity>0){
 				sum+=slotCapacity;	//sum up slot capacity
@@ -360,23 +361,6 @@ public class GreedyScheduler extends Scheduler{
 		return (int) Math.ceil(flow.getTokensMin()/flow.getWindowMin())+1;
 	}
 	
-	private int getStartTime(Flow flow){
-		if (RELAX_TIME_LIMITS){
-			int startTime = flow.getStartTime()-15/(flow.getImpStartTime()+1);
-			if(startTime<0){ startTime=0;}
-			return startTime;
-		} else{
-			return flow.getStartTime();
-		}
-	}
-	private int getDeadline(Flow flow){
-		if (RELAX_TIME_LIMITS){
-			int deadline = flow.getDeadline()+15/(flow.getImpDeadline()+1);
-			if(deadline>=ng.getTimeslots()) {deadline=ng.getTimeslots();}
-			return deadline;
-		} else{
-			return flow.getDeadline();
-		}
-	}
+
 
 }

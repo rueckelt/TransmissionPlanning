@@ -20,7 +20,8 @@ public class CostFunction {
 	
 	private NetworkGenerator ng;
 	private FlowGenerator tg;
-	private int minTpAmplifier = 100;
+	private int minTpAmplifier = 20;
+	private static int LcyJitAmplifier = 1;	// this is testing only. MUST BE = 1 for eval!  is not in opt. therefore modify ImpJit/Lcy.
 	protected LogMatlabFormat logger = null;
 	
 	public CostFunction(NetworkGenerator ng, FlowGenerator tg){
@@ -44,7 +45,7 @@ public class CostFunction {
 	public static int latencyMatch(Flow flow, Network net){
 		if(net.getLatency()>flow.getReqLatency()){
 			//System.out.println("lcy "+(Math.pow(net.getLatency()-flow.getReqLatency(),2)*flow.getImpLatency()));
-			return (int) (Math.pow(net.getLatency()-flow.getReqLatency(),2)*flow.getImpLatency());
+			return (int) (Math.pow(net.getLatency()-flow.getReqLatency(),2)*flow.getImpLatency())*LcyJitAmplifier;
 		}else{
 			return 0;
 		}
@@ -57,7 +58,7 @@ public class CostFunction {
 	 */
 	public static int jitterMatch(Flow flow, Network net){
 		if(net.getJitter()>flow.getReqJitter()){
-			return (int) (Math.pow(net.getJitter()-flow.getReqJitter(),2)*flow.getImpJitter());
+			return (int) (Math.pow(net.getJitter()-flow.getReqJitter(),2)*flow.getImpJitter())*LcyJitAmplifier;
 		}else{
 			return 0;
 		}
@@ -453,6 +454,34 @@ public class CostFunction {
 			logger.log("costTotal", costTotal);
 		}
 		return costTotal;
+	}
+	
+	public String getStat(int[][][] schedule){
+		String stat="Cost Deviation Statistics: \n";
+		int total = costTotal(schedule);
+		stat+="total = "+total;
+		
+		int mon = costMon(schedule);
+		int vio = costViolation(schedule);
+		int switches= costSwitches(schedule);
+		stat+="\nmon: "+100*mon/total+"%, vio: "+100*vio/total+"%, switches"+100*switches/total+"%";
+		int timeLimits=0;
+		int nonsched=0;
+		int tp = 0;
+		int lcyJit=0;
+		for(int f = 0; f<schedule.length; f++){
+			int impUser = tg.getFlows().get(f).getImpUser();
+			int[][] cummulated_f_t = cummulated_f_t(schedule);
+			
+			timeLimits += (vioSt(schedule)[f]+vioDl(schedule)[f])*impUser;
+			nonsched += vioNon(cummulated_f_t)[f]*impUser;
+			tp += vioTp(cummulated_f_t)[f]*impUser;
+			lcyJit += vioLcy(schedule)[f]+vioJit(schedule)[f]*impUser;
+		}
+		 
+		stat+="\ntime_limits: "+100*timeLimits/total+"%, nonsched: "+100*nonsched/total+"%, tp: "+100*tp/total+"%, lcyJit"+100*lcyJit/total+"%";
+		
+		return stat;
 	}
 	
 	//this is only dummy for overwriting in extending test classes and should be left empty

@@ -169,16 +169,18 @@ public class Network implements Serializable, Cloneable{
 		wifi.setType(1);
 		wifi.setCost(RndInt.get(1,3));
 		wifi.setJitter(RndInt.get(4, 8));
-		wifi.setLatency(RndInt.get(1, 3));
+		wifi.setLatency(RndInt.get(1, 4));
 		return wifi;
 	}
 	
 	public static Network getCellular(int slots, int meanChunks){
-		Network cell = new Network(slots, meanChunks);
-		cell.setType(2);
-		cell.setCost(RndInt.get(15, 25));
-		cell.setJitter(RndInt.get(3, 8));
-		cell.setLatency(RndInt.get(6, 12));
+		int type = RndInt.get(2, 4);	//2G, 3G, 4G
+		Network cell = new Network(slots, type*meanChunks/2);
+		cell.setType(2);	//set cellular
+		
+		cell.setCost(2+type*RndInt.get(2, 3)/2);	//higher technology, more expensive
+		cell.setJitter((5-type)*RndInt.get(1, 3));
+		cell.setLatency((5-type)*RndInt.get(3, 5));
 		return cell;
 	}
 	
@@ -191,6 +193,7 @@ public class Network implements Serializable, Cloneable{
 	 */
 	public void addPositionUncertainty(Vector<Integer> slotIndexes) {
 		int len = capacity.size();
+		System.out.println("cap_old="+capacity);
 		Vector<Integer> cap_tmp= new Vector<Integer>();
 		
 		//set capacity values
@@ -203,6 +206,8 @@ public class Network implements Serializable, Cloneable{
 		while(cap_tmp.size()<len){
 			cap_tmp.add(capacity.get(capacity.size()-1));	
 		}
+		capacity=cap_tmp;
+		System.out.println("cap_new="+capacity);
 	}
 	
 	/**
@@ -236,7 +241,8 @@ public class Network implements Serializable, Cloneable{
 				int rnd = (int) ((float)RndInt.getGauss(-c, c)*w_char);
 				filtered = (int)((float)filtered*(1-alpha)+rnd*alpha);
 //				System.out.print(filtered+", ");
-				capacity.set(t, c+filtered);
+				int newCap = Math.max(0, c+filtered);
+				capacity.set(t, newCap);
 			}
 		}
 		
@@ -282,15 +288,18 @@ public class Network implements Serializable, Cloneable{
 					}else{
 					//reduce network range
 						varyRange=-varyRange;	//make it positive for easier application
-						
+						int varyRange_tmp=0;
 						//remove items
 						for(int i = 0;i<varyRange;i++){
-							capacity.remove(index);
+							if(index<capacity.size()){
+								capacity.remove(index);
+								varyRange_tmp++;
+							}
 						}
 						
 						//add elements at start and end
-						for(int v=0;v<varyRange;v++){
-							if(v<varyRange/2){
+						for(int v=0;v<varyRange_tmp;v++){
+							if(v<varyRange_tmp/2){
 								capacity.add(0, capacity.get(0));	//insert first element again
 							}else{
 								capacity.add(capacity.size()-1, capacity.get(capacity.size()-1));	//insert last element

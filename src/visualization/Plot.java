@@ -18,6 +18,8 @@ import javax.swing.ToolTipManager;
 
 import schedulers.Scheduler;
 import schedulingIOModel.CostFunction;
+import schedulingIOModel.Flow;
+import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
 
 /**
@@ -35,8 +37,10 @@ public class Plot extends JFrame{
 	 */
 	private static final long serialVersionUID = -4512141223520070006L;
 
+	FlowGenerator fg;
 	public Plot(VisualizationPack vis) {
 		super("Connection problem prediction");
+		fg= vis.getTraffic();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height, vis);
 		JScrollPane scrollPane = new JScrollPane(drawingPanel);
@@ -303,11 +307,11 @@ class PlotGraph extends JPanel{
 	int widthTimeslot = 10;		// width per timeslot
 	int vOffset = 20;			// space between two networks
 	int textAreaWidth = 165;
-
+	private FlowGenerator fg;
 	
 	public PlotGraph(VisualizationPack vis, Scheduler s, int factor) {
 		super(null);			// No layout
-		
+		fg=vis.getTraffic();
 		sched = s;
 		nets = vis.getNets().getNetworks();
 		this.factor = factor;
@@ -390,7 +394,7 @@ class PlotGraph extends JPanel{
 						
 						// Flows
 						temp = vFlowRect.get(f);
-						
+
 						// different color for each flow .... until there are more then 17.
 						switch (f) {
 							case 0: g.setColor(Color.GREEN.darker()); break;
@@ -533,21 +537,27 @@ class PlotGraph extends JPanel{
 		if (firstTime) {
 			textArea.append("Violations:");
 			for (int f = 0; f < sched.getFlowCounter(); f++) {
-				textArea.append("\nFlow " +f +":\n");
+				Flow flow=fg.getFlows().get(f);
+				String[] colors = {"dark green", "blue", "pink", "light gray", "magenta", "orange", "yellow",
+						"cyan", "green", "light blue", "light pink", "dark grey", "light magenta", "light orange",
+						"light yellow", "light cyan", "light green"};
+				
+				textArea.append("\nFlow " +f +": "+flow.getFlowName()+"\n DR= "+sched.getFlowDrop(f)+"%, "+colors[f%16]+"\n");
 				if (violations[f][0] != 0)
-					textArea.append("Throughput: " +violations[f][0] +"\n");
+					textArea.append(" TP: " +violations[f][0] +",");
 		
 				if (violations[f][1] != 0)
-					textArea.append("Jitter: " +violations[f][1] +"\n");
+					textArea.append(" Jit: " +violations[f][1] +",");
 		
 				if (violations[f][2] != 0)
-					textArea.append("Latency: " +violations[f][2] +"\n");
+					textArea.append(" Lcy: " +violations[f][2] +",");
 		
 				if (violations[f][3] != 0)
-					textArea.append("Starttime: " +violations[f][3] +"\n");
+					textArea.append(" St: " +violations[f][3] +",");
 		
 				if (violations[f][4] != 0)
-					textArea.append("Deadline: " +violations[f][4] +"\n");
+					textArea.append(" Dl: " +violations[f][4] +",");
+				textArea.append("\n");
 			}
 		}
 		

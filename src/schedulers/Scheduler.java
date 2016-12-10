@@ -108,7 +108,9 @@ public abstract class Scheduler {
 			schedule_f_t_n=schedule_f_t_n_temp;	//store to schedule_f_t_n if constraints hold
 			
 			logInstance(path, duration);
-
+			System.err.println(getType()+": \t"
+			//+ cf.costTotal(schedule_f_t_n)); //
+			+cf.getStat(schedule_f_t_n));
 		}
 	}
 
@@ -132,6 +134,8 @@ public abstract class Scheduler {
 		cf.calculate(schedule_f_t_n_temp);	//writes log
 		
 		logger.comment(showSchedule(schedule_f_t_n_temp));
+		
+		logFlowDrop();
 		
 		//finish logging and write to file
 		logger.writeLog(getLogfileName(path));
@@ -380,6 +384,40 @@ public abstract class Scheduler {
 	
 	public Flow getFlow(int pos) {
 		return tg.getFlows().get(pos);
+	}
+
+	public void logFlowDrop(){
+		String s = "Flow Drop Rate:\n";
+		for(int f =0; f<tg.getFlows().size(); f++){
+			Flow flow = tg.getFlows().get(f);
+			s+="Flow "+f+": "+getFlowDrop(f)+"%, type: "+flow.getFlowName()
+					+", st "+flow.getStartTime()
+					+", dl "+flow.getDeadline()
+					+", UserImp "+flow.getImpUser()
+					+", ImpUnsch "+flow.getImpUnsched()
+					+", ImpLcy " +flow.getImpLatency()
+					+", ImpJit "+flow.getImpJitter()
+					+", ImpTp "+flow.getImpThroughputMin()
+					+", Tokens "+flow.getTokens()
+					+"\n";
+					
+		}
+		logger.comment(s);
+	}
+	
+	public int getFlowDrop(int f){
+		Flow flow = tg.getFlows().get(f);
+			int sched_flow_tokens=0;
+			
+			for(int n = 0; n<ng.getNetworks().size(); n++){
+				for(int t = 0; t<ng.getTimeslots(); t++){
+					sched_flow_tokens+=schedule_f_t_n[f][t][n];
+				}
+			}
+			if(flow.getTokens()>0)
+				return (100-100*sched_flow_tokens/flow.getTokens());
+			else
+				return 0;
 	}
 	
 }

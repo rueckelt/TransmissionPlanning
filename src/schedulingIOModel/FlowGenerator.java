@@ -1,13 +1,9 @@
 package schedulingIOModel;
-import ilog.opl.IloOplFactory;
-import ilog.opl.IloOplModel;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
@@ -15,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import ToolSet.PersistentStore;
 import ToolSet.RndInt;
-import optimization.ModelAccess;
 
 
 public class FlowGenerator implements Serializable{
@@ -27,7 +22,8 @@ public class FlowGenerator implements Serializable{
 	public static final String TG_NAME = "TrafficGenerator";
 	private Vector<Flow> flows = new Vector<Flow>();
 
-	private final float ALLOWED_ERROR_OFFSET = (float) 0.05;
+	private final float ALLOWED_ERROR_OFFSET = (float) 0.05;	//part of error/uncertainty model
+	private int data_amount = 5;	//amount of data: usually between 1 and 10. can be higher.
 	
 	public FlowGenerator(){
 		Flow.setNextId(new AtomicInteger(0));
@@ -75,6 +71,12 @@ public class FlowGenerator implements Serializable{
 		}
 	}
 	
+	public void setDataAmount(int amount){
+		data_amount=amount;
+	}
+	public int getDataAmount(){
+		return data_amount;
+	}
 	/*
 	 * Realistic traffic shaping:
 	 * 
@@ -121,7 +123,7 @@ public class FlowGenerator implements Serializable{
 	}
 	
 	private int getOverallTokens(int duration){
-		return duration*(15+RndInt.get(0,30)); //random amount of overall traffic, but values 45 and 30 have no deeper reason
+		return data_amount*duration*(15+RndInt.get(0,30))/10; //random amount of overall traffic, but values 45 and 30 have no deeper reason
 	}
 	private void addBufferable(int duration){
 		int tokens_bufferable 	= (int) (getOverallTokens(duration)*0.25);
@@ -227,7 +229,7 @@ public class FlowGenerator implements Serializable{
 			adapt = Math.min(2, error/act_error);	//upper limit for adaption step. Uncertainty may have huge random influence which lead to giant (unwanted) adaption.
 			
 			
-			System.out.println("act_error = "+act_error+", adapt = "+adapt+", probAddCancel = "+ probAddCancel);
+//			System.out.println("act_error = "+act_error+", adapt = "+adapt+", probAddCancel = "+ probAddCancel);
 		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
 				adapt>(1+ALLOWED_ERROR_OFFSET));
 	}
