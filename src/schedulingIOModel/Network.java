@@ -193,7 +193,7 @@ public class Network implements Serializable, Cloneable{
 	 */
 	public void addPositionUncertainty(Vector<Integer> slotIndexes) {
 		int len = capacity.size();
-		System.out.println("cap_old="+capacity);
+//		System.out.println("cap_old="+capacity);
 		Vector<Integer> cap_tmp= new Vector<Integer>();
 		
 		//set capacity values
@@ -207,7 +207,7 @@ public class Network implements Serializable, Cloneable{
 			cap_tmp.add(capacity.get(capacity.size()-1));	
 		}
 		capacity=cap_tmp;
-		System.out.println("cap_new="+capacity);
+//		System.out.println("cap_new="+capacity);
 	}
 	
 	/**

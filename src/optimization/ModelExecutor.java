@@ -1,9 +1,5 @@
 package optimization;
-import java.util.HashMap;
-
-import ToolSet.LogMatlabFormat;
 import ilog.concert.IloException;
-import ilog.cp.IloCP;
 import ilog.cplex.IloCplex;
 import ilog.opl.IloCustomOplDataSource;
 import ilog.opl.IloOplDataElements;
@@ -15,6 +11,10 @@ import ilog.opl.IloOplModel;
 import ilog.opl.IloOplModelDefinition;
 import ilog.opl.IloOplModelSource;
 import ilog.opl.IloOplSettings;
+
+import java.util.HashMap;
+
+import ToolSet.LogMatlabFormat;
 
 /**
  * Execute IBM CPLEX model

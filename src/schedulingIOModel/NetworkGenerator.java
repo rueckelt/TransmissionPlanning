@@ -1,10 +1,6 @@
 package schedulingIOModel;
-import ilog.opl.IloOplFactory;
-import ilog.opl.IloOplModel;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.ObjectInputStream.GetField;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
@@ -14,7 +10,6 @@ import java.util.Vector;
 
 import ToolSet.PersistentStore;
 import ToolSet.RndInt;
-import optimization.ModelAccess;
 
 /**
  * Firstly creates Network objects defining capacity to each time slot
@@ -64,7 +59,6 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		return networks.get(0).getSlots();
 	}
 	
-	//write this object to file
 	public void writeObject(String dest){
 		PersistentStore.storeObject(dest+NG_NAME, this);
 	}

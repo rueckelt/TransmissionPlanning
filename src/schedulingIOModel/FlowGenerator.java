@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
@@ -44,8 +45,7 @@ public class FlowGenerator implements Serializable{
 		}
 		return tg;
 	}
-	
-	//write this object to file
+
 	public void writeObject(String dest){
 		PersistentStore.storeObject(dest+TG_NAME, this);
 	}
@@ -215,7 +215,7 @@ public class FlowGenerator implements Serializable{
 			flows = cloneFlows(backup);		//reset flows in each iteration without prior success
 			
 			addFlows(probAddCancel, timesteps);
-			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
+//			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
 			cancelFlows(probAddCancel, probContinue, timesteps);
 			
 			float act_error = new UncertaintyErrorCalculation().getFlowUncertaintyError(backup, flows);
@@ -325,6 +325,9 @@ public class FlowGenerator implements Serializable{
 			content = new Scanner(new File(source)).useDelimiter("\\Z").next();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchElementException e){
+			System.err.println("FlowGenerator writeOutput (Opt) line 320: could not write file.\nsource: "+source +"\ndest: "+dest);
 			e.printStackTrace();
 		}
 		

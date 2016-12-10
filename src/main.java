@@ -17,7 +17,7 @@ import ToolSet.RndInt;
 public class main {
 	
 	public static void main(String[] args) {
-		boolean decomp = false;
+
 		//logfile is logpath/f_t_n/rep..
 //		int f=2;
 //		int t=1;
@@ -26,14 +26,13 @@ public class main {
 		int f=3;
 		int t=2;
 		int n=3;//5;
-		int rep=1;
-		boolean eval_uncertainty = true;
+		int rep=30;
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
 
 		//String logpath= "my_logs"+File.separator+"tester";
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
-		String logpath= "my_logs"+File.separator+"eval_unc";
+		String logpath= "my_logs"+File.separator+"eval_uncertainty";
 
 		
 //		for(int rep1 = 0; rep1<=rep; rep1++){
@@ -44,16 +43,15 @@ public class main {
 		//if nothing of the two, create new scenario if none available; calculate schedules if no logs available for scheduler.
 		
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
-			eval.recalc();
-			eval.addUncertainty((float)0.4, (float)0.4, (float)0.4);
-			eval.visualize();
-//			eval.overwrite();
+//			eval.recalc();
+			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);
+//			eval.visualize();
+//			eval.overwrite();	overwrite does not work in current state. EvalScneario creator needs update. Delete logs or user other path instead!
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();
 //			eval.evaluateNetworkVariation();
 			eval.evaluateTop();
-//			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, false ,true, decomp);	//recalc
-//			eval.calculateInstance_t_n_i(t, n, f, rep, logpath+File.separator, true ,false, decomp);	//overwrite
+
 			eval.parallel(4);
 			eval.start();
 //		}

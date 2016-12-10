@@ -1,7 +1,5 @@
 package ToolSet;
 
-import java.util.Arrays;
-
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;

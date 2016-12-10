@@ -1,6 +1,4 @@
 package schedulingIOModel;
-import java.util.Arrays;
-
 import schedulers.PriorityScheduler;
 import schedulers.Scheduler;
 import ToolSet.LogMatlabFormat;
@@ -272,10 +270,11 @@ public class CostFunction {
 		//return vioTpMin[f][t]*flow.getImpThroughputMin()/(flow.getChunksMin()*flow.getWindowMin());
 	}
 	public int vioTp_weight(int vioTpMin, Flow flow){
+		
 		if(flow.getTokensMin()*flow.getWindowMin()<=0){
 			return 0;
 		}
-		return vioTpMin*flow.getImpThroughputMin()*(int)(minTpAmplifier*1.02)/(flow.getTokensMin()*flow.getWindowMin());
+		return Math.round(((float)(vioTpMin*flow.getImpThroughputMin()*minTpAmplifier))/(flow.getTokensMin()*flow.getWindowMin()));
 	}
 	
 	public int[] vioTp(int[][] cummulated_f_t){

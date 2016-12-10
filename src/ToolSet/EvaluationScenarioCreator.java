@@ -1,28 +1,20 @@
 package ToolSet;
 import java.io.File;
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import schedulers.GreedyOnlineOpppertunisticScheduler;
 import schedulers.GreedyOnlineScheduler;
 import schedulers.GreedyScheduler;
 import schedulers.OptimizationScheduler;
-import schedulers.PriorityScheduler;
-import schedulers.RandomScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
-import visualization.Plot;
-import visualization.VisualizationPack;
 
 
 public class EvaluationScenarioCreator {
@@ -118,22 +110,14 @@ public class EvaluationScenarioCreator {
 //		for(int i=-12000; i>-20000;i=i-2000){
 //			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
 //		}
-//		schedulers.add(new OptimizationScheduler(ng, tg));
+		schedulers.add(new OptimizationScheduler(ng, tg));
 		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
 		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
-//		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
-//		schedulers.add(new RandomScheduler(ng, tg, 3));	//200 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
+		schedulers.add(new RandomScheduler(ng, tg, 100));	//200 random runs of this scheduler. Returns average duration and cost
 	return schedulers;
 	}
-	
-	private Vector<Scheduler> initWithUncertainty(NetworkGenerator ng, FlowGenerator fg){
-		Vector<Scheduler> schedulers = new Vector<Scheduler>();
-		
-		
-		
-		
-		return schedulers;
-	}
+
 	
 	private void writeScenarioLog(int evaluateMax){
 		
@@ -212,19 +196,19 @@ public class EvaluationScenarioCreator {
 	}
 
 	public void evaluateUncertainty(int t, int n, int f, int rep){
-		calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, 0, 0);	
+		calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, 0, 0);		//no uncertainty
 	
-//		for(float move_unc=(float)0.1; move_unc<=MOVE_UNCERTAINTY; move_unc+=(float)0.1){
-//			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, move_unc, 0);
-//		}
-//		for(float net_unc=(float)0.1; net_unc<=NET_UNCERTAINTY; net_unc+=(float)0.1){
-//			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, net_unc, 0, 0);
-//		}
-//		for(float flow_unc=(float)0.1; flow_unc<=FLOW_UNCERTAINTY; flow_unc+=(float)0.1){
-//			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, 0, flow_unc);	
-//		}
+		for(float move_unc=(float)0.1; move_unc<=MOVE_UNCERTAINTY; move_unc+=(float)0.1){
+			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, move_unc, 0);
+		}
+		for(float net_unc=(float)0.1; net_unc<=NET_UNCERTAINTY; net_unc+=(float)0.1){
+			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, net_unc, 0, 0);
+		}
+		for(float flow_unc=(float)0.1; flow_unc<=FLOW_UNCERTAINTY; flow_unc+=(float)0.1){
+			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, 0, flow_unc);	
+		}
 		if(FLOW_UNCERTAINTY>0 && MOVE_UNCERTAINTY>0 && FLOW_UNCERTAINTY>0){
-			for(float unc=(float)0.0; unc<=FLOW_UNCERTAINTY; unc+=(float)0.1){
+			for(float unc=(float)0.1; unc<=FLOW_UNCERTAINTY; unc+=(float)0.1){
 				calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, unc, unc, unc);
 			}
 		}
@@ -251,7 +235,7 @@ public class EvaluationScenarioCreator {
 //		calculateInstance(time, nets, flows, rep, folder_out, overwrite, recalc, decomposition_heuristic);
 
 		NetworkGenerator ng = getNetworkGenerator(folder_out, overwrite, nets, time, netUncertainty, movementUncertainty);	//do not change order of ng and fg! There's a bad dependence for optimization 
-		FlowGenerator fg = getFlowGenerator(folder_out, flowUncertainty>0 && overwrite, nets, time, flowUncertainty);
+		FlowGenerator fg = getFlowGenerator(folder_out, flowUncertainty>0 && overwrite, flows, time, flowUncertainty);
 		
 		if(netUncertainty>0 && movementUncertainty>0 && flowUncertainty>0){
 			folder_out+="comb_"+movementUncertainty+File.separator;
@@ -310,7 +294,7 @@ public class EvaluationScenarioCreator {
 			
 			ng.writeObject(path);
 		}
-		
+
 		return ng;		
 	}
 	
@@ -340,6 +324,7 @@ public class EvaluationScenarioCreator {
 //			System.out.println("write FlowGen to: "+path);	
 			fg.writeObject(path);
 		}
+		
 		return fg;
 	}
 	

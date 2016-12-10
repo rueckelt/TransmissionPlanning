@@ -2,10 +2,6 @@ package schedulingIOModel;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.sound.sampled.ReverbType;
-
-import schedulers.PriorityScheduler;
-import schedulers.Scheduler;
 import ToolSet.RndInt;
 
 
