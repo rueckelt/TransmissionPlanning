@@ -1,0 +1,128 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+\definecolor{mycolor2}{rgb}{0.90000,0.70000,0.10000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0,
+xmax=7,
+xtick={0,1,2,3,4,5,6,7},
+xticklabels={{},{0.0},{0.1},{0.2},{0.3},{0.4},{0.5},{},{}},
+xlabel={Network Uncertainty: Prediction Error},
+separate axis lines,
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymin=-0.1,
+ymax=0.6,
+ylabel={Relative Detail Score RDS(GA)},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.03)},anchor=south west,legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=black,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.0217997181427351	-0.015624693004242	-0.0135387096112769\\
+2	0.0216358475422657	-0.0139733201296282	-0.0088654521566352\\
+3	0.0198185990571774	-0.0189606253583343	-0.0115752459862381\\
+4	0.031601797901858	-0.0172531469823044	-0.0244262460321569\\
+5	0.0277947200565115	-0.0122059420690772	-0.0154510409273726\\
+6	0.0377955387912368	-0.017145028240124	-0.0272878948184755\\
+};
+\addlegendentry{min. throughput};
+
+\addplot [color=mycolor1,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.000511220962639196	-0.00641846188745858	-0.00323879495127006\\
+2	0.00135356766370278	-0.00533605890727759	-0.0018708627712129\\
+3	0.0010838315381539	-0.00394845201646821	-0.00259423882528813\\
+4	0.000810253074495114	-0.00339700483351963	-0.004138211134514\\
+5	0.00216526772460863	-0.00803191668710124	-0.00265671047767093\\
+6	0.00568290066691417	-0.0109613068444047	-0.00650752522486784\\
+};
+\addlegendentry{unscheduled tokens};
+
+\addplot [color=blue,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.374998907581993	-0.187100361932186	-0.150603841827717\\
+2	0.371315103596063	-0.132744047824861	-0.136008154390703\\
+3	0.382908563216522	-0.148926339497311	-0.198693621428119\\
+4	0.345278307863681	-0.212131174175744	-0.151695512660729\\
+5	0.326747952927884	-0.161041846144759	-0.110823763963422\\
+6	0.280938138802943	-0.133813861377482	-0.092768317605599\\
+};
+\addlegendentry{latency jitter};
+
+\addplot [color=mycolor2,solid]
+  table[row sep=crcr]{%
+0	0\\
+7	0\\
+};
+\addlegendentry{Ref Opt};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0,
+xmax=7,
+xtick={0,1,2,3,4,5,6,7},
+xticklabels={{},{0.0},{0.1},{0.2},{0.3},{0.4},{0.5},{},{}},
+xlabel={Network Uncertainty: Prediction Error},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-0.1,
+ymax=0.6,
+ylabel={Relative Detail Score RDS(GA)}
+]
+\addplot [color=black,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.0217997181427351	-0.015624693004242	-0.0135387096112769\\
+2	0.0216358475422657	-0.0139733201296282	-0.0088654521566352\\
+3	0.0198185990571774	-0.0189606253583343	-0.0115752459862381\\
+4	0.031601797901858	-0.0172531469823044	-0.0244262460321569\\
+5	0.0277947200565115	-0.0122059420690772	-0.0154510409273726\\
+6	0.0377955387912368	-0.017145028240124	-0.0272878948184755\\
+};
+\addplot [color=mycolor1,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.000511220962639196	-0.00641846188745858	-0.00323879495127006\\
+2	0.00135356766370278	-0.00533605890727759	-0.0018708627712129\\
+3	0.0010838315381539	-0.00394845201646821	-0.00259423882528813\\
+4	0.000810253074495114	-0.00339700483351963	-0.004138211134514\\
+5	0.00216526772460863	-0.00803191668710124	-0.00265671047767093\\
+6	0.00568290066691417	-0.0109613068444047	-0.00650752522486784\\
+};
+\addplot [color=blue,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.374998907581993	-0.187100361932186	-0.150603841827717\\
+2	0.371315103596063	-0.132744047824861	-0.136008154390703\\
+3	0.382908563216522	-0.148926339497311	-0.198693621428119\\
+4	0.345278307863681	-0.212131174175744	-0.151695512660729\\
+5	0.326747952927884	-0.161041846144759	-0.110823763963422\\
+6	0.280938138802943	-0.133813861377482	-0.092768317605599\\
+};
+\addplot [color=mycolor2,solid,forget plot]
+  table[row sep=crcr]{%
+0	0\\
+7	0\\
+};
+\end{axis}
+\end{tikzpicture}%

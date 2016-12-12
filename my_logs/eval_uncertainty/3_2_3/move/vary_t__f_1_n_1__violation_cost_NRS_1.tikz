@@ -1,0 +1,160 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+\definecolor{mycolor2}{rgb}{0.00000,1.00000,1.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0,
+xmax=7,
+xtick={0,1,2,3,4,5,6,7},
+xticklabels={{},{0.0},{0.1},{0.2},{0.3},{0.4},{0.5},{},{}},
+xlabel={Movement Uncertainty: Prediction Error},
+separate axis lines,
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymin=-0.8,
+ymax=1,
+ylabel={Normalized Rating Score (NRS)},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.03)},anchor=south west,legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=mycolor1,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.790074003977896	-0.0352104455443486	-0.0484012215370546\\
+2	0.782568109946735	-0.0719599481484875	-0.0583526907597131\\
+3	0.804227192847222	-0.0327118735089248	-0.0782963811969963\\
+4	0.798804157170893	-0.0575771112627578	-0.0554723677622162\\
+5	0.808517709203468	-0.0495792633794061	-0.084723329735799\\
+6	0.791770488497124	-0.0486332212302888	-0.094721222364046\\
+};
+\addlegendentry{TP};
+
+\addplot [color=blue,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.655905266686657	-0.110342381274382	-0.0843404653347871\\
+2	0.657444739259974	-0.103721336333772	-0.0874923690868405\\
+3	0.649956755186772	-0.115848341364804	-0.0735121244885716\\
+4	0.707771434576148	-0.0651990560767316	-0.133550893289621\\
+5	0.687019247935804	-0.0801767708292521	-0.17754241267143\\
+6	0.670911311014069	-0.0773446306740295	-0.137633667575951\\
+};
+\addlegendentry{ONS};
+
+\addplot [color=red,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.483868133311414	-0.104678144545992	-0.202131139017803\\
+2	0.496438501562436	-0.101626132044612	-0.120946432477313\\
+3	0.457671974601827	-0.0793481170349958	-0.0941611553781118\\
+4	0.471722119757947	-0.115692348512463	-0.135886973886959\\
+5	0.449375264714595	-0.15782254190669	-0.133421988892995\\
+6	0.483688066546748	-0.0691442919996141	-0.13219928773279\\
+};
+\addlegendentry{NS};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.699797060168019	-0.0590115227273029	-0.0880233211995398\\
+2	0.725033367137872	-0.0634658568079517	-0.158254682841401\\
+3	0.700075401074296	-0.0655650712149038	-0.0879943535429617\\
+4	0.713222962378268	-0.0598049787137136	-0.109324924845168\\
+5	0.758342601155291	-0.0398276770121457	-0.165491157491667\\
+6	0.696386736777908	-0.0729513604974713	-0.134646995419021\\
+};
+\addlegendentry{GA};
+
+\addplot [color=mycolor2,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.787632064024761	-0.0335445022127177	-0.0459592815839194\\
+2	0.351976653836595	-0.257557959089064	-0.158535932991497\\
+3	0.0752742971844429	-0.27192445593084	-0.200543687709354\\
+4	0.216140102631177	-0.122059172775439	-0.385292005702155\\
+5	-0.0702197312872729	-0.292530151785373	-0.358782747894418\\
+6	-0.0973023656561026	-0.384035045554718	-0.523604578132277\\
+};
+\addlegendentry{Exe};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0,
+xmax=7,
+xtick={0,1,2,3,4,5,6,7},
+xticklabels={{},{0.0},{0.1},{0.2},{0.3},{0.4},{0.5},{},{}},
+xlabel={Movement Uncertainty: Prediction Error},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-0.8,
+ymax=1,
+ylabel={Normalized Rating Score (NRS)}
+]
+\addplot [color=mycolor1,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.790074003977896	-0.0352104455443486	-0.0484012215370546\\
+2	0.782568109946735	-0.0719599481484875	-0.0583526907597131\\
+3	0.804227192847222	-0.0327118735089248	-0.0782963811969963\\
+4	0.798804157170893	-0.0575771112627578	-0.0554723677622162\\
+5	0.808517709203468	-0.0495792633794061	-0.084723329735799\\
+6	0.791770488497124	-0.0486332212302888	-0.094721222364046\\
+};
+\addplot [color=blue,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.655905266686657	-0.110342381274382	-0.0843404653347871\\
+2	0.657444739259974	-0.103721336333772	-0.0874923690868405\\
+3	0.649956755186772	-0.115848341364804	-0.0735121244885716\\
+4	0.707771434576148	-0.0651990560767316	-0.133550893289621\\
+5	0.687019247935804	-0.0801767708292521	-0.17754241267143\\
+6	0.670911311014069	-0.0773446306740295	-0.137633667575951\\
+};
+\addplot [color=red,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.483868133311414	-0.104678144545992	-0.202131139017803\\
+2	0.496438501562436	-0.101626132044612	-0.120946432477313\\
+3	0.457671974601827	-0.0793481170349958	-0.0941611553781118\\
+4	0.471722119757947	-0.115692348512463	-0.135886973886959\\
+5	0.449375264714595	-0.15782254190669	-0.133421988892995\\
+6	0.483688066546748	-0.0691442919996141	-0.13219928773279\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.699797060168019	-0.0590115227273029	-0.0880233211995398\\
+2	0.725033367137872	-0.0634658568079517	-0.158254682841401\\
+3	0.700075401074296	-0.0655650712149038	-0.0879943535429617\\
+4	0.713222962378268	-0.0598049787137136	-0.109324924845168\\
+5	0.758342601155291	-0.0398276770121457	-0.165491157491667\\
+6	0.696386736777908	-0.0729513604974713	-0.134646995419021\\
+};
+\addplot [color=mycolor2,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.787632064024761	-0.0335445022127177	-0.0459592815839194\\
+2	0.351976653836595	-0.257557959089064	-0.158535932991497\\
+3	0.0752742971844429	-0.27192445593084	-0.200543687709354\\
+4	0.216140102631177	-0.122059172775439	-0.385292005702155\\
+5	-0.0702197312872729	-0.292530151785373	-0.358782747894418\\
+6	-0.0973023656561026	-0.384035045554718	-0.523604578132277\\
+};
+\end{axis}
+\end{tikzpicture}%

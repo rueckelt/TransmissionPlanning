@@ -1,0 +1,206 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+\definecolor{mycolor2}{rgb}{0.00000,1.00000,1.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0,
+xmax=7,
+xtick={0,1,2,3,4,5,6,7},
+xticklabels={{},{0.0},{0.1},{0.2},{0.3},{0.4},{0.5},{},{}},
+xlabel={Movement Uncertainty: Prediction Error},
+separate axis lines,
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymode=log,
+ymin=103774,
+ymax=621787,
+ylabel={cost function value},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.03)},anchor=south west,legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=black,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	121409	-37869	-15986\\
+2	119012.5	-41177.5	-10612.5\\
+3	122569	-41821	-18795\\
+4	128753	-21194	-24838\\
+5	127735.5	-24961.5	-20777.5\\
+6	125353	-17441	-18285\\
+};
+\addlegendentry{Opt};
+
+\addplot [color=mycolor1,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	208526.5	-25150.5	-29239.5\\
+2	212238	-24116	-39182\\
+3	207539.5	-33596.5	-39530.5\\
+4	210553.5	-25086.5	-37576.5\\
+5	200373	-47990	-26257\\
+6	205498	-40948	-20342\\
+};
+\addlegendentry{TP};
+
+\addplot [color=blue,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	255778.5	-21598.5	-37816.5\\
+2	255301	-19518	-35463\\
+3	258648	-16905	-42511\\
+4	262372.5	-10285.5	-63527.5\\
+5	260374.5	-16358.5	-51816.5\\
+6	260839.5	-18658.5	-53776.5\\
+};
+\addlegendentry{ONS};
+
+\addplot [color=red,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	310157	-66087	-42549\\
+2	303957.5	-64864.5	-33867.5\\
+3	315573.5	-67210.5	-43304.5\\
+4	317808.5	-43103.5	-42017.5\\
+5	317876.5	-64583.5	-49291.5\\
+6	310546	-73702	-40076\\
+};
+\addlegendentry{NS};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	232674	-38923	-34354\\
+2	225470.5	-46514.5	-30302.5\\
+3	233437.5	-38734.5	-33686.5\\
+4	229978	-39231	-25287\\
+5	238715	-42079	-39233\\
+6	240111	-40253	-29210\\
+};
+\addlegendentry{GA};
+
+\addplot [color=mycolor2,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	208526.5	-25150.5	-29239.5\\
+2	338359.5	-116693.5	-75092.5\\
+3	409052.5	-80411.5	-70388.5\\
+4	431582.5	-89014.5	-102716.5\\
+5	520723	-82320	-123644\\
+6	560674.5	-61112.5	-186761.5\\
+};
+\addlegendentry{Exe};
+
+\addplot [color=black,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	457252.5	-64929.5	-32272.5\\
+2	469313.5	-119389.5	-63424.5\\
+3	448204.5	-82646.5	-52138.5\\
+4	459704	-109395	-58965\\
+5	484370.5	-86936.5	-81803.5\\
+6	471330.5	-91665.5	-51874.5\\
+};
+\addlegendentry{Rnd};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0,
+xmax=7,
+xtick={0,1,2,3,4,5,6,7},
+xticklabels={{},{0.0},{0.1},{0.2},{0.3},{0.4},{0.5},{},{}},
+xlabel={Movement Uncertainty: Prediction Error},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymode=log,
+ymin=103774,
+ymax=621787,
+ylabel={cost function value}
+]
+\addplot [color=black,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	121409	-37869	-15986\\
+2	119012.5	-41177.5	-10612.5\\
+3	122569	-41821	-18795\\
+4	128753	-21194	-24838\\
+5	127735.5	-24961.5	-20777.5\\
+6	125353	-17441	-18285\\
+};
+\addplot [color=mycolor1,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	208526.5	-25150.5	-29239.5\\
+2	212238	-24116	-39182\\
+3	207539.5	-33596.5	-39530.5\\
+4	210553.5	-25086.5	-37576.5\\
+5	200373	-47990	-26257\\
+6	205498	-40948	-20342\\
+};
+\addplot [color=blue,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	255778.5	-21598.5	-37816.5\\
+2	255301	-19518	-35463\\
+3	258648	-16905	-42511\\
+4	262372.5	-10285.5	-63527.5\\
+5	260374.5	-16358.5	-51816.5\\
+6	260839.5	-18658.5	-53776.5\\
+};
+\addplot [color=red,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	310157	-66087	-42549\\
+2	303957.5	-64864.5	-33867.5\\
+3	315573.5	-67210.5	-43304.5\\
+4	317808.5	-43103.5	-42017.5\\
+5	317876.5	-64583.5	-49291.5\\
+6	310546	-73702	-40076\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	232674	-38923	-34354\\
+2	225470.5	-46514.5	-30302.5\\
+3	233437.5	-38734.5	-33686.5\\
+4	229978	-39231	-25287\\
+5	238715	-42079	-39233\\
+6	240111	-40253	-29210\\
+};
+\addplot [color=mycolor2,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	208526.5	-25150.5	-29239.5\\
+2	338359.5	-116693.5	-75092.5\\
+3	409052.5	-80411.5	-70388.5\\
+4	431582.5	-89014.5	-102716.5\\
+5	520723	-82320	-123644\\
+6	560674.5	-61112.5	-186761.5\\
+};
+\addplot [color=black,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	457252.5	-64929.5	-32272.5\\
+2	469313.5	-119389.5	-63424.5\\
+3	448204.5	-82646.5	-52138.5\\
+4	459704	-109395	-58965\\
+5	484370.5	-86936.5	-81803.5\\
+6	471330.5	-91665.5	-51874.5\\
+};
+\end{axis}
+\end{tikzpicture}%
