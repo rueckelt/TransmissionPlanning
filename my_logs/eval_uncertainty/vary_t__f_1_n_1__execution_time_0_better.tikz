@@ -1,0 +1,184 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+\definecolor{mycolor2}{rgb}{0.00000,1.00000,1.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0,
+xmax=7e-07,
+xtick={0,1e-07,2e-07,3e-07,4e-07,5e-07,6e-07,7e-07},
+xticklabels={{},{25},{50},{75},{100},{125},{150},{},{}},
+xlabel={\# time slots},
+separate axis lines,
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymode=log,
+ymin=1e-05,
+ymax=100,
+ylabel={Execution Time (s)},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.97,0.03)},anchor=south east,legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=black,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	1.52433795	-0.22469905	-0.95690075\\
+2e-07	2.80655385	-0.77303725	-0.94953325\\
+3e-07	4.41107105	-1.45499935	-0.41816845\\
+4e-07	4.7892054	-0.6886552	-0.7293576\\
+5e-07	7.43472165	-0.79618885	-0.87674615\\
+6e-07	14.3190787	-3.3481229	-0.6817135\\
+};
+\addlegendentry{Opt};
+
+\addplot [color=mycolor1,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.00036725	-9.695e-05	-0.00011625\\
+2e-07	0.00078595	-0.00011925	-0.00011215\\
+3e-07	0.0011327	-0.0001695	-0.000116\\
+4e-07	0.00168475	-0.00013925	-0.00062465\\
+5e-07	0.0032493	-0.0001967	-0.0007014\\
+6e-07	0.0040589	-0.0013011	-0.0006258\\
+};
+\addlegendentry{TP};
+
+\addplot [color=blue,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.0003742	-8.7e-05	-0.0003167\\
+2e-07	0.00096905	-0.00013365	-0.00034085\\
+3e-07	0.00177035	-0.00033045	-0.00037715\\
+4e-07	0.0025807	-0.0002365	-0.0001889\\
+5e-07	0.00405125	-0.00041025	-0.00064195\\
+6e-07	0.0060117	-0.0009148	-0.0008297\\
+};
+\addlegendentry{ONS};
+
+\addplot [color=red,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.00036315	-8.325e-05	-5.635e-05\\
+2e-07	0.00096385	-0.00013145	-0.00026825\\
+3e-07	0.001671	-0.0002308	-8.18e-05\\
+4e-07	0.0025603	-0.0002319	-0.0001983\\
+5e-07	0.00459635	-0.00061905	-0.00047235\\
+6e-07	0.0059395	-0.0008465	-0.0003743\\
+};
+\addlegendentry{NS};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.016308	-0.002639	-0.0087593\\
+2e-07	0.04073325	-0.01046535	-0.01205765\\
+3e-07	0.040923	-0.0039736	-0.0091199\\
+4e-07	0.0791917	-0.0126261	-0.0157206\\
+5e-07	0.09962015	-0.01360355	-0.02991185\\
+6e-07	0.12587235	-0.01753835	-0.03640755\\
+};
+\addlegendentry{GA};
+
+\addplot [color=mycolor2,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.00018535	-3.545e-05	-1.685e-05\\
+2e-07	0.00066535	-3.935e-05	-2.235e-05\\
+3e-07	0.00133785	-0.00022515	-6.905e-05\\
+4e-07	0.0019343	-9.93e-05	-0.0001173\\
+5e-07	0.00335175	-0.00037015	-0.00036655\\
+6e-07	0.0046938	-0.0007104	-0.0002596\\
+};
+\addlegendentry{Rnd};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0,
+xmax=7e-07,
+xtick={0,1e-07,2e-07,3e-07,4e-07,5e-07,6e-07,7e-07},
+xticklabels={{},{25},{50},{75},{100},{125},{150},{},{}},
+xlabel={\# time slots},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymode=log,
+ymin=1e-05,
+ymax=100,
+ylabel={Execution Time (s)}
+]
+\addplot [color=black,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	1.52433795	-0.22469905	-0.95690075\\
+2e-07	2.80655385	-0.77303725	-0.94953325\\
+3e-07	4.41107105	-1.45499935	-0.41816845\\
+4e-07	4.7892054	-0.6886552	-0.7293576\\
+5e-07	7.43472165	-0.79618885	-0.87674615\\
+6e-07	14.3190787	-3.3481229	-0.6817135\\
+};
+\addplot [color=mycolor1,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.00036725	-9.695e-05	-0.00011625\\
+2e-07	0.00078595	-0.00011925	-0.00011215\\
+3e-07	0.0011327	-0.0001695	-0.000116\\
+4e-07	0.00168475	-0.00013925	-0.00062465\\
+5e-07	0.0032493	-0.0001967	-0.0007014\\
+6e-07	0.0040589	-0.0013011	-0.0006258\\
+};
+\addplot [color=blue,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.0003742	-8.7e-05	-0.0003167\\
+2e-07	0.00096905	-0.00013365	-0.00034085\\
+3e-07	0.00177035	-0.00033045	-0.00037715\\
+4e-07	0.0025807	-0.0002365	-0.0001889\\
+5e-07	0.00405125	-0.00041025	-0.00064195\\
+6e-07	0.0060117	-0.0009148	-0.0008297\\
+};
+\addplot [color=red,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.00036315	-8.325e-05	-5.635e-05\\
+2e-07	0.00096385	-0.00013145	-0.00026825\\
+3e-07	0.001671	-0.0002308	-8.18e-05\\
+4e-07	0.0025603	-0.0002319	-0.0001983\\
+5e-07	0.00459635	-0.00061905	-0.00047235\\
+6e-07	0.0059395	-0.0008465	-0.0003743\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.016308	-0.002639	-0.0087593\\
+2e-07	0.04073325	-0.01046535	-0.01205765\\
+3e-07	0.040923	-0.0039736	-0.0091199\\
+4e-07	0.0791917	-0.0126261	-0.0157206\\
+5e-07	0.09962015	-0.01360355	-0.02991185\\
+6e-07	0.12587235	-0.01753835	-0.03640755\\
+};
+\addplot [color=mycolor2,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1e-07	0.00018535	-3.545e-05	-1.685e-05\\
+2e-07	0.00066535	-3.935e-05	-2.235e-05\\
+3e-07	0.00133785	-0.00022515	-6.905e-05\\
+4e-07	0.0019343	-9.93e-05	-0.0001173\\
+5e-07	0.00335175	-0.00037015	-0.00036655\\
+6e-07	0.0046938	-0.0007104	-0.0002596\\
+};
+\end{axis}
+\end{tikzpicture}%
