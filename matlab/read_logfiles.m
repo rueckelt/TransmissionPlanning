@@ -8,16 +8,20 @@ function [output] = read_logfiles(input_folder)
 
 output=[];
 file = 'GA_conv.txt';
+EXT_ROUNDS = 401; %extend vector with zeros to fill this number of rounds
 
 rep=0;
 filename = [input_folder filesep num2str(rep) filesep file];
 
 %% Measurement data read-in for all repetitions, as long as they exist
 while exist(filename, 'file') == 2
-    read_matrix=csvread(filename)
+    read_matrix=csvread(filename);
+    %read_matrix = read_matrix * -1
+	[lines,rounds]=size(read_matrix);
+	read_matrix(lines, EXT_ROUNDS)=0;
+	
     output=vertcat(output, read_matrix);
     
     rep=rep+1;
     filename = [input_folder filesep num2str(rep) filesep file]
 end
- 
