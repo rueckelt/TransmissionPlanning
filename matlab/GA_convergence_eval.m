@@ -5,10 +5,10 @@ addpath('matlab2tikz');
 
 %Parameter
 force_read_data=1;
-input_folder = 'C:\Data\eclipse_ws_luna\Scheduling\my_logs\eval_uncertainty\3_2_3'
-output_folder='tikz';
+input_folder = '../converge0.0/'
+output_folder='tikz0.0';
 
-percentiles = [25, 50, 75, 100];    %which percentiles should be ploted?
+percentiles = [68.3, 95.4, 99.7, 100];    %which percentiles should be ploted?
 
 mkdir(output_folder);
 data_file = 'GA_convergence.mat';
@@ -23,6 +23,7 @@ else
     GA_conv = read_logfiles(input_folder);
     save(data_file, 'GA_conv');
 end
+GA_conv=-GA_conv;
 
 
 %##################################################
@@ -52,8 +53,9 @@ end
 
 %##################################################
 state='plot'
-
+size(round_of_percentiles)
 o_filename=[output_folder filesep 'GA_convergence.tikz'];
+
 cdfPrint(o_filename, 'GA Rounds', round_of_percentiles, plot_names);
 %cdfPrint( output_name, my_xlabel, data, index1, prot_names)
 

@@ -49,7 +49,8 @@ function [ output_args ] = cdfPrint( output_name, my_xlabel, data, prot_names)
 
     xlabel(my_xlabel);
     ylabel('Cumulative Distribution');
-    legend(prot_names{1}, prot_names{2}, prot_names{3},prot_names{4});
+    legend(prot_names{1}, prot_names{2}, prot_names{3}, prot_names{4});
+    xlim([0 50]);
    % axes1 = axes('Parent',fig,'XScale','log');
     set(gca,'XMinorTick', 'off');
    % set(gca,'xscale','log', 'XMinorTick', 'off');
