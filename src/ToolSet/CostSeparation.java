@@ -47,12 +47,19 @@ public class CostSeparation {
 		for(Flow flow:tg.getFlows()){
 			int n=0;
 			for(Network net:ng.getNetworks()){
+				double denom = 50;	//default value for average number of tokens when scheduled (estimated)
+				if(flow.getTokensMin()>0 && flow.getWindowMin()>0){
+					denom=flow.getTokensMin()/flow.getWindowMin();
+				}
+						
 				networkMatch[f][n] = 
-						flow.getImpUser()*(
-							CostFunction.latencyMatch(flow, net)+
-							CostFunction.jitterMatch(flow, net) 
-						)+
-						cf.monetary(net);
+				 (int) (flow.getImpUser()*(		
+							//latency and jitter match work per time slot. 
+							//Therefore we normalize it to the average min tp of the flow				
+							(CostFunction.latencyMatch(flow, net)+
+							CostFunction.jitterMatch(flow, net)) 
+							/denom))
+						+cf.monetary(net);
 				n++;
 			}
 			f++;
@@ -69,6 +76,9 @@ public class CostSeparation {
 			for(int t=0; t<ng.getTimeslots(); t++){
 				timeMatch[f][t] = CostFunction.vioTimeLimits(flow, t)*flow.getImpUser();
 //				System.out.print(timeMatch[f][t]+", ");
+//				if(f==6 && (t==44 || t==45)){
+//					System.out.println("time match = "+timeMatch[f][t]);
+//				}
 			}
 //			System.out.println("");
 			f++;

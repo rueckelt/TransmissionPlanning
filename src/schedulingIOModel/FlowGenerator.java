@@ -24,10 +24,17 @@ public class FlowGenerator implements Serializable{
 	private Vector<Flow> flows = new Vector<Flow>();
 
 	private final float ALLOWED_ERROR_OFFSET = (float) 0.05;	//part of error/uncertainty model
-	private int data_amount = 5;	//amount of data: usually between 1 and 10. can be higher.
+	private int data_amount = 2;	//amount of data: 1 for low, 2 for medium, 3 for high
+	private int num_flows=1;
 	
 	public FlowGenerator(){
 		Flow.setNextId(new AtomicInteger(0));
+	}
+	
+	public FlowGenerator(int duration, int requests, int load){
+		setDataAmount(load);
+		Flow.setNextId(new AtomicInteger(0));
+		addTraffic(duration,requests);
 	}
 	
 	public FlowGenerator(int duration, int requests){
@@ -110,6 +117,7 @@ public class FlowGenerator implements Serializable{
 	//bad method; does only work for flow count multiple of 4. But otherwise the traffic share is not possible
 	//too lazy to implement rest; so parameter 
 	private void addTraffic(int duration, int flows){
+		num_flows=flows;
 		for(int i=0;i<flows/4;i++){
 			add4(duration);
 		}
@@ -123,7 +131,10 @@ public class FlowGenerator implements Serializable{
 	}
 	
 	private int getOverallTokens(int duration){
-		return data_amount*duration*(15+RndInt.get(0,30))/10; //random amount of overall traffic, but values 45 and 30 have no deeper reason
+		
+		return duration*(data_amount*data_amount*30+RndInt.get(0, 30))/num_flows;
+		
+//		return data_amount*duration*(15+RndInt.get(0,30))/10; //random amount of overall traffic, but values 45 and 30 have no deeper reason
 	}
 	private void addBufferable(int duration){
 		int tokens_bufferable 	= (int) (getOverallTokens(duration)*0.25);

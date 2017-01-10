@@ -69,7 +69,7 @@ public class CostFunction {
 	public static int vioTimeLimits(Flow flow, int t){
 		return (int) ( 
 				Math.pow(Math.max(t-flow.getDeadline(),0), 2)*flow.getImpDeadline()+
-				Math.pow(Math.max(flow.getStartTime()-t,0), 2)*flow.getImpStartTime()
+				Math.pow(Math.max(flow.getStartTime()-t-1,0), 2)*flow.getImpStartTime()
 				);
 	}
 	

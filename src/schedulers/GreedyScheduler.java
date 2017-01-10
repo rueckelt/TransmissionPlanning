@@ -82,7 +82,7 @@ public class GreedyScheduler extends Scheduler{
 		//############## 2. start allocation for each flow #################
 		for(int f= 0; f<tg.getFlows().size(); f++){
 			int f0 = flow_order.get(f);
-//			System.out.println("flow "+f0+" criticality decerasing: "+ );
+//			System.out.println("flow "+f0+" criticality decerasing: "+ flow_order);
 			
 			scheduleFlow(f0, false);
 		}
@@ -108,7 +108,7 @@ public class GreedyScheduler extends Scheduler{
 						return flowCrit_tmp.get(i2)-flowCrit_tmp.get(i1);
 					}
 				});	 //highest priority first
-				System.out.println(flow_order);
+//				System.out.println(flow_order);
 		return flow_order;
 	}
 
@@ -200,12 +200,16 @@ public class GreedyScheduler extends Scheduler{
 			int tp=cs.getTimeMatch(f, t)*tg.getFlows().get(f).getImpUser();
 			int sum = calcVio+statefulReward+tp;
 //			if(sum-1000<schedule_decision_limit && sum>schedule_decision_limit){
+//			if(f==5 && n==4){
 //				System.out.println("Flow "+f+"\tat Time "+t+"\ton Net "+n+":\t"+(sum-schedule_decision_limit)+
 //						",\t vio: "+calcVio+",\t stateful: "+statefulReward+",\t tp: "+tp+"\tnet-match: "+cs.getNetworkMatch(f, n));
 //			}
 			return  sum	< schedule_decision_limit;
 
 		}else
+//			if(f==5 && n==4){
+//				System.out.println("calc vio "+calcVio(f, n));
+//			}
 			return calcVio(f, n)<schedule_decision_limit;
 	}
 	
@@ -288,7 +292,8 @@ public class GreedyScheduler extends Scheduler{
 	protected int calcVio(int f, int n){
 		if(NEW_RATING_ESTIMATOR){
 			int c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);
-			//System.out.print("stateless: "+cs.getStatelessReward(f)+"\t");
+//			if(f==5 && n==4)
+//				System.out.print("CALC_VIO: net_match = "+cs.getNetworkMatch(f, n)+"   stateless: "+cs.getStatelessReward(f)+"\n");
 			return c;
 		}else{
 			//old cost function estimation

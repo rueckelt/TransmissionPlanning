@@ -299,7 +299,7 @@ public class Flow implements Serializable, Cloneable{
 		
 		stream.setImpUnsched(6+ RndInt.get(0,5));//5			//unscheduled chunks may adapt video quality
 		
-		stream.setImpUser(4+ RndInt.get(-2, 2));//7
+		stream.setImpUser(4+ RndInt.get(0, 2));//7
 		stream.setFlowName("BufferableStream");
 		
 		return stream;
@@ -336,9 +336,9 @@ public class Flow implements Serializable, Cloneable{
 		int with_deadline=RndInt.get(0,1);		//is 1 for 50% of flows
 		Flow background = new Flow();
 		background.setTokens(tokens);
-		background.setImpUnsched(2+RndInt.get(0, 2) +with_deadline*2);			//chunks should be scheduled with low priority
+		background.setImpUnsched(3+RndInt.get(0, 2) +with_deadline*2);			//chunks should be scheduled with low priority
 		
-		background.setImpUser(RndInt.get(2, 3)+with_deadline*2);
+		background.setImpUser(RndInt.get(2, 4)+with_deadline*2);
 		
 		//set a weak deadline
 		background.setDeadline(deadline);

@@ -28,7 +28,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	public static final String NG_NAME = "NetworkGenerator";
 	private Vector<Network> networks = new Vector<Network>();
 	
-	private final float ALLOWED_ERROR_OFFSET = (float) 0.02;	//part of error/uncertainty model. 
+	private final float ALLOWED_ERROR_OFFSET = (float) 0.05;	//part of error/uncertainty model. 
 	
 	private int hysteresis = 500;
 	private int cost_imp = 15;	//importance of monetary cost for network use
