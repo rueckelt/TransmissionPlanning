@@ -36,7 +36,7 @@ public class main {
 		//String logpath= "my_logs"+File.separator+"tester";
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 
-		String logpath= "my_logs"+File.separator+"test2";
+		String logpath= "my_logs"+File.separator+"vary_time";
 		
 
 		
