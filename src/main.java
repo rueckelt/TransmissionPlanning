@@ -23,12 +23,12 @@ public class main {
 //		int t=1;
 //		int n=2;
 //		int rep=3;
-		int f=8;	//2^f		default: f=3 (8 flows) 
-		int t=4;	//25*2^t	default: t=2 (100 time slots)
+		int f=3;	//2^f		default: f=3 (8 flows) 
+		int t=2;	//25*2^t	default: t=2 (100 time slots)
 		int n=3;	//2^n		default: n=3 (8 networks)	
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
-		int rep=50;
+		int rep=10;
 		
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
@@ -36,7 +36,8 @@ public class main {
 		//String logpath= "my_logs"+File.separator+"tester";
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 
-		String logpath= "my_logs"+File.separator+"vary_time";
+//		String logpath= "my_logs"+File.separator+"vary_time";
+		String logpath= "my_logs"+File.separator+"vary_load";
 		
 
 		
@@ -48,14 +49,15 @@ public class main {
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 //			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
-//			eval.visualize();
+			eval.visualize();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
-			eval.evaluateTimeVariation();
+//			eval.evaluateTimeVariation();
 //			eval.evaluateNetworkVariation();
 //			eval.evaluateFlowVariation();
-			eval.evaluateTop();
-			eval.parallel(17);
+//			eval.evaluateTop();
+			eval.evaluateThisInstance();
+			eval.parallel(1);
 			eval.start();
 
 		

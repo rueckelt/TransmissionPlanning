@@ -119,16 +119,16 @@ public class EvaluationScenarioCreator {
 		
 //		schedulers.add(new DummyScheduler(ng, tg));
 		
-//		schedulers.add(new OptimizationScheduler(ng, tg));
-//		schedulers.add(new RandomScheduler(ng, tg, 100));	//200 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new OptimizationScheduler(ng, tg));
+//		schedulers.add(new RandomScheduler(ng, tg, 100));	//100 random runs of this scheduler. Returns average duration and cost
 		
-		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
+//		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
 //		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
 		newRating=true;
 		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
-//		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
+		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
 	return schedulers;
 	}
 
@@ -177,6 +177,14 @@ public class EvaluationScenarioCreator {
 		System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 	
+	public void evaluateThisInstance(){
+		//paramter log
+		DATA_AMOUNT=3;
+
+		evaluateUncertainty(MAX_TIME, MAX_NETS, MAX_FLOWS, REPETITIONS-1);
+		
+		System.out.println("###############  TASK CREATION DONE  ##################");
+	}
 	
 	public void evaluateTop(){
 		//paramter log
@@ -371,7 +379,7 @@ public class EvaluationScenarioCreator {
 				//add uncertainty
 				fg.addUncertainty(flowUncertainty, time);
 			}else{
-				fg=new FlowGenerator(time, flows);
+				fg=new FlowGenerator(time, flows, DATA_AMOUNT);
 			}
 
 //			System.out.println("write FlowGen to: "+path);	

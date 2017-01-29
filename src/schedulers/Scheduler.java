@@ -111,8 +111,13 @@ public abstract class Scheduler {
 			System.err.println(getType()+": \t"
 			//+ cf.costTotal(schedule_f_t_n)); //
 			+cf.getStat(schedule_f_t_n));
+		}else{
+//			System.out.println(getLogfileName(path)+" is already calculated. Load result from file for visualization or other postprocessing.");
+			schedule_f_t_n = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", getLogfileName(path));
+//			System.out.println(showSchedule(schedule_f_t_n));
 		}
 	}
+
 
 	/**
 	 * evaluate cost of schedule_f_t_n and log results
@@ -269,13 +274,7 @@ public abstract class Scheduler {
 		int scheduled = Math.min(tokens, remaining_net_cap);
 //		System.out.println("Scheduler::allocate. f,t,n "+flow+","+time+","+network+" tokens: "+tokens+
 //				"; remaining cap = "+remaining_net_cap+"; scheduled = "+scheduled);
-		//schedule as much as possible
-//		if(tokens>remaining_net_cap){
-//			s[flow][time][network]+=remaining_net_cap;
-//			scheduled= remaining_net_cap;
-//		}else{
-//			s[flow][time][network]+=tokens;
-//		}
+
 		if(scheduled>0){
 			s[flow][time][network]+=scheduled;
 			//any constraint violated? use if ok, else revert
@@ -333,6 +332,7 @@ public abstract class Scheduler {
 			return false;
 		}
 	}
+
 	
 	
 	public String showSchedule(int[][][] schedule_f_t_n){
