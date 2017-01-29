@@ -3,19 +3,19 @@
 %stores results.mat file in in_folder for extracted log matrices
 %delete this file to read logs from raw files
 
-%in_folder = '..\my_logs\jakob';% 'logs_time';
-in_folder = '..\my_logs\eval_4_4_3_c15new';% 'logs_time';
-out_folder = [in_folder filesep 'test_newRE'];
-force_read_data = 0;
-max_only=0;
+%in_folder = '..\my_logs\jakob';% 
+%in_folder = '..\my_logs\vary_time';% 
+%in_folder = '..\my_logs\vary_load';% 
+%in_folder = '..\my_logs\vary_nets';% 
+in_folder = '..\my_logs\vary_flows';% 
+out_folder = [in_folder filesep 'eval'];
+select = 1; %select data to read from files: 1=flows, 2=time, 3=net, 4=load, 5=monetary
+force_read_data = 1;
 
 %get paramters from file
 parameter_file=[in_folder filesep 'parameters_log.m'];
 if exist(parameter_file, 'file') ==2    %compare to 2 == is a file?
    run(parameter_file);
-   max_flows=max_flows+1;
-   max_nets=max_nets+1;
-   max_time=max_time+1;
 end
 state = 'read param done'
 %read matrix file if available, else create matrix file from raw log files
@@ -27,20 +27,20 @@ valuenames = {'violation cost', 'execution duration', 'time limits',...
 %     'throughput', 'unscheduled', 'latency_jitter', 'monetary_cost'};
 
 if force_read_data <1 && exist(data_file, 'file') %read values from file if no force to reread and available
-    load(data_file);
-    load(avail_file);
+    %load(data_file);
+    %load(avail_file);
 else
     %read data from simulation output files
     valuestrings = {'costTotal', 'scheduling_duration_us', 'sum(vioSt)+sum(vioDl)', ...
         'sum(vioTp)', 'sum(vioNon)', 'sum(vioLcy)+sum(vioJit)', 'cost_ch'};
     tic
-    [raw_values, avail] = readValuesFromFiles( in_folder, valuestrings,...
-        max_time, max_nets, max_flows, max_rep, scheduler_logs, max_only);
+    [raw_values, avail] = readValuesFromFiles1D( in_folder, valuestrings,...
+        max_flows, max_time, max_nets, load, w_monetary, select, max_rep, scheduler_logs);
     toc
     save(data_file, 'raw_values');
     save(avail_file, 'avail');
 end
-raw_values(2,:,:,:,:,:)=raw_values(2,:,:,:,:,:)./(1000*1000);     %time: µs to seconds
+raw_values(2,:,:,:)=raw_values(2,:,:,:)./(1000*1000);     %time: µs to seconds
 state='gathered data'
 %calculate relative
 % %plot
@@ -49,7 +49,7 @@ state='gathered data'
 
 
 %plot_data3(out_folder, raw_values, avail, valuenames, schedulers);  %vary time
-plot_data4(out_folder, raw_values, avail, valuenames, schedulers);  %vary networks
+plot_data4(out_folder, raw_values, avail, valuenames, schedulers, select);  %vary networks
 %plot_data5(out_folder, raw_values, avail, valuenames, schedulers);  %vary schedulers
  
 state='done'

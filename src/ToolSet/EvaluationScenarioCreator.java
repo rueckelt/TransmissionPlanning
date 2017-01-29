@@ -125,6 +125,7 @@ public class EvaluationScenarioCreator {
 		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
 		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
 		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
+
 		newRating=true;
 		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
 		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
@@ -177,6 +178,14 @@ public class EvaluationScenarioCreator {
 		System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 	
+	public void evaluateThisInstance(){
+		//paramter log
+		DATA_AMOUNT=3;
+
+		evaluateUncertainty(MAX_TIME, MAX_NETS, MAX_FLOWS, REPETITIONS-1);
+		
+		System.out.println("###############  TASK CREATION DONE  ##################");
+	}
 	
 	public void evaluateTop(){
 		//paramter log

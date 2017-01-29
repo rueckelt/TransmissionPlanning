@@ -23,9 +23,11 @@ public class main {
 //		int t=1;
 //		int n=2;
 //		int rep=3;
+
 		int f=3;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
-		int t=4;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
+		int t=2;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
 		int n=3;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
+
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
 		int rep=50;
@@ -36,7 +38,8 @@ public class main {
 		//String logpath= "my_logs"+File.separator+"tester";
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 
-		String logpath= "my_logs"+File.separator+"vary_time";
+//		String logpath= "my_logs"+File.separator+"vary_time";
+		String logpath= "my_logs"+File.separator+"vary_load";
 		
 
 		
@@ -48,7 +51,7 @@ public class main {
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 //			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
-//			eval.visualize();
+			eval.visualize();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();
@@ -57,7 +60,7 @@ public class main {
 //			eval.evaluateMonetaryWeight();
 			eval.evaluateDataAmount();
 //			eval.evaluateTop();
-			eval.parallel(3);
+			eval.parallel(16);
 			eval.start();
 
 		

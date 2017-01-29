@@ -318,6 +318,7 @@ public class Flow implements Serializable, Cloneable{
 		userRequest.setImpUser(8+ RndInt.get(0, 5));//7
 		userRequest.setImpDeadline(5+ RndInt.get(-1, 1));
 		userRequest.setImpStartTime(5+ RndInt.get(-1, 1));
+		userRequest.setImpLatency(2+RndInt.get(0,1));
 		
 		//we model interactive traffic as burst of interactions that
 		//must be transmitted quite steadily
@@ -326,6 +327,9 @@ public class Flow implements Serializable, Cloneable{
 		userRequest.setWindowMin(win_size);
 		userRequest.setTokensMin(chunks_per_win);	
 		userRequest.setImpThroughputMin(25+ RndInt.get(-1, 1));		//soft minimum throughput limit
+		userRequest.setWindowMax(win_size);
+		userRequest.setTokensMax(chunks_per_win*2);
+		userRequest.setReqLatency(6+RndInt.get(0,1));
 		
 		userRequest.setFlowName("Interactive");
 		return userRequest;
