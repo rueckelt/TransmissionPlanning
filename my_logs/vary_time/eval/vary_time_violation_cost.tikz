@@ -1,0 +1,154 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymode=log,
+ymin=10000,
+ymax=10000000,
+ylabel={Cost function value},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=black}
+]
+\addplot [color=black,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	24602.5	8053.5	2642.5\\
+2	66717	18227	13146\\
+3	161911.5	29190.5	30250.5\\
+4	406837	98129	69407\\
+5	853025	123483	96666\\
+};
+\addlegendentry{Opt};
+
+\addplot [color=blue,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	95721.5	13034.5	14304.5\\
+2	178340.5	19354.5	21530.5\\
+3	324634	57656	23379\\
+4	702985.5	96170.5	101725.5\\
+5	1362362	240783	141910\\
+};
+\addlegendentry{NS};
+
+\addplot [color=mycolor1,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	86343.5	14260.5	14425.5\\
+2	159468	20923	21121\\
+3	296084.5	67675.5	32834.5\\
+4	650585	76191	130702\\
+5	1201334.5	309410.5	94775.5\\
+};
+\addlegendentry{ONS};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	71657.5	12138.5	15554.5\\
+2	132121.5	28402.5	22630.5\\
+3	246828.5	76548.5	28600.5\\
+4	591411	103163	128520\\
+5	1129409.5	298862.5	169672.5\\
+};
+\addlegendentry{JTP};
+
+\addplot [color=red,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	140046.5	26600.5	13427.5\\
+2	268177	45430	37234\\
+3	521813.5	82572.5	45626.5\\
+4	1142551.5	184426.5	193146.5\\
+5	2310195.5	211115.5	291686.5\\
+};
+\addlegendentry{Rnd};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymode=log,
+ymin=10000,
+ymax=10000000,
+yminorticks=true,
+ylabel={Cost function value}
+]
+\addplot [color=black,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	24602.5	8053.5	2642.5\\
+2	66717	18227	13146\\
+3	161911.5	29190.5	30250.5\\
+4	406837	98129	69407\\
+5	853025	123483	96666\\
+};
+\addplot [color=blue,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	95721.5	13034.5	14304.5\\
+2	178340.5	19354.5	21530.5\\
+3	324634	57656	23379\\
+4	702985.5	96170.5	101725.5\\
+5	1362362	240783	141910\\
+};
+\addplot [color=mycolor1,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	86343.5	14260.5	14425.5\\
+2	159468	20923	21121\\
+3	296084.5	67675.5	32834.5\\
+4	650585	76191	130702\\
+5	1201334.5	309410.5	94775.5\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	71657.5	12138.5	15554.5\\
+2	132121.5	28402.5	22630.5\\
+3	246828.5	76548.5	28600.5\\
+4	591411	103163	128520\\
+5	1129409.5	298862.5	169672.5\\
+};
+\addplot [color=red,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	140046.5	26600.5	13427.5\\
+2	268177	45430	37234\\
+3	521813.5	82572.5	45626.5\\
+4	1142551.5	184426.5	193146.5\\
+5	2310195.5	211115.5	291686.5\\
+};
+\end{axis}
+\end{tikzpicture}%

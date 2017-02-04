@@ -1,0 +1,245 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+\definecolor{mycolor2}{rgb}{0.00000,1.00000,1.00000}%
+\definecolor{mycolor3}{rgb}{1.00000,1.00000,0.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0,
+xmax=8,
+xtick={0,1,2,3,4,5,6,7,8},
+xticklabels={{},{4},{},{8},{},{16},{},{32},{},{64},{}},
+xlabel={Data flows},
+separate axis lines,
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymode=log,
+ymin=0.01,
+ymax=10000,
+ylabel={Execution time in s},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=black,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	72.2036075	-30.0930945	-24.7909045\\
+4	518.372023	-1166.716233	-284.515275\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addlegendentry{Optimization};
+
+\addplot [color=blue,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.050818	-0.014599	-0.006954\\
+4	0.100856	-0.013809	-0.015528\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addlegendentry{Random};
+
+\addplot [color=mycolor1,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.052498	-0.024849	-0.008258\\
+4	0.1097955	-0.0118605	-0.0132555\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addlegendentry{$\text{Greedy}_\text{0}$};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.0518955	-0.0155155	-0.0105635\\
+4	0.1109905	-0.0194325	-0.0142625\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addlegendentry{$\text{GreedyOnlineOpp}_\text{0}$};
+
+\addplot [color=red,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.056543	-0.010214	-0.010253\\
+4	0.113887	-0.020603	-0.009921\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addlegendentry{GreedyOnline};
+
+\addplot [color=mycolor2,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.0535215	-0.0140825	-0.0102635\\
+4	0.1057625	-0.0116305	-0.0117645\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addlegendentry{$\text{Greedy}_\text{0}_\text{H}\text{2}$};
+
+\addplot [color=mycolor3,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.0479335	-0.0188375	-0.00648650000000001\\
+4	0.106291	-0.015407	-0.013566\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addlegendentry{$\text{GreedyOnlineOpp}_\text{0}_\text{H}\text{2}$};
+
+\addplot [color=black,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.054983	-0.010966	-0.010686\\
+4	0.114674	-0.025721	-0.01848\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addlegendentry{$\text{GreedyOnline}_\text{H}\text{2}$};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0,
+xmax=8,
+xtick={0,1,2,3,4,5,6,7,8},
+xticklabels={{},{4},{},{8},{},{16},{},{32},{},{64},{}},
+xlabel={Data flows},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymode=log,
+ymin=0.01,
+ymax=10000,
+ylabel={Execution time in s}
+]
+\addplot [color=black,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	72.2036075	-30.0930945	-24.7909045\\
+4	518.372023	-1166.716233	-284.515275\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addplot [color=blue,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.050818	-0.014599	-0.006954\\
+4	0.100856	-0.013809	-0.015528\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addplot [color=mycolor1,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.052498	-0.024849	-0.008258\\
+4	0.1097955	-0.0118605	-0.0132555\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.0518955	-0.0155155	-0.0105635\\
+4	0.1109905	-0.0194325	-0.0142625\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addplot [color=red,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.056543	-0.010214	-0.010253\\
+4	0.113887	-0.020603	-0.009921\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addplot [color=mycolor2,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.0535215	-0.0140825	-0.0102635\\
+4	0.1057625	-0.0116305	-0.0117645\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addplot [color=mycolor3,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.0479335	-0.0188375	-0.00648650000000001\\
+4	0.106291	-0.015407	-0.013566\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\addplot [color=black,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0.054983	-0.010966	-0.010686\\
+4	0.114674	-0.025721	-0.01848\\
+5	0	0	0\\
+6	0	0	0\\
+7	0	0	0\\
+};
+\end{axis}
+\end{tikzpicture}%

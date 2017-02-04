@@ -1,0 +1,111 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymin=-1e-05,
+ymax=8e-05,
+ylabel={Normalized Rating Score (NRS)},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=black}
+]
+\addplot [color=blue,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	2.20738313065943e-05	5.21835731457726e-05	1.81382763907703e-05\\
+2	1.22577544497631e-05	3.29829213243755e-05	1.01991827277293e-05\\
+3	1.64438448947171e-05	5.35050254080392e-05	1.40267160185191e-05\\
+4	1.79024512933743e-05	3.26551738095206e-05	1.5029957993747e-05\\
+5	6.30655984218709e-06	5.57620526092956e-06	4.54249389180733e-06\\
+};
+\addlegendentry{NS};
+
+\addplot [color=mycolor1,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	1.5846874476183e-05	1.53214085969737e-05	1.37817150257084e-05\\
+2	7.35214390846176e-06	1.64875260046322e-05	6.47674192723418e-06\\
+3	4.60526140406337e-06	2.99421230230884e-05	5.01194709359505e-06\\
+4	5.45456471632497e-06	1.64389790599037e-05	1.07463178144621e-05\\
+5	9.56545407050565e-07	4.91290114806604e-06	4.80164840936019e-06\\
+};
+\addlegendentry{ONS};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	8.85333396115776e-06	2.86220533864272e-05	7.49555096613311e-06\\
+2	4.2506642253594e-06	2.39600046512148e-05	5.21937003930714e-06\\
+3	4.78102254564762e-06	2.33062508996673e-05	6.59843591076999e-06\\
+4	5.70524787181274e-06	1.46477866807102e-05	9.00834574630624e-06\\
+5	4.19768029937792e-07	5.30424929398278e-06	2.55083274458473e-06\\
+};
+\addlegendentry{JTP};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-1e-05,
+ymax=8e-05,
+ylabel={Normalized Rating Score (NRS)}
+]
+\addplot [color=blue,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	2.20738313065943e-05	5.21835731457726e-05	1.81382763907703e-05\\
+2	1.22577544497631e-05	3.29829213243755e-05	1.01991827277293e-05\\
+3	1.64438448947171e-05	5.35050254080392e-05	1.40267160185191e-05\\
+4	1.79024512933743e-05	3.26551738095206e-05	1.5029957993747e-05\\
+5	6.30655984218709e-06	5.57620526092956e-06	4.54249389180733e-06\\
+};
+\addplot [color=mycolor1,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	1.5846874476183e-05	1.53214085969737e-05	1.37817150257084e-05\\
+2	7.35214390846176e-06	1.64875260046322e-05	6.47674192723418e-06\\
+3	4.60526140406337e-06	2.99421230230884e-05	5.01194709359505e-06\\
+4	5.45456471632497e-06	1.64389790599037e-05	1.07463178144621e-05\\
+5	9.56545407050565e-07	4.91290114806604e-06	4.80164840936019e-06\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	8.85333396115776e-06	2.86220533864272e-05	7.49555096613311e-06\\
+2	4.2506642253594e-06	2.39600046512148e-05	5.21937003930714e-06\\
+3	4.78102254564762e-06	2.33062508996673e-05	6.59843591076999e-06\\
+4	5.70524787181274e-06	1.46477866807102e-05	9.00834574630624e-06\\
+5	4.19768029937792e-07	5.30424929398278e-06	2.55083274458473e-06\\
+};
+\end{axis}
+\end{tikzpicture}%

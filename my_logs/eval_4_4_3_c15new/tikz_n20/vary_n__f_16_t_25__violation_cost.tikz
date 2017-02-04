@@ -1,0 +1,154 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=3,
+xmax=5,
+xtick={3,3.2,3.4,3.6,3.8,4,4.2,4.4,4.6,4.8,5},
+xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{}},
+xlabel={\# networks},
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymode=log,
+ymin=0,
+ymax=4210251.75407272,
+ylabel={cost function value},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=black}
+]
+\addplot [color=black,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	708737.65	234683.558919724	234683.558919724\\
+5	0	0	0\\
+};
+\addlegendentry{Opt};
+
+\addplot [color=mycolor1,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	1542232.3	559816.645604443	559816.645604442\\
+5	0	0	0\\
+};
+\addlegendentry{TS};
+
+\addplot [color=blue,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	2049035.3	530265.862142577	530265.862142577\\
+5	0	0	0\\
+};
+\addlegendentry{ONS};
+
+\addplot [color=red,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	2197814.05	573665.797660404	573665.797660404\\
+5	0	0	0\\
+};
+\addlegendentry{NS};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	3292469.15	535032.444611565	535032.444611565\\
+5	0	0	0\\
+};
+\addlegendentry{Rnd};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=3,
+xmax=5,
+xtick={3,3.2,3.4,3.6,3.8,4,4.2,4.4,4.6,4.8,5},
+xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{}},
+xlabel={\# networks},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymode=log,
+ymin=0,
+ymax=4210251.75407272,
+yminorticks=true,
+ylabel={cost function value}
+]
+\addplot [color=black,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	708737.65	234683.558919724	234683.558919724\\
+5	0	0	0\\
+};
+\addplot [color=mycolor1,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	1542232.3	559816.645604443	559816.645604442\\
+5	0	0	0\\
+};
+\addplot [color=blue,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	2049035.3	530265.862142577	530265.862142577\\
+5	0	0	0\\
+};
+\addplot [color=red,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	2197814.05	573665.797660404	573665.797660404\\
+5	0	0	0\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	0	0	0\\
+4	3292469.15	535032.444611565	535032.444611565\\
+5	0	0	0\\
+};
+\end{axis}
+\end{tikzpicture}%

@@ -1,0 +1,59 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: QZ61P8
+ * Creation Date: 10.07.2014 at 08:59:12
+ *********************************************/
+
+
+nNetworks = 4;
+nTime = 50;
+nInterfaceTypes = 2;
+nFlows = [nRequests];
+
+//channel model: generated Wed May 25 16:36:57 CEST 2016
+availChunkBuckets = //[Networks, Time]  
+[
+	[59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59, 59],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 63, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 29, 59, 59, 59, 59, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 52, 79, 79, 79, 79, 79, 79, 52, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+];
+	
+network_cost = //[Networks] 
+	[21, 2, 2, 2];				//static cost per channel (change later to more realistic model)
+network_lcy =
+	[12, 1, 2, 3];
+network_jit =
+	[4, 6, 8, 6];	
+
+network_type= //[Networks] 				//each channel has a specific type; e.g. WiFi, LTE..
+	[2, 1, 1, 1];		
+nClientInterfaces = //[InterfaceTypes]
+	[1, 1];	
+
+//requests: generated [trafficGenTime]
+nChunks = 				[[chunks]];		//[Flows]		
+deadline= 				[[deadline]];		//[Flows] 
+prefStartTime = 		[[startTime]];		//[Flows]
+tpMaxWindow = 			[[windowMax]];		//[Flows]	//0 says not relevant/no maximum transfer rate; upper throughput limit
+tpMaxChunks = 			[[throughputMax]]; 		//maximum of chunks in above specified time frame
+tpMinWindow = 			[[windowMin]];		//[Flows]  //1000 says not relevant / no minimum transfer rate
+tpMinChunks = 			[[throughputMin]]; 		//minimum of chunks in above specified time frame; lower throughput limit
+latency = 				[[reqLatency]];	
+jitter = 				[[reqJitter]];
+
+hysteresis = 500;
+importance = [
+	[[impDeadline]],	//deadline
+	[[impStartTime]],	//start time
+	[[impThroughputMax]],	//throughput upper bound
+	[[impThroughputMin]],	//throughput lower bound
+	[[impUnscheduled]],	//unsched
+	[[impLatency]],	//latency
+	[[impJitter]]	//jitter
+]; //[ImportanceTypes, Flows]
+
+//user profiles
+userImportance = [[impUser]]; //[Flows]
+costImp = 15; //former willingness to pay is now inversely proportional value: cost importance 
+ 
