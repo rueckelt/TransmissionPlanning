@@ -108,13 +108,16 @@ public abstract class Scheduler {
 			schedule_f_t_n=schedule_f_t_n_temp;	//store to schedule_f_t_n if constraints hold
 			
 			logInstance(path, duration);
-			System.err.println(getType()+": \t"
-			//+ cf.costTotal(schedule_f_t_n)); //
-			+cf.getStat(schedule_f_t_n));
+
+//			System.err.println(getType()+": \t"
+//			//+ cf.costTotal(schedule_f_t_n)); //
+//			+cf.getStat(schedule_f_t_n));
+
 		}else{
 //			System.out.println(getLogfileName(path)+" is already calculated. Load result from file for visualization or other postprocessing.");
 			schedule_f_t_n = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", getLogfileName(path));
 //			System.out.println(showSchedule(schedule_f_t_n));
+
 		}
 	}
 

@@ -83,7 +83,7 @@ public class EvaluationScenarioCreator {
 	}
 	
 	public void start(){
-		ExecutorService executor = Executors.newFixedThreadPool(Math.min(1, PARALLEL));
+		ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, PARALLEL));
 		try {
 			executor.invokeAll(taskList);
 		} catch (InterruptedException e) {
@@ -120,11 +120,12 @@ public class EvaluationScenarioCreator {
 //		schedulers.add(new DummyScheduler(ng, tg));
 		
 		schedulers.add(new OptimizationScheduler(ng, tg));
-//		schedulers.add(new RandomScheduler(ng, tg, 100));	//100 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new RandomScheduler(ng, tg, 100));	//200 random runs of this scheduler. Returns average duration and cost
 		
-//		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
-//		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
+		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
+		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
+
 		newRating=true;
 		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
 		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
@@ -212,7 +213,7 @@ public class EvaluationScenarioCreator {
 	public void evaluateFlowVariation(){
 		//paramter log
 		writeScenarioLog(1);
-		for(int f= 0; f<=MAX_FLOWS; f++){
+		for(int f= 2; f<=MAX_FLOWS; f++){		//start with 2 = 2² = 4 flows to be able to use "add4" for traffic share
 			for(int rep=0; rep<REPETITIONS;rep++){
 				evaluateUncertainty(MAX_TIME,  MAX_NETS, f, rep);
 			}
