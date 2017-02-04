@@ -5,11 +5,11 @@
 
 %in_folder = '..\my_logs\jakob';% 
 %in_folder = '..\my_logs\vary_time';% 
-%in_folder = '..\my_logs\vary_load';% 
+in_folder = '..\my_logs\vary_load';% 
 %in_folder = '..\my_logs\vary_nets';% 
-in_folder = '..\my_logs\vary_flows';% 
+%in_folder = '..\my_logs\vary_flows';% 
 out_folder = [in_folder filesep 'eval'];
-select = 1; %select data to read from files: 1=flows, 2=time, 3=net, 4=load, 5=monetary
+select = 4; %select data to read from files: 1=flows, 2=time, 3=net, 4=load, 5=monetary
 force_read_data = 1;
 
 %get paramters from file

@@ -20,18 +20,23 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
     
     if(select==1)
         my_xlabel = 'Data flows';
+        fname_part = 'flows';
         my_xTickLabels = {'','4','','8','','16','','32','','64',''};
     elseif(select==2)
         my_xlabel = 'Time Slots';
+        fname_part = 'time';
         my_xTickLabels = {'','25','','50','','100','','200','','400',''};
     elseif(select==3)
         my_xlabel = 'Networks';
+        fname_part = 'networks';
         my_xTickLabels = {'','1','','2','','4','','8','','16','','32','','64',''};
     elseif(select==4)
         my_xlabel = 'Data traffic Load';
+        fname_part = 'traffic_load';
         my_xTickLabels = {'','low','','medium','','high',''};
     elseif(select==5)
         my_xlabel = 'Monetary cost weight';
+        fname_part = 'cost_weight';
         my_xTickLabels = {'','low','','medium','','high',''};
     end
     
@@ -58,7 +63,7 @@ for v=1:nof_vartypes
         data_sq = squeeze(data(v,:,:,:));
 
         %create path and labels
-        filename = [out_folder filesep 'vary_time_' vartypes{v} '.tikz']
+        filename = [out_folder filesep 'vary_' fname_part '_' vartypes{v} '.tikz']
 
         labels = {'Cost function value','Execution time in s'};
         my_ylabel=labels{v};
@@ -79,7 +84,7 @@ for v=1:nof_vartypes
         end
 
        %plot NRS
-        filename = [out_folder filesep 'vary_time_NRS_' vartypes{v} '.tikz'];
+        filename = [out_folder filesep 'vary_' fname_part '_NRS_' vartypes{v} '.tikz'];
 
         my_ylabel='Normalized Rating Score (NRS)';
         tikz_out_errorbar(filename, data_score, my_ylabel,my_xlabel, my_xTickLabels, scale_s(2:end-1),1, 0,0);
@@ -117,7 +122,7 @@ if 1==1
          if sum(avail_sq(:))>0
              %['plot for n:' num2str(n) ' f:' num2str(f)]
              %squeezed_data=squeeze(data_rel_sq(s,:,:));
-             filename = [out_folder filesep 'vary_time_RDS__' schedulers{s} '.tikz']
+             filename = [out_folder filesep 'vary_' fname_part '_RDS__' schedulers{s} '.tikz']
 
            % my_ylabel=[schedulers{s} ' detail cost relative to optimal schedule'];
            % tikz_out_errorbar(filename, data_rel_sq, my_ylabel,legendlabels, 0,1);
