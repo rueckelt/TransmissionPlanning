@@ -51,7 +51,7 @@ public class main {
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 //			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
-			eval.visualize();
+//			eval.visualize();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();
@@ -60,7 +60,7 @@ public class main {
 //			eval.evaluateMonetaryWeight();
 			eval.evaluateDataAmount();
 //			eval.evaluateTop();
-			eval.parallel(16);
+			eval.parallel(2);
 			eval.start();
 
 		

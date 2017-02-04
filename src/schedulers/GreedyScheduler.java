@@ -151,7 +151,7 @@ public class GreedyScheduler extends Scheduler{
 						int chunks=chunksMaxTp;
 						if(flow.getTokensMin()/flow.getWindowMin()>0){
 							chunks=(int)(flow.getTokensMin()/flow.getWindowMin());
-							System.out.println("MIN LIMIT HOLDS FOR FLOW "+flowIndex+": "+chunks);
+//							System.out.println("MIN LIMIT HOLDS FOR FLOW "+flowIndex+": "+chunks);
 						}
 						allocated=allocate(flowIndex, t, n, Math.min(chunksToAllocate, chunks)); //do not allocate more chunks than required and flow can provide
 
@@ -273,7 +273,7 @@ public class GreedyScheduler extends Scheduler{
 			}
 		}
 		);
-		System.out.println("network sort for Flow "+flow.getId()+" = "+netIDs);
+//		System.out.println("network sort for Flow "+flow.getId()+" = "+netIDs);
 		return netIDs;
 	}
 	
@@ -287,8 +287,8 @@ public class GreedyScheduler extends Scheduler{
 	protected int calcVio(int f, int n){
 		if(NEW_RATING_ESTIMATOR){
 			int c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);
-			if(f==5 && (n==1 || n==2 || n==6))
-				System.out.print("f="+f+", n="+n+", CALC_VIO: net_match = "+cs.getNetworkMatch(f, n)+"   stateless: "+cs.getStatelessReward(f)+"\n");
+//			if(f==5 && (n==1 || n==2 || n==6))
+//				System.out.print("f="+f+", n="+n+", CALC_VIO: net_match = "+cs.getNetworkMatch(f, n)+"   stateless: "+cs.getStatelessReward(f)+"\n");
 			return c;
 		}else{
 			//old cost function estimation
@@ -369,7 +369,10 @@ public class GreedyScheduler extends Scheduler{
 				sumSlots++;
 			}
 		}
-		return sumCap/sumSlots;
+		if (sumSlots==0) 
+			return 0;
+		else
+			return sumCap/sumSlots;
 	}
 	
 
