@@ -5,11 +5,13 @@
 
 %in_folder = '..\my_logs\jakob';% 
 %in_folder = '..\my_logs\vary_time';% 
-%in_folder = '..\my_logs\vary_load';% 
+
+in_folder = ['..' filesep 'my_logs' filesep 'vary_time'];% 
+%in_folder = ['..' filesep 'my_logs' filesep 'vary_load'];% 
 %in_folder = '..\my_logs\vary_nets';% 
-in_folder = '..\my_logs\vary_flows';% 
+%in_folder = '..\my_logs\vary_flows';% 
 out_folder = [in_folder filesep 'eval'];
-select = 1; %select data to read from files: 1=flows, 2=time, 3=net, 4=load, 5=monetary
+select = 2; %select data to read from files: 1=flows, 2=time, 3=net, 4=load, 5=monetary
 force_read_data = 1;
 
 %get paramters from file
@@ -40,7 +42,7 @@ else
     save(data_file, 'raw_values');
     save(avail_file, 'avail');
 end
-raw_values(2,:,:,:)=raw_values(2,:,:,:)./(1000*1000);     %time: µs to seconds
+raw_values(2,:,:,:)=raw_values(2,:,:,:)./(1000*1000);     %time: ï¿½s to seconds
 state='gathered data'
 %calculate relative
 % %plot

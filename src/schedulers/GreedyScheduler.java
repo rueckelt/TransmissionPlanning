@@ -369,7 +369,10 @@ public class GreedyScheduler extends Scheduler{
 				sumSlots++;
 			}
 		}
-		return sumCap/sumSlots;
+		if (sumSlots==0) 
+			return 0;
+		else
+			return sumCap/sumSlots;
 	}
 	
 

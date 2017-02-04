@@ -1,0 +1,171 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+\definecolor{mycolor2}{rgb}{0.00000,1.00000,1.00000}%
+\definecolor{mycolor3}{rgb}{1.00000,1.00000,0.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0,
+xmax=6,
+xtick={0,1,2,3,4,5,6},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+separate axis lines,
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymin=-8e-05,
+ymax=4e-05,
+ylabel={Normalized Rating Score (NRS)},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=blue,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-2.20743190241336e-05	-1.81387486196562e-05	-5.21885999998471e-05\\
+2	-1.22579048659339e-05	-1.01993289061739e-05	-3.29848177195483e-05\\
+3	-1.64441189257366e-05	-1.40269842070124e-05	-5.35096445637493e-05\\
+4	-1.79027751046762e-05	-1.50302735538075e-05	-3.26574062009103e-05\\
+5	-6.30659964754006e-06	-4.54253058522613e-06	-5.57630665736096e-06\\
+};
+\addlegendentry{Random};
+
+\addplot [color=mycolor1,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-5.7089663601153e-06	-7.59119406249721e-06	-2.4329455183079e-05\\
+2	-6.0656622944364e-07	-7.35712367576818e-06	-2.10725063664039e-05\\
+3	-3.83189795522387e-06	-7.6013415123576e-06	-5.71065511098238e-05\\
+4	-3.50232747389835e-06	-7.34216869766475e-06	-3.68806846133182e-05\\
+5	-1.6034221776036e-07	-2.43301410231282e-06	-5.31198639601886e-06\\
+};
+\addlegendentry{$\text{Greedy}_\text{0}$};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-9.48571455580191e-07	-2.80108569780867e-06	-1.29444479120321e-05\\
+2	-3.43135446941214e-07	-8.68452321467374e-06	-1.68954989795552e-05\\
+3	4.9289218932488e-07	-3.87055850023423e-06	-4.00593047378168e-05\\
+4	-8.10411363395236e-06	-9.47217213427883e-06	-2.90654199379023e-05\\
+5	-6.87222591504476e-07	-2.0247890327868e-06	-7.51672963752539e-06\\
+};
+\addlegendentry{$\text{GreedyOnlineOpp}_\text{0}$};
+
+\addplot [color=red,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-2.13765236515636e-07	-6.14929195464642e-07	-5.1006241773817e-06\\
+2	-3.49408497204362e-09	-1.24700364752417e-05	-3.87288944502466e-06\\
+3	8.73500521055596e-09	-4.91135563312124e-06	-7.58153578106375e-06\\
+4	2.62612024043129e-07	-2.33831783981012e-05	-4.12924510657198e-06\\
+5	3.10868229690838e-07	-2.73425013030934e-06	-1.10608470847765e-06\\
+};
+\addlegendentry{GreedyOnline};
+
+\addplot [color=mycolor2,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-4.60190574585754e-06	-5.62101245764443e-06	-2.8949177301958e-05\\
+2	-4.59340836870813e-06	-6.63310219663311e-06	-2.98480509371468e-05\\
+3	-5.87434316302025e-06	-7.01992978488166e-06	-5.45200058419933e-05\\
+4	-6.78991275787313e-06	-7.89414786165947e-06	-6.17681644000692e-05\\
+5	-3.39715671012843e-06	-3.86133807449818e-06	-9.90949970953005e-06\\
+};
+\addlegendentry{$\text{Greedy}_\text{0}_\text{H}\text{2}$};
+
+\addplot [color=mycolor3,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-1.29498267088875e-06	-1.36263458112571e-06	-2.13976574201078e-05\\
+2	-3.17064920703878e-06	-3.55385679653055e-06	-2.20175455184364e-05\\
+3	-1.61150066168599e-06	-2.28576300723264e-06	-4.27776925994628e-05\\
+4	-8.38634489860307e-06	-8.39631495434323e-06	-4.7184690565063e-05\\
+5	-2.60984090186858e-06	-2.46232351572277e-06	-7.82593446098302e-06\\
+};
+\addlegendentry{$\text{GreedyOnlineOpp}_\text{0}_\text{H}\text{2}$};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0,
+xmax=6,
+xtick={0,1,2,3,4,5,6},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-8e-05,
+ymax=4e-05,
+ylabel={Normalized Rating Score (NRS)}
+]
+\addplot [color=blue,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-2.20743190241336e-05	-1.81387486196562e-05	-5.21885999998471e-05\\
+2	-1.22579048659339e-05	-1.01993289061739e-05	-3.29848177195483e-05\\
+3	-1.64441189257366e-05	-1.40269842070124e-05	-5.35096445637493e-05\\
+4	-1.79027751046762e-05	-1.50302735538075e-05	-3.26574062009103e-05\\
+5	-6.30659964754006e-06	-4.54253058522613e-06	-5.57630665736096e-06\\
+};
+\addplot [color=mycolor1,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-5.7089663601153e-06	-7.59119406249721e-06	-2.4329455183079e-05\\
+2	-6.0656622944364e-07	-7.35712367576818e-06	-2.10725063664039e-05\\
+3	-3.83189795522387e-06	-7.6013415123576e-06	-5.71065511098238e-05\\
+4	-3.50232747389835e-06	-7.34216869766475e-06	-3.68806846133182e-05\\
+5	-1.6034221776036e-07	-2.43301410231282e-06	-5.31198639601886e-06\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-9.48571455580191e-07	-2.80108569780867e-06	-1.29444479120321e-05\\
+2	-3.43135446941214e-07	-8.68452321467374e-06	-1.68954989795552e-05\\
+3	4.9289218932488e-07	-3.87055850023423e-06	-4.00593047378168e-05\\
+4	-8.10411363395236e-06	-9.47217213427883e-06	-2.90654199379023e-05\\
+5	-6.87222591504476e-07	-2.0247890327868e-06	-7.51672963752539e-06\\
+};
+\addplot [color=red,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-2.13765236515636e-07	-6.14929195464642e-07	-5.1006241773817e-06\\
+2	-3.49408497204362e-09	-1.24700364752417e-05	-3.87288944502466e-06\\
+3	8.73500521055596e-09	-4.91135563312124e-06	-7.58153578106375e-06\\
+4	2.62612024043129e-07	-2.33831783981012e-05	-4.12924510657198e-06\\
+5	3.10868229690838e-07	-2.73425013030934e-06	-1.10608470847765e-06\\
+};
+\addplot [color=mycolor2,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-4.60190574585754e-06	-5.62101245764443e-06	-2.8949177301958e-05\\
+2	-4.59340836870813e-06	-6.63310219663311e-06	-2.98480509371468e-05\\
+3	-5.87434316302025e-06	-7.01992978488166e-06	-5.45200058419933e-05\\
+4	-6.78991275787313e-06	-7.89414786165947e-06	-6.17681644000692e-05\\
+5	-3.39715671012843e-06	-3.86133807449818e-06	-9.90949970953005e-06\\
+};
+\addplot [color=mycolor3,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	-1.29498267088875e-06	-1.36263458112571e-06	-2.13976574201078e-05\\
+2	-3.17064920703878e-06	-3.55385679653055e-06	-2.20175455184364e-05\\
+3	-1.61150066168599e-06	-2.28576300723264e-06	-4.27776925994628e-05\\
+4	-8.38634489860307e-06	-8.39631495434323e-06	-4.7184690565063e-05\\
+5	-2.60984090186858e-06	-2.46232351572277e-06	-7.82593446098302e-06\\
+};
+\end{axis}
+\end{tikzpicture}%

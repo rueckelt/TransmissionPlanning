@@ -1,0 +1,107 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=4.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={\# time slots},
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+%ymode=log,
+ymin=0.258787098351163,
+ymax=1.03189476389547,
+ylabel={Normalized Rating Score (NRS)},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=black}
+]
+\addplot [color=mycolor1,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.667140194565972	0.134874405198137	0.134874405198137\\
+2	0.723936109296751	0.094282707240915	0.094282707240915\\
+3	0.820509056002515	0.0526867876956201	0.0526867876956201\\
+4	0.889493484363514	0.0485926646323666	0.0485926646323666\\
+};
+\addlegendentry{TP};
+
+\addplot [color=blue,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.494833522893427	0.145008529827581	0.145008529827581\\
+2	0.554279762520446	0.124533798157944	0.124533798157944\\
+3	0.615029706884471	0.143467182857667	0.143467182857667\\
+4	0.693458702886828	0.135263840450726	0.135263840450726\\
+};
+\addlegendentry{ONS};
+
+\addplot [color=red,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.441532805303515	0.153991584913334	0.153991584913334\\
+2	0.500657429668442	0.133498139923681	0.133498139923681\\
+3	0.54921381228663	0.146619417137097	0.146619417137097\\
+4	0.560108834512671	0.155489613857103	0.155489613857103\\
+};
+\addlegendentry{NS};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+%ymode=log,
+xmin=0.5,
+xmax=4.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={\# time slots},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=0.258787098351163,
+ymax=1.03189476389547,
+ylabel={Normalized Rating Score (NRS)}
+]
+\addplot [color=mycolor1,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.667140194565972	0.134874405198137	0.134874405198137\\
+2	0.723936109296751	0.094282707240915	0.094282707240915\\
+3	0.820509056002515	0.0526867876956201	0.0526867876956201\\
+4	0.889493484363514	0.0485926646323666	0.0485926646323666\\
+};
+\addplot [color=blue,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.494833522893427	0.145008529827581	0.145008529827581\\
+2	0.554279762520446	0.124533798157944	0.124533798157944\\
+3	0.615029706884471	0.143467182857667	0.143467182857667\\
+4	0.693458702886828	0.135263840450726	0.135263840450726\\
+};
+\addplot [color=red,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.441532805303515	0.153991584913334	0.153991584913334\\
+2	0.500657429668442	0.133498139923681	0.133498139923681\\
+3	0.54921381228663	0.146619417137097	0.146619417137097\\
+4	0.560108834512671	0.155489613857103	0.155489613857103\\
+};
+\end{axis}
+\end{tikzpicture}%

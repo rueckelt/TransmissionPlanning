@@ -60,7 +60,7 @@ public class main {
 //			eval.evaluateMonetaryWeight();
 			eval.evaluateDataAmount();
 //			eval.evaluateTop();
-			eval.parallel(4);
+			eval.parallel(2);
 			eval.start();
 
 		

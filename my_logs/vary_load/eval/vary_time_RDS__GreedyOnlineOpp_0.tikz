@@ -1,0 +1,144 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+\definecolor{mycolor2}{rgb}{0.90000,0.70000,0.10000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+unbounded coords=jump,
+xmin=0.5,
+xmax=3.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+separate axis lines,
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymin=-0.25,
+ymax=0.15,
+ylabel={$\text{Relative Detail Score RDS(GreedyOnlineOpp}_\text{0}\text{)}$},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=black,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	-0.00405943213670177	-0.00146911593419729	-0.00246283064378332\\
+};
+\addlegendentry{time limits};
+
+\addplot [color=blue,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	0.0230531971980289	-0.00614179296655866	-0.00620328552110861\\
+};
+\addlegendentry{min. throughput};
+
+\addplot [color=mycolor1,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	0.0863350161156375	-0.0542951563240989	-0.03016214269937\\
+};
+\addlegendentry{unscheduled tokens};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	0.0125889128286296	-0.0294840911815782	-0.0117402594268587\\
+};
+\addlegendentry{latency jitter};
+
+\addplot [color=red,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	-0.0619403188400686	-0.130798280613745	-0.168742989401396\\
+};
+\addlegendentry{monetary cost};
+
+\addplot [color=mycolor2,solid]
+  table[row sep=crcr]{%
+0.5	0\\
+3.5	0\\
+};
+\addlegendentry{Ref Opt};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+unbounded coords=jump,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=3.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-0.25,
+ymax=0.15,
+ylabel={$\text{Relative Detail Score RDS(GreedyOnlineOpp}_\text{0}\text{)}$}
+]
+\addplot [color=black,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	-0.00405943213670177	-0.00146911593419729	-0.00246283064378332\\
+};
+\addplot [color=blue,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	0.0230531971980289	-0.00614179296655866	-0.00620328552110861\\
+};
+\addplot [color=mycolor1,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	0.0863350161156375	-0.0542951563240989	-0.03016214269937\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	0.0125889128286296	-0.0294840911815782	-0.0117402594268587\\
+};
+\addplot [color=red,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	nan	nan	nan\\
+2	nan	nan	nan\\
+3	-0.0619403188400686	-0.130798280613745	-0.168742989401396\\
+};
+\addplot [color=mycolor2,solid,forget plot]
+  table[row sep=crcr]{%
+0.5	0\\
+3.5	0\\
+};
+\end{axis}
+\end{tikzpicture}%

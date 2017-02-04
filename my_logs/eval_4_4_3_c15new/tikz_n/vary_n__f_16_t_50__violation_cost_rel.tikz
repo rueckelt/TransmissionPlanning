@@ -1,0 +1,111 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{}},
+xlabel={\# networks},
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymin=0.263410273105766,
+ymax=1.04070721777306,
+ylabel={Normalized Rating Score (NRS)},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=black}
+]
+\addplot [color=mycolor1,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.843701605153512	0.0790799642329886	0.0790799642329886\\
+2	0.846217941789593	0.0998795289131905	0.0998795289131905\\
+3	0.757124861944347	0.0995275198563064	0.0995275198563064\\
+4	0.744683087062883	0.0737784874815934	0.0737784874815934\\
+5	0.704265725421496	0.0694379359064241	0.0694379359064241\\
+};
+\addlegendentry{TS};
+
+\addplot [color=blue,dashdotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.583933920056259	0.143419558126058	0.143419558126058\\
+2	0.578289909668616	0.170146048172374	0.170146048172374\\
+3	0.687704331698289	0.0673300546965231	0.0673300546965231\\
+4	0.528775508663581	0.136012447657531	0.136012447657531\\
+5	0.609232904111407	0.0853774370441898	0.0853774370441898\\
+};
+\addlegendentry{ONS};
+
+\addplot [color=red,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.478796083053271	0.135829102491779	0.135829102491779\\
+2	0.488531964627056	0.195853883398427	0.195853883398427\\
+3	0.609319838999633	0.115156134878394	0.115156134878394\\
+4	0.447538948407877	0.117453165799205	0.117453165799205\\
+5	0.585529845985041	0.0806045648655795	0.0806045648655795\\
+};
+\addlegendentry{NS};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=5.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5},
+xticklabels={{},{1},{},{2},{},{4},{},{8},{},{16},{}},
+xlabel={\# networks},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=0.263410273105766,
+ymax=1.04070721777306,
+ylabel={Normalized Rating Score (NRS)}
+]
+\addplot [color=mycolor1,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.843701605153512	0.0790799642329886	0.0790799642329886\\
+2	0.846217941789593	0.0998795289131905	0.0998795289131905\\
+3	0.757124861944347	0.0995275198563064	0.0995275198563064\\
+4	0.744683087062883	0.0737784874815934	0.0737784874815934\\
+5	0.704265725421496	0.0694379359064241	0.0694379359064241\\
+};
+\addplot [color=blue,dashdotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.583933920056259	0.143419558126058	0.143419558126058\\
+2	0.578289909668616	0.170146048172374	0.170146048172374\\
+3	0.687704331698289	0.0673300546965231	0.0673300546965231\\
+4	0.528775508663581	0.136012447657531	0.136012447657531\\
+5	0.609232904111407	0.0853774370441898	0.0853774370441898\\
+};
+\addplot [color=red,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0.478796083053271	0.135829102491779	0.135829102491779\\
+2	0.488531964627056	0.195853883398427	0.195853883398427\\
+3	0.609319838999633	0.115156134878394	0.115156134878394\\
+4	0.447538948407877	0.117453165799205	0.117453165799205\\
+5	0.585529845985041	0.0806045648655795	0.0806045648655795\\
+};
+\end{axis}
+\end{tikzpicture}%

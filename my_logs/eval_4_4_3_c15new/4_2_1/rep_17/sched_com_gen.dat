@@ -1,0 +1,57 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: QZ61P8
+ * Creation Date: 10.07.2014 at 08:59:12
+ *********************************************/
+
+
+nNetworks = 2;
+nTime = 100;
+nInterfaceTypes = 2;
+nFlows = 16;
+
+//channel model: generated Fri May 27 12:42:16 CEST 2016
+availChunkBuckets = //[Networks, Time]  
+[
+	[46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 34, 52, 52, 52, 52, 52, 52, 34, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+];
+	
+network_cost = //[Networks] 
+	[21, 3];				//static cost per channel (change later to more realistic model)
+network_lcy =
+	[10, 1];
+network_jit =
+	[5, 5];	
+
+network_type= //[Networks] 				//each channel has a specific type; e.g. WiFi, LTE..
+	[2, 1];		
+nClientInterfaces = //[InterfaceTypes]
+	[1, 1];	
+
+//requests: generated Fri May 27 12:42:16 CEST 2016
+nChunks = 				[675, 1485, 405, 1350, 550, 1210, 330, 1100, 925, 2035, 555, 1850, 825, 1815, 495, 1650];		//[Flows]		
+deadline= 				[74, 62, 78, 71, 52, 91, 13, 24, 75, 71, 88, 32, 67, 50, 17, 46];		//[Flows] 
+prefStartTime = 		[24, 0, 33, 66, 19, 0, 3, 17, 25, 0, 44, 27, 34, 0, 11, 40];		//[Flows]
+tpMaxWindow = 			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];		//[Flows]	//0 says not relevant/no maximum transfer rate; upper throughput limit
+tpMaxChunks = 			[100000, 100000, 9, 100000, 100000, 100000, 33, 100000, 100000, 100000, 12, 100000, 100000, 100000, 82, 100000]; 		//maximum of chunks in above specified time frame
+tpMinWindow = 			[16, 100000, 1, 100000, 21, 100000, 1, 100000, 18, 100000, 1, 100000, 14, 100000, 1, 100000];		//[Flows]  //1000 says not relevant / no minimum transfer rate
+tpMinChunks = 			[52, 1, 3, 1, 84, 1, 11, 1, 81, 1, 12, 1, 87, 1, 20, 1]; 		//minimum of chunks in above specified time frame; lower throughput limit
+latency = 				[10, 10, 4, 10, 10, 10, 4, 10, 10, 10, 4, 10, 10, 10, 4, 10];	
+jitter = 				[10, 10, 4, 10, 10, 10, 4, 10, 10, 10, 4, 10, 10, 10, 4, 10];
+
+hysteresis = 500;
+importance = [
+	[5, 0, 20, 9, 5, 0, 20, 8, 9, 0, 20, 7, 5, 0, 20, 9],	//deadline
+	[5, 0, 10, 9, 1, 0, 10, 7, 2, 0, 10, 8, 5, 0, 10, 9],	//start time
+	[, , , , , , , , , , , , , , , ],	//throughput upper bound
+	[7, 0, 50, 0, 7, 0, 50, 0, 6, 0, 50, 0, 6, 0, 50, 0],	//throughput lower bound
+	[5, 3, 5, 14, 4, 4, 3, 14, 6, 1, 4, 13, 5, 3, 3, 13],	//unsched
+	[0, 0, 8, 0, 0, 0, 8, 0, 0, 0, 9, 0, 0, 0, 9, 0],	//latency
+	[0, 0, 9, 0, 0, 0, 7, 0, 0, 0, 9, 0, 0, 0, 9, 0]	//jitter
+]; //[ImportanceTypes, Flows]
+
+//user profiles
+userImportance = [7, 2, 8, 7, 8, 1, 9, 9, 5, 1, 10, 7, 5, 1, 9, 7]; //[Flows]
+costImp = 15; //former willingness to pay is now inversely proportional value: cost importance 
+ 

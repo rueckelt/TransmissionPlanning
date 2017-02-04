@@ -1,0 +1,181 @@
+% This file was created by matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{1.00000,0.00000,1.00000}%
+\definecolor{mycolor2}{rgb}{0.00000,1.00000,1.00000}%
+\definecolor{mycolor3}{rgb}{1.00000,1.00000,0.00000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+xmin=0.5,
+xmax=3.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+separate axis lines,
+every outer y axis line/.append style={white!85!black},
+every y tick label/.append style={font=\color{white!85!black}},
+ymode=log,
+ymin=100000,
+ymax=10000000,
+ylabel={Cost function value},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={at={(0.03,0.97)},anchor=north west,legend cell align=left,align=left,draw=white!15!black}
+]
+\addplot [color=black,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	778799	-112213	-77568\\
+};
+\addlegendentry{Optimization};
+
+\addplot [color=blue,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	346780	-273302	-445439\\
+};
+\addlegendentry{$\text{Greedy}_\text{0}$};
+
+\addplot [color=mycolor1,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	963967	-160709	-60369\\
+};
+\addlegendentry{$\text{GreedyOnlineOpp}_\text{0}$};
+
+\addplot [color=green,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	1011402.5	-123046.5	-49486.5\\
+};
+\addlegendentry{GreedyOnline};
+
+\addplot [color=red,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	409860.5	-281633.5	-451765.5\\
+};
+\addlegendentry{$\text{Greedy}_\text{0}_\text{H}\text{2}$};
+
+\addplot [color=mycolor2,dotted,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	961921.5	-162754.5	-58323.5\\
+};
+\addlegendentry{$\text{GreedyOnlineOpp}_\text{0}_\text{H}\text{2}$};
+
+\addplot [color=mycolor3,solid,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	1011402.5	-123046.5	-49486.5\\
+};
+\addlegendentry{$\text{GreedyOnline}_\text{H}\text{2}$};
+
+\addplot [color=black,dashed,line width=1.5pt]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	1584272.5	-128073.5	-158490.5\\
+};
+\addlegendentry{Random};
+
+\end{axis}
+
+\begin{axis}[%
+width=0.951\figW,
+height=\figH,
+at={(0\figW,0\figH)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=0.5,
+xmax=3.5,
+xtick={0.5,1,1.5,2,2.5,3,3.5},
+xticklabels={{},{25},{},{50},{},{100},{},{200},{},{400},{}},
+xlabel={Time Slots},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymode=log,
+ymin=100000,
+ymax=10000000,
+ylabel={Cost function value}
+]
+\addplot [color=black,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	778799	-112213	-77568\\
+};
+\addplot [color=blue,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	346780	-273302	-445439\\
+};
+\addplot [color=mycolor1,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	963967	-160709	-60369\\
+};
+\addplot [color=green,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	1011402.5	-123046.5	-49486.5\\
+};
+\addplot [color=red,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	409860.5	-281633.5	-451765.5\\
+};
+\addplot [color=mycolor2,dotted,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	961921.5	-162754.5	-58323.5\\
+};
+\addplot [color=mycolor3,solid,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	1011402.5	-123046.5	-49486.5\\
+};
+\addplot [color=black,dashed,line width=1.5pt,forget plot]
+ plot [error bars/.cd, y dir = both, y explicit]
+ table[row sep=crcr, y error plus index=2, y error minus index=3]{%
+1	0	0	0\\
+2	0	0	0\\
+3	1584272.5	-128073.5	-158490.5\\
+};
+\end{axis}
+\end{tikzpicture}%
