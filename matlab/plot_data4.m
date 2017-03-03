@@ -21,15 +21,15 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
     if(select==1)
         my_xlabel = 'Data flows';
         fname_part = 'flows';
-        my_xTickLabels = {'','4','','8','','16','','32','','64',''};
+        my_xTickLabels = {'','4','8','16','32',''};
     elseif(select==2)
         my_xlabel = 'Time Slots';
         fname_part = 'time';
-        my_xTickLabels = {'','25','','50','','100','','200','','400',''};
+        my_xTickLabels = {'','25','50','100','200','400',''};
     elseif(select==3)
         my_xlabel = 'Networks';
         fname_part = 'networks';
-        my_xTickLabels = {'','1','','2','','4','','8','','16','','32','','64',''};
+        my_xTickLabels = {'','1','2','4','8','16','32',''};
     elseif(select==4)
         my_xlabel = 'Data traffic Load';
         fname_part = 'traffic_load';
@@ -37,7 +37,7 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
     elseif(select==5)
         my_xlabel = 'Monetary cost weight';
         fname_part = 'cost_weight';
-        my_xTickLabels = {'','low','','medium','','high',''};
+        my_xTickLabels = {'','zero','','low','','medium','','high',''};
     end
     
    
@@ -82,7 +82,7 @@ for v=1:nof_vartypes
         for s=1:nof_schedulers-2  
             data_score(s,:,:) = (data_sq(end,:,:)-data_sq(s+1,:,:)) ./ (data_sq(end,:,:)-data_sq(1,:,:));
         end
-
+        data_score(isnan(data_score))=0;
        %plot NRS
         filename = [out_folder filesep 'vary_' fname_part '_NRS_' vartypes{v} '.tikz'];
 
@@ -115,7 +115,7 @@ if 1==1
              detail_cost_share(v,:,:) = (squeeze(detail_cost_share(v,:,:))-squeeze(data(v+2,1,:,:))) ./ ...
                                         (squeeze(data(1,s,:,:))-squeeze(data(1,1,:,:)));
          end
-
+        detail_cost_share(isnan(detail_cost_share))=0;
          avail_sq=squeeze(avail(3:end,s,:,:));
 
          %plot only if data is available

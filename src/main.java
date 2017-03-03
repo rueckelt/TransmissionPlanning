@@ -9,6 +9,7 @@ import schedulingIOModel.NetworkGenerator;
 import visualization.Plot;
 import visualization.VisualizationPack;
 import ToolSet.EvaluationScenarioCreator;
+import ToolSet.LogMatlabFormat;
 import ToolSet.RndInt;
 
 
@@ -38,10 +39,20 @@ public class main {
 		//String logpath= "my_logs"+File.separator+"tester";
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 
-//		String logpath= "my_logs"+File.separator+"vary_time";
-//		String logpath= "my_logs"+File.separator+"vary_load";
-		
+	
 		String logpath= "my_logs"+File.separator+"test_exec";
+
+//		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;//f=5;
+//		String logpath= "my_logs"+File.separator+"vary_time"; t=4;
+//		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
+//		String logpath= "my_logs"+File.separator+"vary_load"; 
+//		String logpath= "my_logs"+File.separator+"vary_cost";
+//		String logpath= "my_logs"+File.separator+"vary_time_test"; t=0;
+		 
+//		String logpath= "my_logs"+File.separator+"vary_pe_move";
+//		String logpath= "my_logs"+File.separator+"vary_pe_net";
+//		String logpath= "my_logs"+File.separator+"vary_pe_flow";
+//		String logpath= "my_logs"+File.separator+"vary_pe_comb";
 		
 		
 		//if overwrite, then delete everything in folder, create scenario new and calculate
@@ -51,17 +62,22 @@ public class main {
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 //			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
+//			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
+//			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
+//			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
+//			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
+			eval.evaluateTop();
 //			eval.visualize();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
-//			eval.evaluateTimeVariation();
+//			eval.evaluateTimeVariation();	
 //			eval.evaluateNetworkVariation();
 //			eval.evaluateFlowVariation();
 //			eval.evaluateMonetaryWeight();
-//			eval.evaluateDataAmount();
-			eval.evaluateTop();
-			eval.parallel(4);
-			eval.start();
+//			eval.evaluateTrafficLoad();
+//			eval.evaluateThisInstance();
+			eval.parallel(2);
+			eval.start(4*24);
 
 		
 		//testing uncertainty models

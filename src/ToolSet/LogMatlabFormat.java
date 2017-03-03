@@ -173,6 +173,45 @@ public class LogMatlabFormat {
 		comment(date);
 	}
 
+	public static long loadValueFromLogfile(String varName, String logfileName){
+		long v = 0;
+		
+		//read file to string
+				Scanner scanner = null;
+				String content="";
+				try {
+					scanner = new Scanner(new File(logfileName)).useDelimiter("\\Z");
+					content = scanner.next();
+				} catch (FileNotFoundException e) {
+					System.err.println("LogMatlabFormat::load3DFromLogfile: reading logged result failed. File not found: "+logfileName);
+					e.printStackTrace();
+				} finally{
+					scanner.close();
+				}
+				
+				//parse lines
+				content=content.trim();
+				String lines[]=content.split("\n");
+				
+				for(String line : lines){
+//					e.g. scheduling_duration_us = 152508;
+					if(line.contains(varName)){
+						String valueStr = line.substring(line.indexOf('=')+1, line.indexOf(';'));
+						valueStr=valueStr.trim();
+						try{
+							v=Long.parseLong(valueStr);
+							return v;
+						}catch(Exception e){
+							System.err.println("LobMatlabFormat: loadValue from File: invalid parseInt:"+valueStr);
+							e.printStackTrace();
+							break;
+						}
+					}
+				}
+		
+		return v;
+	}
+	
 	public static int[][][] load3DFromLogfile(String varName, String logfileName) {
 
 		int values[][][] = null;

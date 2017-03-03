@@ -23,11 +23,29 @@ linecolors = {'black','blue','magenta','green','red','cyan','yellow'};
     %A=size(data);
 
     YMatrix1=median(data, 3)'%mean(data,3)';
-    EMatrix1bot=prctile(data, p,3)' -YMatrix1 ;%std(data,1,3)';
-    EMatrix1top=YMatrix1-prctile(data, 100-p,3)' ;%std(data,1,3)'
+    EMatrix1bot=-(prctile(data, p,3)' -YMatrix1 );%std(data,1,3)';
+    EMatrix1top=-(YMatrix1-prctile(data, 100-p,3)' );%std(data,1,3)'
+  
     
     [dim1, dim2]=size(YMatrix1)
-    x=repmat(1:dim1, dim2, 1)'
+    x=repmat(1:dim1, dim2, 1)'  
+       
+%     %sort out non-available
+%     if(~isnan(avail))
+%         for d1 = 1:dim1
+%            for d2 = 1:dim2
+%                'next'
+%               tmp=data(d1,d2)
+%               tmp=tmp(avail(d2,d1)>0)
+%               
+%               YMatrix1(d1,d2)=median(tmp);%mean(data,3)';
+%               EMatrix1bot(d1,d2)=-(prctile(tmp, p) -YMatrix1(d1,d2) );%std(data,1,3)';
+%               EMatrix1top=-(YMatrix1(d1,d2)-prctile(tmp, 100-p) );%std(data,1,3)'
+%            end
+%         end
+%     end
+    
+    
     
     axes1 = axes('Parent',figure1,'YMinorTick','on',...%'YScale','log',...
         'XTickLabel',my_xTickLabels);%{'','25','','50','','100','','200','','400',''});

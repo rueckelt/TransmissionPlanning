@@ -1,5 +1,5 @@
 %values are in the form: 
-%(varnames, schedulers, flows, time, networks, %repetitions)
+%(varnames, schedulers, [flows, time, networks,..], repetitions)
 
 %get schedulers from scheduler_logs (read from parameter_file.m)
 
@@ -8,12 +8,11 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
 %   Detailed explanation goes here
     [~, nof_schedulers] =size(scheduler_logs); 
     [~, nof_values] = size(varnames);
-   
     %define path and counter variable with select parameter
     if select==1    %vary flows
         path_prefix = [in_folder filesep];
         path_suffix = [ '_' num2str(t_max) '_' num2str(n_max) '_' num2str(load_max) '_' num2str(mon_max)];
-        counter = 0:f_max;
+        counter = 2:f_max;
     elseif select==2    %vary time
         path_prefix = [in_folder filesep num2str(f_max) '_' ];
         path_suffix = [ '_' num2str(n_max) '_' num2str(load_max) '_' num2str(mon_max)];
@@ -32,7 +31,7 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
     elseif select ==5   %vary monetary cost weight
         path_prefix = [in_folder filesep num2str(f_max) '_' num2str(t_max) '_' num2str(n_max) '_' num2str(load_max) '_' ];
         path_suffix = [];
-        counter = 1:mon_max;
+        counter = 0:mon_max;
                     
     end;
     

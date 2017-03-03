@@ -144,7 +144,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 
 		//take motorway model for <0.2. Urban leads to higher orders whenever the car stops at least once. stops convergence.
 		//else, select randomly.
-		boolean motorwayModel=error<0.2 || RndInt.get(0, 1)>0;
+		boolean motorwayModel=true;//error<0.2 || RndInt.get(0, 1)>0;
 //		motorwayModel=false;
 //		System.out.println("isMotorway "+motorwayModel);
 		float strength=error;

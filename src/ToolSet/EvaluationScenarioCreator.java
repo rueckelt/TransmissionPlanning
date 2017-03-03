@@ -6,6 +6,7 @@ import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import schedulers.AdaptationScheduler;
 import schedulers.DummyScheduler;
@@ -85,10 +86,10 @@ public class EvaluationScenarioCreator {
 		VISUALIZE=true;
 	}
 	
-	public void start(){
+	public void start(int timeout_hours){
 		ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, PARALLEL));
 		try {
-			executor.invokeAll(taskList);
+			executor.invokeAll(taskList,timeout_hours, TimeUnit.HOURS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -106,46 +107,35 @@ public class EvaluationScenarioCreator {
 	public Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator tg){
 		
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
-//		schedulers.add(new PriorityScheduler(ng, tg));
-//		for(int i=-3000; i<=2000;i=i+100){
-//			schedulers.add(new GreedyScheduler(ng, tg).setScheduleDecisionLimit(i));
-//	//		schedulers.add(new GreedyScheduler(ng, tg));
-//		}
-//		for(int i=-65000; i<=5000;i=i+1000){
-//			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
-//		}
-//		for(int i=-12000; i>-20000;i=i-2000){
-//			schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).setScheduleDecisionLimit(i));
-//		}
-		
-		
-//		schedulers.add(new DummyScheduler(ng, tg));
-		
-//		schedulers.add(new OptimizationScheduler(ng, tg));
 
 		boolean newRating = false;
+		schedulers.add(new OptimizationScheduler(ng, tg));
+//		
 //		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
 //		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
-
+//
 		newRating=true;
-		//schedule for executor and adaptation
 		Scheduler gs = new GreedyScheduler(ng, tg).newRating(newRating);
-		
 		schedulers.add(gs);		
-		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
-		schedulers.add(new GreedyOnlineScheduler(ng, tg).newRating(newRating));
 		
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));
+		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
+
 		//execution of schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
 		schedulers.add(new ExecutionScheduler(ng, tg, path));
-//		
-//		//adaptation of schedule under erroneous prediction of the 
-//		FlowGenerator tgPred = getFlowGenerator(path, false, 0, 0, 0);	//load from file.
-//		schedulers.add(new AdaptationScheduler(ng, tg, tgPred));
+		
+		
+//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, tg).setScheduleDecisionLimit(5)).newRating(newRating));
+//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, tg).setScheduleDecisionLimit(8)).newRating(newRating));
+//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, tg).setScheduleDecisionLimit(10)).newRating(newRating));
+//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, tg).setScheduleDecisionLimit(15)).newRating(newRating));
+//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, tg).setScheduleDecisionLimit(20)).newRating(newRating));
 		
 
 		schedulers.add(new RandomScheduler(ng, tg, 100));	//200 random runs of this scheduler. Returns average duration and cost
+		
 	return schedulers;
 	}
 
@@ -196,7 +186,7 @@ public class EvaluationScenarioCreator {
 	
 	public void evaluateThisInstance(){
 		//paramter log
-		DATA_AMOUNT=3;
+//		DATA_AMOUNT=3;
 
 		evaluateUncertainty(MAX_TIME, MAX_NETS, MAX_FLOWS, REPETITIONS-1);
 		
@@ -248,8 +238,9 @@ public class EvaluationScenarioCreator {
 	System.out.println("###############  TASK CREATION DONE  ##################");
 	}
 	
-	public void evaluateDataAmount(){
+	public void evaluateTrafficLoad(){
 		//paramter log
+		DATA_AMOUNT=3;	//set max for log
 		writeScenarioLog(1);
 		for(int d= 1; d<=3; d++){
 			DATA_AMOUNT=d;
@@ -263,7 +254,7 @@ public class EvaluationScenarioCreator {
 	public void evaluateMonetaryWeight(){
 		//paramter log
 		writeScenarioLog(1);
-		for(int m= 1; m<=3; m++){
+		for(int m= 0; m<=3; m++){
 			MONETARY_WEIGHT=m;
 			for(int rep=0; rep<REPETITIONS;rep++){
 				evaluateUncertainty(MAX_TIME, MAX_NETS, MAX_FLOWS, rep);
@@ -313,7 +304,7 @@ public class EvaluationScenarioCreator {
 //		calculateInstance(time, nets, flows, rep, folder_out, overwrite, recalc, decomposition_heuristic);
 
 		NetworkGenerator ng = getNetworkGenerator(folder_out, overwrite, nets, time, netUncertainty, movementUncertainty);	//do not change order of ng and fg! There's a bad dependence for optimization
-		ng.setCostImportance((MONETARY_WEIGHT-1)*10+5);	//5, 15, 25
+		ng.setCostImportance(Math.max(0,(MONETARY_WEIGHT-1)*10+5));	//0, 5, 15, 25
 		FlowGenerator fg = getFlowGenerator(folder_out, flowUncertainty>0 && overwrite, flows, time, flowUncertainty);
 		
 		if(netUncertainty>0 && movementUncertainty>0 && flowUncertainty>0){

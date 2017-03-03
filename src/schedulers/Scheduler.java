@@ -13,7 +13,7 @@ import ToolSet.LogMatlabFormat;
 
 
 public abstract class Scheduler {
-	
+	final boolean DEBUG = false;
 	/**
 	 * TODO: Different strategies
 	 * 
@@ -102,7 +102,6 @@ public abstract class Scheduler {
 	 */
 	public void calculateInstance(String path, boolean recalc){
 		if((!new File(getLogfileName(path)).exists())||recalc){
-		
 			initTempSchedule();
 			startTimer();
 			calculateInstance_internal(path);	//result is stored to schedule_f_t_n_temp
@@ -113,14 +112,24 @@ public abstract class Scheduler {
 			
 			logInstance(path, duration);
 
-//			System.err.println(getType()+": \t"
+//			if(DEBUG) System.err.println(getType()+": \t"
 //			//+ cf.costTotal(schedule_f_t_n)); //
 //			+cf.getStat(schedule_f_t_n));
 
 		}else{
 //			System.out.println(getLogfileName(path)+" is already calculated. Load result from file for visualization or other postprocessing.");
 			schedule_f_t_n = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", getLogfileName(path));
+			schedule_f_t_n_temp=schedule_f_t_n;
 //			System.out.println(showSchedule(schedule_f_t_n));
+			
+			long duration = LogMatlabFormat.loadValueFromLogfile("scheduling_duration_us", getLogfileName(path));
+			
+			//redo log
+//			cf.calculate(schedule_f_t_n);
+//			
+//			if(duration>0)
+//				logInstance(path, duration);
+//			
 
 		}
 	}
@@ -151,6 +160,24 @@ public abstract class Scheduler {
 		
 		//finish logging and write to file
 		logger.writeLog(getLogfileName(path));
+	}
+	
+	//per million
+	private int getDropRate(){
+		int sum_tokens = 0;
+		int sum_scheduled=0;
+		for(int f=0;f<tg.getFlows().size();f++){
+			sum_tokens+=tg.getFlows().get(f).getTokens();
+			for(int n=0;n<ng.getNetworks().size();n++){
+				for(int t=0;t<ng.getTimeslots();t++){
+					sum_scheduled+=schedule_f_t_n_temp[f][t][n];
+				}
+			}
+		}
+		if(sum_tokens==0)return 0;	//avoid division by zero
+		double drop_rate=1000000.0*((double)1.0-((double)sum_scheduled/(double)sum_tokens));
+//		System.out.println("DR: scheduled/tokens = dr \t"+sum_scheduled+" / "+sum_tokens+" = "+((double)1.0-((double)sum_scheduled/(double)sum_tokens)));
+		return (int)drop_rate;
 	}
 	
 	
@@ -189,14 +216,14 @@ public abstract class Scheduler {
 				}
 				//check overuse of resources (1)
 				if(network_use>networks.get(n).getCapacity().get(t)){
-					System.err.println("Scheduler::constraintCheck - Net use error: "+network_use+ " > "+networks.get(n).getCapacity().get(t)+", network "+n+" time "+t);
+					if(DEBUG) System.err.println("Scheduler::constraintCheck - Net use error: "+network_use+ " > "+networks.get(n).getCapacity().get(t)+", network "+n+" time "+t);
 					return false;	//violation if used capacity of network in this time slot is larger than available capacity in this time slot
 				}
 			}
 			//check: Do not exceed available number of Link Interfaces (2)
 			for (int i = 0; i < network_used_by_type.length; i++) {
 				if(network_used_by_type[i]>ng.getNofInterfacesByType()[i]){ //check if sum is larger than available interfaces
-					System.err.println("Scheduler::constraintCheck - Parallel link interface error : "+ network_used_by_type[i] +" > "+ng.getNofInterfacesByType()[i]);
+					if(DEBUG) System.err.println("Scheduler::constraintCheck - Parallel link interface error : "+ network_used_by_type[i] +" > "+ng.getNofInterfacesByType()[i]);
 					System.out.println(Arrays.toString(ng.getNofInterfacesByType()));
 					return false;
 				}
@@ -210,7 +237,7 @@ public abstract class Scheduler {
 						if(flow_is_scheduled==false){
 							flow_is_scheduled=true;	//set true if flow is scheduled in this time slot
 						}else{
-							System.err.println("Scheduler::constraintCheck - Parallel channel use for same flow: "+f +" in time slot " + t);
+							if(DEBUG) System.err.println("Scheduler::constraintCheck - Parallel channel use for same flow: "+f +" in time slot " + t);
 							return false;	//violation if flow scheduled to a second network
 						}
 					}
@@ -224,15 +251,31 @@ public abstract class Scheduler {
 			int chunksMax = flow.getTokensMax();
 			for(int t=0;t<(ng.getTimeslots()-winSize); t++){
 				int chunkSum=0;	//sum of chunks in this window
-				for(int tw=t;tw<t+winSize;tw++){
+				int t_max = Math.min(t+winSize, ng.getTimeslots());
+				for(int tw=t;tw<t_max;tw++){
 					for(int n=0; n<ng.getNetworks().size();n++){
 						chunkSum+=schedule_f_t_n[f][tw][n];
 					}
 				}
 				if(chunkSum>chunksMax){
-					System.err.println("Scheduler::constraintCheck - Upper throughput limit exceeded for flow: "+f +" in time window " + t+" to " + t+winSize +" by "+ (chunkSum-chunksMax));
+					if(DEBUG) System.err.println("Scheduler::constraintCheck - Upper throughput limit exceeded for flow: "+f +" in time window " + t+" to " + t_max +" by "+ (chunkSum-chunksMax));
 					return false;	//violation of upper tp limit
 				}
+			}
+		}
+		
+		//do not schedule more tokens than available
+		for(int f=0;f<flows.size();f++){
+			int sum = 0;
+			for (int n=0; n<networks.size();n++){
+				for(int t=0; t<ng.getTimeslots();t++){
+					sum+=schedule_f_t_n[f][t][n];
+				}
+			}
+			if(sum>flows.get(f).getTokens()){
+				if(DEBUG) System.err.println("Scheduler::constraintCheck - More tokens scheduled than available for flow: "+f);
+				return false;	//violation of flow tokens
+				
 			}
 		}
 		
@@ -277,20 +320,21 @@ public abstract class Scheduler {
 //		System.out.println("Scheduler::allocate. validity checks passed");
 		//calculate remaining capacity of network in this slot
 		int remaining_net_cap=getRemainingNetCap(network, time);
-		int s[][][]=schedule_f_t_n_temp.clone();
+//		int s[][][]=schedule_f_t_n_temp.clone();
 		int scheduled = Math.min(tokens, remaining_net_cap);
 //		System.out.println("Scheduler::allocate. f,t,n "+flow+","+time+","+network+" tokens: "+tokens+
 //				"; remaining cap = "+remaining_net_cap+"; scheduled = "+scheduled);
 
 		if(scheduled>0){
-			s[flow][time][network]+=scheduled;
+			schedule_f_t_n_temp[flow][time][network]+=scheduled;
 			//any constraint violated? use if ok, else revert
-			if(verificationOfConstraints(s)){
-				schedule_f_t_n_temp=s;
+			if(verificationOfConstraints(schedule_f_t_n_temp)){
+//				System.out.println("CORRECT PLAN: "+verificationOfConstraints(schedule_f_t_n_temp));
 				interfaceLimit.useNetwork(network, time);
 				return scheduled;
 			}else{
-				System.err.println("Scheduler::allocate. constraint check NOT passed");
+				schedule_f_t_n_temp[flow][time][network]-=scheduled;	//undo: remove tokens from plan if it gets invalid
+				if(DEBUG) System.err.println("Scheduler::allocate. constraint check NOT passed");
 				return 0;
 			}
 		}
@@ -394,6 +438,10 @@ public abstract class Scheduler {
 	}
 
 	public void logFlowDrop(){
+
+		logger.comment("Drop rate in parts per million. (=Percent with four digits right of comma)");
+		logger.log("drop_rate", getDropRate());
+		
 		String s = "Flow Drop Rate:\n";
 		for(int f =0; f<tg.getFlows().size(); f++){
 			Flow flow = tg.getFlows().get(f);
