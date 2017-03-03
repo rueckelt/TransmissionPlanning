@@ -20,20 +20,21 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 	private boolean VISUALIZE; 
 	private String folder;  
 	private boolean recalc;
+	private Vector<Scheduler> schedulers;
 
 	//overwrite means: Create new scenario (ng+tg) even if it exists in this folder and calculate all schedules
 	//recalc means: Keep ng+tg but recalculate all schedules
 	
 	//change
 	public EvaluationScenarioExecutionWorker(NetworkGenerator ng, FlowGenerator fg, boolean tEST_COST_FUNCTION, 
-			boolean vISUALIZE, String folder, boolean recalc){
+			boolean vISUALIZE, String folder, boolean recalc, Vector<Scheduler> schedulers){
 		this.ng=ng;
 		this.fg=fg;
 		TEST_COST_FUNCTION = tEST_COST_FUNCTION;
 		VISUALIZE = vISUALIZE;
 		this.folder=folder;
 		this.recalc=recalc;
-
+		this.schedulers=schedulers;
 	}
 	
 	public Boolean call() throws Exception {
@@ -52,8 +53,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 			sched.calculateInstance(folder, recalc); //or when overwrite
 		} else {
 
-			Vector<Scheduler> scheds= EvaluationScenarioCreator.initSchedulers(ng, fg);
-			for (Scheduler scheduler : scheds) {
+			for (Scheduler scheduler : schedulers) {
 				Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				String date = formatter.format(Calendar.getInstance().getTime());
 				System.out.println(" "+scheduler.getType()+",\t"+folder + ",\tstarting at "+date);
@@ -63,7 +63,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 			}
 
 			if(VISUALIZE){
-				new Plot(new VisualizationPack(ng, fg, scheds));
+				new Plot(new VisualizationPack(ng, fg, schedulers));
 			}
 
 		}

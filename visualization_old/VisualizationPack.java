@@ -24,13 +24,7 @@ public class VisualizationPack {
 	private Scheduler sched1=null;
 	private Scheduler sched2=null;
 	private Scheduler sched3=null;
-	private int[][][] sp = null;
 
-	public VisualizationPack(NetworkGenerator ng, FlowGenerator tg, int[][][] schedule) {
-		nets = ng;
-		traff = tg;
-		setSp(schedule);
-	}
 	
 	public VisualizationPack(NetworkGenerator ng, FlowGenerator tg, Scheduler s0, Scheduler s1, Scheduler s2, Scheduler s3){
 		nets = ng;
@@ -77,12 +71,4 @@ public class VisualizationPack {
 	public Scheduler getScheduler1() { return sched1; }
 	public Scheduler getScheduler2() { return sched2; }
 	public Scheduler getScheduler3() { return sched3; }
-
-	public int[][][] getSp() {
-		return sp;
-	}
-
-	public void setSp(int[][][] sp) {
-		this.sp = sp;
-	}
 }

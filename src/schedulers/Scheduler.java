@@ -75,6 +75,10 @@ public abstract class Scheduler {
 	public int[][][] getSchedule(){
 		return schedule_f_t_n;
 	}
+	public void setSchedule(int[][][] schedule_f_t_n){
+		this.schedule_f_t_n = schedule_f_t_n;
+		this.schedule_f_t_n_temp = schedule_f_t_n;
+	}
 	
 	public CostFunction getCostFunction(){
 		return cf;

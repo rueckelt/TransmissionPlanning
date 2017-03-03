@@ -18,6 +18,8 @@ import javax.swing.ToolTipManager;
 
 import schedulers.Scheduler;
 import schedulingIOModel.CostFunction;
+import schedulingIOModel.Flow;
+import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
 
 /**
@@ -35,8 +37,10 @@ public class Plot extends JFrame{
 	 */
 	private static final long serialVersionUID = -4512141223520070006L;
 
+	FlowGenerator fg;
 	public Plot(VisualizationPack vis) {
 		super("Connection problem prediction");
+		fg= vis.getTraffic();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height, vis);
 		JScrollPane scrollPane = new JScrollPane(drawingPanel);
@@ -121,8 +125,6 @@ class DrawingPanel extends JPanel {
 			factor++;
 		if (vis.getScheduler3() != null)
 			factor++;
-		if (vis.getSp() != null) 
-			factor = 0;
 		
 		// factor is reused! Until now it just counts the needed schedulers. From now on, it is the factor to multiply
 		// the height of each printed scheduler.
@@ -135,21 +137,7 @@ class DrawingPanel extends JPanel {
 		int nextStartY = heightHead;
 		
 		if (vis.getNets() != null) {
-			if (vis.getSp() != null) {
 
-			labelGraph0 = null;
-			gL0 = new PlotGraph(vis, vis.getSp(), factor);
-				gL0.setLocation(offsetHGraph, nextStartY);
-				gL0.setVisible(true);
-			add(gL0);
-			
-			nextStartY += gL0.getHeight() +offsetVGraph;
-			
-			// correction for screen width
-			int tempwidth = (int)gL0.getPreferredSize().getWidth() +50;
-			if (tempwidth > width)
-				width = tempwidth;
-			} else
 			// Line 0
 			if (vis.getScheduler0() != null) {
 				labelGraph0 = new JLabel(vis.getScheduler0().getType());
@@ -249,7 +237,6 @@ class DrawingPanel extends JPanel {
 				labelGraph3 = null;
 				gL3 = null;
 			}
-			
 				
 			height = nextStartY;
 				
@@ -303,7 +290,6 @@ class PlotGraph extends JPanel{
 	
 	private Vector<Network> nets;
 	private Scheduler sched;
-	private int[][][] sp;
 	private Vector <FlowRect> vFlowRect = new Vector <FlowRect>();
 	private ViolationRect vViolationRect = new ViolationRect();
 	private CostFunction costs;
@@ -321,11 +307,11 @@ class PlotGraph extends JPanel{
 	int widthTimeslot = 10;		// width per timeslot
 	int vOffset = 20;			// space between two networks
 	int textAreaWidth = 165;
-
+	private FlowGenerator fg;
 	
 	public PlotGraph(VisualizationPack vis, Scheduler s, int factor) {
 		super(null);			// No layout
-		
+		fg=vis.getTraffic();
 		sched = s;
 		nets = vis.getNets().getNetworks();
 		this.factor = factor;
@@ -360,55 +346,13 @@ class PlotGraph extends JPanel{
 		scrollPane.setSize(textAreaWidth, height);
 		setSize(width, height);
 	}
-	
-	public PlotGraph(VisualizationPack vis, int[][][] sp, int factor) {
-		super(null);			// No layout
-		this.sp = sp;
-		nets = vis.getNets().getNetworks();
-		this.factor = factor;
-		costs = new CostFunction(vis.getNets(), vis.getTraffic());
-		
-		textArea = new JTextArea("Costs: "+costs.costTotal(sp)+"\n\n");//costs.costMon(sched.getSchedule())+"\n\n");
-		textArea.setEditable(false);
-		textArea.setVisible(true);
-		scrollPane = new JScrollPane(textArea);
-		scrollPane.setLocation(0, 0);
-		add(scrollPane);
-
-		width = nets.get(0).getSlots() *widthTimeslot +(textAreaWidth +10);
-		
-		// calculate height to set size
-		for(Network net : nets) {
-			int heightMax = 0;
-			for (int c : net.getCapacity()) {
-				if (c > heightMax)
-					heightMax = c;
-			}
-			
-			height += heightMax *factor +vOffset;
-		}
-		
-		violations = new int[sp.length][5];
-		
-		for (int i=0; i<sp.length; i++) {
-			vFlowRect.add(new FlowRect());
-		}
-		
-		scrollPane.setSize(textAreaWidth, height);
-		setSize(width, height);
-	}
 
 	
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		int[][][] s;
-		if (sp != null) {
-			s = sp;
-		} else {
-			s = sched.getSchedule();
-		}
 
+		int[][][] s = sched.getSchedule();
 		int netCounter = 0;
 		int offset = textAreaWidth +10;
 		height = 0;
@@ -423,9 +367,6 @@ class PlotGraph extends JPanel{
 			heightMax *= factor;
 			
 			int t = 0;		// Current timeslot
-			if (netCounter >= s[0][0].length) {
-				break;
-			}
 			for (int c : n.getCapacity()) {
 				g.setColor(Color.GRAY);
 				
@@ -447,14 +388,13 @@ class PlotGraph extends JPanel{
 
 				boolean violationFound = false;
 				String sViolation = new String ("<html>Slot "+t);
-				
-				int flowNum = s.length;
-				for (int f = 0; f < s.length; f++) {//sched.getFlowCounter(); f++) {
+
+				for (int f = 0; f < sched.getFlowCounter(); f++) {
 					if (s[f][t][netCounter] != 0) {
 						
 						// Flows
 						temp = vFlowRect.get(f);
-						
+
 						// different color for each flow .... until there are more then 17.
 						switch (f) {
 							case 0: g.setColor(Color.GREEN.darker()); break;
@@ -489,9 +429,7 @@ class PlotGraph extends JPanel{
 						vFlowRect.remove(f);
 						vFlowRect.add(f, temp);
 						
-						if (sp != null) {
-							
-						} else {
+						
 						// Violations (including target-actual-comparison)
 						if (sched.getFlow(f).getDeadline() < t) {
 							// Deadline violation
@@ -526,8 +464,7 @@ class PlotGraph extends JPanel{
 							sViolation += "<br>"+"Jitter("+f+") T:"+sched.getFlow(f).getReqJitter()+" vs A:"+n.getJitter()+" | Cost: "+vioJit(f, t, netCounter);
 							violationFound = true;
 							if (firstTime) violations[f][1] += 1;
-						}
-						}
+						}	
 					}
 				}
 
@@ -597,29 +534,31 @@ class PlotGraph extends JPanel{
 		
 		
 		// Print summary in a text area.
-		if (sp != null) {
-			
-		} else {
 		if (firstTime) {
 			textArea.append("Violations:");
 			for (int f = 0; f < sched.getFlowCounter(); f++) {
-				textArea.append("\nFlow " +f +":\n");
+				Flow flow=fg.getFlows().get(f);
+				String[] colors = {"dark green", "blue", "pink", "light gray", "magenta", "orange", "yellow",
+						"cyan", "green", "light blue", "light pink", "dark grey", "light magenta", "light orange",
+						"light yellow", "light cyan", "light green"};
+				
+				textArea.append("\nFlow " +f +": "+flow.getFlowName()+"\n DR= "+sched.getFlowDrop(f)+"%, "+colors[f%16]+"\n");
 				if (violations[f][0] != 0)
-					textArea.append("Throughput: " +violations[f][0] +"\n");
+					textArea.append(" TP: " +violations[f][0] +",");
 		
 				if (violations[f][1] != 0)
-					textArea.append("Jitter: " +violations[f][1] +"\n");
+					textArea.append(" Jit: " +violations[f][1] +",");
 		
 				if (violations[f][2] != 0)
-					textArea.append("Latency: " +violations[f][2] +"\n");
+					textArea.append(" Lcy: " +violations[f][2] +",");
 		
 				if (violations[f][3] != 0)
-					textArea.append("Starttime: " +violations[f][3] +"\n");
+					textArea.append(" St: " +violations[f][3] +",");
 		
 				if (violations[f][4] != 0)
-					textArea.append("Deadline: " +violations[f][4] +"\n");
+					textArea.append(" Dl: " +violations[f][4] +",");
+				textArea.append("\n");
 			}
-		}
 		}
 		
 		firstTime = false;			// don't count any more violations, because they are already calculated 

@@ -24,13 +24,13 @@ public class main {
 //		int n=2;
 //		int rep=3;
 
-		int f=3;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
-		int t=2;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
-		int n=3;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
+		int f=2;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
+		int t=0;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
+		int n=2;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
 
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
-		int rep=50;
+		int rep=1;
 		
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
@@ -39,9 +39,9 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 
 //		String logpath= "my_logs"+File.separator+"vary_time";
-		String logpath= "my_logs"+File.separator+"vary_load";
+//		String logpath= "my_logs"+File.separator+"vary_load";
 		
-
+		String logpath= "my_logs"+File.separator+"test_exec";
 		
 		
 		//if overwrite, then delete everything in folder, create scenario new and calculate
@@ -58,9 +58,9 @@ public class main {
 //			eval.evaluateNetworkVariation();
 //			eval.evaluateFlowVariation();
 //			eval.evaluateMonetaryWeight();
-			eval.evaluateDataAmount();
-//			eval.evaluateTop();
-			eval.parallel(2);
+//			eval.evaluateDataAmount();
+			eval.evaluateTop();
+			eval.parallel(4);
 			eval.start();
 
 		
