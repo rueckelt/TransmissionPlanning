@@ -9,6 +9,7 @@ import schedulingIOModel.NetworkGenerator;
 import visualization.Plot;
 import visualization.VisualizationPack;
 import ToolSet.EvaluationScenarioCreator;
+import ToolSet.LogMatlabFormat;
 import ToolSet.RndInt;
 
 
@@ -17,12 +18,6 @@ import ToolSet.RndInt;
 public class main {
 	
 	public static void main(String[] args) {
-
-		//logfile is logpath/f_t_n/rep..
-//		int f=2;
-//		int t=1;
-//		int n=2;
-//		int rep=3;
 
 		int f=3;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
 		int t=2;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
@@ -38,9 +33,17 @@ public class main {
 		//String logpath= "my_logs"+File.separator+"tester";
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 
-//		String logpath= "my_logs"+File.separator+"vary_time";
-		String logpath= "my_logs"+File.separator+"vary_load";
-		
+//		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;//f=5;
+//		String logpath= "my_logs"+File.separator+"vary_time"; t=4;
+		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
+//		String logpath= "my_logs"+File.separator+"vary_load"; 
+//		String logpath= "my_logs"+File.separator+"vary_cost";
+//		String logpath= "my_logs"+File.separator+"vary_time_test"; t=0;
+		 
+//		String logpath= "my_logs"+File.separator+"vary_pe_move";
+//		String logpath= "my_logs"+File.separator+"vary_pe_net";
+//		String logpath= "my_logs"+File.separator+"vary_pe_flow";
+//		String logpath= "my_logs"+File.separator+"vary_pe_comb";
 
 		
 		
@@ -51,17 +54,22 @@ public class main {
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 //			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
+//			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
+//			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
+//			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
+//			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
+//			eval.evaluateTop();
 //			eval.visualize();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
-//			eval.evaluateTimeVariation();
-//			eval.evaluateNetworkVariation();
+//			eval.evaluateTimeVariation();	
+			eval.evaluateNetworkVariation();
 //			eval.evaluateFlowVariation();
 //			eval.evaluateMonetaryWeight();
-			eval.evaluateDataAmount();
-//			eval.evaluateTop();
+//			eval.evaluateTrafficLoad();
+//			eval.evaluateThisInstance();
 			eval.parallel(2);
-			eval.start();
+			eval.start(4*24);
 
 		
 		//testing uncertainty models

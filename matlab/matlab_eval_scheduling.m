@@ -3,15 +3,17 @@
 %stores results.mat file in in_folder for extracted log matrices
 %delete this file to read logs from raw files
 
-%in_folder = '..\my_logs\jakob';% 
-%in_folder = '..\my_logs\vary_time';% 
 
-in_folder = ['..' filesep 'my_logs' filesep 'vary_time'];% 
-%in_folder = ['..' filesep 'my_logs' filesep 'vary_load'];% 
-%in_folder = '..\my_logs\vary_nets';% 
-%in_folder = '..\my_logs\vary_flows';% 
-out_folder = [in_folder filesep 'eval'];
-select = 2; %select data to read from files: 1=flows, 2=time, 3=net, 4=load, 5=monetary
+%select data to read from files: select =   1=flows, 2=time, 3=net, 4=load, 5=monetary
+in_folder = ['..' filesep 'my_logs' filesep 'vary_flows']; select= 1; 
+%in_folder = ['..' filesep 'my_logs' filesep 'vary_time']; select=2; 
+%in_folder = ['..' filesep 'my_logs' filesep 'vary_nets']; select= 3;
+%in_folder = ['..' filesep 'my_logs' filesep 'vary_load_notime']; select= 4;
+%in_folder = ['..' filesep 'my_logs' filesep 'vary_cost']; select= 5;
+
+out_folder = [in_folder filesep 'eval_test'];
+
+
 force_read_data = 1;
 
 %get paramters from file
@@ -24,17 +26,17 @@ state = 'read param done'
 data_file=[in_folder filesep 'results.mat'];
 avail_file=[in_folder filesep 'avail.mat'];
 valuenames = {'violation cost', 'execution duration', 'time limits',...
-     'min. throughput','unscheduled tokens', 'latency jitter','monetary cost'};
+     'min. throughput','unscheduled tokens', 'latency jitter','monetary cost', 'drop rate'};
 % valuenames = {'cost', 'duration', 'time_limits', ...
 %     'throughput', 'unscheduled', 'latency_jitter', 'monetary_cost'};
 
 if force_read_data <1 && exist(data_file, 'file') %read values from file if no force to reread and available
-    %load(data_file);
-    %load(avail_file);
+    load(data_file);
+    load(avail_file);
 else
     %read data from simulation output files
     valuestrings = {'costTotal', 'scheduling_duration_us', 'sum(vioSt)+sum(vioDl)', ...
-        'sum(vioTp)', 'sum(vioNon)', 'sum(vioLcy)+sum(vioJit)', 'cost_ch'};
+        'sum(vioTp)', 'sum(vioNon)', 'sum(vioLcy)+sum(vioJit)', 'cost_ch', 'drop_rate'};
     tic
     [raw_values, avail] = readValuesFromFiles1D( in_folder, valuestrings,...
         max_flows, max_time, max_nets, load, w_monetary, select, max_rep, scheduler_logs);
@@ -50,9 +52,9 @@ state='gathered data'
 %save('rel_data.mat', 'rel_data');
 
 
-%plot_data3(out_folder, raw_values, avail, valuenames, schedulers);  %vary time
-plot_data4(out_folder, raw_values, avail, valuenames, schedulers, select);  %vary networks
-%plot_data5(out_folder, raw_values, avail, valuenames, schedulers);  %vary schedulers
+plot_data4(out_folder, raw_values(1:7,:,:,:), avail,valuenames, schedulers, select); 
+
+plot_data_dr(out_folder, raw_values, avail, valuenames, schedulers, select);
  
 state='done'
 

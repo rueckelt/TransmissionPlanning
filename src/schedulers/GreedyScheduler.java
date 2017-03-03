@@ -145,39 +145,30 @@ public class GreedyScheduler extends Scheduler{
 					
 					//do not allocate more than once in same time slot
 					if(!usedSlots.contains(t)){
+						
 //					System.out.println("remaining chunks "+chunksToAllocate);
 						int allocated=0;
 //						System.out.println("chunks maxTP: "+chunksMaxTp+"; chunksToAllocate: "+chunksToAllocate);
 						int chunks=chunksMaxTp;
-						if(flow.getTokensMin()/flow.getWindowMin()>0){
-							chunks=(int)(flow.getTokensMin()/flow.getWindowMin());
-//							System.out.println("MIN LIMIT HOLDS FOR FLOW "+flowIndex+": "+chunks);
-						}
+//						if(flow.getTokensMin()/flow.getWindowMin()>0){
+//							chunks=(int)(flow.getTokensMin()/flow.getWindowMin());
+////							System.out.println("MIN LIMIT HOLDS FOR FLOW "+flowIndex+": "+chunks);
+//						}
 						allocated=allocate(flowIndex, t, n, Math.min(chunksToAllocate, chunks)); //do not allocate more chunks than required and flow can provide
-
-//						System.out.println("remaining tokens "+chunksToAllocate+"; allocated: "+allocated);
 						chunksToAllocate-=allocated;
-						
+
 						//update internal state of allocation
 						if(allocated>0){
+//							System.out.println("allocated f "+flowIndex+", t "+t+", net "+n+": "+allocated);
 							if(NEW_RATING_ESTIMATOR){
 								cs.updateStatefulReward(flowIndex, t, allocated);
 							}
-//								System.out.println("allocated "+allocated+ " t="+t+" n="+n0 +" remaining "+chunksToAllocate);
+//							System.out.println("allocated "+allocated+ " t="+t+" n="+n0 +" remaining "+chunksToAllocate);
 							usedSlots.add(t);	//mark slot as used
 							//remove capacity from network
-							if(!rate){
-								//rate=false
-								int remaining_chunks=ng_tmp.getNetworks().get(n).getCapacity().get(t)-allocated;
-	//							System.out.println(remaining_chunks+" rem, alloc "+ allocated);
-								ng_tmp.getNetworks().get(n).getCapacity().set(t,remaining_chunks);
-							}else{
-								//rate=true
-								int[][][] sched = getTempSchedule();	//hold schedule
-								setTempSchedule(getEmptySchedule());	//reset schedule
-								return new CostFunction(ng_tmp, tg).costViolation(sched);	//calculate rating
-							}
-							
+							int remaining_chunks=ng_tmp.getNetworks().get(n).getCapacity().get(t)-allocated;
+							ng_tmp.getNetworks().get(n).getCapacity().set(t,remaining_chunks);
+
 						}
 					}
 				}
@@ -202,9 +193,6 @@ public class GreedyScheduler extends Scheduler{
 			return  sum	< schedule_decision_limit;
 
 		}else
-//			if(f==5 && n==4){
-//				System.out.println("calc vio "+calcVio(f, n));
-//			}
 			return calcVio(f, n)<schedule_decision_limit;
 	}
 	
@@ -262,11 +250,11 @@ public class GreedyScheduler extends Scheduler{
 		Collections.sort(netIDs, new Comparator<Integer>(){
 			@Override
 			public int compare(Integer arg0, Integer arg1) {
-				Network net0 = ng_tmp.getNetworks().get(arg0);
-				Network net1 = ng_tmp.getNetworks().get(arg1);
 				int result=calcVio(flow.getIndex(), arg0)-calcVio(flow.getIndex(),arg1);
-				//in case of equal match, use network with higher average throughput
+				//in case of equal match, use network with higher remaining average throughput
 				if(result==0){
+					Network net0 = ng_tmp.getNetworks().get(arg0);
+					Network net1 = ng_tmp.getNetworks().get(arg1);
 					return getAvCapacity(net1)-getAvCapacity(net0);
 				}else
 				return result;
@@ -307,11 +295,11 @@ public class GreedyScheduler extends Scheduler{
 					- flow.getImpUnsched()*flow.getImpUser()	//each unscheduled chunk leads to this cost
 					)*flow.getImpUser()
 					+ network.getCost()*ng.getCostImportance();	//cost independent from flow user weight
-			if(f==5 && (n==1 || n==2 || n==6))
-			System.out.println("f="+flow.getId()+", n="+ n+" jit "+CostFunction.jitterMatch(flow, network)*flow.getImpUser()+		//match functions return 0 for match, else strength of violation
-					" lcy "+CostFunction.latencyMatch(flow, network)*flow.getImpUser()+
-					" - tp_min "+throughputMatch(flow, network)*flow.getImpUser() + " cost "+network.getCost()*ng.getCostImportance() +
-					" - unsched "+flow.getImpUnsched()*flow.getImpUser()*flow.getImpUser()+ " c "+c);
+//			if(f==5 && (n==1 || n==2 || n==6))
+//			System.out.println("f="+flow.getId()+", n="+ n+" jit "+CostFunction.jitterMatch(flow, network)*flow.getImpUser()+		//match functions return 0 for match, else strength of violation
+//					" lcy "+CostFunction.latencyMatch(flow, network)*flow.getImpUser()+
+//					" - tp_min "+throughputMatch(flow, network)*flow.getImpUser() + " cost "+network.getCost()*ng.getCostImportance() +
+//					" - unsched "+flow.getImpUnsched()*flow.getImpUser()*flow.getImpUser()+ " c "+c);
 			
 			return c;
 		}
