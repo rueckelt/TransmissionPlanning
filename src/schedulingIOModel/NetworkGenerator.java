@@ -40,6 +40,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	
 	public NetworkGenerator(int nofNetworks, int time){
 		addNetworks(nofNetworks, time);
+		resetNetworkIds();
 	}
 	
 	public static NetworkGenerator loadNetworkGenerator(String path){
@@ -48,6 +49,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			if(new File(path+NG_NAME).exists()){
 				ng= (NetworkGenerator) PersistentStore.loadObject(path+NG_NAME);
 //				ng.setNofInterfacesOfType(new int[]{1,1});
+				ng.resetNetworkIds();
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -439,5 +441,13 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			nets.add(net.clone());
 		}
 		return nets;
+	}
+	
+	public void resetNetworkIds(){
+		int index=0;
+		for(Network net : networks){
+			net.setId(index);
+			index++;
+		}
 	}
 }

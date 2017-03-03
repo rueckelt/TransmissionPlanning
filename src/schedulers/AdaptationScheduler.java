@@ -20,6 +20,7 @@ import adaptation.utils.Config;
 
 public class AdaptationScheduler extends Scheduler{
 	private int[][][] longTermSP;
+	private String spLogPath;
 	private int[] mQ;
 	private List<Integer> throughput; // size: flowSize
 	private List<Integer> dataSize;   // size: flowSize
@@ -31,22 +32,27 @@ public class AdaptationScheduler extends Scheduler{
 		// TODO Auto-generated constructor stub
 	}
 	
-	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg, FlowGenerator tgPred) {
+	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg, FlowGenerator tgPred, String logpath) {
 		super(ng, tg);
 		this.tgPred = tgPred;
-		// TODO Auto-generated constructor stub
+		spLogPath=logpath;
 	}
 	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg, String logpath) {
 		super(ng, tg);
 		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logpath);
-//		this.longTermSP = JsonLogger.json2Array(logpath);
+		System.out.println(showSchedule(longTermSP));
+		//		this.longTermSP = JsonLogger.json2Array(logpath);
 	}
 
+	public void loadLongTermSp(String logfile){
+		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logfile);
+	}
+	
 	public void run(boolean dependence, double pctg, boolean lookahead) {
-
+		System.out.println(showSchedule(longTermSP));
 		initEnvConfig();
 		
-		int[][][] adapted = new int[tg.getFlows().size()][ng.getTimeslots()][ng.getNetworks().size()];
+		int[][][] adapted = getEmptySchedule();//new int[tg.getFlows().size()][ng.getTimeslots()][ng.getNetworks().size()];
 
 		// time slot loop
 		for (int t = 0; t < ng.getTimeslots(); t++) {
@@ -59,8 +65,8 @@ public class AdaptationScheduler extends Scheduler{
 			updateInitSP(t); // TODO different strategy for initialization
 			// each time slot - update network capacity
 			updateNetworkConfig(true);
-			updateNetCap(t);
-			updateFlowAvl(t, dependence);
+			updateNetCap(t);	//read out network capacities
+			updateFlowAvl(t, dependence);	//read out flow availabilties
 			updateMax();
 			//**********************//
 			/**********************************/
@@ -166,9 +172,11 @@ public class AdaptationScheduler extends Scheduler{
 	}
 	
 	public void activateNetwork(int index, boolean active) {
+//		System.out.println("activateNet: "+index);
 		config.getActiveNetworkBool()[index] = active? 1 : 0;
 	}
 	
+	//get initial individual (networks) from long term SP timeslot t
 	public void updateInitSP(int ts) {
 		if (ts >= longTermSP[0].length) return;
 		for (int f = 0; f < longTermSP.length && f < config.getInitGenes().length; f++) {
@@ -176,7 +184,7 @@ public class AdaptationScheduler extends Scheduler{
 				if (longTermSP[f][ts][n] != 0) {
 				//	////////System.out.println(config.getInitGenes().length);
 				//	//Printer.printInt(config.getInitGenes());
-					config.getInitGenes()[f] = n + 1;
+					config.getInitGenes()[f] = n + 1;	//assign network id to each flow
 				}
 			}
 		}
@@ -321,15 +329,16 @@ public class AdaptationScheduler extends Scheduler{
 	
 	@Override
 	protected void calculateInstance_internal(String logfile) {
-		// TODO Auto-generated method stub
-		// for loop for time slots
+		//load transmission plan from log file
+		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", spLogPath);
+		//adapt
 		run(false, 1.0, true);
 		
 	}
 	@Override
 	public String getType() {
 		// TODO Auto-generated method stub
-		return null;
+		return "GA";
 	}
 
 	public List<Integer> getDataSize() {
@@ -378,7 +387,7 @@ public class AdaptationScheduler extends Scheduler{
 		return nf;
 	}
 	
-	public static void main(String[] args) {
+//	public static void main(String[] args) {
 //		/*****************Init Simulation Parameters***************/
 //		ArrayList<String> verf_true = new ArrayList<String>();
 //		ArrayList<String> verf_false = new ArrayList<String>();
@@ -462,6 +471,6 @@ public class AdaptationScheduler extends Scheduler{
 //				Plot plot2 = new Plot(new VisualizationPack(ngReal, tg, adaptScheduler.getSchedule()));
 //			}
 //		}
-	}
+//	}
 
 }

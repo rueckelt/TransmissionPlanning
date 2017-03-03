@@ -60,6 +60,7 @@ public class CCP_Ga {
 	            }
 	            pop.add(myPop);
 	            converge.add(bestInd.getFitness());
+	            System.out.println("Fitness in rnd "+generationCount+" is "+bestInd.getFitness());
 	            ////Printer.printInt(myPop.getFittest().getComb().getComb());
 	            myPop = Algorithm.evolvePopulation(myPop);
             } else {

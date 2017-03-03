@@ -139,7 +139,7 @@ public class Executor {
 		////////System.out.println("total: " + total);
 		
 		if (plotBool) {
-			Plot plot2 = new Plot(new VisualizationPack(ng, fg, getExecutedPlan()));
+//			Plot plot2 = new Plot(new VisualizationPack(ng, fg, getExecutedPlan()));
 		}
 		
 	}

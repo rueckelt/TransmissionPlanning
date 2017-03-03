@@ -61,7 +61,6 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 				scheduler.calculateInstance(folder, recalc); //or when overwrite
 
 			}
-
 			if(VISUALIZE){
 				new Plot(new VisualizationPack(ng, fg, schedulers));
 			}

@@ -60,14 +60,14 @@ public class main {
 		//if nothing of the two, create new scenario if none available; calculate schedules if no logs available for scheduler.
 
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
-//			eval.recalc();
+			eval.visualize();
+			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
 //			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
 //			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
 			eval.evaluateTop();
-//			eval.visualize();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();	
@@ -76,7 +76,7 @@ public class main {
 //			eval.evaluateMonetaryWeight();
 //			eval.evaluateTrafficLoad();
 //			eval.evaluateThisInstance();
-			eval.parallel(2);
+			eval.parallel(1);
 			eval.start(4*24);
 
 		
