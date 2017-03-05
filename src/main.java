@@ -25,9 +25,9 @@ public class main {
 //		int n=2;
 //		int rep=3;
 
-		int f=2;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
-		int t=0;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
-		int n=2;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
+		int f=3;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
+		int t=2;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
+		int n=3;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
 
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
@@ -40,7 +40,7 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 
 	
-		String logpath= "my_logs"+File.separator+"test_exec";
+		String logpath= "my_logs"+File.separator+"test_exec_ga";
 
 //		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;//f=5;
 //		String logpath= "my_logs"+File.separator+"vary_time"; t=4;

@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/oplall.jar"/>
 	<classpathentry kind="lib" path="C:/Data/eclipse_ws_luna/Scheduling/lib/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="C:/Data/eclipse_ws_luna/Scheduling/lib/commons-collections4-4.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

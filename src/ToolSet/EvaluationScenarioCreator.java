@@ -116,14 +116,14 @@ public class EvaluationScenarioCreator {
 //
 		newRating=true;
 
-//		schedulers.add(new GreedyOnlineScheduler(ng, fg).newRating(newRating));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg).newRating(newRating));
+		schedulers.add(new GreedyOnlineScheduler(ng, fg).newRating(newRating));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg).newRating(newRating));
 		Scheduler gs = new GreedyScheduler(ng, fg).newRating(newRating);
 		schedulers.add(gs);				
 
 		//execution of schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
-		schedulers.add(new ExecutionScheduler(ng, fg, path));
+//		schedulers.add(new ExecutionScheduler(ng, fg, path));
 		
 		//Adaptation of schedule under prediction errors
 		FlowGenerator fgPred = getFlowGenerator(log_run_path, false, 0, 0, 0);
@@ -135,7 +135,7 @@ public class EvaluationScenarioCreator {
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(15)).newRating(newRating));
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(20)).newRating(newRating));
 		
-		schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
+//		schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
 		
 	return schedulers;
 	}

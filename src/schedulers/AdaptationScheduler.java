@@ -49,7 +49,8 @@ public class AdaptationScheduler extends Scheduler{
 	}
 	
 	public void run(boolean dependence, double pctg, boolean lookahead) {
-		System.out.println(showSchedule(longTermSP));
+//		System.out.println(showSchedule(longTermSP));
+		tg.setFlowIndices();
 		initEnvConfig();
 		
 		int[][][] adapted = getEmptySchedule();//new int[tg.getFlows().size()][ng.getTimeslots()][ng.getNetworks().size()];
@@ -184,6 +185,7 @@ public class AdaptationScheduler extends Scheduler{
 				if (longTermSP[f][ts][n] != 0) {
 				//	////////System.out.println(config.getInitGenes().length);
 				//	//Printer.printInt(config.getInitGenes());
+//					System.out.println("Init gene f="+f+", net="+n+" in t="+ts);
 					config.getInitGenes()[f] = n + 1;	//assign network id to each flow
 				}
 			}
@@ -199,7 +201,10 @@ public class AdaptationScheduler extends Scheduler{
 			config.getCapReal()[n.getId()] = cap;
 			if (cap == 0) {
 				activateNetwork(n.getId(), false);
+			}else{
+				activateNetwork(n.getId(), true);
 			}
+//			System.out.println("net="+n.getId()+", cap="+cap+", in ts="+ts);
 		}
 	}
 	
@@ -227,14 +232,17 @@ public class AdaptationScheduler extends Scheduler{
 	//		////////System.out.println("f-id: " + f.getId() + " - " + f.getStartTime());
 			if (f.getStartTime() <= ts) {
 				activateFlow(f.getIndex(), true);
+//				System.out.println("flow active f="+f.getIndex()+", ts="+ts);
 			}
 			int tp = getThroughput().get(f.getIndex());
 			int ds = getDataSize().get(f.getIndex());
 			if (ts > f.getDeadline()) {// && !f.isBufferable()) {
 				activateFlow(f.getIndex(), false);	
+//				System.out.println("flow inactive f="+f.getIndex()+", ts="+ts+"  deadline exceeded");
 			}
 			if (tp > 0 && tp >= ds) { 
 				activateFlow(f.getIndex(), false);
+//				System.out.println("flow inactive f="+f.getIndex()+", ts="+ts+"  throughput");
 			}
 		}
 		if (useOnlyScheduledFlow) {
