@@ -109,14 +109,14 @@ public class EvaluationScenarioCreator {
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 
 		boolean newRating = false;
-		schedulers.add(new OptimizationScheduler(ng, fg));
+//		schedulers.add(new OptimizationScheduler(ng, fg));
 //		
 //		schedulers.add(new GreedyScheduler(ng, fg).newRating(newRating));		
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg).newRating(newRating));
 //
 		newRating=true;
 
-		schedulers.add(new GreedyOnlineScheduler(ng, fg).newRating(newRating));
+//		schedulers.add(new GreedyOnlineScheduler(ng, fg).newRating(newRating));
 		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg).newRating(newRating));
 		Scheduler gs = new GreedyScheduler(ng, fg).newRating(newRating);
 		schedulers.add(gs);				
@@ -127,7 +127,7 @@ public class EvaluationScenarioCreator {
 		
 		//Adaptation of schedule under prediction errors
 		FlowGenerator fgPred = getFlowGenerator(log_run_path, false, 0, 0, 0);
-//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
+		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
 		
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(5)).newRating(newRating));
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(8)).newRating(newRating));
@@ -135,7 +135,7 @@ public class EvaluationScenarioCreator {
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(15)).newRating(newRating));
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(20)).newRating(newRating));
 		
-		schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
+//		schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
 		
 	return schedulers;
 	}

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import schedulers.AdaptationScheduler;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
 import ToolSet.CostSeparation;
@@ -26,6 +27,7 @@ public class Config {
 	private    int[] networkFlag = {0, 0, 0, 0, 0};
 	private    NetworkGenerator ng;
 	private    FlowGenerator fg;
+	private 	AdaptationScheduler scheduler;
 
 	private    int[] activeFlowBool = {1, 1, 1, 1, 1, 0, 0, 0}; // 8
 	private    int time;
@@ -123,6 +125,10 @@ public class Config {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return array over active flows, containing the original index of all flows
+	 */
 	public   int[] getActiveFlow() {
 		int[] activeFlow = new int[getActiveFlowNum()];
 		for (int i = 0, aF = 0; i < getFlowNum(); i++) {
@@ -266,6 +272,10 @@ public class Config {
 		public    void setFlowNetFlag(int[][] flowNetFlagVar) {
 			flowNetFlag = flowNetFlagVar;
 		}
+		
+		/*
+		 * 
+		 */
 		public   int[] getmQ() {
 			return mQ;
 		}
@@ -333,5 +343,14 @@ public class Config {
 			// TODO Auto-generated method stub
 			this.capReal = is;
 		}
+
+		public AdaptationScheduler getAdaptScheduler() {
+			return scheduler;
+		}
+
+		public void setAdaptScheduler(AdaptationScheduler scheduler) {
+			this.scheduler = scheduler;
+		}
+
 	
 }

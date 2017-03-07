@@ -31,28 +31,41 @@ public class Combination {
 
 	private double combCost = -1;
 	
-	public Combination(int[] combVar, Config config) {
+	/**
+	 * 
+	 * @param combVar
+	 * @param config
+	 */
+	public Combination(Config config) {
 		this.setConfig(config);
+		int[] combVar = config.getInitGenes();						//this is the initial individual from long term schedule
 		resultGlobal = new int[config.getFlowNum()];
 		combGlobal = new int[config.getFlowNum()];
-		int[] activeFlow = new int[config.getActiveFlowNum()];
+		int[] activeFlow = new int[config.getActiveFlowNum()];		//mapping: contains the original indices of the active flows
 		int[] activeComb = new int[config.getActiveFlowNum()];
 		// set those inactive networks to 0
-		for (int i = 0, aF = 0; i < combVar.length && aF < config.getActiveFlowNum(); i++) {
-			if (config.getActiveFlowBool()[i] > 0) {
-				activeFlow[aF] = i;
+		for (int flowIndex = 0, aF = 0; flowIndex < combVar.length && aF < config.getActiveFlowNum(); flowIndex++) {
+			if (config.getActiveFlowBool()[flowIndex] > 0) {		//for all flows marked as active
+				activeFlow[aF] = flowIndex;							//enter index into list 
 				////Printer.printInt("comb", combVar);
 				//////////System.out.println("i: " + i + " - " + combVar[i]);
-				if (combVar[i] < 1 || combVar[i] > config.getActiveNetworkBool().length || config.getActiveNetworkBool()[combVar[i] - 1] < 1) {
+				
+				//if the corresponding network index is invalid or points to network 0 (=none?), set the flow to network 0 (=none?)
+				if (combVar[flowIndex] < 1 || combVar[flowIndex] > config.getActiveNetworkBool().length || config.getActiveNetworkBool()[combVar[flowIndex] - 1] < 1) {
 					activeComb[aF] = 0;
 				} else {
-					activeComb[aF] = combVar[i];
+					//else, set the flow to the actual network
+					activeComb[aF] = combVar[flowIndex];
 				}
 				aF++;
 			}
 		}
+		
+		//after this, activeComb[flow] contains a flow-network assignment derived from long term plan  
+		//with active flows only and valid+active networks only.
+		
 		setComb(activeComb);
-		updatePart();
+//		updatePart();
 		setResult(new int[comb.length]);
 	}
 //	public Combination(int[] combVar) {
@@ -89,39 +102,43 @@ public class Combination {
 	}
 
 	public double run() {
+		System.out.println("THIS IS USED");
 		int t = getConfig().getTime();
 		setCombCost(0);
 		int step = 1;
 		getConfig().extend(getCombGlobal(), getComb(), getConfig().getActiveFlow());
 		// do Balancer (allocation work) for each network
-		for (int i = 0; i < getConfig().getNetNum() + 1; i++) { // (not used...no 0 id for network) contains network "0", in order to add the cost for dropped packets (assigned to 0)	
+		for (int netId = 0; netId < getConfig().getNetNum() + 1; netId++) { // (not used...no 0 id for network) contains network "0", in order to add the cost for dropped packets (assigned to 0)	
 			/*** initialization balancer ***/
-			int pN = getPart()[i];
+			int nofActiveFlowsForThisNet = getPart()[netId];	//pn[networkId] = number of active flows assigned to this network
 			int cap = 0;
-			if (i != 0) {
-				cap = getConfig().getCapReal()[i-1];
+			if (netId != 0) {	//network 0 = none
+				cap = getConfig().getCapReal()[netId-1];
 			}
 			////Printer.printInt("pN", getPart());
-			int[] minReq = new int[pN];
-			int[] maxReq = new int[pN];
-			int[] p2 = new int[pN];
-			int[] flowId = new int[pN];
+			int[] minReqThroughput = new int[nofActiveFlowsForThisNet];
+			int[] maxThroughputLimit = new int[nofActiveFlowsForThisNet];
+			int[] flowPriority = new int[nofActiveFlowsForThisNet];
+			int[] flowId = new int[nofActiveFlowsForThisNet];
 			updatePart();
-			Balancer.pick(getConfig().getmQ(), minReq, getComb(), getConfig().getActiveFlow(), i);
-			Balancer.pick(getConfig().getPrior(), p2, getComb(),getConfig().getActiveFlow(), i);
-			Balancer.pick(getConfig().getMax(), maxReq, getComb(),getConfig().getActiveFlow(), i);
-			Balancer.pickFlowId(flowId, getComb(), getConfig().getActiveFlow(), i);
-			Balancer b = new Balancer(cap, pN, step, getConfig().getPriorSum(), getConfig());
-			b.setMinReq(minReq);
-			b.setPriority(p2);
-			b.calPriorCost();
-			b.setMax(maxReq);
+			Balancer.pick(getConfig().getmQ(), minReqThroughput, getComb(), getConfig().getActiveFlow(), netId);	//set minimum throughput of active flows
+			Balancer.pick(getConfig().getPrior(), flowPriority, getComb(),getConfig().getActiveFlow(), netId);	//set priority of active flows. TODO: use flowCriticality??
+			Balancer.pick(getConfig().getMax(), maxThroughputLimit, getComb(),getConfig().getActiveFlow(), netId);	//set maximum throughput of acive flows
+			Balancer.pickFlowId(flowId, getComb(), getConfig().getActiveFlow(), netId);	
+			
+			//the balancer assigns data flows to networks
+			Balancer b = new Balancer(cap, nofActiveFlowsForThisNet, step, getConfig().getPriorSum(), getConfig());
+			b.setMinReq(minReqThroughput);
+			b.setPriority(flowPriority);
+			b.calPriorCost();			//normalizes the priority by the sum
+			b.setMax(maxThroughputLimit);
 			b.setFlowId(flowId);
 			//if (i == 1) //Printer.printInt("b-max", b.getMax());
 			/*** initialization ends ***/
-			if (i > 0) {
-				b.allocate(i-1, t);
-				setCombCost(getCombCost() + b.evaluator(getConfig().getTime(), i-1));
+			if (netId > 0) {
+				b.allocate2(netId-1, t);
+//				b.allocate(netId-1, t);
+				setCombCost(getCombCost() + b.evaluator(getConfig().getTime(), netId-1));
 			} 
 			// copy the result in balancer (results with one network) to comb
 			// eg. network1: b.result=[10,10,20]
@@ -129,10 +146,10 @@ public class Combination {
 			// result = [?, 10, 10, ?, 20]
 			int rIndex = 0;
 			for (int j = 0; j < comb.length; j++) {
-				if (comb[j] != 0 && comb[j] == i) {
+				if (comb[j] != 0 && comb[j] == netId) {
 					getResult()[j] = b.getResult()[rIndex];
 					rIndex++;
-					if (rIndex >= pN) {
+					if (rIndex >= nofActiveFlowsForThisNet) {
 						break;
 					}
 				}
@@ -159,12 +176,20 @@ public class Combination {
 		// for (int i = 0; i < )
 	}
 	
+	/**
+	 * for each network
+	 * what is part?
+	 * part is updated to an array that contains the count of active data flows which are assigned to this network for the individual 
+	 * part[network]=number of active data flows assigned to this network
+	 */
 	public void updatePart() {
 		int[] partNew = new int[getConfig().getNetNum() + 1]; // add network 0 (this represents unavailable network)
-		for (int i = 0; i < comb.length; i++) {
-			if (comb[i] < 1) partNew[0] += 1;//continue;
-			else partNew[comb[i]] += 1;
+		
+		for (int f = 0; f < comb.length; f++) {
+			if (comb[f] < 1) partNew[0] += 1;//continue;	if a flow is not assigned to any network, count it for network 0 (=none)
+			else partNew[comb[f]] += 1;					//	else assign it to the corresponding network
 		}
+		//after this part new contains the count of active data flows which are assigned to this network for the individual 
 		setPart(partNew);
 	}
 
@@ -173,6 +198,10 @@ public class Combination {
 		return comb;
 	}
 
+	/**
+	 * 
+	 * @param comb set a combination = activeFlow[flowIndex] = networkAssignment
+	 */
 	public void setComb(int[] comb) {
 		this.comb = comb;
 		updatePart();

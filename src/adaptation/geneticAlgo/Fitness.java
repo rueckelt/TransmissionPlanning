@@ -10,6 +10,7 @@ public class Fitness {
 
     // Calculate inidividuals fittness by comparing it to our candidate solution
     static double getFitness(Individual individual) {
+
     	individual.getComb().updatePart();
     	double combcost = individual.getComb().getCombCost();
     	if (combcost == -1) {

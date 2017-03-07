@@ -13,7 +13,7 @@ import schedulingIOModel.NetworkGenerator;
  * @author QZ61P8
  *
  */
-public class GreedyOnlineScheduler extends GreedyScheduler {
+public class GreedyOnlineScheduler extends HeuristicScheduler {
 
 	public GreedyOnlineScheduler(NetworkGenerator ng, FlowGenerator tg) {
 		super(ng, tg);
@@ -82,12 +82,6 @@ public class GreedyOnlineScheduler extends GreedyScheduler {
 		}
 
 	}
-
-
-	protected boolean scheduleDecision(int f, int n, int t) {
-		return true;
-	}
-
 	
 	@Override
 	public String getType() {

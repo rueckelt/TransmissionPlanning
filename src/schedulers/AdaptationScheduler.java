@@ -18,7 +18,7 @@ import adaptation.geneticAlgo.Individual;
 import adaptation.utils.Combination;
 import adaptation.utils.Config;
 
-public class AdaptationScheduler extends Scheduler{
+public class AdaptationScheduler extends HeuristicScheduler{
 	private int[][][] longTermSP;
 	private String spLogPath;
 	private int[] mQ;
@@ -27,35 +27,74 @@ public class AdaptationScheduler extends Scheduler{
 	private static Combination previous; //= new Combination();
 	private FlowGenerator tgPred;
 	private Config config;
-	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg) {
-		super(ng, tg);
-		// TODO Auto-generated constructor stub
-	}
+		
 	
+//	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg) {
+//		super(ng, tg);
+//		// TODO Auto-generated constructor stub
+//	}
+//	
 	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg, FlowGenerator tgPred, String logpath) {
 		super(ng, tg);
 		this.tgPred = tgPred;
-		spLogPath=logpath;
-	}
-	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg, String logpath) {
-		super(ng, tg);
-		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logpath);
-		System.out.println(showSchedule(longTermSP));
-		//		this.longTermSP = JsonLogger.json2Array(logpath);
-	}
-
-	public void loadLongTermSp(String logfile){
-		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logfile);
-	}
-	
-	public void run(boolean dependence, double pctg, boolean lookahead) {
-//		System.out.println(showSchedule(longTermSP));
+//		System.out.println(logpath);
+//		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logpath);
 		tg.setFlowIndices();
 		int i_n=0;
 		for(Network n:ng.getNetworks()){
 			n.setId(i_n);
 			i_n++;
 		}
+		spLogPath=logpath;
+	}
+//	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg, String logpath) {
+//		super(ng, tg);
+//		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logpath);
+//		System.out.println(showSchedule(longTermSP));
+//
+//		//set indices of flows and networks in consecutive order
+//		tg.setFlowIndices();
+//		int i_n=0;
+//		for(Network n:ng.getNetworks()){
+//			n.setId(i_n);
+//			i_n++;
+//		}
+//		//		this.longTermSP = JsonLogger.json2Array(logpath);
+//	}
+
+
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return "GA_new_heuristic";
+	}
+	
+	public void loadLongTermSp(String logfile){
+		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logfile);
+	}
+	
+	@Override
+	protected void calculateInstance_internal(String logfile) {
+		initCostSeparation();
+		//load transmission plan from log file
+		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", spLogPath);
+		System.out.println(showSchedule(longTermSP));
+		//adapt
+		run(false, 1.0, true);
+		
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param dependence	shall only flows active in the long term schedule be considered?
+	 * @param pctg			relative number of individuals in the population = #flows * pctg
+	 * @param lookahead		time preserving strategy: allow flows to be allocated earlier than long term schedule says?
+	 */
+	public void run(boolean dependence, double pctg, boolean lookahead) {
+//		System.out.println(showSchedule(longTermSP));
+				
 		initEnvConfig();
 		
 		int[][][] adapted = getEmptySchedule();//new int[tg.getFlows().size()][ng.getTimeslots()][ng.getNetworks().size()];
@@ -65,7 +104,7 @@ public class AdaptationScheduler extends Scheduler{
 			config.setTime(t);
 
 			//***********************//
-			updateFlowNetFlag(t, lookahead);
+			updateFlowNetFlag(t, lookahead);	//mark which flow network combinations are allowed (preferred?)
 
 			// each time slot - update initGene (intial solution from long-term schedule plan)
 			updateInitSP(t); // TODO different strategy for initialization
@@ -91,6 +130,7 @@ public class AdaptationScheduler extends Scheduler{
 					} else {
 						adapted[f][t][netIndex - 1] = resource;
 						getThroughput().set(f, getThroughput().get(f) + resource);
+						cs.updateStatefulReward(f, netIndex-1, resource);
 					}
 
 				}
@@ -104,13 +144,145 @@ public class AdaptationScheduler extends Scheduler{
 		setSchedule(adapted);
 	}
 	
+	//flags all network/flow matches that have been seen in the long-term plan.
+	//This is a heuristic to preserve time selection
+	//TODO: make it more efficient by keeping the state and updating just for current time slot? Use special case t=0 to init.
+	public void updateFlowNetFlag(int t, boolean lookahead) {
+		config.setFlowNetFlag(new int[tg.getFlows().size()][ng.getNetworks().size()]);		//set all flags to zero
+		int range = 15;
+		if (lookahead) {
+			//if range covers all remaining time horizon, set all flags
+			if (t + range >= ng.getTimeslots()) {
+				for (int i = 0; i < config.getFlowNetFlag().length; i++) {
+					Arrays.fill(config.getFlowNetFlag()[i], 1);
+				}
+				return;
+			}
+			
+			
+			//IF long term schedule has allocated tokens till now+range OR tokens of flow <10, THEN increase flag
+			for (int i = 0; i < t + range; i++) {
+				for (int f = 0; f < longTermSP.length && f < tg.getFlows().size(); f++) {
+					for (int n = 0; n < longTermSP[0][0].length; n++) {
+						if (longTermSP[f][i][n] != 0 || tg.getFlows().get(f).getTokensMin() < 10) {
+							config.getFlowNetFlag()[f][n] += 1;		//why +=1 and not =1?
+						}
+					}
+				}
+			}
+			
+			//also activate flags for all NEW flows that are not in the long term plan
+			if (tg.getFlows().size() > longTermSP.length) {
+				for (int f = longTermSP.length; f < tg.getFlows().size(); f++) {
+					for (int n = 0; n < longTermSP[0][0].length; n++) {
+						config.getFlowNetFlag()[f][n] += 1;				
+					}
+				}	
+			}
+			
+		} else {
+			for (int i = 0; i < config.getFlowNetFlag().length; i++) {
+				Arrays.fill(config.getFlowNetFlag()[i], 1);
+			}
+			return;			
+		}
+	}
+	
+	//get initial individual (networks) from long term SP timeslot t
+	public void updateInitSP(int ts) {
+		if (ts >= longTermSP[0].length) return;
+		for (int f = 0; f < longTermSP.length && f < config.getInitGenes().length; f++) {
+			for (int n = 0; n < longTermSP[0][0].length; n++) {
+				if (longTermSP[f][ts][n] != 0) {
+				//	////////System.out.println(config.getInitGenes().length);
+				//	//Printer.printInt(config.getInitGenes());
+//					System.out.println("Init gene f="+f+", net="+n+" in t="+ts);
+					config.getInitGenes()[f] = n + 1;	//assign network id to each flow
+				}
+			}
+		}
+		
+	}
+	
+	public void updateNetworkConfig(boolean onOff) {
+		for (Network n : ng.getNetworks()) {
+			activateNetwork(n.getId(), onOff);
+		}
+	}
+	
+	
+	//TODO combine with network availability
+	public void updateNetCap(int ts) {
+		for (Network n : ng.getNetworks()) {
+			//////////System.out.println("newtork start time: " + n.getId() + " - " + n.getSlots() + " / " + n.);
+			int cap = n.getCapacity().get(ts);	
+			config.getCapReal()[n.getId()] = cap;
+			if (cap == 0) {
+				activateNetwork(n.getId(), false);
+			}
+			else{
+				activateNetwork(n.getId(), true);
+			}
+//			System.out.println("net="+n.getId()+", cap="+cap+", in ts="+ts);
+		}
+	}
+	
+	public void updateFlowAvl(int ts, boolean useOnlyScheduledFlow) {
+
+		for (Flow f : tg.getFlows()) {
+	//		////////System.out.println("f-id: " + f.getId() + " - " + f.getStartTime());
+			if (f.getStartTime() <= ts) {
+				activateFlow(f.getIndex(), true);
+//				System.out.println("flow active f="+f.getIndex()+", ts="+ts);
+			}
+			int tp = getThroughput().get(f.getIndex());
+			int ds = getDataSize().get(f.getIndex());
+			if (ts > f.getDeadline()) {// && !f.isBufferable()) {
+				activateFlow(f.getIndex(), false);	
+//				System.out.println("flow inactive f="+f.getIndex()+", ts="+ts+"  deadline exceeded");
+			}
+			if (tp > 0 && tp >= ds) { 
+				activateFlow(f.getIndex(), false);
+//				System.out.println("flow inactive f="+f.getIndex()+", ts="+ts+"  throughput");
+			}
+		}
+		if (useOnlyScheduledFlow) {
+			for (int i = 0; i < config.getInitGenes().length && i < tg.getFlows().size(); i++) {
+				if (config.getInitGenes()[i] == 0) {
+					activateFlow(i, false);
+				}
+			}
+			
+			Set<Integer> newflows = getNewflowsId();
+			////////System.out.println("newflows: " + newflows.toString());
+			for (Integer nf : newflows) {
+				activateFlow(nf, true);
+				Flow f = tg.getFlows().get(nf);
+				if (f.getStartTime() > ts) {
+					activateFlow(f.getIndex(), false);
+				}
+				int tp = getThroughput().get(f.getIndex());
+				int ds = getDataSize().get(f.getIndex());
+				if (tp > 0 && tp >= ds) {
+					activateFlow(f.getIndex(), false);
+				}
+
+			}
+		}
+//		//Printer.printInt("activeFlow: ", comb.getActiveFlowBool());
+		
+	}
+	
+	
+	//INITIALIZATION
+	
 	public void initEnvConfig() {
 		// f - minReq
 		config = new Config(ng, tg);
 		CostSeparation cs = new CostSeparation(tg, ng);
 		config.setCs(cs);
 		//Simulation.setPrevious(new Combination());
-
+		config.setAdaptScheduler(this);
 
 		for (Flow f : tg.getFlows()) {
 			////////System.out.println("id: " + f.getIndex() + " - " + f.getTokensMin() + " - " + f.getWindowMin());
@@ -161,17 +333,12 @@ public class AdaptationScheduler extends Scheduler{
 		}
 	}
 	
-	public void updateFlowConfig(boolean onOff) {
-		for (Flow f : tg.getFlows()) {
-			activateFlow(f.getIndex(), onOff);
-		}
-	}
-	
-	public void updateNetworkConfig(boolean onOff) {
-		for (Network n : ng.getNetworks()) {
-			activateNetwork(n.getId(), onOff);
-		}
-	}
+//	public void updateFlowConfig(boolean onOff) {
+//		for (Flow f : tg.getFlows()) {
+//			activateFlow(f.getIndex(), onOff);
+//		}
+//	}
+
 	
 	public void activateFlow(int index, boolean active) {
 		config.getActiveFlowBool()[index] = active? 1 : 0;
@@ -182,36 +349,8 @@ public class AdaptationScheduler extends Scheduler{
 		config.getActiveNetworkBool()[index] = active? 1 : 0;
 	}
 	
-	//get initial individual (networks) from long term SP timeslot t
-	public void updateInitSP(int ts) {
-		if (ts >= longTermSP[0].length) return;
-		for (int f = 0; f < longTermSP.length && f < config.getInitGenes().length; f++) {
-			for (int n = 0; n < longTermSP[0][0].length; n++) {
-				if (longTermSP[f][ts][n] != 0) {
-				//	////////System.out.println(config.getInitGenes().length);
-				//	//Printer.printInt(config.getInitGenes());
-//					System.out.println("Init gene f="+f+", net="+n+" in t="+ts);
-					config.getInitGenes()[f] = n + 1;	//assign network id to each flow
-				}
-			}
-		}
-		
-	}
-	
-	//TODO combine with network availability
-	public void updateNetCap(int ts) {
-		for (Network n : ng.getNetworks()) {
-			//////////System.out.println("newtork start time: " + n.getId() + " - " + n.getSlots() + " / " + n.);
-			int cap = n.getCapacity().get(ts);	
-			config.getCapReal()[n.getId()] = cap;
-			if (cap == 0) {
-				activateNetwork(n.getId(), false);
-			}else{
-				activateNetwork(n.getId(), true);
-			}
-//			System.out.println("net="+n.getId()+", cap="+cap+", in ts="+ts);
-		}
-	}
+
+
 	
 	public void updateFlowAvl(int ts) {
 		for (Flow f : tg.getFlows()) {
@@ -231,51 +370,7 @@ public class AdaptationScheduler extends Scheduler{
 //		//Printer.printInt("activeFlow: ", comb.getActiveFlowBool());		
 	}
 	
-	public void updateFlowAvl(int ts, boolean useOnlyScheduledFlow) {
 
-		for (Flow f : tg.getFlows()) {
-	//		////////System.out.println("f-id: " + f.getId() + " - " + f.getStartTime());
-			if (f.getStartTime() <= ts) {
-				activateFlow(f.getIndex(), true);
-//				System.out.println("flow active f="+f.getIndex()+", ts="+ts);
-			}
-			int tp = getThroughput().get(f.getIndex());
-			int ds = getDataSize().get(f.getIndex());
-			if (ts > f.getDeadline()) {// && !f.isBufferable()) {
-				activateFlow(f.getIndex(), false);	
-//				System.out.println("flow inactive f="+f.getIndex()+", ts="+ts+"  deadline exceeded");
-			}
-			if (tp > 0 && tp >= ds) { 
-				activateFlow(f.getIndex(), false);
-//				System.out.println("flow inactive f="+f.getIndex()+", ts="+ts+"  throughput");
-			}
-		}
-		if (useOnlyScheduledFlow) {
-			for (int i = 0; i < config.getInitGenes().length && i < tg.getFlows().size(); i++) {
-				if (config.getInitGenes()[i] == 0) {
-					activateFlow(i, false);
-				}
-			}
-			
-			Set<Integer> newflows = getNewflowsId();
-			////////System.out.println("newflows: " + newflows.toString());
-			for (Integer nf : newflows) {
-				activateFlow(nf, true);
-				Flow f = tg.getFlows().get(nf);
-				if (f.getStartTime() > ts) {
-					activateFlow(f.getIndex(), false);
-				}
-				int tp = getThroughput().get(f.getIndex());
-				int ds = getDataSize().get(f.getIndex());
-				if (tp > 0 && tp >= ds) {
-					activateFlow(f.getIndex(), false);
-				}
-
-			}
-		}
-//		//Printer.printInt("activeFlow: ", comb.getActiveFlowBool());
-		
-	}
 	
 	public void updateMax() {
 		int fId = 0;
@@ -302,57 +397,12 @@ public class AdaptationScheduler extends Scheduler{
 		}
 	}
 	
-	public void updateFlowNetFlag(int t, boolean lookahead) {
-		config.setFlowNetFlag(new int[tg.getFlows().size()][ng.getNetworks().size()]);
-		int range = 15;
-		if (lookahead) {
-			if (t + range >= ng.getTimeslots()) {
-				for (int i = 0; i < config.getFlowNetFlag().length; i++) {
-					Arrays.fill(config.getFlowNetFlag()[i], 1);
-				}
-				return;
-			}
-			for (int i = 0; i < t + range; i++) {
-				for (int f = 0; f < longTermSP.length && f < tg.getFlows().size(); f++) {
-					for (int n = 0; n < longTermSP[0][0].length; n++) {
-						if (longTermSP[f][i][n] != 0 || tg.getFlows().get(f).getTokensMin() < 10) {
-							config.getFlowNetFlag()[f][n] += 1;
-						}
-					}
-				}
-			}
-			if (tg.getFlows().size() > longTermSP.length) {
-				for (int f = longTermSP.length; f < tg.getFlows().size(); f++) {
-					for (int n = 0; n < longTermSP[0][0].length; n++) {
-						config.getFlowNetFlag()[f][n] += 1;				
-					}
-				}	
-			}
-		} else {
-			for (int i = 0; i < config.getFlowNetFlag().length; i++) {
-				Arrays.fill(config.getFlowNetFlag()[i], 1);
-			}
-			return;			
-		}
-	}
 	
 	public List<Integer> getThroughput() {
 		return throughput;
 	}
 	
-	@Override
-	protected void calculateInstance_internal(String logfile) {
-		//load transmission plan from log file
-		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", spLogPath);
-		//adapt
-		run(false, 1.0, true);
-		
-	}
-	@Override
-	public String getType() {
-		// TODO Auto-generated method stub
-		return "GA";
-	}
+
 
 	public List<Integer> getDataSize() {
 		return dataSize;

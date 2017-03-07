@@ -44,7 +44,7 @@ public class Individual extends Thread implements Comparable {
     	genes = new int[config.getFlowNum()];
     	Arrays.fill(genes, 1);
 //    	Arrays.fill(initGenes, 1);
-    	comb = new Combination(config.getInitGenes().clone(), config);
+    	comb = new Combination(config);
     //	////////System.out.println("indi: ");
     //	//Printer.printInt(comb.getComb());
  //   	comb.setComb(initGenes);

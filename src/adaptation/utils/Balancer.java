@@ -8,10 +8,17 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 
 import ToolSet.CostSeparation;
-
+import schedulers.AdaptationScheduler;
+import schedulers.HeuristicScheduler;
 import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
@@ -22,7 +29,7 @@ public class Balancer {
 	private int partNum;
 	private int capacity; // network capacity
 	private int[] minReq; // length = the number of flows assigned to the network, thoughput_min_req of flows
-	private int[] result; // how much capacity is allocated to each flow, length is the same to minReq.
+	private int[] result; // how much capacity is allocated of each flow, length is the same to minReq.
 	private int[] priority; // the priority of flows
 	private int[] flowId; // each flow has it's unique identifier, which is different from array index.
 	private int sumPrior;
@@ -51,8 +58,61 @@ public class Balancer {
 		setStep(step);
 	}
 
+	
+	
+	public void allocate2(int n, int t){
+		AdaptationScheduler adaptSched = config.getAdaptScheduler();
+		
+		List<Integer> flow_order = getSchedulingOrder(n, t);
+		int remaining_capacity = config.getNg().getNetworks().get(n).getCapacity().get(t);
+		
+		for(int f0=0; f0<flowId.length; f0++){	//iterate over the real IDs of active flows
+			int f = flow_order.get(f0);		//f should be the active flow index, to be used for the arrays
+			
+			int remaining_tokens = adaptSched.getDataSize().get(flowId[f]) - adaptSched.getThroughput().get(flowId[f]);
+			int max_tokens_to_assign = Math.min(remaining_tokens, max[f]);
+			int tokens_to_assign = Math.min(max_tokens_to_assign, remaining_capacity);
+			result[f]=0;//tokens_to_assign;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param n
+	 * @param t
+	 * @return	a list. First element in list is the active index (for addressing arrays) of the flow with highest priority and so on..
+	 */
+	private List<Integer> getSchedulingOrder(int n, int t){
+
+		AdaptationScheduler adaptSched = config.getAdaptScheduler();	//this is the initial element
+		
+		List<Integer> flowSchedulingBenefit= new LinkedList<Integer>();
+		//sort keys of map in descending order
+		List<Integer> flow_order = new LinkedList<Integer>();
+		for(int f=0; f<flowId.length; f++){
+			//f is the index of the arrays here; of the ACTIVE flows.
+			flow_order.add(f);
+			flowSchedulingBenefit.add(adaptSched.getEstimatedSchedulingCost(flowId[f], t, n));	//we calculate the benefit of the original indexed flow
+		}
+		if(flowId.length>0)System.out.println("flowIds: "+Arrays.toString(flowId)+"\n benefit="+flowSchedulingBenefit.toString());
+		final List<Integer> flowCrit_tmp=flowSchedulingBenefit;
+		//sort indices of ACTIVE flows in decending order with estimated scheduling cost.
+		Collections.sort(flow_order, new Comparator<Integer>() {
+			@Override
+			public int compare(Integer i1, Integer i2) {
+				return flowCrit_tmp.get(i2)-flowCrit_tmp.get(i1);
+			}
+		});
+		return flow_order;
+	}
+	
+	/**
+	 * allocate tokens of the configured flows to network n in time slot t
+	 * @param n	networkId (original one without 0=none)
+	 * @param t	time slot
+	 */
 	public void allocate(int n, int t) {
-		int rest = capacity - sum(minReq);
+		int rest = capacity - sum(minReq);		//first shot: assign the minimum capacity (throughput min) of each flow
 		result = minReq.clone();
 		if (rest == 0) {
 			return;
@@ -60,19 +120,19 @@ public class Balancer {
 		
 		/****
 		 * rest > 0 : the capacity of the network is larger than the sum_req of all flows
-		 * strategy: satisfy the req of each flow (if it's not expensive), and then
+		 * strategy: satisfy the minimum required throughput of each flow (if it's not expensive), and then
 		 * 			 allocate the rest resource according to priority (but now the priority is equal, each flow is with 1)
 		 * similar to round robin
 		 */
 		if (rest > 0) {
 			int waste = 0;
 
-			for (int i = 0; i < result.length; i++) {
+			for (int f = 0; f < result.length; f++) {		//for each flow that is active for the network do
 
-				int resultPrev = result[i];
-				int totalPriority = sum(priority);
+				int resultPrev = result[f];
+				int totalPriority = sum(priority);	//priorities must be set
 				if (totalPriority == 0) return;
-				int flowId = getFlowId()[i];
+				int flowId = getFlowId()[f];
 				Flow flow = config.getFg().getFlows().get(flowId);
 				double costUnsched = (double) flow.getImpUnsched()* flow.getImpUser();
 				double costSched =  calcCost(flowId, t, n);
@@ -80,24 +140,21 @@ public class Balancer {
 				
 				// if too expensive - the monetary cost too large
 				if (monetary > costUnsched) {
-					if (costUnsched != 0) {
-						result[i] = (int) (result[i] / 100);//(monetary / costUnsched));
-					} else {
-						result[i] = result[i] / 100;
-					}
+						result[f] = 0;//result[f] / 100;
+					
 				} 
 				// Double.MAX_VALUE -> the flow-net mapping is not used by long-term scheduler
 				if (costSched == Double.MAX_VALUE) {
-					result[i] = 0;
+					result[f] = 0;
 					continue;
 				}
 				
-				if (costSched > costUnsched*result[i]) {
-					result[i] = 0;
+				if (costSched > costUnsched*result[f]) {
+					result[f] = 0;
 					continue;
 				} 
-				result[i] =  Math.min(getMax()[i], result[i] + rest * priority[i] / totalPriority + waste);
-				waste = resultPrev + rest * priority[i] / totalPriority + waste - getMax()[i];
+				result[f] =  Math.min(getMax()[f], result[f] + rest * priority[f] / totalPriority + waste);
+				waste = resultPrev + rest * priority[f] / totalPriority + waste - getMax()[f];
 				waste = waste > 0? waste : 0;			
 			}
 			return;
@@ -282,6 +339,14 @@ public class Balancer {
 	}
 
 	
+	/**
+	 * 
+	 * @param orig	take data from this array and put it to dest
+	 * @param dest	this is actually an OUTPUT
+	 * @param comb	the individual, saying for each flow, to which network it is assigned comb[f] = netId
+	 * @param activeFlow	original indexes of active flows. activeFlow[indexOfActiveFlows] = indexOfOriginalFlow
+	 * @param nIndex	Index of network to pick flows from
+	 */
 	public static void pick(int[] orig, int[] dest, int[] comb, int[] activeFlow, int nIndex) {
 		// int[] result = new int[part[nIndex]];
 		int rI = 0;
@@ -295,6 +360,13 @@ public class Balancer {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param dest		OUTPUT variable. dest[active flows for this network] = original flow index
+	 * @param comb		comb[f] = netId
+	 * @param activeFlow original indexes of active flows. activeFlow[indexOfActiveFlows] = indexOfOriginalFlow
+	 * @param nIndex	index of network to pick flows from. only this network is considered
+	 */
 	public static void pickFlowId(int[] dest, int[] comb, int[] activeFlow, int nIndex) {
 		// int[] result = new int[part[nIndex]];
 		int rI = 0;
@@ -304,11 +376,11 @@ public class Balancer {
 		////Printer.printInt("comb", comb);
 		if (dest.length == 0) return;
 
-		for (int i = 0; i < comb.length; i++) {
+		for (int f = 0; f < comb.length; f++) {
 			//////////System.out.println("i: " + i);
 			//////////System.out.println("rI: " + rI);
-			if (comb[i] == nIndex) {
-				dest[rI] = activeFlow[i];
+			if (comb[f] == nIndex) {
+				dest[rI] = activeFlow[f];
 				////Printer.printInt("after dest", dest);
 
 				rI++;

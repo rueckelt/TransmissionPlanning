@@ -25,9 +25,9 @@ public class main {
 //		int n=2;
 //		int rep=3;
 
-		int f=3;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
-		int t=2;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
-		int n=3;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
+		int f=2;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
+		int t=1;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
+		int n=2;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
 
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
@@ -44,7 +44,7 @@ public class main {
 
 //		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;//f=5;
 //		String logpath= "my_logs"+File.separator+"vary_time"; t=4;t=1;rep=2;
-		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
+//		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
 //		String logpath= "my_logs"+File.separator+"vary_load"; 
 //		String logpath= "my_logs"+File.separator+"vary_cost";
 //		String logpath= "my_logs"+File.separator+"vary_time_test"; t=0;
@@ -54,6 +54,9 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"vary_pe_flow";
 //		String logpath= "my_logs"+File.separator+"vary_pe_comb";
 		
+
+		String logpath= "my_logs"+File.separator+"test_GA";
+		
 		
 		//if overwrite, then delete everything in folder, create scenario new and calculate
 		//if recalc, then keep generated scenario, keep all files and recalculate only specified schedules; overwrite their files
@@ -61,7 +64,7 @@ public class main {
 
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 			eval.visualize();
-//			eval.recalc();
+			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
