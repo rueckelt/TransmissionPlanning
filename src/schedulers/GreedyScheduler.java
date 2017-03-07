@@ -89,30 +89,6 @@ public class GreedyScheduler extends Scheduler{
 //		System.out.println("greedy done");
 	}
 
-	/**
-	 * @return
-	 */
-	protected List<Integer> sortByFlowCriticality() {
-		//		################# 1. sort flows according to decreasing criticality #################
-				List<Integer> flowCriticality= new LinkedList<Integer>();
-				//sort keys of map in descending order
-				List<Integer> flow_order = new LinkedList<Integer>();
-				for(int f=0; f<tg.getFlows().size(); f++){
-//					Flow flow= tg.getFlows().get(f);
-//					System.out.println("Flow "+f+": maxTokens="+flow.getTokensMax()+", winMax="+flow.getWindowMax());
-					flow_order.add(f);
-					flowCriticality.add(calculateFlowCriticality(tg.getFlows().get(f), ng));
-				}
-				final List<Integer> flowCrit_tmp=flowCriticality;
-				Collections.sort(flow_order, new Comparator<Integer>() {
-					@Override
-					public int compare(Integer i1, Integer i2) {
-						return flowCrit_tmp.get(i2)-flowCrit_tmp.get(i1);
-					}
-				});	 //highest priority first
-//				System.out.println(flow_order);
-		return flow_order;
-	}
 
 	/**
 	 * @param flowIndex
@@ -205,6 +181,33 @@ public class GreedyScheduler extends Scheduler{
 		return this;
 	}
 
+
+	/**
+	 * @return
+	 */
+	protected List<Integer> sortByFlowCriticality() {
+		//		################# 1. sort flows according to decreasing criticality #################
+				List<Integer> flowCriticality= new LinkedList<Integer>();
+				//sort keys of map in descending order
+				List<Integer> flow_order = new LinkedList<Integer>();
+				for(int f=0; f<tg.getFlows().size(); f++){
+//					Flow flow= tg.getFlows().get(f);
+//					System.out.println("Flow "+f+": maxTokens="+flow.getTokensMax()+", winMax="+flow.getWindowMax());
+					flow_order.add(f);
+					flowCriticality.add(calculateFlowCriticality(tg.getFlows().get(f), ng));
+				}
+				final List<Integer> flowCrit_tmp=flowCriticality;
+				Collections.sort(flow_order, new Comparator<Integer>() {
+					@Override
+					public int compare(Integer i1, Integer i2) {
+						return flowCrit_tmp.get(i2)-flowCrit_tmp.get(i1);
+					}
+				});	 //highest priority first
+//				System.out.println(flow_order);
+		return flow_order;
+	}
+	
+	
 	/**
 	 * criticality is worst case schedule cost (flow NOT scheduled) devided by the number of tokens 
 	 * @param f flow

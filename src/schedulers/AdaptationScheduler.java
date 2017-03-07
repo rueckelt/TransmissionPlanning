@@ -51,6 +51,11 @@ public class AdaptationScheduler extends Scheduler{
 	public void run(boolean dependence, double pctg, boolean lookahead) {
 //		System.out.println(showSchedule(longTermSP));
 		tg.setFlowIndices();
+		int i_n=0;
+		for(Network n:ng.getNetworks()){
+			n.setId(i_n);
+			i_n++;
+		}
 		initEnvConfig();
 		
 		int[][][] adapted = getEmptySchedule();//new int[tg.getFlows().size()][ng.getTimeslots()][ng.getNetworks().size()];

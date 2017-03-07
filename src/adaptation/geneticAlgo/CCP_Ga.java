@@ -58,6 +58,7 @@ public class CCP_Ga {
 	            if (bestInd.getFitness() > myPop.getFittest().getFitness()) {
 	            	bestInd = myPop.getFittest();
 	            }
+	           
 	            pop.add(myPop);
 	            converge.add(bestInd.getFitness());
 	            System.out.println("Fitness in rnd "+generationCount+" is "+bestInd.getFitness());

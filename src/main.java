@@ -40,11 +40,11 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 
 	
-		String logpath= "my_logs"+File.separator+"test_exec_ga";
+//		String logpath= "my_logs"+File.separator+"test_exec_ga";
 
 //		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;//f=5;
-//		String logpath= "my_logs"+File.separator+"vary_time"; t=4;
-//		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
+//		String logpath= "my_logs"+File.separator+"vary_time"; t=4;t=1;rep=2;
+		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
 //		String logpath= "my_logs"+File.separator+"vary_load"; 
 //		String logpath= "my_logs"+File.separator+"vary_cost";
 //		String logpath= "my_logs"+File.separator+"vary_time_test"; t=0;
@@ -61,13 +61,13 @@ public class main {
 
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 			eval.visualize();
-			eval.recalc();
+//			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
 //			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
 //			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
-			eval.evaluateTop();
+//			eval.evaluateTop();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();	
@@ -75,7 +75,7 @@ public class main {
 //			eval.evaluateFlowVariation();
 //			eval.evaluateMonetaryWeight();
 //			eval.evaluateTrafficLoad();
-//			eval.evaluateThisInstance();
+			eval.evaluateThisInstance();
 			eval.parallel(1);
 			eval.start(4*24);
 

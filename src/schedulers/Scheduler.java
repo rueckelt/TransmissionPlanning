@@ -123,9 +123,9 @@ public abstract class Scheduler {
 //			System.out.println(showSchedule(schedule_f_t_n));
 			
 			long duration = LogMatlabFormat.loadValueFromLogfile("scheduling_duration_us", getLogfileName(path));
-			
+
+			cf.calculate(schedule_f_t_n);
 			//redo log
-//			cf.calculate(schedule_f_t_n);
 //			
 //			if(duration>0)
 //				logInstance(path, duration);
