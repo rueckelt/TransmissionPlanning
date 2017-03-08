@@ -67,16 +67,14 @@ public class Population {
     	setPopulationSize(size);
     	////////System.out.println(size() + " - " + this.amp + " - " + getPopulationSize());
         setIndividuals(new Individual[getPopulationSize()]);
-
+        
         // Initialise population
         if (initialise) {
-            // Loop and create individuals
-        	 //Individual.generateInit();        	
-        	////////System.out.println("size: " + getPopulationSize());
+            // Loop and create individuals: therefore
             for (int i = 0; i < getPopulationSize(); i++) {
             //////////System.out.println("pop-i: " + i + " *****************************");
                 Individual newIndividual = new Individual(config);
-                // get the netnumber
+                // get the net number
                 Random r = new Random();
                 int genePoolSize = newIndividual.getGenePool().size();
                 int x = r.nextInt(genePoolSize * 2);
@@ -135,6 +133,13 @@ public class Population {
 
 	public Individual[] getIndividuals() {
 		return individuals;
+	}
+	
+	public boolean containsIndividual(Individual indiv){
+		for(Individual i:getIndividuals()){
+			if(indiv==i) return true;
+		}
+		return false;
 	}
 
 	public void setIndividuals(Individual[] individuals) {

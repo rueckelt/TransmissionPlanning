@@ -42,7 +42,7 @@ public class Individual extends Thread implements Comparable {
     
     public Individual(Config config) {
     	genes = new int[config.getFlowNum()];
-    	Arrays.fill(genes, 1);
+    	Arrays.fill(genes, 1);		//set each flow to network 1?
 //    	Arrays.fill(initGenes, 1);
     	comb = new Combination(config);
     //	////////System.out.println("indi: ");
@@ -97,9 +97,9 @@ public class Individual extends Thread implements Comparable {
 		for (int i = 0; i < 100 && Arrays.equals(combList, comb.getComb()); i++) {
 
 			Random rand = new Random();
-		    int randomFlowIndex = rand.nextInt(net.size());
-		    randomFlow = net.get(randomFlowIndex); 
-		    randomNet = getRandomGene();
+		    int randomFlowIndex = rand.nextInt(net.size());		
+		    randomFlow = net.get(randomFlowIndex); 				//select random flow
+		    randomNet = getRandomGene();						
 		    if (getGenePool().size() > 1) {
 			    ////////System.out.println(getGenePool().toString());
 			    ////////System.out.println("combList: " + randomFlow + ":" + combList[randomFlow]);
@@ -124,51 +124,79 @@ public class Individual extends Thread implements Comparable {
 	    //////////System.out.println("mutateIndex: " + getMutateIndex());
     }
     
+//    public void mutate() {
+//    	// ////////System.out.println("this mutate");
+//		int[] combList = comb.getComb().clone();
+//		int randomFlow = -1;
+//		int randomFlowIndex = -1;
+//		int randomNet = -1;
+//		for (int i = 0; i < 100 && Arrays.equals(combList, comb.getComb()); i++) {
+//
+//			Random rand = new Random();
+//			randomFlow = rand.nextInt(comb.getComb().length);
+//		    randomNet = getRandomGene();
+//		    
+//		 //   ////////System.out.println("randomNet: " + randomNet);
+//		    combList[randomFlow] = randomNet;
+//		 //   System.out.print("i: " + i + " ");
+//		 //   //Printer.printInt(combList);	
+//		}
+//	    ////Printer.printInt(combList);	
+//
+//	    comb.setComb(combList);
+//	    comb.updatePart();
+//	    //////////System.out.println("mutateIndex: " + getMutateIndex());
+//    }
+    
+    /**
+     * mutate the individual
+     * give it 100 tries to mutate, then give up if no change happened.
+     * 
+     * oldMutationStrategy:
+     * select a random flow and assign random network
+     * 
+     * newMutationStrategy:
+     * for each flow, assign a random network with a proability of
+     * (x+1) / population size.
+     * hereby, x is the log10 of the repetition try (maximum 100 tries, see above)
+     * 
+     */
     public void mutate() {
+    	boolean newMutationStrategy = true;
     	// ////////System.out.println("this mutate");
-		int[] combList = comb.getComb().clone();
+		int[] combMutated = comb.getComb().clone();	//copy
 		int randomFlow = -1;
-		int randomFlowIndex = -1;
 		int randomNet = -1;
-		for (int i = 0; i < 100 && Arrays.equals(combList, comb.getComb()); i++) {
-
-			Random rand = new Random();
-			randomFlow = rand.nextInt(comb.getComb().length);
-		    randomNet = getRandomGene();
-		    
-		 //   ////////System.out.println("randomNet: " + randomNet);
-		    combList[randomFlow] = randomNet;
-		 //   System.out.print("i: " + i + " ");
-		 //   //Printer.printInt(combList);	
+		
+		//while no change happened or 100 runs exceeded
+		for (int i = 0; i < 100 && Arrays.equals(combMutated, comb.getComb()); i++) {	
+			
+			
+			if(newMutationStrategy){
+				//change each gene (flow) with a probability of 1/populationSize
+				for(int f=0; f<comb.getComb().length;f++){
+					//TODO: check impact of the + Math.log10(i+1). Increase
+					boolean doChange = Math.random() < ((1.0+Math.log10(i+1)) / (double)comb.getComb().length);
+					if(doChange){
+						combMutated[f]=getRandomGene();
+					}
+				}
+			}
+			else{
+				Random rand = new Random();
+				randomFlow = rand.nextInt(comb.getComb().length);
+			    randomNet = getRandomGene();
+			    
+			 //   ////////System.out.println("randomNet: " + randomNet);
+			    combMutated[randomFlow] = randomNet;
+			 //   System.out.print("i: " + i + " ");
+			 //   //Printer.printInt("combList: ", combList);	
+			 //   //////System.out.println("randomNet: " + randomNet);
+			}
 		}
 	    ////Printer.printInt(combList);	
 
-	    comb.setComb(combList);
-	    comb.updatePart();
-	    //////////System.out.println("mutateIndex: " + getMutateIndex());
-    }
-    public void mutate(boolean constOn) {
-    	// ////////System.out.println("this mutate");
-		int[] combList = comb.getComb().clone();
-		int randomFlow = -1;
-		int randomFlowIndex = -1;
-		int randomNet = -1;
-		for (int i = 0; i < 100 && Arrays.equals(combList, comb.getComb()); i++) {
-
-			Random rand = new Random();
-			randomFlow = rand.nextInt(comb.getComb().length);
-		    randomNet = getRandomGene();
-		    
-		 //   ////////System.out.println("randomNet: " + randomNet);
-		    combList[randomFlow] = randomNet;
-		 //   System.out.print("i: " + i + " ");
-		 //   //Printer.printInt("combList: ", combList);	
-		 //   //////System.out.println("randomNet: " + randomNet);
-
-		}
-	    ////Printer.printInt(combList);	
-
-	    comb.setComb(combList);
+	    comb.setComb(combMutated);
 	    comb.updatePart();
 	    obeyConstraint(randomNet);
 	    ////Printer.printInt("nettype", getGeneTypeArray());

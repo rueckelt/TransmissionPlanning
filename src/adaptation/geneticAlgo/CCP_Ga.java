@@ -78,6 +78,7 @@ public class CCP_Ga {
         if (myPop.size() == 0) return bestInd;
         getPopList().add(pop);
         
+        //for the fittest, update stateful reward in costSeparation
         bestInd.getComb().updateState();
         
         return myPop.getFittest();

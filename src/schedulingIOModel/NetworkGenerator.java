@@ -35,6 +35,11 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	//one interface of each type. Only first two are used 
 	private int[] interfacesOftype = {1,1};	//default: (index: 0 = NONE, 1 = #wifi, 2 = #mobile network) 
 	
+	//store slot change when adding movement uncertainty
+	//we may use it in the heuristics, undoing the movement error networks. (Reality: get Position from GPS)
+	//however then just network characteristics can be estimated from a Map. Flows stay.
+	private Vector<Integer> slotChange;
+	
 	public NetworkGenerator(){
 	}
 	
@@ -175,6 +180,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		for(Network net: networks){
 			net.addPositionUncertainty(slotChange);
 		}
+		this.slotChange=slotChange;
 	}
 	
 	/**
@@ -200,6 +206,8 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 * @param strength		scales the sigma for the distribution
 	 * @param offset		[0..1] select 1 for no offset
 	 * @param motorwayModel	set true for motorway, false for urban distribution model
+	 * @return A vector, containing for each time slot of the horizon the corresponding original time slot without movement error
+	 * apply uncertainty: net
 	 * 
 	 * motorway model covers normal distribution of speed deviation. Target speed is held for 1-15 time slots, low alpha for low pass filter of speed
 	 * urban model has tighter distribution. Target speed is held for 1-10 time slots. High alpha for low pass filter leads to fast reaction and high dynamics
@@ -450,4 +458,15 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			index++;
 		}
 	}
+
+	/**
+	 * 
+	 * @return vector with time indices for movement error. 
+	 *  slotChange[t_without_movement_error] = t_with_movement_error
+	 *  result is null when no movement error was applied.
+	 */
+	public Vector<Integer> getSlotChange() {
+		return slotChange;
+	}
+
 }

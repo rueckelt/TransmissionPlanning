@@ -18,3 +18,18 @@ DataSize		number of tokens of a flow
 prior			not used, all equal. Former user weight.		AdaptScheduler. Use flowCriticality Heuristic?
 
 cap				capacity of the network in this time slot
+
+
+Questions: 
+
+What is netIndex in Individual.mutate(boolean random, int netIndex), why not using the other mutate ?
+Algorithm mutate loop????????? 
+	Does not loop through genes? - variable i is not used. 
+	constOn - not used
+Individual mutate loop i < 100???
+
+
+Changes: 
+Tournament selection: Do not use the same Individual twice in a random tournament set. Done. Correct?
+
+Individual.mutate: mutate each gene(flow) with probability 1/populationSize instead of selecting one flow to change.	

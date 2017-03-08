@@ -44,7 +44,8 @@ public class Algorithm {
         // Mutate population
         for (int i = elitismOffset; i < newPopulation.getPopulationSize(); i++) {
         	////////System.out.println("i: " + i);
-            mutate(newPopulation.getIndividual(i), true);
+//            mutate(, true);
+            newPopulation.getIndividual(i).mutate();
         }
 
         return newPopulation;
@@ -69,34 +70,23 @@ public class Algorithm {
         return newSol;
         // [1 2 2 4 4] - [1 3 3 5 ] - 1 2 3 4 5  - 1 2 3
     }
-    // Mutate an individual
-    private static void mutate(Individual indiv) {
-        // Loop through genes
-        for (int i = 0; i < indiv.size(); i++) {
-            if (Math.random() <= mutationRate) {
-            	indiv.mutate();
-            }
-        }
-    }
-    
-    private static void mutate(Individual indiv, boolean constOn) {
-        // Loop through genes
-        for (int i = 0; i < indiv.size(); i++) {
-            //if (Math.random() <= mutationRate) {
-            //	////////System.out.println("hello mutate");
-            indiv.mutate(constOn);
-            //}
-        }
-    }
+
 
     // Select individuals for crossover
     private static Individual tournamentSelection(Population pop) {
-        // Create a tournament population
+        // Create an empty tournament population
         Population tournament = new Population(getTournamentSize(), pop.getConfig(), false);
+        
         // For each place in the tournament get a random individual
         for (int i = 0; i < getTournamentSize(); i++) {
-            int randomId = (int) (Math.random() * pop.getPopulationSize());
-            tournament.saveIndividual(i, pop.getIndividual(randomId));
+        	//find an unused random individual	TR: added while loop to select new individual
+        	Individual selectedIndiv;
+        	do{
+        		int randomId = (int) (Math.random() * pop.getPopulationSize());
+        		selectedIndiv = pop.getIndividual(randomId);
+        	} while(tournament.containsIndividual(selectedIndiv));	//repeat if individual was already selected.
+        	
+            tournament.saveIndividual(i, selectedIndiv);	//add selected Individual to set
         }
         // Get the fittest
         Individual fittest = tournament.getFittest();

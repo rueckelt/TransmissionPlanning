@@ -136,8 +136,8 @@ public class Combination {
 			//if (i == 1) //Printer.printInt("b-max", b.getMax());
 			/*** initialization ends ***/
 			if (netId > 0) {
-				b.allocate2(netId-1, t);
-//				b.allocate(netId-1, t);
+//				b.allocate2(netId-1, t);
+				b.allocate(netId-1, t);
 				setCombCost(getCombCost() + b.evaluator(getConfig().getTime(), netId-1));
 			} 
 			// copy the result in balancer (results with one network) to comb
@@ -164,17 +164,18 @@ public class Combination {
 	}
 	
 
+	//is called only for the fittest individual after finishing and updates stateful reward of cs
 	public void updateState() {
-		// bug
+		// bug - no should be good
 		for (int f : getConfig().getActiveFlow()) {
 			getConfig().getCs().updateStatefulReward(f, getConfig().getTime(), getResultGlobal()[f]);
 		}
 
 	}
-
-	public static void assignResult(int[] result, int[] subResult) {
-		// for (int i = 0; i < )
-	}
+//
+//	public static void assignResult(int[] result, int[] subResult) {
+//		// for (int i = 0; i < )
+//	}
 	
 	/**
 	 * for each network
@@ -285,39 +286,40 @@ public class Combination {
 		return neigh;
 	}
 */	
-	public int getRandomGene() {
-		Set<Integer> genePool = getConfig().getAvailableNetworks();
-
-		int item = genePool.size() == 0? 0 : new Random().nextInt(genePool.size()); // In real life, the Random object should be rather more shared than this
-		int i = 0;
-		for(Integer gene : genePool) {
-		    if (i == item)
-		        return gene;
-		    i = i + 1;
-		}
-		return 1;
-	}
+//	public int getRandomGene() {
+//		Set<Integer> genePool = getConfig().getAvailableNetworks();
+//
+//		int item = genePool.size() == 0? 0 : new Random().nextInt(genePool.size()); // In real life, the Random object should be rather more shared than this
+//		int i = 0;
+//		for(Integer gene : genePool) {
+//		    if (i == item)
+//		        return gene;
+//		    i = i + 1;
+//		}
+//		return 1;
+//	}
 	
-    public void obeyConstraint(int net, int[] com) {
-    	//HashMap<Integer, Set<Integer>> netTypeSet = getGeneType();
-    	int[] genetype = getConfig().getNetworkType().clone();
-    	int nt = 0;
-    	if (net - 1 < genetype.length && net - 1 >= 0) {
-    		nt =  genetype[net - 1];
-    	} else {
-    		return;
-    	}
-    	
-    	for (int i = 0; i < com.length; i++) {
-    		if (com[i] - 1 < 0) continue;
-    		if (com[i] == net) continue;
-    		if (genetype[com[i] - 1] == nt) {
-    			////Printer.printInt("type: ", genetype);
-    			////////System.out.println("obeyConstraint: " + "f_" + i + "orig_" + com[i] + "replace_" + net);
-    			com[i] = net;
-    		}
-    	}   	
-    }
+//	//unused
+//    public void obeyConstraint(int net, int[] com) {
+//    	//HashMap<Integer, Set<Integer>> netTypeSet = getGeneType();
+//    	int[] genetype = getConfig().getNetworkType().clone();
+//    	int nt = 0;
+//    	if (net - 1 < genetype.length && net - 1 >= 0) {
+//    		nt =  genetype[net - 1];
+//    	} else {
+//    		return;
+//    	}
+//    	
+//    	for (int i = 0; i < com.length; i++) {
+//    		if (com[i] - 1 < 0) continue;
+//    		if (com[i] == net) continue;
+//    		if (genetype[com[i] - 1] == nt) {
+//    			////Printer.printInt("type: ", genetype);
+//    			////////System.out.println("obeyConstraint: " + "f_" + i + "orig_" + com[i] + "replace_" + net);
+//    			com[i] = net;
+//    		}
+//    	}   	
+//    }
 	public Config getConfig() {
 		return config;
 	}
