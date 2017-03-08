@@ -55,7 +55,7 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"vary_pe_comb";
 		
 
-		String logpath= "my_logs"+File.separator+"test_GA";
+		String logpath= "test_GA";
 		
 		
 		//if overwrite, then delete everything in folder, create scenario new and calculate
