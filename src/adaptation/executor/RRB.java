@@ -13,23 +13,25 @@ public class RRB {
 		int rest = cap;
 //		while (rest > 0) {
 		if (fNum == 0 || cap <= 0 || minTp.length == 0) return;
-		int average = cap / fNum;
+		int average = cap / fNum;		//share of the network capacity
 		////System.out.println("before: rest: " + rest + " - fNum: " + fNum);
-		for (int i = 0; i < minTp.length && rest > 0; i++) {
+		
+		//for each flow do
+		for (int f = 0; f < minTp.length && rest > 0; f++) {
 			int sent = 0;
 			// when cap < fNum, average will be 0, but there are still data to be sent
-			if (average == 0 && minTp[i] > 0) {
+			if (average == 0 && minTp[f] > 0) {
 				sent = 1;
 			} else {
-				int min = minTp[i];
-				if (min > average) {
+				int min = minTp[f];		//minimum throughput requirement of flow
+				if (min > average) {	//if it wants more than its average share, send average
 					sent = average;
 				} else {
-					sent = min;
+					sent = min;			//else, send mintp
 				}
 			}
-			executed[i] += sent;
-			minTp[i] -= sent;
+			executed[f] += sent;
+			minTp[f] -= sent;
 			rest -= sent;
 		}	
 		//}

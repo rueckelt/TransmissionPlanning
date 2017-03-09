@@ -30,6 +30,8 @@ public class CCP_Ga {
 	 * @return
 	 */
 	public static Individual run(double popAmp, Config config) {
+		if(config.getActiveFlowNum()<1)return new Individual(config);	//when there is not active flow
+		
 		//setConverge(new ArrayList<Integer>());
 		ArrayList<Double> converge = new ArrayList<Double>();
 

@@ -53,7 +53,7 @@ public class Individual extends Thread {
      * 
      */
     public void mutate(double amplifier, boolean force) {
-    	boolean newMutationStrategy = false;
+    	boolean newMutationStrategy = true;
     	// ////////System.out.println("this mutate");
 		int[] combMutated = comb.getComb().clone();	//copy
 		int randomFlow = -1;
@@ -78,6 +78,7 @@ public class Individual extends Thread {
 						if(net !=combMutated[f]){
 							netsToObey.add(net);
 							combMutated[f]=net;
+							combMutated=obeyConstraint(combMutated, net);
 							break;
 						}
 						
@@ -88,19 +89,16 @@ public class Individual extends Thread {
 				Random rand = new Random();
 				randomFlow = rand.nextInt(comb.getComb().length);
 			    randomNet = getRandomGene();
+			    combMutated[randomFlow] = randomNet;
 
 				if(randomNet !=combMutated[randomFlow]){
-					netsToObey.add(randomNet);
+					combMutated=obeyConstraint(combMutated, randomNet);
 				}
-			    combMutated[randomFlow] = randomNet;
 			}
 			tries--;
 		}
 
-		for(int n:netsToObey){
-		    obeyConstraint(n);
-		}
-		
+
 	    comb.setComb(combMutated);
 	    comb.updatePart();
     }
@@ -113,9 +111,16 @@ public class Individual extends Thread {
     	return comb.getConfig().getNetTypeMap();
     }
 
+    
+    public void obeyConstraint(int net){
+    	
+    	int[] assignedNets=obeyConstraint(comb.getComb(), net);
+    	comb.setComb(assignedNets); // update Config info
+    	comb.updatePart(); // not good implementation, but please read the comment in Config.java
+    }
     // this is the type constraint that flow-net Config must obey
-    public void obeyConstraint(int net) {
-    	int[] assignedNets = comb.getComb().clone();
+    public int[] obeyConstraint(int[] assignedNets, int net) {
+//    	int[] assignedNets = comb.getComb();
     	
     	//get type of each network
     	int[] netTypes = comb.getConfig().getNetworkType().clone();
@@ -125,7 +130,7 @@ public class Individual extends Thread {
     	if (net - 1 < netTypes.length && net - 1 >= 0) {
     		netType =  netTypes[net - 1];
     	} else {
-    		return;
+    		return assignedNets;
     	}
     	
     	//for each flow in the combination do 
@@ -138,9 +143,9 @@ public class Individual extends Thread {
     			assignedNets[f] = net;
     		}
     	}
-    	comb.setComb(assignedNets); // update Config info
-    	comb.updatePart(); // not good implementation, but please read the comment in Config.java
-    	
+//    	comb.setComb(assignedNets); // update Config info
+//    	comb.updatePart(); // not good implementation, but please read the comment in Config.java
+    	return assignedNets;
     }
 
 

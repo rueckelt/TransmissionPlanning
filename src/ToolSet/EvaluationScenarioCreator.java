@@ -124,11 +124,11 @@ public class EvaluationScenarioCreator {
 
 		//execution of schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
-//		schedulers.add(new ExecutionScheduler(ng, fg, path));
+		schedulers.add(new ExecutionScheduler(ng, fg, path));
 		
 		//Adaptation of schedule under prediction errors
 		FlowGenerator fgPred = getFlowGenerator(log_run_path, false, 0, 0, 0);
-		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
+//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
 		
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(5)).newRating(newRating));
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(8)).newRating(newRating));

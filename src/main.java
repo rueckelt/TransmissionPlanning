@@ -25,7 +25,7 @@ public class main {
 //		int n=2;
 //		int rep=3;
 
-		int f=5;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
+		int f=3;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
 		int t=2;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
 		int n=3;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
 
@@ -81,7 +81,7 @@ public class main {
 //			eval.evaluateMonetaryWeight();
 //			eval.evaluateTrafficLoad();
 			eval.evaluateThisInstance();
-			eval.parallel(1);
+			eval.parallel(2);
 			eval.start(4*24);
 
 		

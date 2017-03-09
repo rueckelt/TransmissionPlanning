@@ -43,17 +43,15 @@ public class Combination {
 	public Combination(Config config) {
 		this.setConfig(config);
 		int[] combVar = config.getInitGenes();						//this is the initial individual from long term schedule
-//		System.out.println("new combination: initGenes are"+Arrays.toString(config.getInitGenes()));
 		resultGlobal = new int[config.getFlowNum()];
 		combGlobal = new int[config.getFlowNum()];
 		int[] activeFlow = new int[config.getActiveFlowNum()];		//mapping: contains the original indices of the active flows
 		int[] activeComb = new int[config.getActiveFlowNum()];
+		
 		// set those inactive networks to 0
 		for (int flowIndex = 0, aF = 0; flowIndex < combVar.length && aF < config.getActiveFlowNum(); flowIndex++) {
 			if (config.getActiveFlowBool()[flowIndex] > 0) {		//for all flows marked as active
 				activeFlow[aF] = flowIndex;							//enter index into list 
-				////Printer.printInt("comb", combVar);
-				//////////System.out.println("i: " + i + " - " + combVar[i]);
 				
 				//if the corresponding network index is invalid or points to network 0 (=none?), set the flow to network 0 (=none?)
 				if (combVar[flowIndex] < 1 || combVar[flowIndex] > config.getActiveNetworkBool().length || config.getActiveNetworkBool()[combVar[flowIndex] - 1] < 1) {
