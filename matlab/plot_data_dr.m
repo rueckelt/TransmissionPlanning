@@ -23,7 +23,7 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
         i_start=2;
         my_xlabel = 'Data flows';
         fname_part = 'flows';
-        my_xTickLabels = {'','4','8','16','32',''};
+        my_xTickLabels = {'','4','','8','','16',''};
     elseif(select==2)
         my_xlabel = 'Time Slots';
         fname_part = 'time';
@@ -55,7 +55,7 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
     end
     
 
-  %select data
+  %select data: drop rate
  v=8
     avail_sq= squeeze(avail(v,:,:,:));  %vartype, scheduler, vary_param, rep
 
@@ -72,6 +72,20 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
         %plot absolutes
         tikz_out_errorbar(filename, data_sq, my_ylabel,my_xlabel, my_xTickLabels, legendlabels2,0, 0,0);
 
+        
+%         %RELATIVE
+%         data_sq_rel = data_sq(2:end,:,:);
+%         for s=(2:nof_schedulers)
+%             data_sq_rel(s-1,:,:) = data_sq(s,:,:)./data_sq(1,:,:);
+%         end
+%         data_sq_rel
+%         %create path and labels
+%         filename = [out_folder filesep 'vary_rel_' fname_part '_' vartypes{v} '.tikz']
+% 
+%         my_ylabel= 'Relative drop and long-term delay rate';
+%         
+%         %plot absolutes
+%         tikz_out_errorbar(filename, data_sq_rel, my_ylabel,my_xlabel, my_xTickLabels, legendlabels2(2:end),0, 0,0);
         
     end
 

@@ -5,13 +5,13 @@
 
 
 %select data to read from files: select =   1=flows, 2=time, 3=net, 4=load, 5=monetary
-in_folder = ['..' filesep 'my_logs' filesep 'vary_flows']; select= 1; 
+%in_folder = ['..' filesep 'my_logs' filesep 'vary_flows']; select= 1; 
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_time']; select=2; 
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_nets']; select= 3;
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_load_notime']; select= 4;
-%in_folder = ['..' filesep 'my_logs' filesep 'vary_cost']; select= 5;
+in_folder = ['..' filesep 'my_logs' filesep 'vary_cost']; select= 5;
 
-out_folder = [in_folder filesep 'eval_test'];
+out_folder = [in_folder filesep 'eval_rop'];
 
 
 force_read_data = 1;

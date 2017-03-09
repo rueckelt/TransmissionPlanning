@@ -21,7 +21,7 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
     if(select==1)
         my_xlabel = 'Data flows';
         fname_part = 'flows';
-        my_xTickLabels = {'','4','8','16','32',''};
+        my_xTickLabels = {'','4','','8','','16',''};
     elseif(select==2)
         my_xlabel = 'Time Slots';
         fname_part = 'time';
@@ -78,16 +78,25 @@ for v=1:nof_vartypes
         % v_rnd - v_opt
           
         %calculate NRS
-        data_score = data_sq(2:end-1,:,:);  %cut off opt and random
-        for s=1:nof_schedulers-2  
-            data_score(s,:,:) = (data_sq(end,:,:)-data_sq(s+1,:,:)) ./ (data_sq(end,:,:)-data_sq(1,:,:));
+        data_score = data_sq(1:end-1,:,:);  %cut off opt and random
+        for s=2:nof_schedulers-1  
+            data_score(s,:,:) = (data_sq(end,:,:)-data_sq(s,:,:)) ./ (data_sq(end,:,:)-data_sq(1,:,:));
         end
+        %Relative Optimization Potential (ROP)
+        % v_rnd - v_opt
+        % -------------
+        %     v_rnd
+        data_score(1,:,:) = (data_sq(end,:,:)-data_sq(1,:,:)) ./ (data_sq(end,:,:));
+  
         data_score(isnan(data_score))=0;
        %plot NRS
         filename = [out_folder filesep 'vary_' fname_part '_NRS_' vartypes{v} '.tikz'];
 
-        my_ylabel='Normalized Rating Score (NRS)';
-        tikz_out_errorbar(filename, data_score, my_ylabel,my_xlabel, my_xTickLabels, scale_s(2:end-1),1, 0,0);
+        my_ylabel={sprintf('Normalized Rating Score (NRS) and\nRelative Optimization Potential (ROP)')};
+        legend_names = scale_s(1:end-1)
+        legend_names(1) = {'ROP'};
+        %tikz_out_errorbar(filename, data_score, my_ylabel,my_xlabel, my_xTickLabels, scale_s(2:end-1),1, 0,0);
+        tikz_out_errorbar(filename, data_score, my_ylabel,my_xlabel, my_xTickLabels, legend_names,0, 0,0);
        if(v==1) 
             nrs_jtp = squeeze(data_score(3,:,:))';   %3 = jtp, 2= ons, 1 = ns. 
             nrs_ons = squeeze(data_score(2,:,:))';   %3 = jtp, 2= ons, 1 = ns.  

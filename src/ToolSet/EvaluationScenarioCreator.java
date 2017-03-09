@@ -108,7 +108,7 @@ public class EvaluationScenarioCreator {
 //		schedulers.add(new PriorityScheduler(ng, tg));
 //		schedulers.add(new DummyScheduler(ng, tg));
 		
-		schedulers.add(new OptimizationScheduler(ng, tg));
+//		schedulers.add(new OptimizationScheduler(ng, tg));
 //		
 //		schedulers.add(new GreedyScheduler(ng, tg).newRating(newRating));		
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, tg).newRating(newRating));

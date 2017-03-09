@@ -121,11 +121,11 @@ public abstract class Scheduler {
 			long duration = LogMatlabFormat.loadValueFromLogfile("scheduling_duration_us", getLogfileName(path));
 			
 			//redo log
-//			cf.calculate(schedule_f_t_n);
-//			
+			cf.calculate(schedule_f_t_n);	//calculate cost function parts from schedule
+			
 //			if(duration>0)
 //				logInstance(path, duration);
-//			
+			
 
 		}
 	}

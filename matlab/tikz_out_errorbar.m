@@ -16,7 +16,7 @@ p = 25;
 % Create figure
 figure1 = figure('visible', 'on');
 linestyles = {'-','--',':'};
-linecolors = {'black','blue','magenta','green','red','cyan','yellow'};
+linecolors = {'black','cyan','magenta','green','red','blue','yellow'};
 %colors = [0,0,0; 0,0,1; 0,1,0; 0,1,1; 1,0,0; 1,0,1; 1,1,0]; %same colors in rgb
 % Create axes
 
