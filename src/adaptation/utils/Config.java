@@ -3,6 +3,7 @@ package adaptation.utils;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Vector;
 
 import schedulers.AdaptationScheduler;
 import schedulingIOModel.FlowGenerator;
@@ -32,6 +33,9 @@ public class Config {
 	private    int[] activeFlowBool = {1, 1, 1, 1, 1, 0, 0, 0}; // 8
 	private    int time;
 	private    CostSeparation cs;
+	
+	private		Vector<int[]> myIndividuals = new Vector<int[]>();
+	
 	/*** Config config ends ***/
 	
 	public Config(NetworkGenerator ng, FlowGenerator tg) {
@@ -78,6 +82,14 @@ public class Config {
 
 	public    int[] getInitGenes() {
 		return initGenes;
+	}
+	
+	public void clearIndividuals(){
+		myIndividuals.clear();
+	}
+	
+	public void addIndividual(int[] geneSeq){
+		myIndividuals.add(geneSeq);
 	}
 
 	public   void setInitGenes(int[] initGenesVar) {
@@ -162,8 +174,8 @@ public class Config {
 		return result;
 	}
 	
-	public   Set<Integer> getAvailableNetworks() {
-		Set<Integer> netPool = new HashSet<Integer>();
+	public   Vector<Integer> getAvailableNetworks() {
+		Vector<Integer> netPool = new Vector<Integer>();
 		//netPool.add(0);
 		for (int i = 0; i < getActiveNetworkBool().length; i++) {
 			if(getActiveNetworkBool()[i] > 0) {

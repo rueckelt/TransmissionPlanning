@@ -1,8 +1,10 @@
 package adaptation.geneticAlgo;
 
+import java.util.Arrays;
 import java.util.Random;
 
 //import org.apache.commons.math3.distribution.NormalDistribution;
+
 
 
 
@@ -13,6 +15,8 @@ import adaptation.utils.Config;
 import adaptation.utils.Printer;
 
 public class Population {
+	
+	private final int NOF_TRIES_INIT_MUTATE=10;
 
     private Individual[] individuals;
  //   private int[] seed = new int[Individual.defaultGeneLength]; // the long-term subplan
@@ -24,72 +28,47 @@ public class Population {
      * Constructors
      */
     // Create a population
+    
+    public Population(double amp, int size, Config config, boolean initialize){
+    	this.config= config;
+    	this.amp=amp;
+    	populationSize=size;
+    	individuals = new Individual[getPopulationSize()];
+    	
+    	if(size<1) return;
+    	
+    	if(initialize){
+        	individuals[0] = new Individual(config);	//first unchanged
+//        	individuals[0].obeyConstraint(net);
+    		for(int i = 1; i<size; i++){
+    			Individual newIndividual = new Individual(config);
+    			int tries=0;
+    			while(tries<NOF_TRIES_INIT_MUTATE && containsEqualIndividual(newIndividual)){
+    				newIndividual.mutate(1.0, true);	//enforce a change
+    				tries++;
+    			}
+    			individuals[i]=newIndividual;
+    			System.out.println("Population: craeted individual "+ newIndividual.toString());
+    			if(tries==NOF_TRIES_INIT_MUTATE)System.out.println("Population: failed to init novel individual "+i);
+    		}
+    	}
+    }
+    
+    private boolean containsEqualIndividual(Individual indiv){
+    	for(Individual i0:individuals){
+    		if(i0!=null && Arrays.equals(indiv.getComb().getComb(),i0.getComb().getComb())){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
     public Population(double amp, Config config, boolean initialise) {
-    	this.setAmp(amp);
-    	this.setConfig(config);
-    	setPopulationSize((int) Math.ceil((double) size() * amp));
-    	////////System.out.println(size() + " - " + this.amp + " - " + getPopulationSize());
-        setIndividuals(new Individual[getPopulationSize()]);
-
-        // Initialise population
-        if (initialise) {
-            // Loop and create individuals
-        	 //Individual.generateInit();      
-        	////////System.out.println("size: " + getPopulationSize());
-            for (int i = 0; i < getPopulationSize(); i++) {
-            //////////System.out.println("pop-i: " + i + " *****************************");
-                Individual newIndividual = new Individual(config);
-                // get the netnumber
-                Random r = new Random();
-                int genePoolSize = newIndividual.getGenePool().size();
-                int x = 0;
-                if (genePoolSize == 0) {
-                    x = 0;
-                } else {
-                    x = r.nextInt(genePoolSize * 2);
-                }
-                int net = 0;
-                if (genePoolSize != 0) {
-                    net = x > genePoolSize? 0: newIndividual.getCertainGene(i % newIndividual.getGenePool().size());
-                	//net = Individual.getRandomGene();
-                }
-               // ////////System.out.println("try get individuals" + "x: " + x + "net: " + net);
-                //////////System.out.println("gene pool: " + Individual.getGenePool().toString());
-
-                newIndividual.generateIndividual(net); //TODO not simply getrandomGene
-                saveIndividual(i, newIndividual);
-            }
-        }
+    	this(amp, (config.getActiveFlow().length>3?config.getActiveFlow().length:4) ,config, initialise);
     }    
     
     public Population(int size, Config config, boolean initialise) {
-    	this.setAmp(amp);
-    	setPopulationSize(size);
-    	////////System.out.println(size() + " - " + this.amp + " - " + getPopulationSize());
-        setIndividuals(new Individual[getPopulationSize()]);
-        
-        // Initialise population
-        if (initialise) {
-            // Loop and create individuals: therefore
-            for (int i = 0; i < getPopulationSize(); i++) {
-            //////////System.out.println("pop-i: " + i + " *****************************");
-                Individual newIndividual = new Individual(config);
-                // get the net number
-                Random r = new Random();
-                int genePoolSize = newIndividual.getGenePool().size();
-                int x = r.nextInt(genePoolSize * 2);
-                int net = 0;
-                if (genePoolSize != 0) {
-                    net = x > genePoolSize? 0: newIndividual.getCertainGene(i % newIndividual.getGenePool().size());
-                	//net = Individual.getRandomGene();
-                }
-               // ////////System.out.println("try get individuals" + "x: " + x + "net: " + net);
-                //////////System.out.println("gene pool: " + Individual.getGenePool().toString());
-
-                newIndividual.generateIndividual(net); //TODO not simply getrandomGene
-                saveIndividual(i, newIndividual);
-            }
-        }
+    	this(1, size, config, initialise);
     }  
 
     /* Getters */

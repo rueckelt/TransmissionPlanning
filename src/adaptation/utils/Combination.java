@@ -1,11 +1,15 @@
 package adaptation.utils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+
 
 
 
@@ -39,6 +43,7 @@ public class Combination {
 	public Combination(Config config) {
 		this.setConfig(config);
 		int[] combVar = config.getInitGenes();						//this is the initial individual from long term schedule
+//		System.out.println("new combination: initGenes are"+Arrays.toString(config.getInitGenes()));
 		resultGlobal = new int[config.getFlowNum()];
 		combGlobal = new int[config.getFlowNum()];
 		int[] activeFlow = new int[config.getActiveFlowNum()];		//mapping: contains the original indices of the active flows
@@ -102,14 +107,20 @@ public class Combination {
 	}
 
 	public double run() {
-		System.out.println("THIS IS USED");
 		int t = getConfig().getTime();
 		setCombCost(0);
 		int step = 1;
 		getConfig().extend(getCombGlobal(), getComb(), getConfig().getActiveFlow());
+		
+		
 		// do Balancer (allocation work) for each network
 		for (int netId = 0; netId < getConfig().getNetNum() + 1; netId++) { // (not used...no 0 id for network) contains network "0", in order to add the cost for dropped packets (assigned to 0)	
-			/*** initialization balancer ***/
+			/*** initialization balancer:
+			 *  get basic information about the active flows only and do some renumbering
+			 *  to work with this subset in the main step
+			 *  
+			 *  ***/
+			
 			int nofActiveFlowsForThisNet = getPart()[netId];	//pn[networkId] = number of active flows assigned to this network
 			int cap = 0;
 			if (netId != 0) {	//network 0 = none
@@ -155,6 +166,7 @@ public class Combination {
 				}
 			}
 		}
+		
 	
 		getConfig().extend(getResultGlobal(), getResult(), getConfig().getActiveFlow());
 		getConfig().extend(getCombGlobal(), getComb(), getConfig().getActiveFlow());

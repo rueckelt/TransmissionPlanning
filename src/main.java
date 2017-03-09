@@ -25,13 +25,13 @@ public class main {
 //		int n=2;
 //		int rep=3;
 
-		int f=2;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
-		int t=1;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
-		int n=2;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
+		int f=5;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
+		int t=2;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
+		int n=3;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
 
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
-		int rep=2;
+		int rep=1;
 		
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
@@ -64,7 +64,7 @@ public class main {
 
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 			eval.visualize();
-//			eval.recalc();
+			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net

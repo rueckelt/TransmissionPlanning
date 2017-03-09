@@ -308,13 +308,20 @@ public class Network implements Serializable, Cloneable{
 					}
 				}
 	}
-	
+
 	public float smapeNetwork(Network predicted){
+		return smapeNetwork(predicted, 0, capacity.size());
+	}
+	
+	public float smapeNetwork(Network predicted, int t_start, int t_end){
+		if(t_end<=0)return 0;
+		t_start=Math.max(t_start, 0);
+		
 		float sum_tp=0;
-		for(int t=0;t<capacity.size(); t++){
+		for(int t=t_start;t<t_end; t++){
 			sum_tp+=smape(capacity.get(t), predicted.getCapacity().get(t));
 		}
-		float smape_tp = sum_tp/capacity.size();
+		float smape_tp = sum_tp/(t_end-t_start);
 		float smape_lcy = smape(getLatency(), predicted.getLatency());
 		float smape_jit = smape(getJitter(), predicted.getJitter());
 	

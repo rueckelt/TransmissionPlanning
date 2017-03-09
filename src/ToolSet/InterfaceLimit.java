@@ -17,7 +17,7 @@ public class InterfaceLimit {
 	//dimension 1: interface type
 	//dimension 2: time slot
 	//value: nof used interfaces of this type in this time slot
-	int[][] used_interfaces;
+	int[][] used_interfaces;//nets, timeslots
 	//key is time slot
 	//value is a vector of used networks in this time slot
 	Map<Integer, Vector<Integer>> usedNetworks = new HashMap<Integer, Vector<Integer>>();

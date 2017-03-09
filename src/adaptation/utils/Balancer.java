@@ -17,6 +17,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import ToolSet.CostSeparation;
+import ToolSet.InterfaceLimit;
 import schedulers.AdaptationScheduler;
 import schedulers.HeuristicScheduler;
 import schedulingIOModel.Flow;
@@ -43,6 +44,7 @@ public class Balancer {
 	private static int time = -1; // time slot
 	private Config config;
 	
+	
 	public Balancer(int capacity, int pN, int step, int sumP, Config configVar) {
 		this.config = configVar;
 		setPartNum(pN);
@@ -63,48 +65,58 @@ public class Balancer {
 	public void allocate2(int n, int t){
 		AdaptationScheduler adaptSched = config.getAdaptScheduler();
 		
-		List<Integer> flow_order = getSchedulingOrder(n, t);
-		int remaining_capacity = config.getNg().getNetworks().get(n).getCapacity().get(t);
-		
-		for(int f0=0; f0<flowId.length; f0++){	//iterate over the real IDs of active flows
-			int f = flow_order.get(f0);		//f should be the active flow index, to be used for the arrays
-			
-			int remaining_tokens = adaptSched.getDataSize().get(flowId[f]) - adaptSched.getThroughput().get(flowId[f]);
-			int max_tokens_to_assign = Math.min(remaining_tokens, max[f]);
-			int tokens_to_assign = Math.min(max_tokens_to_assign, remaining_capacity);
-			result[f]=0;//tokens_to_assign;
-		}
-	}
-	
-	/**
-	 * 
-	 * @param n
-	 * @param t
-	 * @return	a list. First element in list is the active index (for addressing arrays) of the flow with highest priority and so on..
-	 */
-	private List<Integer> getSchedulingOrder(int n, int t){
-
-		AdaptationScheduler adaptSched = config.getAdaptScheduler();	//this is the initial element
-		
-		List<Integer> flowSchedulingBenefit= new LinkedList<Integer>();
+		/**
+		 * Step1: Rate flows, sort them in descending order.
+		 * flow_order is a list for indexing the original array according to the sorted order.
+		 */
+		List<Integer> flowSchedulingCost= new LinkedList<Integer>();
 		//sort keys of map in descending order
 		List<Integer> flow_order = new LinkedList<Integer>();
 		for(int f=0; f<flowId.length; f++){
 			//f is the index of the arrays here; of the ACTIVE flows.
+			
+			//calculate the cost of scheduling a token of the flow, which is indexed in active flows by f
+			int cost = adaptSched.getEstimatedSchedulingCost(flowId[f], n, t);
+
+			flowSchedulingCost.add(cost);	//we calculate the benefit of the original indexed flow
 			flow_order.add(f);
-			flowSchedulingBenefit.add(adaptSched.getEstimatedSchedulingCost(flowId[f], t, n));	//we calculate the benefit of the original indexed flow
 		}
-		if(flowId.length>0)System.out.println("flowIds: "+Arrays.toString(flowId)+"\n benefit="+flowSchedulingBenefit.toString());
-		final List<Integer> flowCrit_tmp=flowSchedulingBenefit;
-		//sort indices of ACTIVE flows in decending order with estimated scheduling cost.
-		Collections.sort(flow_order, new Comparator<Integer>() {
-			@Override
-			public int compare(Integer i1, Integer i2) {
-				return flowCrit_tmp.get(i2)-flowCrit_tmp.get(i1);
+//		if(flowId.length>0)System.out.println("flowIds: "+Arrays.toString(flowId)+"\n benefit="+flowSchedulingCost.toString());
+		//sort indices of ACTIVE flows in descending order with estimated scheduling cost.
+		if (flow_order.size()>1){
+			final List<Integer> flowCrit_tmp=flowSchedulingCost;
+			Collections.sort(flow_order, new Comparator<Integer>() {
+				@Override
+				public int compare(Integer i1, Integer i2) {
+					return flowCrit_tmp.get(i1)-flowCrit_tmp.get(i2);
+				}
+			});
+		}
+//		if(flowId.length>0)System.out.println("flowOrder="+flow_order);
+		
+		/**
+		 * Step2: Token allocation
+		 * allocate in descending order and only for flows that create benefit according to the estimation. 
+		 */
+
+		
+		int remaining_capacity = config.getNg().getNetworks().get(n).getCapacity().get(t);
+		
+		for(int f0=0; f0<flow_order.size(); f0++){	//iterate over the real IDs of active flows
+			//allocate tokens only if beneficial
+			if(flowSchedulingCost.get(f0) <= adaptSched.getScheduleDecisionLimit()){
+//				System.out.println("schedule flow with cost= "+flowSchedulingCost.get(f0));
+				int f = flow_order.get(f0);		//f should be the active flow index, to be used for the arrays
+				
+				int remaining_tokens = adaptSched.getDataSize().get(flowId[f]) - adaptSched.getThroughput().get(flowId[f]);
+				int max_tokens_to_assign = Math.min(remaining_tokens, max[f]);
+				int tokens_to_assign = Math.min(max_tokens_to_assign, remaining_capacity);
+				result[f]=tokens_to_assign;
+				remaining_capacity-=tokens_to_assign;
 			}
-		});
-		return flow_order;
+		}
 	}
+	
 	
 	/**
 	 * allocate tokens of the configured flows to network n in time slot t
@@ -311,8 +323,8 @@ public class Balancer {
 		double sum = 0;
 		// partNum -> how many flows assigned to this network
 		for (int i = 0; i < partNum; i++) {
-			int fId = getFlowId()[i];
-			Flow flow = config.getFg().getFlows().get(fId);
+//			int fId = getFlowId()[i];
+//			Flow flow = config.getFg().getFlows().get(fId);
 			sum += (calcCostFinal(i , t, n) * result[i]); //+ monetaryCost*result[i] - (result[i] - (flow.getChunks() / (flow.getDeadline() - flow.getStartTime())))*costUnsched;
 		}
 		return sum;

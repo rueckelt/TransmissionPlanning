@@ -38,6 +38,7 @@ public class CCP_Ga {
         Population myPop = new Population(popAmp, config, true); // true means this is for pop initialization
         int popSize = myPop.getPopulationSize();
         // Tournament Config
+        if(popSize<1) return new Individual(config);	//no population
         if (popSize <= 2) {
         	Algorithm.setTournamentSize(popSize);
         } else {
@@ -50,7 +51,8 @@ public class CCP_Ga {
         }
         // Evolve our population until we reach an optimum solution
         int generationCount = 0;
-        while (generationCount < myPop.size() * 50) { // the naive stop criteria
+        int generationMax = 200;
+        while (generationCount < Math.max(generationMax, myPop.size() * 50)) { // the naive stop criteria
         	////////System.out.println("******************" + generationCount + "******************");
             generationCount++;
             if (myPop.size() != 0) {
@@ -67,11 +69,11 @@ public class CCP_Ga {
             } else {
             	converge.add(0.0);
             }
-            /*
+            
             for (Individual ind : myPop.getIndividuals()) {
-            	////////System.out.println(ind.toString());
+            	System.out.println(ind.toString());
             }
-            */
+            
         }
         convergeList.add(converge);
 

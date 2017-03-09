@@ -106,6 +106,9 @@ public abstract class HeuristicScheduler extends Scheduler{
 		schedule_decision_limit=limit;
 		return this;
 	}
+	public int getScheduleDecisionLimit(){
+		return schedule_decision_limit;
+	}
 
 
 	/**
@@ -140,7 +143,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	 * @param ng available networks
 	 * @return criticality
 	 */
-	protected int calculateFlowCriticality(Flow f, NetworkGenerator ng){
+	public int calculateFlowCriticality(Flow f, NetworkGenerator ng){
 		//calculate violation if flow is NOT scheduled (worst case)
 		FlowGenerator tg_temp= new FlowGenerator();
 		tg_temp.addFlow(f);

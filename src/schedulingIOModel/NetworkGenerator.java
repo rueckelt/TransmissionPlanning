@@ -187,16 +187,22 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 * SMAPE (Symmetrical mean absolute percentage error) of position. Each shift contributes to the error with 2/T.
 	 * @param slotChange
 	 */
-	public float getPositionError(Vector<Integer> slotChange){
+	public float getPositionError(Vector<Integer> slotChange, int till_t){
+		if(till_t<=0)return 0;
 		int sum_change=0;
 		
 		int prev_value=0;
-		for(int value:slotChange){
+		for(int t=0; t<till_t; t++){
+			int value = slotChange.get(t);
 			sum_change+= 2*Math.abs(prev_value+1-value);
 			prev_value = value;
 		}
 //		System.out.println(sum_change);
-		return ((float)sum_change)/getTimeslots();
+		return ((float)sum_change)/till_t;
+	}
+
+	public float getPositionError(Vector<Integer> slotChange){
+		return getPositionError(slotChange, slotChange.size());
 	}
 	
 	/**

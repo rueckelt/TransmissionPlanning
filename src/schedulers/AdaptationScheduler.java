@@ -27,6 +27,9 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	private static Combination previous; //= new Combination();
 	private FlowGenerator tgPred;
 	private Config config;
+	
+	//config parameters
+	private boolean advancedInitialization=false;
 		
 	
 //	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg) {
@@ -47,26 +50,11 @@ public class AdaptationScheduler extends HeuristicScheduler{
 		}
 		spLogPath=logpath;
 	}
-//	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg, String logpath) {
-//		super(ng, tg);
-//		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logpath);
-//		System.out.println(showSchedule(longTermSP));
-//
-//		//set indices of flows and networks in consecutive order
-//		tg.setFlowIndices();
-//		int i_n=0;
-//		for(Network n:ng.getNetworks()){
-//			n.setId(i_n);
-//			i_n++;
-//		}
-//		//		this.longTermSP = JsonLogger.json2Array(logpath);
-//	}
 
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
-		return "GA_new_heuristic";
+		return "GA" + (advancedInitialization? "_loc":"");
 	}
 	
 	public void loadLongTermSp(String logfile){
@@ -75,6 +63,13 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	
 	@Override
 	protected void calculateInstance_internal(String logfile) {
+		//reset indices of networks and flows. Required for GA.
+		tg.setFlowIndices();
+		int i_n=0;
+		for(Network n:ng.getNetworks()){
+			n.setId(i_n);
+			i_n++;
+		}
 		initCostSeparation();
 		//load transmission plan from log file
 		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", spLogPath);
@@ -98,15 +93,31 @@ public class AdaptationScheduler extends HeuristicScheduler{
 		initEnvConfig();
 		
 		int[][][] adapted = getEmptySchedule();//new int[tg.getFlows().size()][ng.getTimeslots()][ng.getNetworks().size()];
-
+		
+		
 		// time slot loop
 		for (int t = 0; t < ng.getTimeslots(); t++) {
+			System.out.println("AdaptationScheduler starting time slot t="+t);
 			config.setTime(t);
 
 			//***********************//
 			updateFlowNetFlag(t, lookahead);	//mark which flow network combinations are allowed (preferred?)
 
 			// each time slot - update initGene (intial solution from long-term schedule plan)
+			config.clearIndividuals();
+			
+			config.addIndividual(extractIndividual(t));		//add the solution from the long term plan  
+			
+			
+			if(advancedInitialization){
+				config.addIndividual(previous.getComb());		//add the solution from the previous time step
+				//add individual of the corresponding time slot of the long term plan without movement error
+				int t_corr = getCorrespondingTimeSlot(t);
+				if(t!=t_corr){
+					config.addIndividual(extractIndividual(t_corr));
+				}
+			}
+			
 			updateInitSP(t); // TODO different strategy for initialization
 			// each time slot - update network capacity
 			updateNetworkConfig(true);
@@ -144,12 +155,27 @@ public class AdaptationScheduler extends HeuristicScheduler{
 		setSchedule(adapted);
 	}
 	
+	/**
+	 * 
+	 * @param t	current time slot after uncertainty
+	 * @return the time slot of the original schedule, which corresponds to the current location of the vehicle
+	 */
+	private int getCorrespondingTimeSlot(int t) {
+		int t0=0;
+		while(t0<t && t0<ng.getTimeslots()){
+			t0++;
+		}
+		return t0;	//failed
+	}
+
+
 	//flags all network/flow matches that have been seen in the long-term plan.
 	//This is a heuristic to preserve time selection
 	//TODO: make it more efficient by keeping the state and updating just for current time slot? Use special case t=0 to init.
 	public void updateFlowNetFlag(int t, boolean lookahead) {
+				
 		config.setFlowNetFlag(new int[tg.getFlows().size()][ng.getNetworks().size()]);		//set all flags to zero
-		int range = 15;
+		int range = 3;
 		if (lookahead) {
 			//if range covers all remaining time horizon, set all flags
 			if (t + range >= ng.getTimeslots()) {
@@ -202,6 +228,19 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			}
 		}
 		
+	}
+	
+	public int[] extractIndividual(int t){
+		int[] geneSeq = new int[longTermSP.length];	// geneSeq[flow]=assigned network
+		if (t >= longTermSP[0].length) return null;
+		for (int f = 0; f < longTermSP.length && f < config.getInitGenes().length; f++) {
+			for (int n = 0; n < longTermSP[0][0].length; n++) {
+				if (longTermSP[f][t][n] != 0) {
+					geneSeq[f] = n + 1;	//assign network id to each flow
+				}
+			}
+		}
+		return geneSeq;
 	}
 	
 	public void updateNetworkConfig(boolean onOff) {
@@ -417,11 +456,11 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	}
 	
 
-	public static Combination getPrevious() {
+	public Combination getPrevious() {
 		return previous;
 	}
 
-	public static void setPrevious(Combination prev) {
+	public void setPrevious(Combination prev) {
 		previous = prev;
 	} 
 	
@@ -448,6 +487,10 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			nf.add(ng1.getFlows().get(i).getIndex());
 		}
 		return nf;
+	}
+
+	public void setLocationCorrection(boolean locationCorrection) {
+		this.advancedInitialization = locationCorrection;
 	}
 	
 //	public static void main(String[] args) {

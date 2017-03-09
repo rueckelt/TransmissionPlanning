@@ -501,30 +501,7 @@ public class CostFunction {
 	public void calculate(int[][][] schedule) {
 		costTotal(schedule);		
 	}
-	
-	/**
-	 * criticality is worst case schedule cost (flow NOT scheduled) 
-	 * @param f flow
-	 * @param ng available networks
-	 * @return criticality
-	 */
-	public static int calculateFlowCriticality(Flow f, NetworkGenerator ng){
-		//calculate violation if flow is NOT scheduled (worst case)
-		//TODO: and subtract violation is flow is scheduled alone (best case)
-		FlowGenerator tg_temp= new FlowGenerator();
-		tg_temp.addFlow(f);
-		CostFunction cf = new CostFunction(ng, tg_temp);
-		Scheduler s = getScheduler(tg_temp, ng);
-		//get cost with empty schedule (worst case, flow is unscheduled)
-		int cost_wc = cf.costViolation(s.getSchedule());
-		//cost_wc*=f.getImpUser();
-		//System.out.println("criticality:cost of flow "+getId()+" worst: "+cost_wc);
-		return cost_wc;//-cost_bc;
-	}
 
-	private static Scheduler getScheduler(FlowGenerator tg, NetworkGenerator ng){
-		return new PriorityScheduler(ng, tg);	//this could be a dummy scheduler.. only need empty schedule from it
-	}
 
 	public int getMinTpAmplifier() {
 		return minTpAmplifier;

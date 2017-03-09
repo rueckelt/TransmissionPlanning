@@ -20,18 +20,14 @@ public class Algorithm {
     	////////System.out.println("in evolve pop_size: " + pop.getPopulationSize() + " - " + pop.getAmp());
         Population newPopulation = new Population(pop.getAmp(), pop.getConfig(), false);
 
+
+        int elitismOffset=0;
         // Keep our best individual
         if (elitism) {
             newPopulation.saveIndividual(0, pop.getFittest());
+            elitismOffset = 1;
         }
 
-        // Crossover population
-        int elitismOffset;
-        if (elitism) {
-            elitismOffset = 1;
-        } else {
-            elitismOffset = 0;
-        }
         // Loop over the population size and create new individuals with
         // crossover
         for (int i = elitismOffset; i < pop.getPopulationSize(); i++) {
@@ -41,6 +37,7 @@ public class Algorithm {
             newPopulation.saveIndividual(i, newIndiv);
         }
         ////////System.out.println("newpop: " + newPopulation.getPopulationSize());
+        
         // Mutate population
         for (int i = elitismOffset; i < newPopulation.getPopulationSize(); i++) {
         	////////System.out.println("i: " + i);
