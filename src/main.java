@@ -19,13 +19,19 @@ public class main {
 	
 	public static void main(String[] args) {
 
-		int f=3;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
+		//logfile is logpath/f_t_n/rep..
+//		int f=2;
+//		int t=1;
+//		int n=2;
+//		int rep=3;
+
+		int f=5;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
 		int t=2;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
 		int n=3;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
 
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
-		int rep=50;
+		int rep=1;
 		
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
@@ -33,7 +39,10 @@ public class main {
 		//String logpath= "my_logs"+File.separator+"tester";
 //		String logpath= "my_logs"+File.separator+"eval_4_4_3_c15";
 
-		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;f=5;
+	
+//		String logpath= "my_logs"+File.separator+"test_exec_ga";
+
+//		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;//f=5;
 //		String logpath= "my_logs"+File.separator+"vary_time"; t=4;
 //		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
 //		String logpath= "my_logs"+File.separator+"vary_load"; 
@@ -44,8 +53,10 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"vary_pe_net";
 //		String logpath= "my_logs"+File.separator+"vary_pe_flow";
 //		String logpath= "my_logs"+File.separator+"vary_pe_comb";
+
 //		String logpath= "my_logs"+File.separator+"vary_pe_all";
 
+		String logpath= "test_GA";
 		
 		
 		//if overwrite, then delete everything in folder, create scenario new and calculate
@@ -53,23 +64,24 @@ public class main {
 		//if nothing of the two, create new scenario if none available; calculate schedules if no logs available for scheduler.
 
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
-//			eval.recalc();
+			eval.visualize();
+			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
 //			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
 //			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
 //			eval.evaluateTop();
-//			eval.visualize();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();	
 //			eval.evaluateNetworkVariation();
-			eval.evaluateFlowVariation();
+
+//			eval.evaluateFlowVariation();
 //			eval.evaluateMonetaryWeight();
 //			eval.evaluateTrafficLoad();
-//			eval.evaluateThisInstance();
-			eval.parallel(4);
+			eval.evaluateThisInstance();
+			eval.parallel(1);
 			eval.start(4*24);
 
 		

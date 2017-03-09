@@ -3,7 +3,7 @@ package schedulers;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
 
-public class DummyScheduler extends Scheduler {
+public class DummyScheduler extends HeuristicScheduler {
 
 	public DummyScheduler(NetworkGenerator ng, FlowGenerator tg) {
 		super(ng, tg);

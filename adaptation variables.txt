@@ -1,0 +1,35 @@
+flowNetFlag[n][f] 				flag is 1 (or more) when for any earlier time slot (+ forward looking range), this combination existed in the initial schedule
+activeFlow[f]					array over active flows, containing the original indices of the active flows activeFlow[f] = original index of f
+activeFlowBool					flag is 1 when flow is active in this time slot
+comb[f]	= assigned Network		Is a combination: this is an an array over flows, saying to which network it is assigned
+
+Balancer pick???	sets dest. what is dest???	assigns 
+Balancer pickFlowId	?? same
+mQ[f]				??? 
+prior[f]			???
+max[f]
+dest[f]				OUTPUT!! 
+
+partNum[n] 		number of active flows using this network
+
+getMax			maximum number of tokens to allocate =  average max throughput OR number of tokens
+getmQ			average minimum throughput value. 				AdaptScheduler: when not available, then use nofTokens / (deadline-start time)?
+DataSize		number of tokens of a flow		
+prior			not used, all equal. Former user weight.		AdaptScheduler. Use flowCriticality Heuristic?
+
+cap				capacity of the network in this time slot
+
+
+Questions: 
+
+What is netIndex in Individual.mutate(boolean random, int netIndex), why not using the other mutate ?
+Algorithm mutate loop????????? 
+	Does not loop through genes? - variable i is not used. 
+	constOn - not used
+Individual mutate loop i < 100???
+
+
+Changes: 
+Tournament selection: Do not use the same Individual twice in a random tournament set. Done. Correct?
+
+Individual.mutate: mutate each gene(flow) with probability 1/populationSize instead of selecting one flow to change.	

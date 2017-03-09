@@ -87,7 +87,11 @@ public class CostSeparation {
 		
 	}
 
-	
+	public int getUnitstatefulReward(int f) {
+		Flow flow = tg.getFlows().get(f); 
+		int step= flow.getImpThroughputMin()*flow.getImpUser();
+		return step;
+	}
 	//calculate potential reward init-state from minTp for scheduling a token of flow f to time slot t
 	private void initStatefulReward(){
 		int f=0;
@@ -176,5 +180,12 @@ public class CostSeparation {
 		return -flowReward[f];	//the equation contains user^2
 	}
 	
+
+	public FlowGenerator getTg(){
+		return tg;
+	}
+	public NetworkGenerator getNg(){
+		return ng;
+	}
 
 }

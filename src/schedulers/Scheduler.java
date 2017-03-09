@@ -75,6 +75,10 @@ public abstract class Scheduler {
 	public int[][][] getSchedule(){
 		return schedule_f_t_n;
 	}
+	public void setSchedule(int[][][] schedule_f_t_n){
+		this.schedule_f_t_n = schedule_f_t_n;
+		this.schedule_f_t_n_temp = schedule_f_t_n;
+	}
 	
 	public CostFunction getCostFunction(){
 		return cf;
@@ -119,10 +123,9 @@ public abstract class Scheduler {
 //			System.out.println(showSchedule(schedule_f_t_n));
 			
 			long duration = LogMatlabFormat.loadValueFromLogfile("scheduling_duration_us", getLogfileName(path));
-			
-			//redo log
+
 			cf.calculate(schedule_f_t_n);	//calculate cost function parts from schedule
-			
+			//redo log
 //			if(duration>0)
 //				logInstance(path, duration);
 			

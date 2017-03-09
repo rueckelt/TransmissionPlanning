@@ -35,11 +35,17 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	//one interface of each type. Only first two are used 
 	private int[] interfacesOftype = {1,1};	//default: (index: 0 = NONE, 1 = #wifi, 2 = #mobile network) 
 	
+	//store slot change when adding movement uncertainty
+	//we may use it in the heuristics, undoing the movement error networks. (Reality: get Position from GPS)
+	//however then just network characteristics can be estimated from a Map. Flows stay.
+	private Vector<Integer> slotChange;
+	
 	public NetworkGenerator(){
 	}
 	
 	public NetworkGenerator(int nofNetworks, int time){
 		addNetworks(nofNetworks, time);
+		resetNetworkIds();
 	}
 	
 	public static NetworkGenerator loadNetworkGenerator(String path){
@@ -48,6 +54,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 			if(new File(path+NG_NAME).exists()){
 				ng= (NetworkGenerator) PersistentStore.loadObject(path+NG_NAME);
 //				ng.setNofInterfacesOfType(new int[]{1,1});
+//				ng.resetNetworkIds();
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -173,22 +180,29 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		for(Network net: networks){
 			net.addPositionUncertainty(slotChange);
 		}
+		this.slotChange=slotChange;
 	}
 	
 	/**
 	 * SMAPE (Symmetrical mean absolute percentage error) of position. Each shift contributes to the error with 2/T.
 	 * @param slotChange
 	 */
-	public float getPositionError(Vector<Integer> slotChange){
+	public float getPositionError(Vector<Integer> slotChange, int till_t){
+		if(till_t<=0)return 0;
 		int sum_change=0;
 		
 		int prev_value=0;
-		for(int value:slotChange){
+		for(int t=0; t<till_t; t++){
+			int value = slotChange.get(t);
 			sum_change+= 2*Math.abs(prev_value+1-value);
 			prev_value = value;
 		}
 //		System.out.println(sum_change);
-		return ((float)sum_change)/getTimeslots();
+		return ((float)sum_change)/till_t;
+	}
+
+	public float getPositionError(Vector<Integer> slotChange){
+		return getPositionError(slotChange, slotChange.size());
 	}
 	
 	/**
@@ -198,6 +212,8 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 * @param strength		scales the sigma for the distribution
 	 * @param offset		[0..1] select 1 for no offset
 	 * @param motorwayModel	set true for motorway, false for urban distribution model
+	 * @return A vector, containing for each time slot of the horizon the corresponding original time slot without movement error
+	 * apply uncertainty: net
 	 * 
 	 * motorway model covers normal distribution of speed deviation. Target speed is held for 1-15 time slots, low alpha for low pass filter of speed
 	 * urban model has tighter distribution. Target speed is held for 1-10 time slots. High alpha for low pass filter leads to fast reaction and high dynamics
@@ -440,4 +456,23 @@ public class NetworkGenerator implements Serializable, Cloneable {
 		}
 		return nets;
 	}
+	
+	public void resetNetworkIds(){
+		int index=0;
+		for(Network net : networks){
+			net.setId(index);
+			index++;
+		}
+	}
+
+	/**
+	 * 
+	 * @return vector with time indices for movement error. 
+	 *  slotChange[t_without_movement_error] = t_with_movement_error
+	 *  result is null when no movement error was applied.
+	 */
+	public Vector<Integer> getSlotChange() {
+		return slotChange;
+	}
+
 }

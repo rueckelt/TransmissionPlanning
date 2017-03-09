@@ -3,6 +3,9 @@ package schedulingIOModel;
 import java.util.HashMap;
 import java.util.Vector;
 
+import schedulers.DummyScheduler;
+import schedulers.HeuristicScheduler;
+
 public class UncertaintyErrorCalculation {
 
 	public float getFlowUncertaintyError(Vector<Flow> predicted, Vector<Flow> actual){
@@ -73,7 +76,6 @@ public class UncertaintyErrorCalculation {
 			
 			//calculate flow restrictiveness (from greedy heuristic) to weight flows.
 			
-			float sum_criticalities = 0;
 			for(int f_id : smape_tokens.keySet()){
 				//get flow first with actual tokens + deadline to put it into the function then
 				Flow flow=null;
@@ -96,15 +98,12 @@ public class UncertaintyErrorCalculation {
 					}
 				}
 				
-				//put into function
-				float criticality =calculateFlowCriticality(flow);
-				sum_criticalities+=criticality;
 				
 				float dl=(float)0;
 				if(smape_deadlines.containsKey(f_id)){
 					dl=smape_deadlines.get(f_id);
 				}
-				smape_flow.put(f_id, criticality*smape_tokens.get(f_id)*alpha + dl*(1-alpha));
+				smape_flow.put(f_id, smape_tokens.get(f_id)*alpha + dl*(1-alpha));
 			}
 			
 		//4. get final SMAPE error
@@ -114,8 +113,10 @@ public class UncertaintyErrorCalculation {
 				sum_smape += smape_flow.get(f_id);	//summation could be integrated above for performance gain
 //				System.out.println("flow smape of f "+f_id+" is "+smape_flow.get(f_id));
 			}
+
+			float flowCount = smape_tokens.size();
 			
-			float smape = sum_smape/sum_criticalities;
+			float smape = sum_smape/flowCount;
 //			System.out.println("result = "+smape+", sum_smape="+sum_smape+", #flows="+smape_flow.size()+", sum_crit="+sum_criticalities);
 			return smape;
 		}
@@ -128,24 +129,6 @@ public class UncertaintyErrorCalculation {
 			float smape = 2*(float)Math.abs(pred-act)/(float)(Math.abs(pred)+Math.abs(act));
 //			System.out.println(smape);
 			return smape;
-		}
-	
-		private float calculateFlowCriticality(Flow f){
-			if(true)return 1;		//equal weight for all flows
-			
-			float c= f.getImpUser()*(
-					//attracting factors: important because cost rises fast if not scheduled
-					f.getTokensMin()/f.getWindowMin() *f.getImpThroughputMin()	//average number of min tokens to schedule
-					+f.getImpUnsched())*f.getTokens()/(f.getDeadline()-f.getStartTime())	//average number of tokens to schedule
-					
-					//repelling factors: important because cost rises fast if wrongly scheduled
-					+f.getReqJitter()*f.getImpJitter()
-					+f.getReqLatency()*f.getImpLatency()
-					;
-			c=(float) Math.log10(c);
-//			System.out.println("flow criticality of f "+f.getId()+" is "+c+", type is "+f.getFlowName());
-			return c;
-			
 		}
 	
 }
