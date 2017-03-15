@@ -8,14 +8,20 @@ import schedulingIOModel.NetworkGenerator;
 
 public class ExecutionScheduler extends Scheduler {
 	private Executor exe;
+	private String nameExtention="";
 	String logFilePath;
 	public ExecutionScheduler(NetworkGenerator ng, FlowGenerator tg) {
 		super(ng, tg);
 	}
 	public ExecutionScheduler(NetworkGenerator ng, FlowGenerator tg, String logFilePath) {
-		super(ng, tg);
+		this(ng, tg);
 		this.logFilePath=logFilePath;
 	}
+	public ExecutionScheduler(NetworkGenerator ng, FlowGenerator tg, String logFilePath, String nameExtention) {
+		this(ng, tg, logFilePath);
+		this.nameExtention=nameExtention;
+	}
+	
 	@Override
 	protected void calculateInstance_internal(String logfile) {
 		System.out.println(logfile+", ; \t"+logFilePath);
@@ -28,7 +34,7 @@ public class ExecutionScheduler extends Scheduler {
 
 	@Override
 	public String getType() {
-		return "Exec";
+		return "Exec"+nameExtention;
 	}
 	
 

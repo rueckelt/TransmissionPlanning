@@ -110,6 +110,7 @@ public class EvaluationScenarioCreator {
 
 
 		boolean newRating = false;
+		int i;
 //		schedulers.add(new OptimizationScheduler(ng, fg));
 //		
 //		schedulers.add(new GreedyScheduler(ng, fg).newRating(newRating));		
@@ -117,18 +118,26 @@ public class EvaluationScenarioCreator {
 //
 		newRating=true;
 
-//		schedulers.add(new GreedyOnlineScheduler(ng, fg).newRating(newRating));
+		schedulers.add(new GreedyOnlineScheduler(ng, fg).newRating(newRating));
 		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg).newRating(newRating));
 		Scheduler gs = new GreedyScheduler(ng, fg).newRating(newRating);
 		schedulers.add(gs);				
 
-		//execution of schedule from erroneous prediction
+		//execution of jtp schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
-		schedulers.add(new ExecutionScheduler(ng, fg, path));
+		schedulers.add(new ExecutionScheduler(ng, fg, path, "_JTP"));
+		
+		//execution from opt
+		OptimizationScheduler os=new OptimizationScheduler(ng, fg);
+		String path_opt = os.getLogfileName(log_run_path);
+		schedulers.add(new ExecutionScheduler(ng, fg, path_opt, "_Opt"));
 		
 		//Adaptation of schedule under prediction errors
 		FlowGenerator fgPred = getFlowGenerator(log_run_path, false, 0, 0, 0);
-//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
+		if(fgPred!=null)
+			schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
+		else
+			System.out.println("FGPred is null");
 		
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(5)).newRating(newRating));
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(8)).newRating(newRating));

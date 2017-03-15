@@ -31,7 +31,7 @@ public class main {
 
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
-		int rep=1;
+		int rep=50;
 		
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
@@ -54,9 +54,9 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"vary_pe_flow";
 //		String logpath= "my_logs"+File.separator+"vary_pe_comb";
 
-//		String logpath= "my_logs"+File.separator+"vary_pe_all";
+		String logpath= "my_logs"+File.separator+"vary_pe_all";
 
-		String logpath= "test_GA";
+//		String logpath= "test_GA";
 		
 		
 		//if overwrite, then delete everything in folder, create scenario new and calculate
@@ -64,14 +64,14 @@ public class main {
 		//if nothing of the two, create new scenario if none available; calculate schedules if no logs available for scheduler.
 
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
-			eval.visualize();
-			eval.recalc();
+//			eval.visualize();
+//			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
 //			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
-//			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
-//			eval.evaluateTop();
+			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
+			eval.evaluateTop();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();	
@@ -80,8 +80,8 @@ public class main {
 //			eval.evaluateFlowVariation();
 //			eval.evaluateMonetaryWeight();
 //			eval.evaluateTrafficLoad();
-			eval.evaluateThisInstance();
-			eval.parallel(2);
+//			eval.evaluateThisInstance();
+			eval.parallel(10);
 			eval.start(4*24);
 
 		

@@ -42,12 +42,12 @@ public class AdaptationScheduler extends HeuristicScheduler{
 		this.tgPred = tgPred;
 //		System.out.println(logpath);
 //		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logpath);
-		tg.setFlowIndices();
-		int i_n=0;
-		for(Network n:ng.getNetworks()){
-			n.setId(i_n);
-			i_n++;
-		}
+//		tg.setFlowIndices();
+//		int i_n=0;
+//		for(Network n:ng.getNetworks()){
+//			n.setId(i_n);
+//			i_n++;
+//		}
 		spLogPath=logpath;
 	}
 
@@ -175,7 +175,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	public void updateFlowNetFlag(int t, boolean lookahead) {
 				
 		config.setFlowNetFlag(new int[tg.getFlows().size()][ng.getNetworks().size()]);		//set all flags to zero
-		int range = 3;
+		int range = 2;
 		if (lookahead) {
 			//if range covers all remaining time horizon, set all flags
 			if (t + range >= ng.getTimeslots()) {
