@@ -50,16 +50,16 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 			for(int f0=0;f0<tg.getFlows().size();f0++){
 				int f=flow_order.get(f0);
 				Flow flow= tg.getFlows().get(f);
-				int chunksMaxTp = (int)(flow.getTokensMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
+				int chunksMaxTp = flow.getTokensMax();//(int)(flow.getTokensMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
 				//assign only within preferred time frame of flow
-				if(flow.getStartTime()<=t && flow.getDeadline()>t){
+				if(flow.getStartTime()-1<=t && flow.getDeadline()>t){
 					int n0=0;					
 					int allocated=0;
 					
 					//try to allocate at networks according to preference. 
 					while(allocated==0 && n0<ng.getNetworks().size()){
 						int n=flowsToNets.get(f).get(n0);
-						//oppertunistic scheduling: use benefit estimation to decide whether to use network or not
+						//opportunistic scheduling: use benefit estimation to decide whether to use network or not
 						if(scheduleDecision(f, n, t)){
 							if(chunksToAllocate.get(f)<chunksMaxTp){
 								allocated=allocate(f, t, n, chunksToAllocate.get(f)); //do not allocate more chunks than required
@@ -85,7 +85,7 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 	
 	@Override
 	public String getType() {
-		return "GreedyOnline"+(NEW_RATING_ESTIMATOR?"_H2":"");
+		return "GreedyOnline_st"+(NEW_RATING_ESTIMATOR?"_H2":"");
 	}
 
 }

@@ -1,4 +1,6 @@
 package schedulers;
+import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -13,26 +15,13 @@ import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
 import ToolSet.CostSeparation;
+import ToolSet.LogMatlabFormat;
 
 
 public abstract class HeuristicScheduler extends Scheduler{
-//	private final boolean RELAX_TIME_LIMITS = false;
 	
-	/**
-	 * 
-	 * Selects a network randomly and keeps it as long as any data can be scheduled to it
-	 * 
-	 * Behavior:
-	 * 
-	 * 1. Order flows according to criticality
-	 * 2. Schedule flows in this order
-	 * 		2.1. Order networks for each flow according to constraints match
-	 * 		2.2. Try to allocate as much as possible to highest priority network, second highest network,third... from flow-start-time till flow-deadline 
-	 * 		2.3. Continue with next flow
-	 * 
-	 * schedule_f_t_n
-	 */
-
+	
+	//for normal heuristics
 	public HeuristicScheduler(NetworkGenerator ng, FlowGenerator tg) {
 		
 		super(ng, tg);
@@ -41,13 +30,31 @@ public abstract class HeuristicScheduler extends Scheduler{
 		}
 	}
 	
+	//For adaptation
+	public HeuristicScheduler(NetworkGenerator ng, FlowGenerator tg, NetworkGenerator ngPred, FlowGenerator tgPred, String longTermSchedule_logfile){
+		super(ng, tg);
+		this.tgPred=tgPred;
+		this.ngPred=ngPred;
+		spLogPath=longTermSchedule_logfile;
+	}
+	
 	
 	protected NetworkGenerator ng_tmp; //remove scheduled chunks from this ng
-	protected int schedule_decision_limit =0;
+	protected int schedule_decision_limit =0;		//clim cost limit. positive fosters allocation. negative impairs allocation.
 	protected int tl_offset =0;	//allowed time offset for which violation is allowed
 	
 	protected boolean NEW_RATING_ESTIMATOR=true;
+	//-1 is automatic from smape. Else vary between 0 and 1; 1 means full impairing = follow plan!
+	protected double TIME_IMPAIRING_WEIGHT = 0;	
+	protected double NET_IMPAIRING_WEIGHT = 0;	
 	protected CostSeparation cs;
+	protected String spLogPath;
+
+	//for adaptation heuristics
+	protected int[][][] longTermSP_f_t_n;	
+	protected FlowGenerator tgPred;
+	protected NetworkGenerator ngPred;
+	private int[][] prefixSumLongTermSP_f_t;
 	
 	/**
 	 * activates new rating scheme for cost estimation
@@ -66,14 +73,10 @@ public abstract class HeuristicScheduler extends Scheduler{
 
 
 	protected boolean oppScheduleDecision(int f, int n, int t) {
-//		System.out.println("DECISION_VIO "+calcVio(flow, ng.getNetworks().get(n)));
 		if(NEW_RATING_ESTIMATOR){
 			int sum = getEstimatedSchedulingCost(f, n, t);
-//			if(sum-1000<schedule_decision_limit && sum>schedule_decision_limit){
-//			if(f==5 && n==4){
-//				System.out.println("Flow "+f+"\tat Time "+t+"\ton Net "+n+":\t"+(sum-schedule_decision_limit)+
-//						",\t vio: "+calcVio+",\t stateful: "+statefulReward+",\t tp: "+tp+"\tnet-match: "+cs.getNetworkMatch(f, n));
-//			}
+			if(f==0)System.out.println("Heuristic: oppScheduleDecision: f="+f+", n="+n+", t="+t+", sum"+sum);
+
 			return  sum	< schedule_decision_limit;
 
 		}else
@@ -91,10 +94,21 @@ public abstract class HeuristicScheduler extends Scheduler{
 		if(cs==null){
 			initCostSeparation();
 		}
-		int calcVio = calcVio(f,n);
+		int statelessReward = cs.getStatelessReward(f);
 		int statefulReward = cs.getStatefulReward(f, t);
+		int netMatch = cs.getNetworkMatch(f, n);
 		int tp=cs.getTimeMatch(f, t);// weight is already covered in cs   // *tg.getFlows().get(f).getImpUser();
-		int sum = calcVio+statefulReward+tp;
+		
+		double time_impairing=0;
+		if(TIME_IMPAIRING_WEIGHT!=0){
+			time_impairing=getTimeImparing(f,t, 0);
+		}
+		if(f==0){
+//			System.out.println("Heuristic: getEstSch: f="+f+", n="+n+", t="+t+", \t pos="+(statefulReward+statelessReward)+", neg="+(netMatch+tp)+", time_imp="+time_impairing);
+		}
+		
+		int sum = (int) ((statelessReward+statefulReward)*(1-time_impairing))
+				+netMatch+tp;	//repelling forces
 		return sum;		//should be 
 	}
 	
@@ -300,6 +314,147 @@ public abstract class HeuristicScheduler extends Scheduler{
 			return sumCap/sumSlots;
 	}
 	
+	/**
+	 * Heuristics for Adaptation:
+	 * 
+	*/
+	
+	/**
+	 * 1. Time match heuristic
+	 * 
+	 * Idea: Adapt the attracting forces of the model (throughput+unscheduled) according of the token to schedule to the long term schedule
+	 *  --> decreases attracting forces, when more tokens are scheduled than planned. Move allocation farther away.
+	 * def: planned tokens = in long-term plan
+	 * 		
+	 * 				Max( so far planned tokens - so far scheduled tokens , 0)
+	 * h(f, t) = 	-----------------------------------------------------------	+ bias_time
+	 * 					tokens of the data flow to schedule
+	 * 
+	 * supremum of h(f,t) rises till 1, when more tokens are planned then scheduled	--> no allocation impairing
+	 * infimum of  h(f,t) is 0, when less tokens are scheduled than planned 	--> allocation impairing! foster delay!
+	 * 						 why not negative? would foster allocation in future because it did not happen in past. but it may be better to delay beyond the horizon.
+	 * 
+	 * --> bias in [0, 1]
+	 * 		 --> bias= 0 bias means, that planning to all other beneficial networks is ok as well
+	 * 		---> bias= 0.3 means, that networks with scheduling gain of 70% of current are also ok
+	 * 
+	 * set:
+	 * scheduling_limit = attracting forces * (alpha*h(f,t)
+	 *  
+	 * 	alpha says, how strong this should be.
+	 *  we set it to an error estimation, using SMAPE.
+	 *  
+	 *   When prediction has been good, alpha should be 
+	 */
+	
+	/**
+	 * 
+	 * @param f flow index
+	 * @param t time slot index
+	 * @param allocated_f number of allocated tokens per flow
+	 * @return	how much to impair attractive force based on schedules. 1 not at all. 0 strongly.
+	 * use long term schedule 
+	 */
+	public double getTimeImparing(int f, int t, double bias){
+		if(TIME_IMPAIRING_WEIGHT==0) return 1;
+		//initialize prefix sum if not done yet
+		if(prefixSumLongTermSP_f_t == null){
+			boolean success = initializePrefixSum();
+			if(!success) return 1.0;
+		}
+		
+		if(f>=tgPred.getFlows().size()) return 1.0;		//if flow was added, do not impair
+		t=Math.min(t,longTermSP_f_t_n[0].length-1);			//restrict t to array size.
+		
+		double impairing =0;
+		
+		//h_time is 0 when scheduling follows plan. Goes up to 1 when more tokens scheduled then planned
+		//allocated_f is set in the allocate method of the "Scheduler" class
 
+		double alpha = getTimeImpairingWeight();
+		int win =2;// 5+(int) (Math.ceil(1/alpha));
+		//window of 5 timeslots length.
+		int t_min = Math.max(0, t-win);
+		int t_max= Math.max(0, t+win-1);
+		updatePrefixAllocated(t, f);
+		int i=0;
+		if(f==3 && t==21){
+			i=0;
+		}
+		int alloc_dif= i+prefix_allocated_f_t[f][t]- prefix_allocated_f_t[f][t_min];
+		int planned_dif= prefixSumLongTermSP_f_t[f][t_max] - prefixSumLongTermSP_f_t[f][t_min];
+//		System.out.println("Alloc= "+Arrays.deepToString(prefix_allocated_f_t));
+		
+		double h_time;// = ((double)Math.max(0, alloc_dif-planned_dif))/Math.max(1,alloc_dif);
+//		if(f==3)System.out.println("Heuristics: getTimeImpairing: prefixSum="+planned_dif+", alloc "+alloc_dif+"; h= "+(1-h_time));
+		
 
+//		System.out.println("HEURISTIC_TIME_IMPAIRING: t="+t+", f= "+f+", h_time="+h_time+",\t sum_LTSP = "+ prefixSumLongTermSP_f_t[f][t]
+//				+",\t alloc="+allocated_f[f] + "\t alpha="+alpha);
+		
+		int sum=Math.max(0, planned_dif-alloc_dif);
+		for(int n = 0; n<ng.getNetworks().size(); n++){
+			sum+=longTermSP_f_t_n[f][t][n];
+		}
+		
+		if(sum>0)
+			h_time=0;	//sched TODO: make a function based on t difference and win
+//			h_time = Math.abs(t-)
+		else
+			h_time=1;	//not sched
+		
+		
+		impairing = alpha*h_time;
+		if(f==3)System.out.println("HEURISTIC_TIME_IMPAIRING: t="+t+", f= "+f+", h_time="+h_time+", impairing = "+impairing);
+		
+		return impairing;
+	}
+	
+	private void updatePrefixAllocated(int t_max, int f){
+
+		prefix_allocated_f_t[f][0]=allocated_f_t[f][0];
+		for(int t=1; t<=t_max; t++){
+			prefix_allocated_f_t[f][t]=prefix_allocated_f_t[f][t-1]+allocated_f_t[f][t];
+		}
+	}
+	
+	private double getTimeImpairingWeight(){
+		double alpha = TIME_IMPAIRING_WEIGHT;
+		if(alpha <0){
+			//automatic
+		}
+		return alpha;
+	}
+
+	/**
+	 * prefix sum counts the sum over all networks and over all previous time slots
+	 * @return false if calculation failed (long term plan does not exist) 
+	 */
+	private boolean initializePrefixSum() {
+		System.out.println("HeuristicS: longTermSP="+showSchedule(longTermSP_f_t_n));
+		if(longTermSP_f_t_n==null) return false;
+		
+		prefixSumLongTermSP_f_t=new int[tg.getFlows().size()][ng.getTimeslots()];
+		
+		for(int f=0; f<longTermSP_f_t_n.length; f++){
+			//prefix sum counts the sum over all networks and over all previous time slots
+			int prefixSumOverNets=0;
+			for(int t=0; t<longTermSP_f_t_n[0].length; t++){
+				//over networks
+				for(int n=0; n<longTermSP_f_t_n[0][0].length; n++){
+					prefixSumOverNets+=longTermSP_f_t_n[f][t][n];
+				}
+				//after summing over networks, apply to the time slot
+				prefixSumLongTermSP_f_t[f][t]=prefixSumOverNets;
+			}
+		}
+		return true;
+	}
+
+	
+	public void loadLongTermSp(String logfile){
+		if(new File(logfile).exists())
+			this.longTermSP_f_t_n = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logfile);
+	}
+	
 }

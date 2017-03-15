@@ -25,7 +25,7 @@ public class FlowGenerator implements Serializable{
 
 	private final float ALLOWED_ERROR_OFFSET = (float) 0.05;	//part of error/uncertainty model
 	private int data_amount = 2;	//amount of data: 1 for low, 2 for medium, 3 for high
-	private int num_flows=1;
+	private int flowNum;
 	
 	public FlowGenerator(){
 		Flow.setNextId(new AtomicInteger(0));
@@ -117,7 +117,7 @@ public class FlowGenerator implements Serializable{
 	//bad method; does only work for flow count multiple of 4. But otherwise the traffic share is not possible
 	//too lazy to implement rest; so parameter 
 	private void addTraffic(int duration, int flows){
-		num_flows=flows;
+		flowNum = flows;
 		for(int i=0;i<flows/4;i++){
 			add4(duration);
 		}
@@ -132,7 +132,7 @@ public class FlowGenerator implements Serializable{
 	
 	private int getOverallTokens(int duration){
 		
-		return duration*(data_amount*data_amount*30+RndInt.get(0, 30))/num_flows;
+		return duration*(data_amount*data_amount*30+RndInt.get(0, 30))/flowNum;
 		
 //		return data_amount*duration*(15+RndInt.get(0,30))/10; //random amount of overall traffic, but values 45 and 30 have no deeper reason
 	}
@@ -234,7 +234,7 @@ public class FlowGenerator implements Serializable{
 //			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
 			cancelFlows(probAddCancel, probContinue, timesteps);
 			
-			float act_error = new UncertaintyErrorCalculation().getFlowUncertaintyError(backup, flows);
+			float act_error = new UncertaintyErrorCalculation(backup, flows, timesteps).getFlowUncertaintyError();
 			
 			
 			adapt = Math.min(2, error/act_error);	//upper limit for adaption step. Uncertainty may have huge random influence which lead to giant (unwanted) adaption.
@@ -450,7 +450,6 @@ public class FlowGenerator implements Serializable{
 			pw.flush();
 			pw.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -462,5 +461,18 @@ public class FlowGenerator implements Serializable{
 		}
 		return cloned_flows;
 	}
+	
+	public void setDataFlows(Vector<Flow> flows){
+		flowNum=flows.size();
+		this.flows=flows;
+	}
 
+	
+	public FlowGenerator clone(){
+		FlowGenerator fg= new FlowGenerator();
+		fg.setDataFlows(this.cloneFlows(this.flows));
+		fg.setDataAmount(this.getDataAmount());
+		
+		return fg;
+	}
 }

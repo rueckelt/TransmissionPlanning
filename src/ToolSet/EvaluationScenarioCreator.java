@@ -107,27 +107,26 @@ public class EvaluationScenarioCreator {
 	public Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator fg){
 
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
-
-
-		boolean newRating = false;
 //		schedulers.add(new OptimizationScheduler(ng, fg));
-//		
-//		schedulers.add(new GreedyScheduler(ng, fg).newRating(newRating));		
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg).newRating(newRating));
-//
-		newRating=true;
 
-//		schedulers.add(new GreedyOnlineScheduler(ng, fg).newRating(newRating));
-		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg).newRating(newRating));
-		Scheduler gs = new GreedyScheduler(ng, fg).newRating(newRating);
+//		schedulers.add(new GreedyOnlineScheduler(ng, fg));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg));
+		Scheduler gs = new GreedyScheduler(ng, fg);
 		schedulers.add(gs);				
 
 		//execution of schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
-		schedulers.add(new ExecutionScheduler(ng, fg, path));
+//		schedulers.add(new ExecutionScheduler(ng, fg, path));
 		
 		//Adaptation of schedule under prediction errors
 		FlowGenerator fgPred = getFlowGenerator(log_run_path, false, 0, 0, 0);
+		NetworkGenerator ngPred = getNetworkGenerator(log_run_path, false, 0, 0, (float) 0.0, (float) 0.0);
+//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 0.2, path));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 0.4, path));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 0.6, path));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 0.8, path));
+//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1, path));
 //		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
 		
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(5)).newRating(newRating));

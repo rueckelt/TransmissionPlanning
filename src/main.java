@@ -3,9 +3,11 @@ import java.util.Vector;
 
 import schedulers.GreedyScheduler;
 import schedulers.Scheduler;
+import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
+import schedulingIOModel.UncertaintyErrorCalculation;
 import visualization.Plot;
 import visualization.VisualizationPack;
 import ToolSet.EvaluationScenarioCreator;
@@ -19,15 +21,10 @@ public class main {
 	
 	public static void main(String[] args) {
 
-		//logfile is logpath/f_t_n/rep..
-//		int f=2;
-//		int t=1;
-//		int n=2;
-//		int rep=3;
 
 		int f=3;	//2^f		default: f=3 (8 flows) 			//for vary flows use f=6
 		int t=2;	//25*2^t	default: t=2 (100 time slots)	//for vary time use t=4
-		int n=3;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
+		int n=2;	//2^n		default: n=3 (8 networks)		//for vary networks use n=6
 
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
@@ -85,11 +82,41 @@ public class main {
 			eval.start(4*24);
 
 		
-		//testing uncertainty models
-//		int timeslots=100;
-//	
-//		FlowGenerator fg= new FlowGenerator(timeslots, 8);
-//		fg.addUncertainty((float) 0.5, timeslots);
+
+
+//		//testing uncertainty models
+//		int timeslots=50;
+//		float unc=(float)0.3;
+//
+//		FlowGenerator fg= new FlowGenerator(timeslots, 4);
+//
+//		for(Flow f1 : fg.getFlows()){
+//			f1.toString();
+//		}
+//		FlowGenerator fg2=fg.clone();
+//		fg2.addUncertainty((float) unc, timeslots);
+//
+//		for(Flow f1 : fg.getFlows()){
+//			System.out.println(f1.toString());
+//		}
+//		UncertaintyErrorCalculation ec = new UncertaintyErrorCalculation(fg.getFlows(), fg2.getFlows(), timeslots);
+//		System.out.println("changed-------------");
+//		for(Flow f1 : fg2.getFlows()){
+//			System.out.println(f1.toString());
+//		}
+//		float error = ec.getFlowUncertaintyError();
+//		System.out.println("error "+error);
+//		
+//		double sum =0;
+//		for(int t0=0; t0<timeslots; t0++){
+//
+//			float error2 = ec.getFlowUncertaintyError(t0, t0);
+//			float error_3 = ec.getFlowUncertaintyError(t0-9, t0);
+//			System.out.println("============error t "+t0+"+1 is "+error2+",\terr +9 ="+error_3);
+//			sum+=error2;
+//		}
+//		System.out.println("average error = " +sum/timeslots+ ", comp to "+unc);
+		
 //		fg.addUncertainty((float)0.2, (float)0.3, timeslots);	//probAddCancel, probContinue, timesteps
 //
 //		
