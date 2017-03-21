@@ -128,11 +128,15 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	}
 	
 	private float getNetworkError(Vector<Network> predicted){
+		return getNetworkError(predicted, 0, getTimeslots());
+	}
+	
+	public float getNetworkError(Vector<Network> predicted, int t_start, int t_end){
 		float sum=0;
 		for(int n=0; n<networks.size(); n++){
 			Network act=networks.get(n);
 			Network pred = predicted.get(n);
-			sum+=act.smapeNetwork(pred);
+			sum+=act.smapeNetwork(pred, t_start, t_end);
 //			System.out.println("smape of n="+n+" is "+act.smapeNetwork(pred));
 		}
 		float result = sum/networks.size();

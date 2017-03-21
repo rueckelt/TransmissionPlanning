@@ -28,6 +28,8 @@ public abstract class Scheduler {
 	private long runtime =0;
 	private int[][][] schedule_f_t_n;			//holds verified schedules only
 	private int[][][] schedule_f_t_n_temp;		//may be used during calculation of a schedule
+	protected int[][] allocated_f_t;
+	protected int[][] prefix_allocated_f_t;
 	
 	
 	public Scheduler(NetworkGenerator ng, FlowGenerator tg){
@@ -36,9 +38,12 @@ public abstract class Scheduler {
 		this.tg=tg;
 		schedule_f_t_n=getEmptySchedule();
 		logger = new LogMatlabFormat();	
-		if(ng!=null)
+		if(tg!=null && ng!=null){
 			interfaceLimit = new InterfaceLimit(ng);
-		cf=new CostFunction(ng, tg, logger);
+			allocated_f_t=new int[tg.getFlows().size()][ng.getTimeslots()];
+			prefix_allocated_f_t=new int[tg.getFlows().size()][ng.getTimeslots()];
+			cf=new CostFunction(ng, tg, logger);
+		}
 	}
 	
 	//set limit for Deadlines of flows to scheduling length
@@ -330,6 +335,8 @@ public abstract class Scheduler {
 			if(verificationOfConstraints(schedule_f_t_n_temp)){
 //				System.out.println("CORRECT PLAN: "+verificationOfConstraints(schedule_f_t_n_temp));
 				interfaceLimit.useNetwork(network, time);
+					
+				allocated_f_t[flow][time]=scheduled;
 				return scheduled;
 			}else{
 				schedule_f_t_n_temp[flow][time][network]-=scheduled;	//undo: remove tokens from plan if it gets invalid

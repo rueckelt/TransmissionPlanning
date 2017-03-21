@@ -19,13 +19,11 @@ import adaptation.utils.Combination;
 import adaptation.utils.Config;
 
 public class AdaptationScheduler extends HeuristicScheduler{
-	private int[][][] longTermSP;
-	private String spLogPath;
+
 	private int[] mQ;
 	private List<Integer> throughput; // size: flowSize
 	private List<Integer> dataSize;   // size: flowSize
 	private static Combination previous; //= new Combination();
-	private FlowGenerator tgPred;
 	private Config config;
 	
 	//config parameters
@@ -37,7 +35,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 //		// TODO Auto-generated constructor stub
 //	}
 //	
-	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg, FlowGenerator tgPred, String logpath) {
+	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg, FlowGenerator tgPred, NetworkGenerator ngPred, String logpath) {
 		super(ng, tg);
 		this.tgPred = tgPred;
 //		System.out.println(logpath);
@@ -56,10 +54,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	public String getType() {
 		return "GA" + (advancedInitialization? "_loc":"");
 	}
-	
-	public void loadLongTermSp(String logfile){
-		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logfile);
-	}
+
 	
 	@Override
 	protected void calculateInstance_internal(String logfile) {
@@ -71,9 +66,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			i_n++;
 		}
 		initCostSeparation();
-		//load transmission plan from log file
-		this.longTermSP = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", spLogPath);
-		System.out.println(showSchedule(longTermSP));
+		System.out.println(showSchedule(longTermSP_f_t_n));
 		//adapt
 		run(false, 1.0, true);
 		
@@ -188,9 +181,9 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			
 			//IF long term schedule has allocated tokens till now+range OR tokens of flow <10, THEN increase flag
 			for (int i = 0; i < t + range; i++) {
-				for (int f = 0; f < longTermSP.length && f < tg.getFlows().size(); f++) {
-					for (int n = 0; n < longTermSP[0][0].length; n++) {
-						if (longTermSP[f][i][n] != 0 || tg.getFlows().get(f).getTokensMin() < 10) {
+				for (int f = 0; f < longTermSP_f_t_n.length && f < tg.getFlows().size(); f++) {
+					for (int n = 0; n < longTermSP_f_t_n[0][0].length; n++) {
+						if (longTermSP_f_t_n[f][i][n] != 0 || tg.getFlows().get(f).getTokensMin() < 10) {
 							config.getFlowNetFlag()[f][n] += 1;		//why +=1 and not =1?
 						}
 					}
@@ -198,9 +191,9 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			}
 			
 			//also activate flags for all NEW flows that are not in the long term plan
-			if (tg.getFlows().size() > longTermSP.length) {
-				for (int f = longTermSP.length; f < tg.getFlows().size(); f++) {
-					for (int n = 0; n < longTermSP[0][0].length; n++) {
+			if (tg.getFlows().size() > longTermSP_f_t_n.length) {
+				for (int f = longTermSP_f_t_n.length; f < tg.getFlows().size(); f++) {
+					for (int n = 0; n < longTermSP_f_t_n[0][0].length; n++) {
 						config.getFlowNetFlag()[f][n] += 1;				
 					}
 				}	
@@ -216,10 +209,10 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	
 	//get initial individual (networks) from long term SP timeslot t
 	public void updateInitSP(int ts) {
-		if (ts >= longTermSP[0].length) return;
-		for (int f = 0; f < longTermSP.length && f < config.getInitGenes().length; f++) {
-			for (int n = 0; n < longTermSP[0][0].length; n++) {
-				if (longTermSP[f][ts][n] != 0) {
+		if (ts >= longTermSP_f_t_n[0].length) return;
+		for (int f = 0; f < longTermSP_f_t_n.length && f < config.getInitGenes().length; f++) {
+			for (int n = 0; n < longTermSP_f_t_n[0][0].length; n++) {
+				if (longTermSP_f_t_n[f][ts][n] != 0) {
 				//	////////System.out.println(config.getInitGenes().length);
 				//	//Printer.printInt(config.getInitGenes());
 //					System.out.println("Init gene f="+f+", net="+n+" in t="+ts);
@@ -231,11 +224,11 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	}
 	
 	public int[] extractIndividual(int t){
-		int[] geneSeq = new int[longTermSP.length];	// geneSeq[flow]=assigned network
-		if (t >= longTermSP[0].length) return null;
-		for (int f = 0; f < longTermSP.length && f < config.getInitGenes().length; f++) {
-			for (int n = 0; n < longTermSP[0][0].length; n++) {
-				if (longTermSP[f][t][n] != 0) {
+		int[] geneSeq = new int[longTermSP_f_t_n.length];	// geneSeq[flow]=assigned network
+		if (t >= longTermSP_f_t_n[0].length) return null;
+		for (int f = 0; f < longTermSP_f_t_n.length && f < config.getInitGenes().length; f++) {
+			for (int n = 0; n < longTermSP_f_t_n[0][0].length; n++) {
+				if (longTermSP_f_t_n[f][t][n] != 0) {
 					geneSeq[f] = n + 1;	//assign network id to each flow
 				}
 			}

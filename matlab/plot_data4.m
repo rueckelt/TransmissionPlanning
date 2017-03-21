@@ -38,6 +38,22 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
         my_xlabel = 'Monetary cost weight';
         fname_part = 'cost_weight';
         my_xTickLabels = {'','zero','','low','','medium','','high',''};
+    elseif(select==6)
+        my_xlabel = 'Movement prediction error';
+        fname_part = 'pe_move';
+        my_xTickLabels = {'','0.0','0.1','0.2','0.3','0.4','0.5',''};
+    elseif(select==7)
+        my_xlabel = 'Flow prediction error';
+        fname_part = 'pe_flow';
+        my_xTickLabels = {'','0.0','0.1','0.2','0.3','0.4','0.5',''};
+    elseif(select==8)
+        my_xlabel = 'Network prediction error';
+        fname_part = 'pe_net';
+        my_xTickLabels = {'','0.0','0.1','0.2','0.3','0.4','0.5',''};
+    elseif(select==9)
+        my_xlabel = 'Combined prediction error';
+        fname_part = 'pe_comb';
+        my_xTickLabels = {'','0.0','0.1','0.2','0.3','0.4','0.5',''};
     end
     
    

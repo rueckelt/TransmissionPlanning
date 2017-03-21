@@ -8,6 +8,7 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
 %   Detailed explanation goes here
     [~, nof_schedulers] =size(scheduler_logs); 
     [~, nof_values] = size(varnames);
+    subfolder= [];
     %define path and counter variable with select parameter
     if select==1    %vary flows
         path_prefix = [in_folder filesep];
@@ -29,10 +30,36 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
         counter = 1:load_max;
                 
     elseif select ==5   %vary monetary cost weight
-        path_prefix = [in_folder filesep num2str(f_max) '_' num2str(t_max) '_' num2str(n_max) '_' num2str(load_max) '_' ];
+        path_prefix = [in_folder filesep num2str(f_max) '_' num2str(t_max) '_' num2str(n_max)...
+            '_' num2str(load_max) '_' ];
         path_suffix = [];
         counter = 0:mon_max;
-                    
+        
+    elseif select ==6   %vary movement error
+        path_prefix = [in_folder filesep num2str(f_max) '_' num2str(t_max) '_' num2str(n_max)...
+            '_' num2str(load_max) '_' num2str(mon_max) ]
+        path_suffix = [filesep 'move_0.']
+        counter = 0:5;
+      
+    elseif select ==7   %vary flow error
+        path_prefix = [in_folder filesep num2str(f_max) '_' num2str(t_max) '_' num2str(n_max)...
+            '_' num2str(load_max) '_' num2str(mon_max) ]
+        path_suffix = [filesep 'flow_0.']
+        counter = 0:5;
+             
+    elseif select ==8   %vary movement error
+        path_prefix = [in_folder filesep num2str(f_max) '_' num2str(t_max) '_' num2str(n_max)...
+            '_' num2str(load_max) '_' num2str(mon_max) ]
+        path_suffix = [filesep 'net_0.']
+        counter = 0:5;
+             
+    elseif select ==9   %vary movement error
+        path_prefix = [in_folder filesep num2str(f_max) '_' num2str(t_max) '_' num2str(n_max)...
+            '_' num2str(load_max) '_' num2str(mon_max) ]
+        path_suffix = [filesep 'comb_0.']
+        counter = 0:5;
+             
+    
     end;
     
     [~, len]=size(counter);
@@ -46,9 +73,17 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
     i=1;    %index for counter. since counters start differently from 0 or 1
     for c=counter
         for rep = 1:rep_max
-            
-           in_path = [path_prefix num2str(c) path_suffix ...
-                filesep num2str(rep-1) filesep]
+           if(select>5) %change position of counter c for error models
+               if(c==0) %0 means no error
+                   in_path = [path_prefix filesep num2str(rep-1) filesep]
+               else
+                   in_path = [path_prefix filesep num2str(rep-1) path_suffix...
+                        num2str(c) filesep]
+               end
+           else
+               in_path = [path_prefix num2str(c) path_suffix ...
+                    filesep num2str(rep-1) filesep]
+           end
            if exist(in_path,'dir')==7
                addpath(in_path);    %make path accessible
 
@@ -71,7 +106,7 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
                    else
                        err=['file not found' fname]
                    end
-                   clearvars -except in_path path_prefix path_suffix i values avail varnames counter c rep t_max n_max f_max rep_max scheduler_logs nof_values nof_schedulers in_folder
+                   clearvars -except in_path path_prefix path_suffix i select values avail varnames counter c rep t_max n_max f_max rep_max scheduler_logs nof_values nof_schedulers in_folder
                 end
                rmpath(in_path);
            end
