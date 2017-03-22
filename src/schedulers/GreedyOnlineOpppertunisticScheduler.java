@@ -41,7 +41,7 @@ public class GreedyOnlineOpppertunisticScheduler extends GreedyOnlineScheduler {
 	public String getType() {
 		// TODO Auto-generated method stub
 		return new String("GreedyOnlineOpp_opt_"+schedule_decision_limit+
-				(NEW_RATING_ESTIMATOR?"_H2":"")+"_alpha_"+TIME_IMPAIRING_WEIGHT+"_w_"+WINDOW).replace("-", "m").replace('.', '_');	
+				"_alpha_"+TIME_IMPAIRING_WEIGHT+"_w_"+WINDOW).replace("-", "m").replace('.', '_');	
 				//fucking matlab does not support minus or dots in file names
 	}
 
