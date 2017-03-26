@@ -72,7 +72,7 @@ public class GreedyScheduler extends HeuristicScheduler{
 		int chunksMaxTp = (int)(flow.getTokensMax());///flow.getWindowMax());	//get average maximum throughput for later allocation
 		int chunksToAllocate = flow.getTokens();
 		//sort networks according to match with flow
-		Vector<Integer> networkIDs = sortNetworkIDs(flow);
+		Vector<Integer> networkIDs = sortNetworkIDs(flowIndex);
 //			System.out.println("##################################  Flow "+flowIndex+"; Network order: "+networkIDs);
 //		System.out.println(flow.toString());
 
@@ -84,9 +84,8 @@ public class GreedyScheduler extends HeuristicScheduler{
 			int n=networkIDs.get(n1);
 //			System.out.println("########### Flow "+flowIndex +"   Network "+n);
 			//schedule min tp first
-			for(int t=Math.max(0, flow.getStartTime()-1-tl_offset); 
-					t<Math.min(ng.getTimeslots(), flow.getDeadline()+tl_offset) && chunksToAllocate>0;
-					t++){
+			for(int t=getStartTime(flow); (t<getDeadline(flow)) && chunksToAllocate>0; t++){
+				
 				//do only allocate if allocation leads to cost reduction
 				if(scheduleDecision(flowIndex, n, t)){
 					

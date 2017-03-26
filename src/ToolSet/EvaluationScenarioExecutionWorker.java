@@ -62,7 +62,7 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 
 			}
 			if(VISUALIZE){
-				new Plot(new VisualizationPack(ng, fg, schedulers));
+				new Plot(new VisualizationPack(ng, fg, schedulers), folder);
 			}
 
 		}

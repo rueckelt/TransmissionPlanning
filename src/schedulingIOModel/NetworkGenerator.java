@@ -122,7 +122,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 				net.addNetworkUncertainty(strength_charactieristics, strength_range);
 			}
 			adapt = Math.max((float)0.00001, error/getNetworkError(backup));
-			//System.out.println("NetGen124: adapt = "+adapt+", strength = "+strength_charactieristics);
+			System.out.println("NetGen124: adapt = "+adapt+", strength = "+strength_charactieristics);
 		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
 				adapt>(1+ALLOWED_ERROR_OFFSET));	
 	}
@@ -133,10 +133,18 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	
 	public float getNetworkError(Vector<Network> predicted, int t_start, int t_end){
 		float sum=0;
+		int count = 0;
 		for(int n=0; n<networks.size(); n++){
 			Network act=networks.get(n);
 			Network pred = predicted.get(n);
 			sum+=act.smapeNetwork(pred, t_start, t_end);
+//			for(int t = t_start;t<=t_end;t++){
+//				if(act.getCapacity().get(t)>0 || pred.getCapacity().get(t)>0){
+//					count++;
+//					break;
+//				}
+//			}
+			
 //			System.out.println("smape of n="+n+" is "+act.smapeNetwork(pred));
 		}
 		float result = sum/networks.size();
@@ -193,6 +201,8 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 */
 	public float getPositionError(Vector<Integer> slotChange, int till_t){
 		if(till_t<=0)return 0;
+		if(slotChange==null || slotChange.isEmpty())return 0;
+		
 		int sum_change=0;
 		
 		int prev_value=0;

@@ -36,6 +36,7 @@ public abstract class Scheduler {
 		boundFlowDeadlines(tg, ng);
 		this.ng=ng;
 		this.tg=tg;
+		this.tg.setFlowIndices(); 
 		schedule_f_t_n=getEmptySchedule();
 		logger = new LogMatlabFormat();	
 		if(tg!=null && ng!=null){
@@ -107,6 +108,7 @@ public abstract class Scheduler {
 	 */
 	public void calculateInstance(String path, boolean recalc){
 		if((!new File(getLogfileName(path)).exists())||recalc){
+			tg.setFlowIndices();
 			initTempSchedule();
 			startTimer();
 			calculateInstance_internal(path);	//result is stored to schedule_f_t_n_temp

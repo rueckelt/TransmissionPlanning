@@ -209,7 +209,7 @@ public class UncertaintyErrorCalculation {
 					))){
 					sum_smape += smape_flow.get(f_id);	//summation could be integrated above for performance gain
 					flowCount++;
-					if(t_end>0)System.out.println("smape in t = "+t_end+" of f "+f_id+" is "+smape_flow.get(f_id));
+//					if(t_end>0)System.out.println("smape in t = "+t_end+" of f "+f_id+" is "+smape_flow.get(f_id));
 				}
 			}
 
@@ -229,8 +229,16 @@ public class UncertaintyErrorCalculation {
 	}
 	
 	private boolean flowIsOrShouldBeActiveWithinTimeFrame(int f_id, int t_start, int t_end){
-		return (t_end	 >=Math.min(act_starttime.get(f_id), pred_starttime.get(f_id)) &&	
-				 t_start <=Math.max(act_deadline.get(f_id), pred_deadline.get(f_id)));	
+		if(act_starttime.containsKey(f_id) && pred_starttime.containsKey(f_id))
+			return (t_end	 >=Math.min(act_starttime.get(f_id), pred_starttime.get(f_id)) &&	
+					 t_start <=Math.max(act_deadline.get(f_id), pred_deadline.get(f_id)));	
+		else if(act_starttime.containsKey(f_id))
+			return (t_end	 >=act_starttime.get(f_id) &&t_start <=act_deadline.get(f_id));
+		else if(pred_starttime.containsKey(f_id)){
+			return (t_end	 >=pred_starttime.get(f_id) &&t_start <=pred_deadline.get(f_id));
+		}else
+			return false;
+			
 	}
 	
 	private boolean isNewFlow(int f_id){
@@ -238,9 +246,12 @@ public class UncertaintyErrorCalculation {
 	}
 	
 	private boolean inUnchangedMidArea(int f_id, int t_start, int t_end){
-		return (
-				t_start>Math.max(act_starttime.get(f_id), pred_starttime.get(f_id))) &&
-				t_end <Math.min(act_deadline.get(f_id),  pred_deadline.get(f_id));
+		if(act_starttime.containsKey(f_id) && pred_starttime.containsKey(f_id))
+			return (
+					t_start>Math.max(act_starttime.get(f_id), pred_starttime.get(f_id))) &&
+					t_end <Math.min(act_deadline.get(f_id),  pred_deadline.get(f_id));
+		else
+			return false;
 	}
 	
 		private float getSmape(int pred, int act){

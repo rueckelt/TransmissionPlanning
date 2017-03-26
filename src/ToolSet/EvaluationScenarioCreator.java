@@ -14,6 +14,8 @@ import schedulers.ExecutionScheduler;
 import schedulers.GreedyScheduler;
 import schedulers.GreedyOnlineOpppertunisticScheduler;
 import schedulers.GreedyOnlineScheduler;
+import schedulers.GreedyScheduler_s;
+import schedulers.GreedyScheduler_sk;
 import schedulers.OptimizationScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
@@ -108,11 +110,13 @@ public class EvaluationScenarioCreator {
 
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 
-		schedulers.add(new OptimizationScheduler(ng, fg));
+//		schedulers.add(new OptimizationScheduler(ng, fg));
 //		schedulers.add(new GreedyOnlineScheduler(ng, fg));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg));
+//		schedulers.add(new GreedyScheduler(ng, fg));
+//		schedulers.add(new GreedyScheduler_s(ng, fg));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg));
 		Scheduler gs = new GreedyScheduler(ng, fg);
-//		schedulers.add(gs);				
+		schedulers.add(gs);				
 
 		//execution of jtp schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
@@ -124,13 +128,16 @@ public class EvaluationScenarioCreator {
 //		schedulers.add(new ExecutionScheduler(ng, fg, path_opt, "_Opt"));
 		
 		//Adaptation of schedule under prediction errors
-		FlowGenerator fgPred = getFlowGenerator(log_run_path, false, 0, 0, 0);
+		FlowGenerator fgPred = getFlowGenerator(log_run_path, false, 0, 0, 0);	//load from file
 //			schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
 
 //		schedulers.add(new ExecutionScheduler(ng, fg, path));
 		
-		NetworkGenerator ngPred = getNetworkGenerator(log_run_path, false, 0, 0, (float) 0.0, (float) 0.0);
-		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt));
+		NetworkGenerator ngPred = getNetworkGenerator(log_run_path, false, 0, 0, (float) 0.0, (float) 0.0);	//load from file
+//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt, "opt"));
+		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp"));
+		
+		
 //		for(double alpha =0; alpha<=1; alpha=alpha+0.2){
 //			double alpha2=(double)(Math.round(10*alpha))/10.0;
 //			for(int window = 1; window <=16; window=window*2){

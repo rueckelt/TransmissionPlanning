@@ -1,5 +1,7 @@
 package ToolSet;
 
+import java.util.Arrays;
+
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
@@ -89,15 +91,14 @@ public class CostSeparation {
 
 	public int getUnitstatefulReward(int f) {
 		Flow flow = tg.getFlows().get(f); 
-		int step= flow.getImpThroughputMin()*flow.getImpUser();
-		return step;
+		return getStatefulRewardStep(flow);
 	}
 	//calculate potential reward init-state from minTp for scheduling a token of flow f to time slot t
 	private void initStatefulReward(){
 		int f=0;
 		for(Flow flow:tg.getFlows()){
 			int reward=0;
-			int step = cf.getMinTpAmplifier()*flow.getImpThroughputMin()*flow.getImpUser();	
+			int step = getStatefulRewardStep(flow);	
 			for(int t=0; t<ng.getTimeslots(); t++){
 				//increment stateful reward for each time when multiple throughput windows cover the time slot
 				if(t>=flow.getStartTime() && t<=flow.getStartTime()+flow.getWindowMin()){
@@ -112,9 +113,16 @@ public class CostSeparation {
 //				System.out.println(reward);
 			}
 			f++;
-	
+			printStatefulReward();
 		}
+	}
+	
+	public void printStatefulReward(){
 //		System.out.println("stateful_reward = "+Arrays.deepToString(statefulReward));
+	}
+	
+	public int getStatefulRewardStep(Flow flow){
+		return cf.getMinTpAmplifier()*flow.getImpThroughputMin()*flow.getImpUser();
 	}
 	
 	private void setFlowReward(){
@@ -127,7 +135,8 @@ public class CostSeparation {
 	
 	public void updateStatefulReward(int f, int t, int tokens){
 		Flow flow =tg.getFlows().get(f); 
-		int step= flow.getImpThroughputMin()*flow.getImpUser()*tokens;
+		int step= getStatefulRewardStep(flow)*tokens*flow.getWindowMin()/flow.getTokensMin();
+//		if(f==3)System.out.println("cost seperatioin: updatestatefulReward step = "+step+", t="+t+", f="+f+", tokens="+tokens);
 
 		//update each affected time slot
 		for(int i=Math.max(0,t-flow.getWindowMin()); i<=Math.min(ng.getTimeslots()-1,t+flow.getWindowMin()); i++){

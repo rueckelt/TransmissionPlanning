@@ -45,7 +45,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected int tl_offset =0;	//allowed time offset for which violation is allowed
 	
 	protected boolean NEW_RATING_ESTIMATOR=true;
-	protected final boolean ADAPTIVE = false;
+	protected final boolean ADAPTIVE = true;
 	protected int WINDOW = -1;
 	//-1 is automatic from smape. Else vary between 0 and 1; 1 means full impairing = follow plan!
 	protected double TIME_IMPAIRING_WEIGHT = 0;	
@@ -58,6 +58,8 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected FlowGenerator tgPred;
 	protected NetworkGenerator ngPred;
 	private int[][] prefixSumLongTermSP_f_t;
+	private int dropped_f[];
+	private int dropped_allocated_f[];
 	
 	/**
 	 * activates new rating scheme for cost estimation
@@ -76,6 +78,9 @@ public abstract class HeuristicScheduler extends Scheduler{
 
 
 	protected boolean oppScheduleDecision(int f, int n, int t) {
+		//return false if index out of bounds
+		if(t>=ng.getTimeslots() || n>=ng.getNetworks().size() || f>=tg.getFlows().size()) return false;
+		
 		if(NEW_RATING_ESTIMATOR){
 			int sum = getEstimatedSchedulingCost(f, n, t);
 //			if(f==0)System.out.println("Heuristic: oppScheduleDecision: f="+f+", n="+n+", t="+t+", sum"+sum);
@@ -100,18 +105,21 @@ public abstract class HeuristicScheduler extends Scheduler{
 		int statelessReward = cs.getStatelessReward(f);
 		int statefulReward = cs.getStatefulReward(f, t);
 		int netMatch = cs.getNetworkMatch(f, n);
-		int tp=cs.getTimeMatch(f, t);// weight is already covered in cs   // *tg.getFlows().get(f).getImpUser();
+		int timeMatch=cs.getTimeMatch(f, t);// weight is already covered in cs   // *tg.getFlows().get(f).getImpUser();
 		
 		double time_impairing=0;
 		if(TIME_IMPAIRING_WEIGHT!=0){
 			time_impairing=getTimeImparing(f,t);
 		}
-//		if(f==0){
-////			System.out.println("Heuristic: getEstSch: f="+f+", n="+n+", t="+t+", \t pos="+(statefulReward+statelessReward)+", neg="+(netMatch+tp)+", time_imp="+time_impairing);
-//		}
+
 		
 		int sum = (int) ((statelessReward+statefulReward)*(1-time_impairing))
-				+netMatch+tp;	//repelling forces
+				+netMatch+timeMatch;	//repelling forces
+		
+//		if(f==5 && n==6){
+//			System.out.println("Heuristic: getEstSch: f="+f+", n="+n+", t="+t+", \t pos="+
+//					(statefulReward+statelessReward)+", neg="+(netMatch+timeMatch)+", time_imp="+time_impairing + "\t sum="+sum);
+//		}
 		return sum;		//should be 
 	}
 	
@@ -185,13 +193,11 @@ public abstract class HeuristicScheduler extends Scheduler{
 	 * rates for the flow and the remaining capacity of the networks, which networks fit best
 	 * @param flow 
 	 */
-	protected Vector<Integer> sortNetworkIDs(final Flow flow){
+	protected Vector<Integer> sortNetworkIDs(final int f){
 		//create sorted list
 		Vector<Integer> netIDs = new Vector<>();
 		for(int n = 0; n<ng_tmp.getNetworks().size(); n++){		//use ng_tmp: remaining capacity of networks
 			netIDs.add(n);
-//			System.out.println("N"+n+": "+ng_tmp.getNetworks().get(n).getCapacity().toString());
-//			System.out.println("N"+n+": "+ng.getNetworks().get(n).getCapacity().toString());
 		}
 		
 		//comparator which compares match of two networks to flow
@@ -199,7 +205,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 		Collections.sort(netIDs, new Comparator<Integer>(){
 			@Override
 			public int compare(Integer arg0, Integer arg1) {
-				int result=calcVio(flow.getIndex(), arg0)-calcVio(flow.getIndex(),arg1);
+				int result=cs.getNetworkMatch(f, arg0)-cs.getNetworkMatch(f, arg1);		//calcVio(f, arg0)-calcVio(f,arg1);
 				//in case of equal match, use network with higher remaining average throughput
 				if(result==0){
 					Network net0 = ng_tmp.getNetworks().get(arg0);
@@ -211,6 +217,63 @@ public abstract class HeuristicScheduler extends Scheduler{
 		}
 		);
 //		System.out.println("network sort for Flow "+flow.getId()+" = "+netIDs);
+		return netIDs;
+	}
+	
+	/**
+	 * rates for the flow and the remaining capacity of the networks, which networks fit best
+	 * @param flow 
+	 */
+	protected Vector<Integer> sortNetworkIDs2(int f){
+		final Flow flow = tg.getFlows().get(f);
+		//create sorted list
+		Vector<Integer> netIDs = new Vector<Integer>();
+		Vector<Integer> benefit = new Vector<Integer>();
+		//add network IDs with default match
+		for(int n = 0; n<ng_tmp.getNetworks().size(); n++){		//use ng_tmp: remaining capacity of networks
+			netIDs.add(n);
+			benefit.add(cs.getNetworkMatch(f, n));
+		}
+		
+		//add network IDs with match without stateful reward
+		//get maximum stateful reward
+		int maxStatefulReward=Integer.MAX_VALUE;
+		for(int t=0;t<ng.getTimeslots();t++){
+			maxStatefulReward=Math.min(maxStatefulReward, cs.getStatefulReward(f, t));
+//			System.out.println("Heuristic: f="+f+", t="+t+", stateful reward="+cs.getStatefulReward(f, t));
+		}
+		for(int n = 0; n<ng_tmp.getNetworks().size(); n++){		//use ng_tmp: remaining capacity of networks
+			netIDs.add(n+ng_tmp.getNetworks().size());
+			benefit.add(cs.getNetworkMatch(f, n)+maxStatefulReward);
+		}
+
+		final Vector<Integer> benefit0= benefit;
+		//comparator which compares match of two networks to flow
+		//uses latency, jitter and throughput
+		Collections.sort(netIDs, new Comparator<Integer>(){
+			@Override
+			public int compare(Integer arg0, Integer arg1) {
+				int result = benefit0.get(arg0)-benefit0.get(arg1);
+//				int result=calcVio(f, arg0)-calcVio(f,arg1);
+				//in case of equal match, use network with higher remaining average throughput
+				if(result==0){
+					if(arg0>=ng_tmp.getNetworks().size())arg0-=ng_tmp.getNetworks().size();
+					if(arg1>=ng_tmp.getNetworks().size())arg1-=ng_tmp.getNetworks().size();
+					Network net0 = ng_tmp.getNetworks().get(arg0);
+					Network net1 = ng_tmp.getNetworks().get(arg1);
+					return getAvCapacity(net1)-getAvCapacity(net0);
+				}else
+				return result;
+			}
+		}
+		);
+		
+		for(int n=0;n<netIDs.size();n++){
+			if(netIDs.get(n)>=ng_tmp.getNetworks().size()){
+				netIDs.set(n, netIDs.get(n)-ng_tmp.getNetworks().size());
+			}
+		}
+//		System.out.println("network sort for Flow "+flow.getId()+" = "+netIDs +"\n  with benefits "+benefit);
 		return netIDs;
 	}
 	
@@ -227,7 +290,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 		}
 		int c=0;
 		if(NEW_RATING_ESTIMATOR){
-			c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);
+			c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);		//lcy+jit+stateless+monetary
 //			if(f==5 && (n==1 || n==2 || n==6))
 //				System.out.print("f="+f+", n="+n+", CALC_VIO: net_match = "+cs.getNetworkMatch(f, n)+"   stateless: "+cs.getStatelessReward(f)+"\n");
 		}else{
@@ -318,7 +381,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	}
 	
 	/**
-	 * Heuristics for Adaptation:
+	 * ################ Heuristics for Adaptation: ##################
 	 * 
 	*/
 	
@@ -350,38 +413,44 @@ public abstract class HeuristicScheduler extends Scheduler{
 	 *   When prediction has been good, alpha should be 
 	 */
 	
-	protected double getError(int t){
-		if(!ADAPTIVE)return 1;
-		int t_min = Math.max(0, t-10);		//how to select the observer window of 10?
+	/**
+	 * 
+	 * @param f
+	 * @param t
+	 * @return the error of k time slots before t. k is equal to 
+	 */
+	protected double getError(int f, int t){
+		if(!ADAPTIVE)return 0;
+		
+		int win=ng.getTimeslots()/4;
+		Flow flow= tg.getFlows().get(f);
+		if(flow.getImpThroughputMin()>0){
+			win= flow.getImpThroughputMin();
+		}
+		
+		int t_min = Math.max(0, t-win);		//how to select the observer window of 10?
 		
 		double err_move =ng.getPositionError(ng.getSlotChange(), t);
+		System.out.println(ng.getSlotChange());
 		double err_net = ng.getNetworkError(ngPred.getNetworks(), t_min, t);
 		UncertaintyErrorCalculation uec = new UncertaintyErrorCalculation(tgPred.getFlows(), tg.getFlows(), ng.getTimeslots());
 		double err_flow= uec.getFlowUncertaintyError2(t_min, t);
 		
-		double err=(err_move+err_net+err_flow)/3; //TODO : define better function of move, net and flow error
 		
+		double err=(err_net+err_flow)/2; //TODO : define better function of move, net and flow error
+		
+//		if(!set.contains(f+100*t))System.out.println("Heuristics: getError. err="+err+", move="+err_move+", net="+err_net+", flow="+err_flow);
+
+		set.add(f+100*t);
 		return err;
 	}
-		
-	private int getWindow(int t){
-		if(WINDOW>0) return WINDOW;
-		return 1;
-		//if not set (-1), use adaptive approach and calculate automatically
-//		double err= getError(t);	//error between 0 and 2
-//		return (int) (1+err*20);			//TODO: how to select the parameter or function to calculate the window???
-	}
+	HashSet<Integer> set=new HashSet<Integer>(); 
+	
+
 	
 	/**
 	 * 
-	 * @param f index of flow in tg
-	 * @return identify from ID if flow is new.
-	 */
-	private boolean isnewFlow(int f){
-		return tg.getFlows().get(f).getId()>=tgPred.getFlows().size();
-	}
-	
-	/**
+	 * impairing forbids the opportunistic approach to allocate tokens that are not planned in the long term plan.
 	 * 
 	 * @param f flow index
 	 * @param t time slot index
@@ -411,11 +480,14 @@ public abstract class HeuristicScheduler extends Scheduler{
 		
 		//h_time is 0 when scheduling follows plan. Goes up to 1 when more tokens scheduled then planned
 		//allocated_f is set in the allocate method of the "Scheduler" class
-
-		double alpha = getTimeImpairingWeight(t);
-		int win =getWindow(t);// 5+(int) (Math.ceil(1/alpha));
+		
+		//a value of 0 leads to opportunistic, a value of 1 forbids transmission in order to follow the plan.
+		double alpha = getTimeImpairingWeight(f,t);
+//		System.out.println("Heuristic:airing(f="+f+",n="+t+") alpha ="+alpha);
+		int win =getWindow(f,t);
 		//window of 5 timeslots length.
 		int t_min = Math.max(0, t-win);
+		t_min=0;
 		int t_max= Math.min(ng.getTimeslots()-1, Math.max(0, t+win-1));
 		updatePrefixAllocated(t, f);
 
@@ -424,13 +496,18 @@ public abstract class HeuristicScheduler extends Scheduler{
 //		System.out.println("Alloc= "+Arrays.deepToString(prefix_allocated_f_t));
 		
 		double h_time;// = ((double)Math.max(0, alloc_dif-planned_dif))/Math.max(1,alloc_dif);
-//		if(f==3)System.out.println("Heuristics: getTimeImpairing: prefixSum="+planned_dif+", alloc "+alloc_dif+"; h= "+(1-h_time));
 		
-
+		
+		//update dropped allocated: tokens that have been dropped 
+		//in the plan but allocated in the opportunistic approach
+		if(t>0){
+			dropped_allocated_f[f]=Math.max(dropped_allocated_f[f], //max of dropped and 
+					prefix_allocated_f_t[f][t-1]-prefixSumLongTermSP_f_t[f_id][t-1]); //diff of allocated and planned
+		}
 //		System.out.println("HEURISTIC_TIME_IMPAIRING: t="+t+", f= "+f+", h_time="+h_time+",\t sum_LTSP = "+ prefixSumLongTermSP_f_t[f][t]
 //				+",\t alloc="+allocated_f[f] + "\t alpha="+alpha);
 		
-		int sum=Math.max(0, planned_dif-alloc_dif);
+		int sum=Math.max(0, planned_dif+dropped_f[f]-dropped_allocated_f[f]	-alloc_dif);
 		for(int n = 0; n<ng.getNetworks().size(); n++){
 			sum+=longTermSP_f_t_n[f_id][t][n];
 		}
@@ -441,12 +518,47 @@ public abstract class HeuristicScheduler extends Scheduler{
 		else
 			h_time=1;	//not sched
 		
+
+//		if(f==3)System.out.println("Heuristics: getairing: prefixSum="+planned_dif+", alloc "+alloc_dif+"; h= "+(1-h_time));
 		
 		impairing = alpha*h_time;
 //		if(f==3)System.out.println("HEURISTIC_TIME_IMPAIRING: t="+t+", f= "+f+", h_time="+h_time+", impairing = "+impairing);
 		
 		return impairing;
 	}
+
+	/**
+	 * @param f
+	 * @param t
+	 * @return	the window (+/-) for which it is checked if the flow f was planned to be transmitted
+	 */
+	private int getWindow(int f, int t){
+		if(WINDOW>0) return WINDOW;		//if fixed window is set, use it
+		
+		//if not set (-1), use adaptive approach and calculate automatically
+		Flow flow= tg.getFlows().get(f);
+		
+		
+		int win_tp_min =Math.min(flow.getWindowMin(),(int) (1+flow.getWindowMin()*getError(f, t)));
+//		System.out.println("Heuristic win="+win_tp_min);
+		return win_tp_min;
+		
+//		double err= getError(t);	//error between 0 and 2
+//		return (int) (1+err*20);			//TODO: how to select the parameter or function to calculate the window???
+	}
+
+	
+	private double getTimeImpairingWeight(int f, int t){
+		double alpha = TIME_IMPAIRING_WEIGHT;
+		double err =getError(f, t);
+		
+		System.out.println("Heuristic: timeImpairingWeight: f="+f+", t="+t+", alpha="+alpha+", err="+err);
+		return (1-err)*alpha;
+	}
+
+	
+	
+	// ######################  AUXILLARY ######################
 	
 	private void updatePrefixAllocated(int t_max, int f){
 
@@ -456,11 +568,17 @@ public abstract class HeuristicScheduler extends Scheduler{
 		}
 	}
 	
-	private double getTimeImpairingWeight(int t){
-		double alpha = TIME_IMPAIRING_WEIGHT;
-		return getError(t)*alpha;
+	
+	/**
+	 * 
+	 * @param f index of flow in tg
+	 * @return identify from ID if flow is new.
+	 */
+	private boolean isnewFlow(int f){
+		return tg.getFlows().get(f).getId()>=tgPred.getFlows().size();
 	}
-
+	
+	
 	/**
 	 * prefix sum counts the sum over all networks and over all previous time slots
 	 * @return false if calculation failed (long term plan does not exist) 
@@ -486,10 +604,43 @@ public abstract class HeuristicScheduler extends Scheduler{
 		return true;
 	}
 
+	int getStartTime(Flow f){
+		int st=0;
+		if(f.getImpStartTime()>0){
+			st=  f.getStartTime();
+		}
+		return Math.max(0, st-1);
+	}
 	
+	int getDeadline(Flow f){
+		int dl=ng.getTimeslots();
+		if(f.getImpDeadline()>0){
+			dl= f.getDeadline();
+		}
+		return Math.min(ng.getTimeslots(), dl);
+	}
+
 	public void loadLongTermSp(String logfile){
-		if(new File(logfile).exists())
+		if(new File(logfile).exists()){
 			this.longTermSP_f_t_n = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logfile);
+			initDropped();
+		}
+	}
+	
+	private void initDropped(){
+		dropped_f = new int[longTermSP_f_t_n.length];
+		dropped_allocated_f=new int[longTermSP_f_t_n.length];
+		
+		for(int f=0; f<longTermSP_f_t_n.length; f++){
+			int dropped_tokens=tg.getFlows().get(f).getTokens();
+		
+			for(int t= 0; t<longTermSP_f_t_n[0].length;t++){
+				for (int n=0; n<longTermSP_f_t_n[0][0].length; n++){
+					dropped_tokens-=longTermSP_f_t_n[f][t][n];
+				}
+			}
+			dropped_f[f]=dropped_tokens;
+		}
 	}
 	
 }

@@ -282,8 +282,8 @@ public class CostFunction {
 		int timeslots = cummulated_f_t[0].length;
 		
 		int[] vioTp = new int[flows];
-		//int[][] vioTpMax = vioTpMax(cummulated_f_t);
-		int[][] vioTpMin = vioTpMin(cummulated_f_t);
+		//get number of tokens which violate the min tp requirement
+		int[][] vioTpMin = vioTpMin(cummulated_f_t);	 
 		for(int f = 0; f<flows; f++){
 			for(int t=0; t<timeslots; t++){
 				/*				vioTp[f]+=	//vioTpMax[f][t]*tg.getFlows().get(f).getImpThroughputMax()+
@@ -336,6 +336,11 @@ public class CostFunction {
 //		return vioTpMax;
 //	}
 //	
+	/**
+	 * 
+	 * @param cummulated_f_t
+	 * @return number of too few allocated tokens of f, t
+	 */
 	public int[][] vioTpMin(int[][] cummulated_f_t){
 		int flows = cummulated_f_t.length;
 		int timeslots = cummulated_f_t[0].length;

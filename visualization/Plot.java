@@ -154,7 +154,7 @@ class DrawingPanel extends JPanel {
 			if (vis.getScheduler0() != null) {
 				labelGraph0 = new JLabel(vis.getScheduler0().getType());
 					labelGraph0.setLocation(offsetHGraph, nextStartY -30);
-					labelGraph0.setSize(100, 20);
+					labelGraph0.setsize(400, 20);
 					labelGraph0.setVisible(true);
 				add(labelGraph0);
 
@@ -179,7 +179,7 @@ class DrawingPanel extends JPanel {
 			if (vis.getScheduler1() != null) {
 				labelGraph1 = new JLabel(vis.getScheduler1().getType());
 					labelGraph1.setLocation(offsetHGraph, nextStartY);
-					labelGraph1.setSize(100, 20);
+					labelGraph1.setsize(400, 20);
 					labelGraph1.setVisible(true);
 				add(labelGraph1);
 
@@ -204,7 +204,7 @@ class DrawingPanel extends JPanel {
 			if (vis.getScheduler2() != null) {
 				labelGraph2 = new JLabel(vis.getScheduler2().getType());
 					labelGraph2.setLocation(offsetHGraph, nextStartY);
-					labelGraph2.setSize(100, 20);
+					labelGraph2.setsize(400, 20);
 					labelGraph2.setVisible(true);
 				add(labelGraph2);
 
@@ -229,7 +229,7 @@ class DrawingPanel extends JPanel {
 			if (vis.getScheduler3() != null) {
 				labelGraph3 = new JLabel(vis.getScheduler3().getType());
 					labelGraph3.setLocation(offsetHGraph, nextStartY);
-					labelGraph3.setSize(100, 20);
+					labelGraph3.setsize(400, 20);
 					labelGraph3.setVisible(true);
 				add(labelGraph3);
 

@@ -38,8 +38,8 @@ public class Plot extends JFrame{
 	private static final long serialVersionUID = -4512141223520070006L;
 
 	FlowGenerator fg;
-	public Plot(VisualizationPack vis) {
-		super("Connection problem prediction");
+	public Plot(VisualizationPack vis, String folder) {
+		super("Connection problem prediction  "+folder);
 		fg= vis.getTraffic();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		DrawingPanel drawingPanel = new DrawingPanel(screenSize.width, screenSize.height, vis);
@@ -50,6 +50,7 @@ public class Plot extends JFrame{
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
+		
     }
 }
 

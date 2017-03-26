@@ -33,18 +33,18 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 		if(NEW_RATING_ESTIMATOR){
 			initCostSeparation();
 		}
-		
 		//initialize network preference vector
 		Vector<Vector<Integer>> flowsToNets = new Vector<Vector<Integer>>();
 		//initialize counter for remaining tokens of flows
 		Vector<Integer> chunksToAllocate = new Vector<Integer>();
-		for(Flow flow : tg.getFlows()){
-			flowsToNets.add(sortNetworkIDs(flow));
+		for(int f = 0; f<tg.getFlows().size(); f++){
+			Flow flow = tg.getFlows().get(f);
+			flowsToNets.add(sortNetworkIDs(flow.getIndex()));
 			chunksToAllocate.add(flow.getTokens());
 		}
 
 		List<Integer> flow_order = sortByFlowCriticality();
-		//System.out.println("FlowOrder GreOn: "+flow_order.toString());
+//		System.out.println("FlowOrder GreOn: "+flow_order.toString()+", net order:"+flowsToNets);
 		for (int t=0; t<ng.getTimeslots(); t++){
 			//assign each active flow to best matching network
 			for(int f0=0;f0<tg.getFlows().size();f0++){
@@ -52,7 +52,7 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 				Flow flow= tg.getFlows().get(f);
 				int chunksMaxTp = flow.getTokensMax();//(int)(flow.getTokensMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
 				//assign only within preferred time frame of flow
-				if(flow.getStartTime()-1<=t && flow.getDeadline()>t){
+				if(getStartTime(flow)<=t && getDeadline(flow)>t){
 					int n0=0;					
 					int allocated=0;
 					
@@ -81,6 +81,11 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 			
 		}
 
+	}
+	
+	@Override
+	public boolean scheduleDecision(int f, int n, int t) {
+		return true;
 	}
 	
 	@Override

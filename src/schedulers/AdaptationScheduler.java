@@ -49,6 +49,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 		spLogPath=logpath;
 	}
 
+	private String name_extention="";
 
 	@Override
 	public String getType() {
@@ -485,91 +486,5 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	public void setLocationCorrection(boolean locationCorrection) {
 		this.advancedInitialization = locationCorrection;
 	}
-	
-//	public static void main(String[] args) {
-//		/*****************Init Simulation Parameters***************/
-//		ArrayList<String> verf_true = new ArrayList<String>();
-//		ArrayList<String> verf_false = new ArrayList<String>();
-//
-//		boolean dependence = false; 
-//		boolean plotBool = true;
-//		boolean others = true;
-//		boolean lookahead = false;
-//		boolean logConv = false;
-//		float strength = (float) 0; //5.0 yes, 10.0 - no
-//		float flowStrength = 0.0f;
-//		float moveStrength = 0.0f;
-//		float netStrength = 0.3f;
-//		boolean overwrite = false;
-//		float offset = (float) 0;
-//		int timesteps = 5;
-//		int flowNum = 8;
-//		int netNum = 8;
-//		boolean root = false;
-//		int simTime = 100;
-//		double pctg = 1.0; // the factor for population size
-//		//String folder_out_root = "NewConfig" + flowNum + "_n" + netNum + "_t" + simTime + File.separator + "test" + File.separator + strength + "_" + offset   + File.separator;// stren_add + "_" + stren_cont + "_" + timesteps + File.separator;
-//		String folder_out_root = "my_logs/" + File.separator + "eval_uncertainty" + File.separator + "3_2_3" + File.separator;
-//		String log_name = "";
-//		int group = 1; // the number of repetitions
-//		/**********************************************************/
-//		for (int r = 0; r < group; r++) {  // reptition
-//			CCP_Ga.setConvergeList(new ArrayList<ArrayList<Double>>());
-//
-//			String folder_out = folder_out_root + r + File.separator;
-//			new File(folder_out).mkdir();
-//			log_name = "";
-//
-//			/******************Network Flow Initial********************/
-//			NetworkGenerator ngClone = EvaluationScenarioCreator.getNetworkGeneratorRoot(folder_out);
-//			FlowGenerator tgClone = EvaluationScenarioCreator.getFlowGeneratorRoot(folder_out);
-//			for (Network n : ngClone.getNetworks()) {
-//				System.out.println(n.toString());
-//			}
-//			for (Flow flow : tgClone.getFlows()) {
-//				System.out.println(flow.toString());
-//			}
-//			// Generate Original Longterm scheduler
-//			Test.testLongTerm(true, tgClone, ngClone, plotBool, "long_term_without_uncertainty", "");
-//			/***********************Uncertainty************************/
-//			NetworkGenerator ngReal;
-//			FlowGenerator tg;
-//			String folder_out_uncert;
-//			if (root) {
-//				ngReal = EvaluationScenarioCreator.getNetworkGeneratorRoot(folder_out);//EvaluationScenarioCreator.getNetworkGenerator(folder_out, overwrite, netNum, simTime, netStrength, moveStrength);
-//				tg = EvaluationScenarioCreator.getFlowGeneratorRoot(folder_out);//EvaluationScenarioCreator.getFlowGenerator(folder_out, overwrite, flowNum, simTime, flowStrength);
-//				folder_out_uncert = folder_out;
-//			} else {
-//				ngReal = EvaluationScenarioCreator.getNetworkGenerator(folder_out, overwrite, netNum, simTime, netStrength, moveStrength);
-//				tg = EvaluationScenarioCreator.getFlowGenerator(folder_out, overwrite, flowNum, simTime, flowStrength);
-//				folder_out_uncert = EvaluationScenarioCreator.getFilePath(folder_out, netStrength, moveStrength, flowStrength);
-//			}
-//			for (Network n : ngReal.getNetworks()) {
-//				System.out.println(n.toString());
-//			}
-//			for (Flow flow : tg.getFlows()) {
-//				System.out.println(flow.toString());
-//			}
-//			// init logger
-//			LogMatlabFormat log = new LogMatlabFormat();
-//			CostFunction cf = new CostFunction(ngReal, tg, log);
-//			String pathLTS = "long_term_without_uncertainty0"; // this is simply a path to store the long term scheduler in json
-//			
-//			System.out.println("******************true********************");
-//			
-//			/*********adaptation + true = what we used ***********************/
-//			LogMatlabFormat log_atrue = new LogMatlabFormat();
-//			CostFunction cf_atrue = new CostFunction(ngReal, tg, log_atrue);
-//			AdaptationScheduler adaptScheduler = new AdaptationScheduler(ngReal, tg, pathLTS);
-//			//Simulation simTrue = new Simulation(pathLTS, tg, ngReal);
-//			//simTrue.simTime = simTime;
-//			dependence = false;
-//			lookahead = true;
-//			adaptScheduler.run(dependence, pctg, lookahead);
-//			if (plotBool) {
-//				Plot plot2 = new Plot(new VisualizationPack(ngReal, tg, adaptScheduler.getSchedule()));
-//			}
-//		}
-//	}
 
 }
