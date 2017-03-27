@@ -183,45 +183,51 @@ public class UncertaintyErrorCalculation {
 		return (float) sum/(t_end-t_start+1);
 	}
 	
+
 	public float getFlowUncertaintyError2(int t_start, int t_end){
+		float sum_smape=0;
+		int flowCount = 0;
+		for(int f_id:smape_flow.keySet()){
+			sum_smape+=getFlowUncertaintyError2(f_id, t_start, t_end);
+			flowCount++;
+		}
+		float smape=0;
+		if(flowCount>0){
+			smape = sum_smape/flowCount;	
+		}
+		return smape;
+	}
+	
+	public float getFlowUncertaintyError2( int f_id, int t_start, int t_end){
 		
 			
 		//4. get final SMAPE error of active flows in time range
 			
-			float sum_smape=0;
-			int flowCount = 0;
-			for(int f_id: smape_flow.keySet()){
-				int i;
-				if(t_end>=0) 
-					i=0;
-				if(t_end<t_start ||	//no proper time specified. return for all slots	
-					
-					//flow deleted. should be active count during planned active time	
-					( flowDeletedButShouldBeActive(f_id, t_start, t_end)||		
 
-					//flow active within the time frame
-					(flowIsOrShouldBeActiveWithinTimeFrame(f_id, t_start, t_end) &&
-						 (
-								 		
-							// window not in unchanged mid area without covering start time or deadline shifts
-							(!inUnchangedMidArea(f_id, t_start, t_end)	)
-					     )	
-					))){
-					sum_smape += smape_flow.get(f_id);	//summation could be integrated above for performance gain
-					flowCount++;
-//					if(t_end>0)System.out.println("smape in t = "+t_end+" of f "+f_id+" is "+smape_flow.get(f_id));
-				}
-			}
-
-			
-			float smape = 0;
-			if(flowCount>0){
-				smape = sum_smape/flowCount;	
-			}
+//			for(int f_id: smape_flow.keySet()){
+		if(smape_flow.containsKey(f_id)){
+			if(t_end<t_start ||	//no proper time specified. return for all slots	
 				
-//			System.out.println("result = "+smape+", sum_smape="+sum_smape+", #flows="+smape_flow.size()+", sum_crit="+sum_criticalities);
-			return smape;
+				//flow deleted. should be active count during planned active time	
+				( flowDeletedButShouldBeActive(f_id, t_start, t_end)||		
+
+				//flow active within the time frame
+				(flowIsOrShouldBeActiveWithinTimeFrame(f_id, t_start, t_end) &&
+					 (
+							 		
+						// window not in unchanged mid area without covering start time or deadline shifts
+						(!inUnchangedMidArea(f_id, t_start, t_end)	)
+				     )	
+				))){
+				return smape_flow.get(f_id)/2;	//summation could be integrated above for performance gain
+			} else{
+				return 0;
+			}
 		}
+
+//		System.out.println("result = "+smape+", sum_smape="+sum_smape+", #flows="+smape_flow.size()+", sum_crit="+sum_criticalities);
+		return 2;	//maximum of smape error
+	}
 	
 	private boolean flowDeletedButShouldBeActive(int f_id, int t_start, int t_end){		//start time error for every time slot
 		return (!act_starttime.keySet().contains(f_id) &&	//flow not in actual set

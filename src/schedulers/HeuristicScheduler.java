@@ -45,7 +45,9 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected int tl_offset =0;	//allowed time offset for which violation is allowed
 	
 	protected boolean NEW_RATING_ESTIMATOR=true;
-	protected final boolean ADAPTIVE = true;
+	protected final boolean ADAPTIVE_loc = true;
+	protected final boolean ADAPTIVE_err = true;
+//	protected final boolean ADAPTIVE = false;
 	protected int WINDOW = -1;
 	//-1 is automatic from smape. Else vary between 0 and 1; 1 means full impairing = follow plan!
 	protected double TIME_IMPAIRING_WEIGHT = 0;	
@@ -412,40 +414,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	 *  
 	 *   When prediction has been good, alpha should be 
 	 */
-	
-	/**
-	 * 
-	 * @param f
-	 * @param t
-	 * @return the error of k time slots before t. k is equal to 
-	 */
-	protected double getError(int f, int t){
-		if(!ADAPTIVE)return 0;
-		
-		int win=ng.getTimeslots()/4;
-		Flow flow= tg.getFlows().get(f);
-		if(flow.getImpThroughputMin()>0){
-			win= flow.getImpThroughputMin();
-		}
-		
-		int t_min = Math.max(0, t-win);		//how to select the observer window of 10?
-		
-		double err_move =ng.getPositionError(ng.getSlotChange(), t);
-		System.out.println(ng.getSlotChange());
-		double err_net = ng.getNetworkError(ngPred.getNetworks(), t_min, t);
-		UncertaintyErrorCalculation uec = new UncertaintyErrorCalculation(tgPred.getFlows(), tg.getFlows(), ng.getTimeslots());
-		double err_flow= uec.getFlowUncertaintyError2(t_min, t);
-		
-		
-		double err=(err_net+err_flow)/2; //TODO : define better function of move, net and flow error
-		
-//		if(!set.contains(f+100*t))System.out.println("Heuristics: getError. err="+err+", move="+err_move+", net="+err_net+", flow="+err_flow);
 
-		set.add(f+100*t);
-		return err;
-	}
-	HashSet<Integer> set=new HashSet<Integer>(); 
-	
 
 	
 	/**
@@ -476,6 +445,11 @@ public abstract class HeuristicScheduler extends Scheduler{
 //		if(f>=tgPred.getFlows().size()) return 1.0;		//if flow was added, do not impair
 		t=Math.min(t,longTermSP_f_t_n[0].length-1);			//restrict t to array size.
 		
+		//use reference time slot t_ref to refer to plan. Location dependent
+		int t_ref = t;
+		if(ADAPTIVE_loc) t_ref=getRefSlot(t, ng.getSlotChange(), f);
+		
+		
 		double impairing =0;
 		
 		//h_time is 0 when scheduling follows plan. Goes up to 1 when more tokens scheduled then planned
@@ -487,12 +461,13 @@ public abstract class HeuristicScheduler extends Scheduler{
 		int win =getWindow(f,t);
 		//window of 5 timeslots length.
 		int t_min = Math.max(0, t-win);
-		t_min=0;
-		int t_max= Math.min(ng.getTimeslots()-1, Math.max(0, t+win-1));
+		int t_min_ref = Math.min(ng.getTimeslots()-1, Math.max(0, t_ref-win));
+//		t_min=0;		//TODO check!
+		int t_max= Math.min(ng.getTimeslots()-1, Math.max(0, t_ref+win-1));
 		updatePrefixAllocated(t, f);
 
 		int alloc_dif= prefix_allocated_f_t[f][t]- prefix_allocated_f_t[f][t_min];
-		int planned_dif= prefixSumLongTermSP_f_t[f_id][t_max] - prefixSumLongTermSP_f_t[f_id][t_min];
+		int planned_dif= prefixSumLongTermSP_f_t[f_id][t_max] - prefixSumLongTermSP_f_t[f_id][t_min_ref];
 //		System.out.println("Alloc= "+Arrays.deepToString(prefix_allocated_f_t));
 		
 		double h_time;// = ((double)Math.max(0, alloc_dif-planned_dif))/Math.max(1,alloc_dif);
@@ -501,13 +476,13 @@ public abstract class HeuristicScheduler extends Scheduler{
 		//update dropped allocated: tokens that have been dropped 
 		//in the plan but allocated in the opportunistic approach
 		if(t>0){
-			dropped_allocated_f[f]=Math.max(dropped_allocated_f[f], //max of dropped and 
-					prefix_allocated_f_t[f][t-1]-prefixSumLongTermSP_f_t[f_id][t-1]); //diff of allocated and planned
+			dropped_allocated_f[f_id]=Math.min(dropped_f[f_id], Math.max(dropped_allocated_f[f_id], //max of dropped and 
+					prefix_allocated_f_t[f][t-1]-prefixSumLongTermSP_f_t[f_id][t-1])); //diff of allocated and planned
 		}
 //		System.out.println("HEURISTIC_TIME_IMPAIRING: t="+t+", f= "+f+", h_time="+h_time+",\t sum_LTSP = "+ prefixSumLongTermSP_f_t[f][t]
 //				+",\t alloc="+allocated_f[f] + "\t alpha="+alpha);
 		
-		int sum=Math.max(0, planned_dif+dropped_f[f]-dropped_allocated_f[f]	-alloc_dif);
+		int sum=Math.max(0, planned_dif+dropped_f[f_id]-dropped_allocated_f[f_id]-alloc_dif);
 		for(int n = 0; n<ng.getNetworks().size(); n++){
 			sum+=longTermSP_f_t_n[f_id][t][n];
 		}
@@ -517,10 +492,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 //			h_time = Math.abs(t-)
 		else
 			h_time=1;	//not sched
-		
-
-//		if(f==3)System.out.println("Heuristics: getairing: prefixSum="+planned_dif+", alloc "+alloc_dif+"; h= "+(1-h_time));
-		
+//		if(f==3)System.out.println("Heuristics: getairing: prefixSum="+planned_dif+", alloc "+alloc_dif+"; h= "+(1-h_time));		
 		impairing = alpha*h_time;
 //		if(f==3)System.out.println("HEURISTIC_TIME_IMPAIRING: t="+t+", f= "+f+", h_time="+h_time+", impairing = "+impairing);
 		
@@ -641,6 +613,57 @@ public abstract class HeuristicScheduler extends Scheduler{
 			}
 			dropped_f[f]=dropped_tokens;
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param f
+	 * @param t
+	 * @return the error of k time slots before t. k is equal to 
+	 */
+	protected double getError(int f, int t){
+		if(!ADAPTIVE_err)return 0;
+		
+		int win=ng.getTimeslots()/4;
+		Flow flow= tg.getFlows().get(f);
+		if(flow.getImpThroughputMin()>0){
+			win= flow.getImpThroughputMin();
+		}
+		
+		int t_min = Math.max(0, t-win);		//how to select the observer window of 10?
+		
+		double err_move =ng.getPositionError(ng.getSlotChange(), t);
+//		System.out.println(ng.getSlotChange());
+		double err_net = ng.getNetworkError(ngPred.getNetworks(), t_min, t);
+		UncertaintyErrorCalculation uec = new UncertaintyErrorCalculation(tgPred.getFlows(), tg.getFlows(), ng.getTimeslots());
+		double err_flow= uec.getFlowUncertaintyError2(f,t_min, t)+uec.getFlowUncertaintyError(t_min, t)/2;
+		
+		double sum_err = err_net+err_flow;
+		double err=Math.pow(sum_err,2); //TODO : define better function of move, net and flow error
+
+		return err;
+	}
+	
+	
+	/**
+	 * 
+	 * @param t
+	 * @param slotChange
+	 * @param f
+	 * @return return the time slot t_ref of the plan which corresponds to the current location of the vehicle. 
+	 * 			Limit difference  between t and t_ref by throughput time window of the data flow f. 
+	 */
+	private int getRefSlot(int t, Vector<Integer> slotChange, int f){
+		if(slotChange==null) return t;
+		int range = Math.min(tg.getFlows().get(f).getWindowMin(), Math.abs(slotChange.get(t)-t));
+		
+		if(slotChange.get(t)>t){
+			return t+range;
+		}else{
+			return t-range;
+		}
+		
 	}
 	
 }

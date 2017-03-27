@@ -543,7 +543,7 @@ class PlotGraph extends JPanel{
 						"cyan", "green", "light blue", "light pink", "dark grey", "light magenta", "light orange",
 						"light yellow", "light cyan", "light green"};
 				
-				textArea.append("\nFlow " +f +": "+flow.getFlowName()+"\n DR= "+sched.getFlowDrop(f)+"%, "+colors[f%16]+"\n");
+				textArea.append("\nFlow " +f +"("+flow.getId()+")" +": "+flow.getFlowName()+"\n DR= "+sched.getFlowDrop(f)+"%, "+colors[f%16]+"\n");
 				if (violations[f][0] != 0)
 					textArea.append(" TP: " +violations[f][0] +",");
 		
