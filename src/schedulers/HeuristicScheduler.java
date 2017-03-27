@@ -45,8 +45,8 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected int tl_offset =0;	//allowed time offset for which violation is allowed
 	
 	protected boolean NEW_RATING_ESTIMATOR=true;
-	protected final boolean ADAPTIVE_loc = true;
-	protected final boolean ADAPTIVE_err = true;
+	protected boolean ADAPTIVE_loc = true;
+	protected boolean ADAPTIVE_err = true;
 //	protected final boolean ADAPTIVE = false;
 	protected int WINDOW = -1;
 	//-1 is automatic from smape. Else vary between 0 and 1; 1 means full impairing = follow plan!

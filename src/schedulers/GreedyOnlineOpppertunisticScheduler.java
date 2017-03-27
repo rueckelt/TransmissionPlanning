@@ -40,12 +40,20 @@ public class GreedyOnlineOpppertunisticScheduler extends GreedyOnlineScheduler {
 		super.calculateInstance_internal(logfile);
 	}
 	
+	public void adapt_location(boolean adapt){
+		ADAPTIVE_loc = adapt;
+	}
+	public void adapt_err(boolean adapt){
+		ADAPTIVE_err = adapt;
+	}
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
+		String ext = "";
+		if(ADAPTIVE_err) ext+="_err_";
+		if(ADAPTIVE_loc) ext+="_loc_";
 		return new String("GreedyOnlineOpp_"+schedule_decision_limit+
-				name_extention+"_alpha_"+TIME_IMPAIRING_WEIGHT+"_w_"+WINDOW).replace("-", "m").replace('.', '_');	
-				//matlab does not support minus or dots in file names
+				name_extention+ext).replace("-", "m").replace('.', '_');	
+
 	}
 
 }
