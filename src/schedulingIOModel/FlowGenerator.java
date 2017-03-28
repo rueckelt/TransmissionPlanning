@@ -226,13 +226,15 @@ public class FlowGenerator implements Serializable{
 		do{
 			Flow.setNextId(new AtomicInteger(0));	
 			probAddCancel = (float) (probAddCancel*(0.85+0.15*adapt));
-			float probContinue = (float) (0.3);//*probAddCancel);
+			float probContinue = (float) (0.2);//*probAddCancel);
 			
 			flows = cloneFlows(backup);		//reset flows in each iteration without prior success
 			
 			addFlows(probAddCancel, timesteps);
 //			float probCancel = 1/(1+probAddCancel);		//should result in equal amount of flows
-			cancelFlows(probAddCancel, probContinue, timesteps);
+			
+			float probCancel = 1-(1-probAddCancel)*(1-probContinue);
+			cancelFlows(probCancel, probContinue, timesteps);
 			
 			float act_error = new UncertaintyErrorCalculation(backup, flows, timesteps).getFlowUncertaintyError();
 			
@@ -256,7 +258,7 @@ public class FlowGenerator implements Serializable{
 			if(rndCancel<probCancel){
 //				System.out.println("Cancel if "+rndCancel+"<"+probCancel);
 				
-				//cancel flow completely with certain probability (20%)
+				//cancel flow completely with certain probability (40%)
 				if(RndInt.get(0,9)<2){
 					//toRemove.add(flow);
 					flow.setTokens(0); // if we remove the flow from the list, the executor cannot follow the original schedule plan with rowindex

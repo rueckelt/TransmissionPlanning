@@ -28,7 +28,7 @@ public class main {
 
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
-		int rep=1;
+		int rep=18769;
 		
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
@@ -65,9 +65,9 @@ public class main {
 			eval.visualize();
 			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
-			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
+//			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
-//			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
+			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
 //			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//combined
 //			eval.evaluateTop();
