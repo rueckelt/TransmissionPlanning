@@ -45,8 +45,8 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected int tl_offset =0;	//allowed time offset for which violation is allowed
 	
 	protected boolean NEW_RATING_ESTIMATOR=true;
-	protected boolean ADAPTIVE_loc = true;
-	protected boolean ADAPTIVE_err = true;
+	protected boolean ADAPTIVE_loc = false;
+	protected boolean ADAPTIVE_err = false;
 //	protected final boolean ADAPTIVE = false;
 	protected int WINDOW = -1;
 	//-1 is automatic from smape. Else vary between 0 and 1; 1 means full impairing = follow plan!
@@ -524,7 +524,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 		double alpha = TIME_IMPAIRING_WEIGHT;
 		double err =getError(f, t);
 		
-		System.out.println("Heuristic: timeImpairingWeight: f="+f+", t="+t+", alpha="+alpha+", err="+err);
+//		System.out.println("Heuristic: timeImpairingWeight: f="+f+", t="+t+", alpha="+alpha+", err="+err);
 		return (1-err)*alpha;
 	}
 
@@ -666,4 +666,12 @@ public abstract class HeuristicScheduler extends Scheduler{
 		
 	}
 	
+	public Scheduler adapt_location(boolean adapt){
+		ADAPTIVE_loc = adapt;
+		return this;
+	}
+	public Scheduler adapt_err(boolean adapt){
+		ADAPTIVE_err = adapt;
+		return this;
+	}
 }

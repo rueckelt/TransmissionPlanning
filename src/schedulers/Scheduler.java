@@ -36,10 +36,11 @@ public abstract class Scheduler {
 		boundFlowDeadlines(tg, ng);
 		this.ng=ng;
 		this.tg=tg;
-		this.tg.setFlowIndices(); 
+		 
 		schedule_f_t_n=getEmptySchedule();
 		logger = new LogMatlabFormat();	
 		if(tg!=null && ng!=null){
+			this.tg.setFlowIndices();
 			interfaceLimit = new InterfaceLimit(ng);
 			allocated_f_t=new int[tg.getFlows().size()][ng.getTimeslots()];
 			prefix_allocated_f_t=new int[tg.getFlows().size()][ng.getTimeslots()];

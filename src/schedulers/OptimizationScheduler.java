@@ -19,7 +19,7 @@ public class OptimizationScheduler extends Scheduler {
 	final static String dataset_net = "sched_com_net.dat";		//is created: with place holders for flows only
 	final static String dataset_gen = "sched_com_gen.dat";		//is created: without place holders
 	
-	private boolean testCF=false;
+	private boolean testCF=true;
 
 	@Override
 	public String getType() {

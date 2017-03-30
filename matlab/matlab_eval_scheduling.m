@@ -11,8 +11,8 @@
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_load_notime']; select= 4;
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_cost']; select= 5;
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 6; %movement prediction error
-%in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 7; %flow prediction error
-in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 8; %network prediction error
+in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 7; %flow prediction error
+%in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 8; %network prediction error
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 9; %combined prediction error
 
 out_folder = [in_folder filesep 'eval'];
@@ -48,7 +48,7 @@ else
     save(data_file, 'raw_values');
     save(avail_file, 'avail');
 end
-raw_values(2,:,:,:)=raw_values(2,:,:,:)./(1000*1000);     %time: �s to seconds
+raw_values(2,:,:,:)=raw_values(2,:,:,:)./(1000*1000);     %time: us to seconds
 state='gathered data'
 %calculate relative
 % %plot
@@ -61,7 +61,20 @@ plot_data4(out_folder, raw_values(1:7,:,:,:), avail,valuenames, schedulers, sele
 plot_data_dr(out_folder, raw_values, avail, valuenames, schedulers, select);
  
 state='done'
-
+%(varnames, schedulers, [flows, time, networks,..], repetitions)
+for r = 1:50
+    for c=1:5
+        i=0;
+        for s=2:9
+            if(raw_values(1,1,c,r)>raw_values(1,s,c,r))
+                i=i+1;
+            end
+        end
+        if(i>0)
+            ['rep' int2str(r) ', i cases ' int2str(i) ' c=' int2str(c)]
+        end
+    end
+end
 
 %The functions you mention return H=0 when a test cannot reject the hypothesis of a normal distribution.
 %Kolmogorow-Smirnow-Test kstest

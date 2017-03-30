@@ -15,7 +15,7 @@ import schedulers.GreedyScheduler;
 import schedulers.GreedyOnlineOpppertunisticScheduler;
 import schedulers.GreedyOnlineScheduler;
 import schedulers.GreedyScheduler_s;
-import schedulers.GreedyScheduler_sk;
+//import schedulers.GreedyScheduler_sk;
 import schedulers.OptimizationScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
@@ -110,11 +110,10 @@ public class EvaluationScenarioCreator {
 
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 
-//		schedulers.add(new OptimizationScheduler(ng, fg));
+		schedulers.add(new OptimizationScheduler(ng, fg));
 //		schedulers.add(new GreedyOnlineScheduler(ng, fg));
-//		schedulers.add(new GreedyScheduler(ng, fg));
 //		schedulers.add(new GreedyScheduler_s(ng, fg));
-		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg));
+//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg));
 		Scheduler gs = new GreedyScheduler(ng, fg);
 		schedulers.add(gs);				
 
@@ -135,7 +134,14 @@ public class EvaluationScenarioCreator {
 		
 		NetworkGenerator ngPred = getNetworkGenerator(log_run_path, false, 0, 0, (float) 0.0, (float) 0.0);	//load from file
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt, "opt"));
-		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp"));
+//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp"));
+//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
+//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
+		
+		GreedyOnlineOpppertunisticScheduler opp = new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp");
+		opp.adapt_err(true);
+		opp.adapt_location(true);
+		schedulers.add(opp);
 		
 		
 //		for(double alpha =0; alpha<=1; alpha=alpha+0.2){
@@ -297,7 +303,7 @@ public class EvaluationScenarioCreator {
 		for(float net_unc=(float)0.1; net_unc<=NET_UNCERTAINTY; net_unc+=(float)0.1){
 			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, net_unc, 0, 0);
 		}
-		for(float flow_unc=(float)0.1; flow_unc<=FLOW_UNCERTAINTY; flow_unc+=(float)0.1){
+		for(float flow_unc=(float)0.4; flow_unc<=FLOW_UNCERTAINTY; flow_unc+=(float)0.1){
 			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, 0, flow_unc);	
 		}
 		if(FLOW_UNCERTAINTY>0 && MOVE_UNCERTAINTY>0 && FLOW_UNCERTAINTY>0){

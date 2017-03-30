@@ -7,7 +7,7 @@
 %####################################################
 function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
 
-[nof_vartypes, nof_schedulers, nof_count, nof_repetitions] = size(data);
+[nof_vartypes, nof_schedulers, ~, nof_repetitions] = size(data);
     %what to plot?
     % use tikz_out(out_folder, data, plot_var_ftn, my_xlabel, my_ylabel, bound_hi, bound_lo, logscale)
         %out folder should contain subfolder for scheduler and subfolder for
@@ -127,7 +127,7 @@ for v=1:nof_vartypes
     end
 end
 
-if 1==1
+if 1==0
      %detail plots
      for s=2:(nof_schedulers-1)
          %Relative Detail Score (RDS) of criterion v

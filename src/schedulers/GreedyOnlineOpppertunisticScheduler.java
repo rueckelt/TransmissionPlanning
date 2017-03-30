@@ -39,18 +39,12 @@ public class GreedyOnlineOpppertunisticScheduler extends GreedyOnlineScheduler {
 		if(spLogPath!=null) loadLongTermSp(spLogPath);
 		super.calculateInstance_internal(logfile);
 	}
-	
-	public void adapt_location(boolean adapt){
-		ADAPTIVE_loc = adapt;
-	}
-	public void adapt_err(boolean adapt){
-		ADAPTIVE_err = adapt;
-	}
+
 	@Override
 	public String getType() {
 		String ext = "";
-		if(ADAPTIVE_err) ext+="_err_";
-		if(ADAPTIVE_loc) ext+="_loc_";
+		if(ADAPTIVE_err) ext+="_err";
+		if(ADAPTIVE_loc) ext+="_loc";
 		return new String("GreedyOnlineOpp_"+schedule_decision_limit+
 				name_extention+ext).replace("-", "m").replace('.', '_');	
 
