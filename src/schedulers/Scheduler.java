@@ -341,6 +341,8 @@ public abstract class Scheduler {
 				interfaceLimit.useNetwork(network, time);
 				int f_id= tg.getFlows().get(flow).getId();	
 				allocated_f_t[f_id][time]+=scheduled;
+				updatePrefixAllocated(Math.min(ng.getTimeslots()-1, ng.getTimeslots()), flow);
+//				if(flow==0)System.out.println("prefix_alloc "+Arrays.deepToString(prefix_allocated_f_t));
 				return scheduled;
 			}else{
 				schedule_f_t_n_temp[flow][time][network]-=scheduled;	//undo: remove tokens from plan if it gets invalid
@@ -476,4 +478,20 @@ public abstract class Scheduler {
 				return 0;
 	}
 	
+	protected void updatePrefixAllocated(int t_max, int f){
+		int f_id = tg.getFlows().get(f).getId();
+
+		prefix_allocated_f_t[f_id][0]=allocated_f_t[f_id][0];
+		for(int t=1; t<=t_max; t++){
+			prefix_allocated_f_t[f_id][t]=prefix_allocated_f_t[f_id][t-1]+allocated_f_t[f_id][t];
+		}
+	}
+	
+	public NetworkGenerator getNetworkGenerator(){
+		return ng;
+	}
+
+	public FlowGenerator getFlowGenerator() {
+		return tg;
+	}
 }

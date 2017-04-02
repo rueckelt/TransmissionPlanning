@@ -135,15 +135,13 @@ public abstract class HeuristicScheduler_bu extends Scheduler{
 	protected boolean oppScheduleDecision(int f, int n, int t) {
 		//return false if index out of bounds
 		if(t>=ng.getTimeslots() || n>=ng.getNetworks().size() || f>=tg.getFlows().size()) return false;
-		
-		if(NEW_RATING_ESTIMATOR){
+
 			int sum = getEstimatedSchedulingCost(f, n, t);
-//			if(f==0)System.out.println("Heuristic: oppScheduleDecision: f="+f+", n="+n+", t="+t+", sum"+sum);
+			int limit = getScheduleDecisionLimit(f, t);
+			if(f==0)System.out.println("Heuristic: oppScheduleDecision: f="+f+", n="+n+", t="+t+", sum"+sum+", limit="+limit);
 
-			return  sum	<= getScheduleDecisionLimit(f, t);
+			return  sum	< limit;
 
-		}else
-			return calcVio(f, n)<schedule_decision_limit;
 	}
 	
 	/**
@@ -498,16 +496,7 @@ public abstract class HeuristicScheduler_bu extends Scheduler{
 	
 	
 	// ######################  AUXILLARY ######################
-	
-	private void updatePrefixAllocated(int t_max, int f){
-		int f_id = tg.getFlows().get(f).getId();
 
-		prefix_allocated_f_t[f_id][0]=allocated_f_t[f_id][0];
-		for(int t=1; t<=t_max; t++){
-			prefix_allocated_f_t[f_id][t]=prefix_allocated_f_t[f_id][t-1]+allocated_f_t[f_id][t];
-		}
-	}
-	
 	
 	/**
 	 * 

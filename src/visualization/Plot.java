@@ -312,11 +312,11 @@ class PlotGraph extends JPanel{
 	
 	public PlotGraph(VisualizationPack vis, Scheduler s, int factor) {
 		super(null);			// No layout
-		fg=vis.getTraffic();
+		fg=s.getFlowGenerator();
 		sched = s;
-		nets = vis.getNets().getNetworks();
+		nets = s.getNetworkGenerator().getNetworks();
 		this.factor = factor;
-		costs = new CostFunction(vis.getNets(), vis.getTraffic());
+		costs = new CostFunction(s.getNetworkGenerator(), fg);
 		
 		textArea = new JTextArea("Costs: "+costs.costTotal(sched.getSchedule())+"\n\n");//costs.costMon(sched.getSchedule())+"\n\n");
 		textArea.setEditable(false);
@@ -396,8 +396,9 @@ class PlotGraph extends JPanel{
 						// Flows
 						temp = vFlowRect.get(f);
 
+						int f_id = fg.getFlows().get(f).getId();
 						// different color for each flow .... until there are more then 17.
-						switch (f) {
+						switch (f_id%16) {
 							case 0: g.setColor(Color.GREEN.darker()); break;
 							case 1: g.setColor(Color.BLUE); break;
 							case 2: g.setColor(Color.PINK); break;
@@ -407,14 +408,14 @@ class PlotGraph extends JPanel{
 							case 6: g.setColor(Color.YELLOW); break;
 							case 7: g.setColor(Color.CYAN); break;
 							case 8: g.setColor(Color.GREEN); break;
-							case 9: g.setColor(Color.BLUE.brighter()); break;
-							case 10: g.setColor(Color.PINK.brighter()); break;
+							case 9: g.setColor(Color.BLUE); break;
+							case 10: g.setColor(Color.PINK.darker().darker()); break;
 							case 11: g.setColor(Color.DARK_GRAY); break;
-							case 12: g.setColor(Color.MAGENTA.brighter()); break;
-							case 13: g.setColor(Color.ORANGE.brighter()); break;
-							case 14: g.setColor(Color.YELLOW.brighter()); break;
-							case 15: g.setColor(Color.CYAN.brighter()); break;
-							default: g.setColor(Color.GREEN.brighter());
+							case 12: g.setColor(Color.MAGENTA.darker().darker()); break;
+							case 13: g.setColor(Color.ORANGE.darker().darker()); break;
+							case 14: g.setColor(Color.YELLOW.darker().darker()); break;
+							case 15: g.setColor(Color.CYAN.darker().darker()); break;
+							default: g.setColor(Color.GREEN.darker());
 						}
 
 /*						if (newlevel != 0) {
@@ -510,7 +511,8 @@ class PlotGraph extends JPanel{
         			for(FlowRect fr : vFlowRect) {
                     	for (int pos = fr.size() -1; pos >= 0; pos--) {
     	                	if (fr.getRect(pos).contains(e.getPoint())) {
-    	            			s = new String("Slot: "+fr.getTimeslot(pos)+"; Flow: "+frCounter+"; Capacity: "+fr.getCapacity(pos));
+    	                		int f_id= fg.getFlows().get(frCounter).getId();
+    	            			s = new String("Slot: "+fr.getTimeslot(pos)+"; Flow: "+frCounter+"("+f_id+"); Capacity: "+fr.getCapacity(pos));
     	            			found = true;
     	            			break;
     	            		}
@@ -539,11 +541,12 @@ class PlotGraph extends JPanel{
 			textArea.append("Violations:");
 			for (int f = 0; f < sched.getFlowCounter(); f++) {
 				Flow flow=fg.getFlows().get(f);
-				String[] colors = {"dark green", "blue", "pink", "light gray", "magenta", "orange", "yellow",
-						"cyan", "green", "light blue", "light pink", "dark grey", "light magenta", "light orange",
-						"light yellow", "light cyan", "light green"};
-				
-				textArea.append("\nFlow " +f +"("+flow.getId()+")" +": "+flow.getFlowName()+"\n DR= "+sched.getFlowDrop(f)+"%, "+colors[f%16]+"\n");
+				String[] colors = {"dark green", "blue", "rose", "light gray", "magenta", "orange", "yellow",
+						"cyan", "green", "dark blue", "dark rose", "dark grey", "dark magenta", "dark orange",
+						"dark yellow", "dark cyan", "dark green"};
+
+				int f_id = flow.getId();
+				textArea.append("\nFlow " +f +"("+flow.getId()+")" +": "+flow.getFlowName()+"\n DR= "+sched.getFlowDrop(f)+"%, "+colors[f_id%16]+"\n");
 				if (violations[f][0] != 0)
 					textArea.append(" TP: " +violations[f][0] +",");
 		

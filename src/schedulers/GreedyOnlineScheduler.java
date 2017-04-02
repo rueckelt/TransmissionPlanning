@@ -39,7 +39,7 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 		Vector<Integer> chunksToAllocate = new Vector<Integer>();
 		for(int f = 0; f<tg.getFlows().size(); f++){
 			Flow flow = tg.getFlows().get(f);
-			flowsToNets.add(sortNetworkIDs(flow.getIndex()));
+			flowsToNets.add(sortNetworkIDs(f));
 			chunksToAllocate.add(flow.getTokens());
 		}
 
@@ -47,7 +47,7 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 //		System.out.println("FlowOrder GreOn: "+flow_order.toString()+", net order:"+flowsToNets);
 		for (int t=0; t<ng.getTimeslots(); t++){
 			//assign each active flow to best matching network
-			for(int f0=0;f0<tg.getFlows().size();f0++){
+			for(int f0=0;f0<flow_order.size();f0++){
 				int f=flow_order.get(f0);
 				Flow flow= tg.getFlows().get(f);
 				int chunksMaxTp = flow.getTokensMax();//(int)(flow.getTokensMax()/flow.getWindowMax());	//get average maximum throughput for later allocation

@@ -255,14 +255,12 @@ public class FlowGenerator implements Serializable{
 		for(Flow flow : flows){
 			//cancel flow during transmission with certain probability
 			float rndCancel = (float)RndInt.get(0, 1000)/1000;
-			if(rndCancel<probCancel){
+			if(flow.getId()==0 || rndCancel<probCancel){
 //				System.out.println("Cancel if "+rndCancel+"<"+probCancel);
 				
 				//cancel flow completely with certain probability (40%)
-				if(RndInt.get(0,9)<2){
+				if(flow.getId()==0 || RndInt.get(0,9)<2){
 					toRemove.add(flow);
-					flow.setTokens(0); // if we remove the flow from the list, the executor cannot follow the original schedule plan with rowindex
-					flow.setImpThroughputMin(0);
 					
 				}else{
 //					System.out.println("##canceled "+flow+";; ");
@@ -299,18 +297,16 @@ public class FlowGenerator implements Serializable{
 			}
 		}
 
+		for(Flow flow:toRemove){
+			flow.setTokens(0);
+			flow.setImpUser(0);
+			flow.setImpThroughputMin(0);
+			flow.setImpUnsched(0);
+		}
 		flows.removeAll(toRemove);
-//		System.out.println("######## after cancel of \n"+toRemove);
-//		for(Flow f: flows){
-//			System.out.println(f);
-//		}
+
 		flows.addAll(toContinue);
 		setFlowIndices();
-//		System.out.println("######## after continue \n"+toContinue);
-//		for(Flow f: flows){
-//			System.out.println(f);
-//		}
-//		System.out.println("finished cancelling");
 	}
 	
 	private void addFlows(float probAdd, int duration) {

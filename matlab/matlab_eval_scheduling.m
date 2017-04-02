@@ -10,10 +10,10 @@
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_nets']; select= 3;
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_load_notime']; select= 4;
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_cost']; select= 5;
-in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 6; %movement prediction error
+%in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 6; %movement prediction error
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 7; %flow prediction error
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 8; %network prediction error
-%in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 9; %combined prediction error
+in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 9; %combined prediction error
 
 out_folder = [in_folder filesep 'eval_h'];
 

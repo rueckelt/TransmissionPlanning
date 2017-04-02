@@ -3,20 +3,20 @@ package schedulers;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
 
-public class GreedyOnlineOppportunisticScheduler extends GreedyOnlineScheduler {
+public class GreedyOnlineOpportunisticScheduler extends GreedyOnlineScheduler {
 
-	public GreedyOnlineOppportunisticScheduler(NetworkGenerator ng,
+	public GreedyOnlineOpportunisticScheduler(NetworkGenerator ng,
 			FlowGenerator tg) {
 		super(ng, tg);
 	}
 	
 
-	public GreedyOnlineOppportunisticScheduler(NetworkGenerator ng,
+	public GreedyOnlineOpportunisticScheduler(NetworkGenerator ng,
 			FlowGenerator tg, NetworkGenerator ng_pred, FlowGenerator tg_pred, double alpha, String longTermSpPath, String name_extention) {
 		this(ng,tg,ng_pred,tg_pred,alpha,-1,longTermSpPath, name_extention);
 	}
 	
-	public GreedyOnlineOppportunisticScheduler(NetworkGenerator ng,
+	public GreedyOnlineOpportunisticScheduler(NetworkGenerator ng,
 			FlowGenerator tg, NetworkGenerator ng_pred, FlowGenerator tg_pred, double alpha, int window, String longTermSpPath, String name_extention) {
 		this(ng, tg);
 		this.tgPred=tg_pred;
@@ -45,6 +45,7 @@ public class GreedyOnlineOppportunisticScheduler extends GreedyOnlineScheduler {
 		String ext = "";
 		if(ADAPTIVE_err) ext+="_err";
 		if(ADAPTIVE_loc) ext+="_loc";
+		if(ADAPTIVE_transm) ext+="_tr";
 		return new String("ONS"+name_extention+ext).replace("-", "m").replace('.', '_');	
 
 	}
