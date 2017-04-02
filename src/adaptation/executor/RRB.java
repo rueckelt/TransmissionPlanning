@@ -36,10 +36,10 @@ public class RRB {
 		}	
 		//}
 		if (rest > 0) rrb(rest, minTp, executed, fNum);
-		System.out.println("rest: " + rest + " - fNum: " + fNum);
-		Printer.printInt(minTp);
-		Printer.printInt(executed);
-		System.out.println("\n_______________");
+//		System.out.println("rest: " + rest + " - fNum: " + fNum);
+//		Printer.printInt(minTp);
+//		Printer.printInt(executed);
+//		System.out.println("\n_______________");
 	}
 	public static void main(String[] args) {
 		int[] minTp = {10, 5, 1, 10, 15, 15, 15};

@@ -12,13 +12,14 @@ import schedulers.AdaptationScheduler;
 import schedulers.DummyScheduler;
 import schedulers.ExecutionScheduler;
 import schedulers.GreedyScheduler;
-import schedulers.GreedyOnlineOpppertunisticScheduler;
+import schedulers.GreedyOnlineOppportunisticScheduler;
 import schedulers.GreedyOnlineScheduler;
 import schedulers.GreedyScheduler_s;
 //import schedulers.GreedyScheduler_sk;
 import schedulers.OptimizationScheduler;
 import schedulers.RandomScheduler;
 import schedulers.Scheduler;
+import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
 
@@ -31,6 +32,7 @@ public class EvaluationScenarioCreator {
 	private boolean VISUALIZE = false;	//tests cost function implemented in java, comparing all results to optimization output
 	private int PARALLEL=1;
 	
+	private final int REP_START=0;
 	private final int REPETITIONS;
 	private final int MAX_TIME;
 	private final int MAX_FLOWS;
@@ -113,7 +115,7 @@ public class EvaluationScenarioCreator {
 		schedulers.add(new OptimizationScheduler(ng, fg));
 //		schedulers.add(new GreedyOnlineScheduler(ng, fg));
 //		schedulers.add(new GreedyScheduler_s(ng, fg));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg));
+		schedulers.add(new GreedyOnlineOppportunisticScheduler(ng, fg));
 		Scheduler gs = new GreedyScheduler(ng, fg);
 		schedulers.add(gs);				
 
@@ -134,14 +136,14 @@ public class EvaluationScenarioCreator {
 		
 		NetworkGenerator ngPred = getNetworkGenerator(log_run_path, false, 0, 0, (float) 0.0, (float) 0.0);	//load from file
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt, "opt"));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp"));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
+		schedulers.add(new GreedyOnlineOppportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp"));
+//		schedulers.add(new GreedyOnlineOppportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
+		schedulers.add(new GreedyOnlineOppportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
 		
-		GreedyOnlineOpppertunisticScheduler opp = new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp");
-		opp.adapt_err(true);
-		opp.adapt_location(true);
-		schedulers.add(opp);
+//		GreedyOnlineOppportunisticScheduler opp = new GreedyOnlineOppportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp");
+//		opp.adapt_err(true);
+//		opp.adapt_location(true);
+//		schedulers.add(opp);
 		
 		
 //		for(double alpha =0; alpha<=1; alpha=alpha+0.2){
@@ -165,7 +167,7 @@ public class EvaluationScenarioCreator {
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(15)).newRating(newRating));
 //		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(20)).newRating(newRating));
 		
-//		schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
 		
 	return schedulers;
 	}
@@ -205,7 +207,7 @@ public class EvaluationScenarioCreator {
 				//(iii) number of flows/requests
 				for(int req=0;req<=MAX_FLOWS;req++){
 					//repetitions of optimization
-					for(int rep=0; rep<REPETITIONS;rep++){
+					for(int rep=REP_START; rep<REPETITIONS;rep++){
 						evaluateUncertainty(t, net, req, rep);
 					}
 					
@@ -228,7 +230,7 @@ public class EvaluationScenarioCreator {
 		//paramter log
 		writeScenarioLog(1);
 
-		for(int rep=0; rep<REPETITIONS;rep++){
+		for(int rep=REP_START; rep<REPETITIONS;rep++){
 //		int rep=2;
 			evaluateUncertainty(MAX_TIME, MAX_NETS, MAX_FLOWS, rep);
 		}
@@ -240,7 +242,7 @@ public class EvaluationScenarioCreator {
 		//paramter log
 		writeScenarioLog(1);
 		for(int t= 0; t<=MAX_TIME; t++){
-			for(int rep=0; rep<REPETITIONS;rep++){
+			for(int rep=REP_START; rep<REPETITIONS;rep++){
 				evaluateUncertainty(t,  MAX_NETS, MAX_FLOWS, rep);
 			}
 		}
@@ -251,7 +253,7 @@ public class EvaluationScenarioCreator {
 		//paramter log
 		writeScenarioLog(1);
 		for(int f= 2; f<=MAX_FLOWS; f++){		//start with 2 = 2² = 4 flows to be able to use "add4" for traffic share
-			for(int rep=0; rep<REPETITIONS;rep++){
+			for(int rep=REP_START; rep<REPETITIONS;rep++){
 				evaluateUncertainty(MAX_TIME,  MAX_NETS, f, rep);
 			}
 		}
@@ -275,7 +277,7 @@ public class EvaluationScenarioCreator {
 		writeScenarioLog(1);
 		for(int d= 1; d<=3; d++){
 			DATA_AMOUNT=d;
-			for(int rep=0; rep<REPETITIONS;rep++){
+			for(int rep=REP_START; rep<REPETITIONS;rep++){
 				evaluateUncertainty(MAX_TIME, MAX_NETS, MAX_FLOWS, rep);
 			}
 		}
@@ -287,7 +289,7 @@ public class EvaluationScenarioCreator {
 		writeScenarioLog(1);
 		for(int m= 0; m<=3; m++){
 			MONETARY_WEIGHT=m;
-			for(int rep=0; rep<REPETITIONS;rep++){
+			for(int rep=REP_START; rep<REPETITIONS;rep++){
 				evaluateUncertainty(MAX_TIME, MAX_NETS, MAX_FLOWS, rep);
 			}
 		}
@@ -424,6 +426,15 @@ public class EvaluationScenarioCreator {
 
 //			System.out.println("write FlowGen to: "+path);	
 			fg.writeObject(path);
+		}
+		
+		//clean flow list: delete all flows with zero tokens.
+		Vector<Flow> fg_copy = new Vector<Flow>();
+		fg_copy.addAll(fg.getFlows());
+		for(Flow flow:fg_copy){
+			if(flow.getTokens()==0){
+				fg.getFlows().remove(flow);
+			}
 		}
 		
 		return fg;

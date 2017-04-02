@@ -158,7 +158,7 @@ public class GreedyScheduler_s extends HeuristicScheduler{
 
 	@Override
 	public String getType() {
-		String s=new String("Greedy_s_"+schedule_decision_limit).replace("-", "m");
+		String s=new String("JTP_s").replace("-", "m");
 		return s;
 	}
 

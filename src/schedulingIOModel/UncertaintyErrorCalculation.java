@@ -231,7 +231,7 @@ public class UncertaintyErrorCalculation {
 	
 	private boolean flowDeletedButShouldBeActive(int f_id, int t_start, int t_end){		//start time error for every time slot
 		return (!act_starttime.keySet().contains(f_id) &&	//flow not in actual set
-				t_end>=act_starttime.get(f_id) && t_start<=act_deadline.get(f_id));
+				t_end>=pred_starttime.get(f_id) && t_start<=pred_deadline.get(f_id));
 	}
 	
 	private boolean flowIsOrShouldBeActiveWithinTimeFrame(int f_id, int t_start, int t_end){

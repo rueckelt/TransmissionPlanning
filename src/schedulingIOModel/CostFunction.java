@@ -92,7 +92,7 @@ public class CostFunction {
 	 * @return Latency violations for each flow (without user pref)
 	 */
 	public int[] vioLcy(int[][][] schedule){
-		int flows = schedule.length;
+		int flows = tg.getFlows().size();
 		int timeslots = schedule[0].length;
 		int networks = schedule[0][0].length;
 		
@@ -122,7 +122,7 @@ public class CostFunction {
 	}
 	
 	public int[] vioJit(int[][][] schedule){
-		int flows = schedule.length;
+		int flows = tg.getFlows().size();
 		int timeslots = schedule[0].length;
 		int networks = schedule[0][0].length;
 		
@@ -156,9 +156,9 @@ public class CostFunction {
 	 * use (t+1) for comparison, because java arrays start at 0 but cplex arrays start with 1
 	 */
 	public int[] vioSt(int[][][] schedule){
-		int flows = schedule.length;
-		int timeslots = schedule[0].length;
-		int networks = schedule[0][0].length;
+		int flows = tg.getFlows().size();
+		int timeslots = ng.getTimeslots();
+		int networks = ng.getNetworks().size();
 		
 		int[] vioSt = new int[flows];
 		for(int f = 0; f<flows; f++){
@@ -192,9 +192,9 @@ public class CostFunction {
 	 * use (t+1) for comparison, because java arrays start at 0 but cplex arrays start with 1
 	 */
 	public int[] vioDl(int[][][] schedule){
-		int flows = schedule.length;
-		int timeslots = schedule[0].length;
-		int networks = schedule[0][0].length;
+		int flows = tg.getFlows().size();
+		int timeslots = ng.getTimeslots();
+		int networks = ng.getNetworks().size();
 		
 		int[] vioDl = new int[flows];
 		for(int f = 0; f<flows; f++){
@@ -221,7 +221,7 @@ public class CostFunction {
 	 * @return cummulated chunks for flows and timeslots
 	 */
 	public int[][] cummulated_f_t(int[][][] schedule){
-		int flows = schedule.length;
+		int flows = tg.getFlows().size();
 		int timeslots = schedule[0].length;
 		int networks = schedule[0][0].length;
 		
@@ -246,8 +246,8 @@ public class CostFunction {
 	 * @return returns violation from non allocated chunks; one time user imp multiplied (must be twice)
 	 */
 	public int[] vioNon(int[][] cummulated_f_t){
-		int flows = cummulated_f_t.length;
-		int timeslots = cummulated_f_t[0].length;
+		int flows = tg.getFlows().size();
+		int timeslots = ng.getTimeslots();
 		
 		int[] vioNon = new int[flows];
 		for(int f = 0; f<flows; f++){
@@ -271,25 +271,27 @@ public class CostFunction {
 	}
 	public int vioTp_weight(int vioTpMin, Flow flow){
 		
-		if(flow.getTokensMin()*flow.getWindowMin()<=0){
+		if(flow.getTokensMin()*flow.getWindowMin()*flow.getTokens()<=0){
 			return 0;
 		}
 		return Math.round(((float)(vioTpMin*flow.getImpThroughputMin()*minTpAmplifier))/(flow.getTokensMin()*flow.getWindowMin()));
 	}
 	
 	public int[] vioTp(int[][] cummulated_f_t){
-		int flows = cummulated_f_t.length;
-		int timeslots = cummulated_f_t[0].length;
+		int flows = tg.getFlows().size();
+		int timeslots = ng.getTimeslots();
 		
 		int[] vioTp = new int[flows];
 		//get number of tokens which violate the min tp requirement
 		int[][] vioTpMin = vioTpMin(cummulated_f_t);	 
 		for(int f = 0; f<flows; f++){
-			for(int t=0; t<timeslots; t++){
-				/*				vioTp[f]+=	//vioTpMax[f][t]*tg.getFlows().get(f).getImpThroughputMax()+
-				vioTpMin[f][t]*tg.getFlows().get(f).getImpThroughputMin();
-			*/
-				vioTp[f]+= vioTp_f_t(vioTpMin, f, t);
+			if(tg.getFlows().get(f).getTokens()>0){
+				for(int t=0; t<timeslots; t++){
+					/*				vioTp[f]+=	//vioTpMax[f][t]*tg.getFlows().get(f).getImpThroughputMax()+
+					vioTpMin[f][t]*tg.getFlows().get(f).getImpThroughputMin();
+				*/
+					vioTp[f]+= vioTp_f_t(vioTpMin, f, t);
+				}
 			}
 		}
 //		System.out.println("vio: "+Arrays.toString(vioTp));
@@ -342,8 +344,8 @@ public class CostFunction {
 	 * @return number of too few allocated tokens of f, t
 	 */
 	public int[][] vioTpMin(int[][] cummulated_f_t){
-		int flows = cummulated_f_t.length;
-		int timeslots = cummulated_f_t[0].length;
+		int flows = tg.getFlows().size();
+		int timeslots = ng.getTimeslots();
 		int[][] vioTpMin = new int[flows][timeslots];
 		for(int f = 0; f<flows; f++){
 			Flow flow = tg.getFlows().get(f);
@@ -379,7 +381,7 @@ public class CostFunction {
 	 * @return monetary cost for schedule
 	 */
 	public int costMon(int[][][] schedule){
-		int flows = schedule.length;
+		int flows = tg.getFlows().size();
 		int timeslots = schedule[0].length;
 		int networks = schedule[0][0].length;
 		
@@ -401,18 +403,19 @@ public class CostFunction {
 	}
 	
 	public int costViolation(int[][][] schedule){
-		int flows = schedule.length;
+		int flows = tg.getFlows().size();
 		
 		int cost_vio =0;
 		for(int f = 0; f<flows; f++){
 			Flow flow = tg.getFlows().get(f);
-			
-			int[][] cummulated_f_t = cummulated_f_t(schedule);
-			
-			cost_vio+=	(	vioSt(schedule)[f]+vioDl(schedule)[f]
-							+vioNon(cummulated_f_t)[f]+vioTp(cummulated_f_t)[f]		//impUser is squared for vioNon
-							+vioLcy(schedule)[f]+vioJit(schedule)[f]
-						) * flow.getImpUser();
+			if(flow.getTokens()>0){
+				int[][] cummulated_f_t = cummulated_f_t(schedule);
+				
+				cost_vio+=	(	vioSt(schedule)[f]+vioDl(schedule)[f]
+								+vioNon(cummulated_f_t)[f]+vioTp(cummulated_f_t)[f]		//impUser is squared for vioNon
+								+vioLcy(schedule)[f]+vioJit(schedule)[f]
+							) * flow.getImpUser();
+			}
 		}
 		check(cost_vio, "cost_violation");
 		if(logger!=null){
@@ -422,7 +425,7 @@ public class CostFunction {
 	}
 	
 	public int costSwitches(int[][][] schedule){
-		int flows = schedule.length;
+		int flows = tg.getFlows().size();
 		int timeslots = schedule[0].length;
 		int networks = schedule[0][0].length;
 		
@@ -473,7 +476,7 @@ public class CostFunction {
 		int nonsched=0;
 		int tp = 0;
 		int lcyJit=0;
-		for(int f = 0; f<schedule.length; f++){
+		for(int f = 0; f<tg.getFlows().size(); f++){
 			int impUser = tg.getFlows().get(f).getImpUser();
 			int[][] cummulated_f_t = cummulated_f_t(schedule);
 			

@@ -19,11 +19,11 @@ import ToolSet.CostSeparation;
 import ToolSet.LogMatlabFormat;
 
 
-public abstract class HeuristicScheduler extends Scheduler{
+public abstract class HeuristicScheduler_bu extends Scheduler{
 	
 	
 	//for normal heuristics
-	public HeuristicScheduler(NetworkGenerator ng, FlowGenerator tg) {
+	public HeuristicScheduler_bu(NetworkGenerator ng, FlowGenerator tg) {
 		
 		super(ng, tg);
 		if(ng!=null&&tg!=null){
@@ -32,7 +32,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	}
 	
 	//For adaptation
-	public HeuristicScheduler(NetworkGenerator ng, FlowGenerator tg, NetworkGenerator ngPred, FlowGenerator tgPred, String longTermSchedule_logfile){
+	public HeuristicScheduler_bu(NetworkGenerator ng, FlowGenerator tg, NetworkGenerator ngPred, FlowGenerator tgPred, String longTermSchedule_logfile){
 		super(ng, tg);
 		this.tgPred=tgPred;
 		this.ngPred=ngPred;
@@ -77,7 +77,60 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected void initCostSeparation(){
 		cs= new CostSeparation(tg, ng);
 	}
+	
+	public boolean scheduleDecision(int f, int n, int t) {
+		return oppScheduleDecision(f, n, t);
+	}
+	
+	public Scheduler setScheduleDecisionLimit(int limit){
+		schedule_decision_limit=limit;
+		return this;
+	}
+	public int getScheduleDecisionLimit(){
+		return schedule_decision_limit;
+	}
+	
+	/**
+	 * 
+	 * covers the heuristics for time impairing to follow long term plans.
+	 * @param f
+	 * @param t
+	 * @return limit for opportunistic scheduling
+	 */
+	public int getScheduleDecisionLimit(int f, int t){
+		
+		//when there is a long term plan to follow
+		if(longTermSP_f_t_n!=null){
+			//initialize prefix sum if not done yet
+			if(prefixSumLongTermSP_f_t == null){
+				boolean success = initializePrefixSum();
+				if(!success) return 0;
+			}
+			
+			int ref_t = t;
+			//heuristic to look up at another point in time, which corresponds to the vehicle location
+			if(ADAPTIVE_loc){
+				ref_t = getRefSlot(t, ng.getSlotChange(), f);
+			}
+			int to_allocate = getPlanned(f, ref_t) + getDropped(f);
 
+			//when allocated less than so far planned (+dropped in plan), then impair
+			int f_id = tg.getFlows().get(f).getId();	//use f_id to identify corresponding flow in plan
+			int alloc_dif= prefix_allocated_f_t[f_id][t] - to_allocate;	
+			double h=0;	//no impairing
+
+			//impair if allocated more than planned (to allocate)
+			if(alloc_dif>0){
+				int attr_force = cs.getStatefulReward(f, t)+cs.getStatelessReward(f)+1;
+				h= 1 * attr_force;		
+			}
+			
+			
+			return (int)h;
+
+		}
+		return 0;
+	}
 
 	protected boolean oppScheduleDecision(int f, int n, int t) {
 		//return false if index out of bounds
@@ -87,7 +140,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 			int sum = getEstimatedSchedulingCost(f, n, t);
 //			if(f==0)System.out.println("Heuristic: oppScheduleDecision: f="+f+", n="+n+", t="+t+", sum"+sum);
 
-			return  sum	< schedule_decision_limit;
+			return  sum	<= getScheduleDecisionLimit(f, t);
 
 		}else
 			return calcVio(f, n)<schedule_decision_limit;
@@ -108,36 +161,13 @@ public abstract class HeuristicScheduler extends Scheduler{
 		int statefulReward = cs.getStatefulReward(f, t);
 		int netMatch = cs.getNetworkMatch(f, n);
 		int timeMatch=cs.getTimeMatch(f, t);// weight is already covered in cs   // *tg.getFlows().get(f).getImpUser();
-		
-		double time_impairing=0;
-		if(TIME_IMPAIRING_WEIGHT!=0){
-			time_impairing=getTimeImparing(f,t);
-		}
 
-		
-		int sum = (int) ((statelessReward+statefulReward)*(1-time_impairing))
+		int sum = statelessReward+statefulReward	//attracting
 				+netMatch+timeMatch;	//repelling forces
-		
-//		if(f==5 && n==6){
-//			System.out.println("Heuristic: getEstSch: f="+f+", n="+n+", t="+t+", \t pos="+
-//					(statefulReward+statelessReward)+", neg="+(netMatch+timeMatch)+", time_imp="+time_impairing + "\t sum="+sum);
-//		}
+
 		return sum;		//should be 
 	}
 	
-	public boolean scheduleDecision(int f, int n, int t) {
-		return oppScheduleDecision(f, n, t);
-	}
-	
-	public Scheduler setScheduleDecisionLimit(int limit){
-		schedule_decision_limit=limit;
-		return this;
-	}
-	public int getScheduleDecisionLimit(){
-		return schedule_decision_limit;
-	}
-
-
 	/**
 	 * @return sorted list of flows ordered by decreasing criticality.
 	 */
@@ -227,7 +257,6 @@ public abstract class HeuristicScheduler extends Scheduler{
 	 * @param flow 
 	 */
 	protected Vector<Integer> sortNetworkIDs2(int f){
-		final Flow flow = tg.getFlows().get(f);
 		//create sorted list
 		Vector<Integer> netIDs = new Vector<Integer>();
 		Vector<Integer> benefit = new Vector<Integer>();
@@ -291,74 +320,11 @@ public abstract class HeuristicScheduler extends Scheduler{
 			initCostSeparation();
 		}
 		int c=0;
-		if(NEW_RATING_ESTIMATOR){
 			c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);		//lcy+jit+stateless+monetary
 //			if(f==5 && (n==1 || n==2 || n==6))
 //				System.out.print("f="+f+", n="+n+", CALC_VIO: net_match = "+cs.getNetworkMatch(f, n)+"   stateless: "+cs.getStatelessReward(f)+"\n");
-		}else{
-			//old cost function estimation. Not used
-		
-			Flow flow = tg.getFlows().get(f);
-			Network network = ng.getNetworks().get(n);
-	//		if(true)
-	//		return network.getId();
-					//scheduling may lead to jitter and latency cost
-			//TODO: violation is not per chunk!! it is for used time slots! normalize it.. but how?!
-			c= 	((CostFunction.jitterMatch(flow, network)	//match functions return 0 for match, else strength of violation
-					+ CostFunction.latencyMatch(flow, network))/(getAvMinTp(flow)+1)	
-					
-					//scheduling avoids throughput-violation cost and unsched cost
-					- throughputMatch(flow, network)
-					- flow.getImpUnsched()*flow.getImpUser()	//each unscheduled chunk leads to this cost
-					)*flow.getImpUser()
-					+ network.getCost()*ng.getCostImportance();	//cost independent from flow user weight
-//			if(f==5 && (n==1 || n==2 || n==6))
-//			System.out.println("f="+flow.getId()+", n="+ n+" jit "+CostFunction.jitterMatch(flow, network)*flow.getImpUser()+		//match functions return 0 for match, else strength of violation
-//					" lcy "+CostFunction.latencyMatch(flow, network)*flow.getImpUser()+
-//					" - tp_min "+throughputMatch(flow, network)*flow.getImpUser() + " cost "+network.getCost()*ng.getCostImportance() +
-//					" - unsched "+flow.getImpUnsched()*flow.getImpUser()*flow.getImpUser()+ " c "+c);
-			
-			
-		}
-		return c;
-	}
-	
-	/**
-	 * Can the network transport the minimum throughput required for the flow?
 
-	 * Considers lower limit only; does not consider already used resources
-	 * @param flow
-	 * @param net
-	 * @return approximation of how much cost can be saved per chunk if chunk is scheduled
-	 * TODO: I blame this function to overestimate minTp cost.. need evidence!
-	 */
-	private int throughputMatch(Flow flow, Network net){
-		//calculate average capacity of a network per bucket neglecting zero-buckets
-		int slotcount=0;
-		int sum =0;
-	
-		for(int t = flow.getStartTime(); t<flow.getDeadline(); t++){	//only analyze throughput in time frame of flow
-			int slotCapacity=net.getCapacity().get(t);
-			if(slotCapacity>0){
-				sum+=slotCapacity;	//sum up slot capacity
-				slotcount++;		//count number of summarized slots
-			}
-		}
-		int averageTp=0;
-		if(slotcount>0){
-			averageTp=Math.round(sum/slotcount);
-		}
-		int flow_minTp = getAvMinTp(flow);
-		
-		int tp;
-		if(averageTp<flow_minTp){
-			tp=averageTp;
-		}else{
-			tp = flow_minTp;
-		}
-		int savedvio =cf.vioTp_weight(tp, flow);	
-		return savedvio;	
-		
+		return c;
 	}
 	
 	protected int getAvMinTp(Flow flow){
@@ -394,9 +360,9 @@ public abstract class HeuristicScheduler extends Scheduler{
 	 *  --> decreases attracting forces, when more tokens are scheduled than planned. Move allocation farther away.
 	 * def: planned tokens = in long-term plan
 	 * 		
-	 * 				
-	 * h(f, t) = 	Max( dropped+so far planned tokens - so far scheduled tokens , 0)
-	 * 					
+	 * 				Max( so far planned tokens - so far scheduled tokens , 0)
+	 * h(f, t) = 	-----------------------------------------------------------	+ bias_time
+	 * 					tokens of the data flow to schedule
 	 * 
 	 * supremum of h(f,t) rises till 1, when more tokens are planned then scheduled	--> no allocation impairing
 	 * infimum of  h(f,t) is 0, when less tokens are scheduled than planned 	--> allocation impairing! foster delay!
@@ -512,6 +478,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 		
 		
 		int win_tp_min =Math.min(flow.getWindowMin(),(int) (1+flow.getWindowMin()*getError(f, t)));
+//		win_tp_min = Math.min(win_tp_min, ng.getTimeslots()/10);
 //		System.out.println("Heuristic win="+win_tp_min);
 		return win_tp_min;
 		
@@ -560,12 +527,11 @@ public abstract class HeuristicScheduler extends Scheduler{
 //		System.out.println("HeuristicS: longTermSP="+showSchedule(longTermSP_f_t_n));
 		if(longTermSP_f_t_n==null) return false;
 		initDropped();
-		
-		prefixSumLongTermSP_f_t=new int[longTermSP_f_t_n.length][longTermSP_f_t_n[0].length];
-		
+		prefixSumLongTermSP_f_t=new int[tg.getFlows().size()*2][ng.getTimeslots()];
+				
 		for(int f=0; f<longTermSP_f_t_n.length; f++){
 			//prefix sum counts the sum over all networks and over all previous time slots
-			int prefixSumOverNets=dropped_f[f];
+			int prefixSumOverNets=0;
 			for(int t=0; t<longTermSP_f_t_n[0].length; t++){
 				//over networks
 				for(int n=0; n<longTermSP_f_t_n[0][0].length; n++){
@@ -578,24 +544,6 @@ public abstract class HeuristicScheduler extends Scheduler{
 		return true;
 	}
 
-
-	private void initDropped(){
-		dropped_f = new int[longTermSP_f_t_n.length];
-		dropped_allocated_f=new int[longTermSP_f_t_n.length];
-		
-		for(int f=0; f<longTermSP_f_t_n.length && f<tg.getFlows().size(); f++){
-			int dropped_tokens=tg.getFlows().get(f).getTokens();
-		
-			for(int t= 0; t<longTermSP_f_t_n[0].length;t++){
-				for (int n=0; n<longTermSP_f_t_n[0][0].length; n++){
-					dropped_tokens-=longTermSP_f_t_n[f][t][n];
-				}
-			}
-			dropped_f[f]=dropped_tokens;
-		}
-	}
-	
-	
 	int getStartTime(Flow f){
 		int st=0;
 		if(f.getImpStartTime()>0){
@@ -616,6 +564,40 @@ public abstract class HeuristicScheduler extends Scheduler{
 		if(new File(logfile).exists()){
 			this.longTermSP_f_t_n = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logfile);
 			initDropped();
+		}
+	}
+	
+	private int getDropped(int f){
+		Flow flow = tg.getFlows().get(f);
+		if(flow.getId()<dropped_f.length){
+			return dropped_f[flow.getId()];
+		}else{
+			return flow.getTokens();
+		}
+	}
+	
+	private int getPlanned(int f, int t){
+		Flow flow = tg.getFlows().get(f);
+		if(flow.getId()<dropped_f.length){
+			return prefixSumLongTermSP_f_t[flow.getId()][t];
+		}else{
+			return 0;
+		}
+	}
+	
+	private void initDropped(){
+		dropped_f = new int[longTermSP_f_t_n.length];
+		dropped_allocated_f=new int[longTermSP_f_t_n.length];
+		
+		for(int f=0; f<longTermSP_f_t_n.length && f<tg.getFlows().size(); f++){
+			int dropped_tokens=tg.getFlows().get(f).getTokens();
+		
+			for(int t= 0; t<longTermSP_f_t_n[0].length;t++){
+				for (int n=0; n<longTermSP_f_t_n[0][0].length; n++){
+					dropped_tokens-=longTermSP_f_t_n[f][t][n];
+				}
+			}
+			dropped_f[f]=dropped_tokens;
 		}
 	}
 	
@@ -670,11 +652,11 @@ public abstract class HeuristicScheduler extends Scheduler{
 		
 	}
 	
-	public HeuristicScheduler adapt_location(boolean adapt){
+	public Scheduler adapt_location(boolean adapt){
 		ADAPTIVE_loc = adapt;
 		return this;
 	}
-	public HeuristicScheduler adapt_err(boolean adapt){
+	public Scheduler adapt_err(boolean adapt){
 		ADAPTIVE_err = adapt;
 		return this;
 	}

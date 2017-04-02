@@ -1,7 +1,9 @@
 package schedulers;
 import java.io.File;
+import java.util.Vector;
 
 import optimization.ModelExecutor;
+import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
 import schedulingIOModel.TestCostFunction;
@@ -19,7 +21,7 @@ public class OptimizationScheduler extends Scheduler {
 	final static String dataset_net = "sched_com_net.dat";		//is created: with place holders for flows only
 	final static String dataset_gen = "sched_com_gen.dat";		//is created: without place holders
 	
-	private boolean testCF=true;
+	private boolean testCF=false;
 
 	@Override
 	public String getType() {
@@ -50,7 +52,7 @@ public class OptimizationScheduler extends Scheduler {
 	}
 	
 	public void writeDatFile(String logpath){
-		//System.out.println("2 "+logpath);
+
 		new File(logpath).mkdirs();
 		String dataset_path = logpath+dataset_gen;
 		ng.writeOutput(MODELDIR+dataset_dyn, logpath+dataset_net);		//write the file for ILP

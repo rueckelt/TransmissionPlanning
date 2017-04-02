@@ -33,6 +33,7 @@ public abstract class Scheduler {
 	
 	
 	public Scheduler(NetworkGenerator ng, FlowGenerator tg){
+
 		boundFlowDeadlines(tg, ng);
 		this.ng=ng;
 		this.tg=tg;
@@ -42,8 +43,8 @@ public abstract class Scheduler {
 		if(tg!=null && ng!=null){
 			this.tg.setFlowIndices();
 			interfaceLimit = new InterfaceLimit(ng);
-			allocated_f_t=new int[tg.getFlows().size()][ng.getTimeslots()];
-			prefix_allocated_f_t=new int[tg.getFlows().size()][ng.getTimeslots()];
+			allocated_f_t=new int[tg.getFlows().size()*2][ng.getTimeslots()];
+			prefix_allocated_f_t=new int[tg.getFlows().size()*2][ng.getTimeslots()];
 			cf=new CostFunction(ng, tg, logger);
 		}
 	}
@@ -338,8 +339,8 @@ public abstract class Scheduler {
 			if(verificationOfConstraints(schedule_f_t_n_temp)){
 //				System.out.println("CORRECT PLAN: "+verificationOfConstraints(schedule_f_t_n_temp));
 				interfaceLimit.useNetwork(network, time);
-					
-				allocated_f_t[flow][time]=scheduled;
+				int f_id= tg.getFlows().get(flow).getId();	
+				allocated_f_t[f_id][time]+=scheduled;
 				return scheduled;
 			}else{
 				schedule_f_t_n_temp[flow][time][network]-=scheduled;	//undo: remove tokens from plan if it gets invalid
@@ -349,15 +350,6 @@ public abstract class Scheduler {
 		}
 		return 0;
 		
-		//calculate remaining capacity of network in this slot
-//		int remaining_net_cap=getRemainingNetCap(network, time);
-//		if(chunks>remaining_net_cap){
-//			schedule_f_t_n_temp[flow][time][network]+=remaining_net_cap;
-//			return remaining_net_cap;
-//		}else{
-//			schedule_f_t_n_temp[flow][time][network]+=chunks;
-//			return chunks;
-//		}
 	}
 	
 	/**

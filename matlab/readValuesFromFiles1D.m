@@ -103,6 +103,11 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
     %                                    ['failed to read: ' fname ': ' varnames{val}]
                            end
                        end
+                       if values(1,1,i,rep)>values(1,s,i,rep)   %total cost of opt is higher?
+                           %rmdir(in_path, 's');
+                           [in_path scheduler_logs{1} ' worse than ' scheduler_logs{s} ' : '...
+                               int2str(values(1,1,i,rep)) ' > '  int2str(values(1,s,i,rep)) ]
+                       end
                    else
                        err=['file not found' fname]
                    end

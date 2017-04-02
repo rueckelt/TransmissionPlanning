@@ -260,8 +260,10 @@ public class FlowGenerator implements Serializable{
 				
 				//cancel flow completely with certain probability (40%)
 				if(RndInt.get(0,9)<2){
-					//toRemove.add(flow);
+					toRemove.add(flow);
 					flow.setTokens(0); // if we remove the flow from the list, the executor cannot follow the original schedule plan with rowindex
+					flow.setImpThroughputMin(0);
+					
 				}else{
 //					System.out.println("##canceled "+flow+";; ");
 					//determine slot for cancellation during running transmission
@@ -335,6 +337,7 @@ public class FlowGenerator implements Serializable{
 		}
 //		System.out.println("finished adding flows");
 	}
+	
 	
 	public void writeOutput(String source, String dest){
 				

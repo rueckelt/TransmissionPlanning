@@ -90,7 +90,7 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 	
 	@Override
 	public String getType() {
-		return "GreedyOnline_st"+(NEW_RATING_ESTIMATOR?"_H2":"");
+		return "NS";
 	}
 
 }

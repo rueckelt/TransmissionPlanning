@@ -24,7 +24,7 @@ public class ExecutionScheduler extends Scheduler {
 	
 	@Override
 	protected void calculateInstance_internal(String logfile) {
-		System.out.println(logfile+", ; \t"+logFilePath);
+//		System.out.println(logfile+", ; load result from \t"+logFilePath);
 		int[][][] sp = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logFilePath);//JsonLogger.json2Array(logFilePath);
 		exe = new Executor(sp, ng, tg);
 		

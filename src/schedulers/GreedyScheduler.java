@@ -127,7 +127,7 @@ public class GreedyScheduler extends HeuristicScheduler{
 
 	@Override
 	public String getType() {
-		String s=new String("Greedy_"+schedule_decision_limit+(NEW_RATING_ESTIMATOR?"_H2":"")).replace("-", "m");
+		String s=new String("JTP").replace("-", "m");
 		return s;
 	}
 

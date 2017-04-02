@@ -3,20 +3,20 @@ package schedulers;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.NetworkGenerator;
 
-public class GreedyOnlineOpppertunisticScheduler extends GreedyOnlineScheduler {
+public class GreedyOnlineOppportunisticScheduler extends GreedyOnlineScheduler {
 
-	public GreedyOnlineOpppertunisticScheduler(NetworkGenerator ng,
+	public GreedyOnlineOppportunisticScheduler(NetworkGenerator ng,
 			FlowGenerator tg) {
 		super(ng, tg);
 	}
 	
 
-	public GreedyOnlineOpppertunisticScheduler(NetworkGenerator ng,
+	public GreedyOnlineOppportunisticScheduler(NetworkGenerator ng,
 			FlowGenerator tg, NetworkGenerator ng_pred, FlowGenerator tg_pred, double alpha, String longTermSpPath, String name_extention) {
 		this(ng,tg,ng_pred,tg_pred,alpha,-1,longTermSpPath, name_extention);
 	}
 	
-	public GreedyOnlineOpppertunisticScheduler(NetworkGenerator ng,
+	public GreedyOnlineOppportunisticScheduler(NetworkGenerator ng,
 			FlowGenerator tg, NetworkGenerator ng_pred, FlowGenerator tg_pred, double alpha, int window, String longTermSpPath, String name_extention) {
 		this(ng, tg);
 		this.tgPred=tg_pred;
@@ -24,7 +24,7 @@ public class GreedyOnlineOpppertunisticScheduler extends GreedyOnlineScheduler {
 		this.TIME_IMPAIRING_WEIGHT=alpha;	//if !=0 this activates time impairing. requires other schedule.
 		this.WINDOW=window;
 		spLogPath=longTermSpPath;
-		this.name_extention="_"+name_extention+"_";
+		this.name_extention="_"+name_extention;
 	}
 
 	private String name_extention="";
@@ -45,8 +45,7 @@ public class GreedyOnlineOpppertunisticScheduler extends GreedyOnlineScheduler {
 		String ext = "";
 		if(ADAPTIVE_err) ext+="_err";
 		if(ADAPTIVE_loc) ext+="_loc";
-		return new String("GreedyOnlineOpp_"+schedule_decision_limit+
-				name_extention+ext).replace("-", "m").replace('.', '_');	
+		return new String("ONS"+name_extention+ext).replace("-", "m").replace('.', '_');	
 
 	}
 
