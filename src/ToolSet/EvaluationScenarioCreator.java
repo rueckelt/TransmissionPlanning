@@ -113,11 +113,10 @@ public class EvaluationScenarioCreator {
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 
 		if(!restricted)schedulers.add(new OptimizationScheduler(ng, fg));
-//		schedulers.add(new GreedyOnlineScheduler(ng, fg));
-//		schedulers.add(new GreedyScheduler_s(ng, fg));
-		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
+		if(!restricted)schedulers.add(new GreedyOnlineScheduler(ng, fg));
+		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
 		Scheduler gs = new GreedyScheduler(ng, fg);
-		schedulers.add(gs);				
+		if(!restricted)schedulers.add(gs);				
 
 		//execution of jtp schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
@@ -132,16 +131,20 @@ public class EvaluationScenarioCreator {
 		FlowGenerator fgPred = getFlowGenerator(log_run_path, false, 0, 0, 0);	//load from file
 //			schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
 //		schedulers.add(new ExecutionScheduler(ng, fg, path));
-		FlowGenerator fg2 = fg.clone();
-		fg2.addUncertainty(0.3f, 100);
+		FlowGenerator fg2 = null;
+		if(fg!=null){
+			fg2=fg.clone();
+			fg2.addUncertainty(0.3f, 100);
+		}
+		
 //		NetworkGenerator ng2= ng.clone();
 //		ng2.addMovementUncertainty((float) 0.5);
 		NetworkGenerator ngPred = getNetworkGenerator(log_run_path, false, 0, 0, (float) 0.0, (float) 0.0);	//load from file
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt, "opt"));
 		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp"));
 //		schedulers.add(new GreedyOnlineOppportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
-//		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
-//		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_transm(true));
+		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
+		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_transm(true));
 		
 //		GreedyOnlineOppportunisticScheduler opp = new GreedyOnlineOppportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp");
 //		opp.adapt_err(true);
@@ -191,7 +194,6 @@ public class EvaluationScenarioCreator {
 		logger.log("net_uncertainty", NET_UNCERTAINTY);
 		logger.log("flow_uncertainty", FLOW_UNCERTAINTY);
 		
-		//logger.log("evaluate_max_only", evaluateMax);			//is 1 if simulation did not ran from 0 to max, but only max
 		logger.logSchedulers(initSchedulers(null, null));	//save which schedulers are available for evaluation
 		
 		logger.writeLog(LOG+"parameters_log.m");

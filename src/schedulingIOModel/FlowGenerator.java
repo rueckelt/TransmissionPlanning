@@ -270,7 +270,7 @@ public class FlowGenerator implements Serializable{
 	
 //					System.out.print(" Continue..");
 					//set new flow properties
-					int newAmountOfTokens=flow.getTokens()*(cancelSlot-flow.getStartTime())/(flow.getDeadline()-flow.getStartTime());
+					int newAmountOfTokens=flow.getTokens()*(cancelSlot-flow.getStartTime())/Math.max(1,flow.getDeadline()-flow.getStartTime());
 					int remainingTokens= flow.getTokens()-newAmountOfTokens;	
 					
 					flow.setTokens(newAmountOfTokens);

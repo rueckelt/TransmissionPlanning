@@ -126,11 +126,14 @@ public abstract class HeuristicScheduler extends Scheduler{
 			//impair if allocated equal or more than planned (to allocate)
 			//and no transmission in reference slot
 			if(too_many_allocated_tokens>=0 && !transmission_in_slot){
-				int attr_force = cs.getStatefulReward(f, t)+cs.getStatelessReward(f)+1;
+				int attr_force = cs.getStatefulReward(f, t)+cs.getStatelessReward(f);
 				h= 1 * attr_force;		
 			}
 			
-//			if(f==0)System.out.println("too many alloc: "+too_many_allocated_tokens);
+//			if(f==0){
+//				System.out.println("Heuristic: getScheduleDecisionOpp: " +
+//					"f="+f+"("+f_id+"), t="+t+", ref_t="+ref_t+", too many alloc: "+too_many_allocated_tokens+", h="+h);
+//			}
 			return (int)h;
 
 		}
@@ -311,29 +314,29 @@ public abstract class HeuristicScheduler extends Scheduler{
 		return netIDs;
 	}
 	
-	
-	/**
-	 * We use this function only to rate network match. Not time match.
-	 * @param flow
-	 * @param network
-	 * @return estimation of cost for scheduling a token of flow f to network n: negative, if allocation is expected to lead to profit 
-	 */
-	protected int calcVio(int f, int n){
-		if(cs==null){
-			initCostSeparation();
-		}
-		int c=0;
-			c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);		//lcy+jit+stateless+monetary
-//			if(f==5 && (n==1 || n==2 || n==6))
-//				System.out.print("f="+f+", n="+n+", CALC_VIO: net_match = "+cs.getNetworkMatch(f, n)+"   stateless: "+cs.getStatelessReward(f)+"\n");
-
-		return c;
-	}
-	
-	protected int getAvMinTp(Flow flow){
-		//get minimum throughput requirement of flow
-		return (int) Math.ceil(flow.getTokensMin()/flow.getWindowMin())+1;
-	}
+//	
+//	/**
+//	 * We use this function only to rate network match. Not time match.
+//	 * @param flow
+//	 * @param network
+//	 * @return estimation of cost for scheduling a token of flow f to network n: negative, if allocation is expected to lead to profit 
+//	 */
+//	protected int calcVio(int f, int n){
+//		if(cs==null){
+//			initCostSeparation();
+//		}
+//		int c=0;
+//			c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);		//lcy+jit+stateless+monetary
+////			if(f==5 && (n==1 || n==2 || n==6))
+////				System.out.print("f="+f+", n="+n+", CALC_VIO: net_match = "+cs.getNetworkMatch(f, n)+"   stateless: "+cs.getStatelessReward(f)+"\n");
+//
+//		return c;
+//	}
+//	
+//	protected int getAvMinTp(Flow flow){
+//		//get minimum throughput requirement of flow
+//		return (int) Math.ceil(flow.getTokensMin()/flow.getWindowMin())+1;
+//	}
 	
 	//return the average throughput of the network over active slots (>0)
 	private int getAvCapacity(Network net){
@@ -504,15 +507,15 @@ public abstract class HeuristicScheduler extends Scheduler{
 
 	
 	
-	/**
-	 * 
-	 * @param f index of flow in tg
-	 * @return identify from ID if flow is new.
-	 */
-	private boolean isnewFlow(int f){
-		return tg.getFlows().get(f).getId()>=tgPred.getFlows().size();
-	}
-	
+//	/**
+//	 * 
+//	 * @param f index of flow in tg
+//	 * @return identify from ID if flow is new.
+//	 */
+//	private boolean isnewFlow(int f){
+//		return tg.getFlows().get(f).getId()>=tgPred.getFlows().size();
+//	}
+//	
 	
 	/**
 	 * prefix sum counts the sum over all networks and over all previous time slots
@@ -521,8 +524,8 @@ public abstract class HeuristicScheduler extends Scheduler{
 	private boolean initializePrefixSum() {
 //		System.out.println("HeuristicS: longTermSP="+showSchedule(longTermSP_f_t_n));
 		if(longTermSP_f_t_n==null) return false;
-		initDropped();
-		prefixSumLongTermSP_f_t=new int[tg.getFlows().size()*2][ng.getTimeslots()];
+
+		prefixSumLongTermSP_f_t=new int[longTermSP_f_t_n.length][longTermSP_f_t_n[0].length];
 				
 		for(int f=0; f<longTermSP_f_t_n.length; f++){
 			//prefix sum counts the sum over all networks and over all previous time slots
@@ -594,10 +597,10 @@ public abstract class HeuristicScheduler extends Scheduler{
 	
 	private void initDropped(){
 		dropped_f = new int[longTermSP_f_t_n.length];
-		dropped_allocated_f=new int[longTermSP_f_t_n.length];
+		//dropped_allocated_f=new int[longTermSP_f_t_n.length];
 		
-		for(int f=0; f<longTermSP_f_t_n.length && f<tg.getFlows().size(); f++){
-			int dropped_tokens=tg.getFlows().get(f).getTokens();
+		for(int f=0; f<longTermSP_f_t_n.length; f++){
+			int dropped_tokens=tgPred.getFlows().get(f).getTokens();
 		
 			for(int t= 0; t<longTermSP_f_t_n[0].length;t++){
 				for (int n=0; n<longTermSP_f_t_n[0][0].length; n++){
@@ -657,7 +660,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 			return t+range;	
 		}else{
 			//vehicle moved slower. release less tokens
-			//TODO: might create problems with (1) deadlines (2) standing does not release tokens.
+			//TODO: might create problems with (1) deadlines (2) standing vehicle: method does not release new tokens.
 			return t-range;
 		}
 		

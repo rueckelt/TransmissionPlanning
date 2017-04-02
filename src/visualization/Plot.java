@@ -542,7 +542,7 @@ class PlotGraph extends JPanel{
 			for (int f = 0; f < sched.getFlowCounter(); f++) {
 				Flow flow=fg.getFlows().get(f);
 				String[] colors = {"dark green", "blue", "rose", "light gray", "magenta", "orange", "yellow",
-						"cyan", "green", "dark blue", "dark rose", "dark grey", "dark magenta", "dark orange",
+						"cyan", "green", "dark blue", "brown", "black", "dark magenta", "dark orange",
 						"dark yellow", "dark cyan", "dark green"};
 
 				int f_id = flow.getId();

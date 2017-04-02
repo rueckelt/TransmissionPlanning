@@ -134,9 +134,9 @@ public class CostSeparation {
 	}
 	
 	public void updateStatefulReward(int f, int t, int tokens){
-		Flow flow =tg.getFlows().get(f); 
-		int step= getStatefulRewardStep(flow)*tokens*flow.getWindowMin()/flow.getTokensMin();
-//		if(f==3)System.out.println("cost seperatioin: updatestatefulReward step = "+step+", t="+t+", f="+f+", tokens="+tokens);
+		Flow flow =tg.getFlows().get(f);
+		int step= getStatefulRewardStep(flow)*tokens*flow.getWindowMin()/Math.max(1, flow.getTokensMin());
+//		if(f==3)System.out.println("cost separation: updatestatefulReward step = "+step+", t="+t+", f="+f+", tokens="+tokens);
 
 		//update each affected time slot
 		for(int i=Math.max(0,t-flow.getWindowMin()); i<=Math.min(ng.getTimeslots()-1,t+flow.getWindowMin()); i++){
