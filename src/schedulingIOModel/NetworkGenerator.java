@@ -201,6 +201,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 */
 	public float getPositionError(Vector<Integer> slotChange, int till_t){
 		if(till_t<=0)return 0;
+		till_t=Math.min(getTimeslots()-1, till_t);
 		if(slotChange==null || slotChange.isEmpty())return 0;
 		
 		int sum_change=0;

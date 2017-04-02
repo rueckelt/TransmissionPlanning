@@ -109,10 +109,10 @@ public class EvaluationScenarioCreator {
 	 * @return list of schedulers
 	 */
 	public Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator fg){
-		boolean restricted = true;
+		boolean restricted = false;
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 
-		if(!restricted)schedulers.add(new OptimizationScheduler(ng, fg));
+//		if(!restricted)schedulers.add(new OptimizationScheduler(ng, fg));
 		if(!restricted)schedulers.add(new GreedyOnlineScheduler(ng, fg));
 		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
 		Scheduler gs = new GreedyScheduler(ng, fg);
@@ -131,20 +131,23 @@ public class EvaluationScenarioCreator {
 		FlowGenerator fgPred = getFlowGenerator(log_run_path, false, 0, 0, 0);	//load from file
 //			schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
 //		schedulers.add(new ExecutionScheduler(ng, fg, path));
-		FlowGenerator fg2 = null;
-		if(fg!=null){
-			fg2=fg.clone();
-			fg2.addUncertainty(0.3f, 100);
-		}
+		FlowGenerator fg2 = fg;
+//		if(fg!=null){
+//			fg2=fg.clone();
+//			fg2.addUncertainty(0.3f, 100);
+//		}
 		
 //		NetworkGenerator ng2= ng.clone();
 //		ng2.addMovementUncertainty((float) 0.5);
 		NetworkGenerator ngPred = getNetworkGenerator(log_run_path, false, 0, 0, (float) 0.0, (float) 0.0);	//load from file
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt, "opt"));
-		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp"));
-//		schedulers.add(new GreedyOnlineOppportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
-		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
-		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_transm(true));
+		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp"));
+		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
+		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_transm(true));
+
+		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
+		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_transm(true).adapt_err(true));
+//		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
 		
 //		GreedyOnlineOppportunisticScheduler opp = new GreedyOnlineOppportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp");
 //		opp.adapt_err(true);
@@ -310,7 +313,7 @@ public class EvaluationScenarioCreator {
 		for(float net_unc=(float)0.1; net_unc<=NET_UNCERTAINTY; net_unc+=(float)0.1){
 			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, net_unc, 0, 0);
 		}
-		for(float flow_unc=(float)0.4; flow_unc<=FLOW_UNCERTAINTY; flow_unc+=(float)0.1){
+		for(float flow_unc=(float)0.1; flow_unc<=FLOW_UNCERTAINTY; flow_unc+=(float)0.1){
 			calculateInstance_t_n_i(t, n, f, rep, LOG, LOG_OVERWRITE, RECALC, 0, 0, flow_unc);	
 		}
 		if(FLOW_UNCERTAINTY>0 && MOVE_UNCERTAINTY>0 && FLOW_UNCERTAINTY>0){

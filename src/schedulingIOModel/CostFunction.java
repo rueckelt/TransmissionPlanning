@@ -221,7 +221,7 @@ public class CostFunction {
 	 * @return cummulated chunks for flows and timeslots
 	 */
 	public int[][] cummulated_f_t(int[][][] schedule){
-		int flows = tg.getFlows().size();
+		int flows = schedule.length;
 		int timeslots = schedule[0].length;
 		int networks = schedule[0][0].length;
 		

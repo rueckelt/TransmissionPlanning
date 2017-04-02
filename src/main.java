@@ -62,7 +62,7 @@ public class main {
 
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 //			eval.visualize();
-			eval.recalc();
+//			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
@@ -77,7 +77,7 @@ public class main {
 //			eval.evaluateMonetaryWeight();
 //			eval.evaluateTrafficLoad();
 //			eval.evaluateThisInstance();
-			eval.parallel(22);
+			eval.parallel(1);
 			eval.start(Integer.MAX_VALUE);
 
 		

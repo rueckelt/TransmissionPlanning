@@ -126,8 +126,13 @@ public abstract class HeuristicScheduler extends Scheduler{
 			//impair if allocated equal or more than planned (to allocate)
 			//and no transmission in reference slot
 			if(too_many_allocated_tokens>=0 && !transmission_in_slot){
+				double err = 0;
+				if(ADAPTIVE_err){
+					err=Math.min(1,getError(f, ref_t));
+				}
+
 				int attr_force = cs.getStatefulReward(f, t)+cs.getStatelessReward(f);
-				h= 1 * attr_force;		
+				h= (1-err) * attr_force;		
 			}
 			
 //			if(f==0){
@@ -495,7 +500,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	
 	private double getTimeImpairingWeight(int f, int t){
 		double alpha = TIME_IMPAIRING_WEIGHT;
-		double err =getError(f, t);
+		double err = Math.min(1,getError(f, t));
 		
 //		System.out.println("Heuristic: timeImpairingWeight: f="+f+", t="+t+", alpha="+alpha+", err="+err);
 		return (1-err)*alpha;
@@ -620,25 +625,26 @@ public abstract class HeuristicScheduler extends Scheduler{
 	 */
 	protected double getError(int f, int t){
 		if(!ADAPTIVE_err)return 0;
-		
+		t=Math.min(t, ng.getTimeslots()-1);
 		int win=ng.getTimeslots()/4;
 		Flow flow= tg.getFlows().get(f);
 		if(flow.getImpThroughputMin()>0){
-			win= flow.getImpThroughputMin();
+			win= Math.min(win,flow.getWindowMin());
 		}
 		
 		int t_min = Math.max(0, t-win);		//how to select the observer window of 10?
 		
 		double err_move =ng.getPositionError(ng.getSlotChange(), t);
-//		System.out.println(ng.getSlotChange());
 		double err_net = ng.getNetworkError(ngPred.getNetworks(), t_min, t);
+		
 		UncertaintyErrorCalculation uec = new UncertaintyErrorCalculation(tgPred.getFlows(), tg.getFlows(), ng.getTimeslots());
 		double err_flow= uec.getFlowUncertaintyError2(f,t_min, t)+uec.getFlowUncertaintyError(t_min, t)/2;
 		
-		double sum_err = err_net+err_flow;
+		double sum_err = err_net+2*err_flow;
 		double err=Math.pow(sum_err,2); //TODO : define better function of move, net and flow error
-
-		return err;
+//		System.out.println("Heuristic: getError: f="+f+", t="+t+", win="+win+", err="+uec.getFlowUncertaintyError2(f,t_min, t));
+		return uec.getFlowUncertaintyError2(f,t_min, t);
+//		return err;
 	}
 	
 	
