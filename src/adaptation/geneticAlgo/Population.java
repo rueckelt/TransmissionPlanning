@@ -33,7 +33,7 @@ public class Population {
     	this.config= config;
     	this.amp=amp;
     	populationSize=size;
-    	individuals = new Individual[getPopulationSize()];
+    	individuals = new Individual[size];
     	
     	if(size<1) return;
     	
@@ -48,8 +48,8 @@ public class Population {
     				tries++;
     			}
     			individuals[i]=newIndividual;
-    			System.out.println("Population: craeted individual "+ newIndividual.toString());
-    			if(tries==NOF_TRIES_INIT_MUTATE)System.out.println("Population: failed to init novel individual "+i);
+//    			System.out.println("Population: craeted individual "+ newIndividual.toString());
+//    			if(tries==NOF_TRIES_INIT_MUTATE)System.out.println("Population: failed to init novel individual "+i);
     		}
     	}
     }
@@ -64,7 +64,7 @@ public class Population {
     }
     
     public Population(double amp, Config config, boolean initialise) {
-    	this(amp, (config.getActiveFlow().length>3?config.getActiveFlow().length:4) ,config, initialise);
+    	this(amp, (config.getActiveFlow().length>3?config.getActiveFlow().length:4) ,config, initialise);	//use at least a size of 4
     }    
     
     public Population(int size, Config config, boolean initialise) {
@@ -98,7 +98,11 @@ public class Population {
 
     // Save individual
     public void saveIndividual(int index, Individual indiv) {
-        getIndividuals()[index] = indiv;
+//    	if(index<populationSize)
+    		getIndividuals()[index] = indiv;
+//    	else{
+//    		System.out.println("Population: size is "+populationSize);
+//    	}
     }
     
     public void print() {
@@ -121,32 +125,16 @@ public class Population {
 		return false;
 	}
 
-	public void setIndividuals(Individual[] individuals) {
-		this.individuals = individuals;
-	}
-
 	public int getPopulationSize() {
 		return populationSize;
-	}
-
-	public void setPopulationSize(int populationSize) {
-		this.populationSize = populationSize;
 	}
 
 	public double getAmp() {
 		return amp;
 	}
 
-	public void setAmp(double amp) {
-		this.amp = amp;
-	}
-
 	public Config getConfig() {
 		return config;
-	}
-
-	public void setConfig(Config config) {
-		this.config = config;
 	}
 
 }

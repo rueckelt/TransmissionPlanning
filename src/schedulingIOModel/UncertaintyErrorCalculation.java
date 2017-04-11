@@ -234,7 +234,7 @@ public class UncertaintyErrorCalculation {
 				t_end>=pred_starttime.get(f_id) && t_start<=pred_deadline.get(f_id));
 	}
 	
-	private boolean flowIsOrShouldBeActiveWithinTimeFrame(int f_id, int t_start, int t_end){
+	public boolean flowIsOrShouldBeActiveWithinTimeFrame(int f_id, int t_start, int t_end){
 		if(act_starttime.containsKey(f_id) && pred_starttime.containsKey(f_id))
 			return (t_end	 >=Math.min(act_starttime.get(f_id), pred_starttime.get(f_id)) &&	
 					 t_start <=Math.max(act_deadline.get(f_id), pred_deadline.get(f_id)));	

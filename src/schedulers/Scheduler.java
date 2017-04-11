@@ -1,7 +1,11 @@
 package schedulers;
 import java.io.File;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import schedulingIOModel.CostFunction;
 import schedulingIOModel.Flow;
@@ -39,6 +43,7 @@ public abstract class Scheduler {
 		this.tg=tg;
 		 
 		schedule_f_t_n=getEmptySchedule();
+		schedule_f_t_n_temp=getEmptySchedule();
 		logger = new LogMatlabFormat();	
 		if(tg!=null && ng!=null){
 			this.tg.setFlowIndices();
@@ -110,15 +115,23 @@ public abstract class Scheduler {
 	 */
 	public void calculateInstance(String path, boolean recalc){
 		if((!new File(getLogfileName(path)).exists())||recalc){
+			Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String date = formatter.format(Calendar.getInstance().getTime());
+			if(!getLogfileName(path).contains("Random")) System.out.println(getLogfileName(path) + " starting "+ date);
 			tg.setFlowIndices();
-			initTempSchedule();
 			startTimer();
 			calculateInstance_internal(path);	//result is stored to schedule_f_t_n_temp
 			long duration = stopTimer();
+			if(!verificationOfConstraints(schedule_f_t_n_temp)){
+				System.err.println("constraint check failed "+path+getType());
+				System.exit(0);
+			}
 		//		Runtime rt = Runtime.getRuntime();
 		//		System.out.println("TotalMemory of JVM: "+(rt.totalMemory()-rt.freeMemory())/(1024*1024));
 			schedule_f_t_n=schedule_f_t_n_temp;	//store to schedule_f_t_n if constraints hold
-			
+
+			date = formatter.format(Calendar.getInstance().getTime());
+			if(!getLogfileName(path).contains("Random")) System.out.println(getLogfileName(path) + " FINISHED "+ date + " duration: "+ duration/1000000000 +"s");
 			logInstance(path, duration);
 
 //			if(DEBUG) System.err.println(getType()+": \t"
@@ -201,7 +214,13 @@ public abstract class Scheduler {
 	 */
 	
 	private boolean verificationOfConstraints(int[][][] schedule_f_t_n){
-
+//		try {
+//			TimeUnit.MICROSECONDS.sleep(50);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		if(true)return true;
 		Vector<Network> networks = ng.getNetworks();
 		Vector<Flow> flows = tg.getFlows();
 		int time = ng.getTimeslots();
@@ -290,6 +309,94 @@ public abstract class Scheduler {
 		return true;
 	}
 	
+	private boolean verificationOfConstraintsPart(int[][][] schedule_f_t_n, int f0, int t0){
+		Vector<Network> networks = ng.getNetworks();
+		Vector<Flow> flows = tg.getFlows();
+		int time = ng.getTimeslots();
+		int t=t0;
+//		for(int t=0; t<time;t++){
+			//constraint 1+2 (per time slot)
+			int[] network_used_by_type = new int[ng.getNofInterfaceTypes()]; //Do not exceed available number of Link Interfaces (2)
+			boolean[] network_used = new boolean[ng.getNetworks().size()];
+			for(int n=0;n<networks.size();n++){
+				
+				int network_use=0;	//overuse of resources (1)
+				
+				for(int f=0;f<flows.size();f++){
+					network_use+=schedule_f_t_n[f][t][n];	//overuse of resources (1)
+					
+					if(!network_used[n]){	//do not count parallel use of the same network (2)
+						network_used_by_type[networks.get(n).getType()-1]++; //Do not exceed available number of used Link Interfaces (2)
+						network_used[n]=true;
+					}
+				}
+				//check overuse of resources (1)
+				if(network_use>networks.get(n).getCapacity().get(t)){
+					if(DEBUG) System.err.println("Scheduler::constraintCheck - Net use error: "+network_use+ " > "+networks.get(n).getCapacity().get(t)+", network "+n+" time "+t);
+					return false;	//violation if used capacity of network in this time slot is larger than available capacity in this time slot
+				}
+			}
+			//check: Do not exceed available number of Link Interfaces (2)
+			for (int i = 0; i < network_used_by_type.length; i++) {
+				if(network_used_by_type[i]>ng.getNofInterfacesByType()[i]){ //check if sum is larger than available interfaces
+					if(DEBUG) System.err.println("Scheduler::constraintCheck - Parallel link interface error : "+ network_used_by_type[i] +" > "+ng.getNofInterfacesByType()[i]);
+					System.out.println(Arrays.toString(ng.getNofInterfacesByType()));
+					return false;
+				}
+			}
+			
+			//check :Do not allow parallel channel use for same flow (3)
+//			for(int f=0;f<flows.size();f++){
+			int f=f0;
+				boolean flow_is_scheduled=false;
+				for(int n=0;n<networks.size();n++){
+					if(schedule_f_t_n[f][t][n]>0){
+						if(flow_is_scheduled==false){
+							flow_is_scheduled=true;	//set true if flow is scheduled in this time slot
+						}else{
+							if(DEBUG) System.err.println("Scheduler::constraintCheck - Parallel channel use for same flow: "+f +" in time slot " + t);
+							return false;	//violation if flow scheduled to a second network
+						}
+					}
+				}
+//			}
+//		}
+		//do not exceed upper throughput limit (4)
+//		for(int f=0;f<flows.size();f++){
+			Flow flow = tg.getFlows().get(f);
+			int winSize = flow.getWindowMax();
+			int chunksMax = flow.getTokensMax();
+			for(int t1=Math.max(0,t0-winSize);t1<=t0; t1++){
+				int chunkSum=0;	//sum of chunks in this window
+				int t_max = Math.min(t1+winSize, ng.getTimeslots());
+				for(int tw=t1;tw<t_max;tw++){
+					for(int n=0; n<ng.getNetworks().size();n++){
+						chunkSum+=schedule_f_t_n[f][tw][n];
+					}
+				}
+				if(chunkSum>chunksMax){
+					if(DEBUG) System.err.println("Scheduler::constraintCheck - Upper throughput limit exceeded for flow: "+f +" in time window " + t1+" to " + t_max +": "+ chunkSum +">"+chunksMax);
+					return false;	//violation of upper tp limit
+				}
+			}
+//		}
+		
+		//do not schedule more tokens than available
+//		for(int f=0;f<flows.size();f++){
+//			int sum = 0;
+//				for(int t3=0; t3<ng.getTimeslots();t3++){
+//					sum+=allocated_f_t[f][t3];
+//				}
+//			if(sum>flows.get(f).getTokens()){
+//				if(DEBUG) System.err.println("Scheduler::constraintCheck - More tokens scheduled than available for flow: "+f);
+//				return false;	//violation of flow tokens
+//				
+//			}
+//		}
+		
+		return true;
+	}
+	
 	private void startTimer(){
 		runtime=System.nanoTime();
 	}
@@ -301,10 +408,6 @@ public abstract class Scheduler {
 	}
 	
 	//#################### Allocation Support ###############
-	
-	protected void initTempSchedule(){
-		schedule_f_t_n_temp=getEmptySchedule();
-	}
 	
 	protected int[][][] getTempSchedule(){
 		return schedule_f_t_n_temp;
@@ -321,7 +424,7 @@ public abstract class Scheduler {
 	 * @param tokens to allocate
 	 * @return number of allocated chunks
 	 */
-	protected int allocate(int flow, int time, int network, int tokens){
+	public int allocate(int flow, int time, int network, int tokens){
 		if(!boundsValid(flow, time, network))return 0;
 		if(!interfaceLimit.isUsable(network, time))return 0;
 //		System.out.println("interface_limit_ok");
@@ -336,7 +439,8 @@ public abstract class Scheduler {
 		if(scheduled>0){
 			schedule_f_t_n_temp[flow][time][network]+=scheduled;
 			//any constraint violated? use if ok, else revert
-			if(verificationOfConstraints(schedule_f_t_n_temp)){
+			if(verificationOfConstraintsPart(schedule_f_t_n_temp, flow, time)){
+//			if(verificationOfConstraints(schedule_f_t_n_temp)){
 //				System.out.println("CORRECT PLAN: "+verificationOfConstraints(schedule_f_t_n_temp));
 				interfaceLimit.useNetwork(network, time);
 				int f_id= tg.getFlows().get(flow).getId();	
@@ -346,7 +450,7 @@ public abstract class Scheduler {
 				return scheduled;
 			}else{
 				schedule_f_t_n_temp[flow][time][network]-=scheduled;	//undo: remove tokens from plan if it gets invalid
-				if(DEBUG) System.err.println("Scheduler::allocate. constraint check NOT passed");
+				if(DEBUG) System.err.println("Scheduler::allocate. constraint check NOT passed: "+getType());
 				return 0;
 			}
 		}
@@ -482,9 +586,11 @@ public abstract class Scheduler {
 		int f_id = tg.getFlows().get(f).getId();
 
 		prefix_allocated_f_t[f_id][0]=allocated_f_t[f_id][0];
-		for(int t=1; t<=t_max; t++){
-			prefix_allocated_f_t[f_id][t]=prefix_allocated_f_t[f_id][t-1]+allocated_f_t[f_id][t];
+		int prev =0;
+		if(t_max>0){
+			prev=prefix_allocated_f_t[f_id][t_max-1];
 		}
+		prefix_allocated_f_t[f_id][t_max]=+allocated_f_t[f_id][t_max]+prev;
 	}
 	
 	public NetworkGenerator getNetworkGenerator(){

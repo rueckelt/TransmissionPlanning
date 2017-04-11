@@ -160,7 +160,7 @@ public class NetworkGenerator implements Serializable, Cloneable {
 	 * @param offset - gives an offset to the mean of the distribution. Car drives faster/slower in average. Use 0 for NO offset; range [0..1]
 	 */
 	public void addMovementUncertainty(float error){
-
+//		System.out.println("movementUnc");
 		//take motorway model for <0.2. Urban leads to higher orders whenever the car stops at least once. stops convergence.
 		//else, select randomly.
 		boolean motorwayModel=true;//error<0.2 || RndInt.get(0, 1)>0;

@@ -45,6 +45,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected boolean ADAPTIVE_loc = false;
 	protected boolean ADAPTIVE_err = false;
 	protected boolean ADAPTIVE_transm = false;
+	protected boolean ADAPTIVE_add = false;
 //	protected final boolean ADAPTIVE = false;
 	protected int WINDOW = -1;
 	//-1 is automatic from smape. Else vary between 0 and 1; 1 means full impairing = follow plan!
@@ -57,16 +58,26 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected int[][][] longTermSP_f_t_n;	
 	protected FlowGenerator tgPred;
 	protected NetworkGenerator ngPred;
-	private int[][] prefixSumLongTermSP_f_t;
+	private int[][] prefixSumLongTermSP_fid_t;
 	private int dropped_f[];
-	private int dropped_allocated_f[];
+	private int additionallyAllocated_f_t[][];
+	protected String typeExt = "";
+	
+	@Override
+	protected void calculateInstance_internal(String logfile) {
+		if(spLogPath!=null){
+			loadLongTermSp(spLogPath);
+		}
+		if(NEW_RATING_ESTIMATOR) initCostSeparation();
+	}
+	
 	
 	/**
 	 * activates new rating scheme for cost estimation
 	 * @param NEW_RATING
 	 * @return
 	 */
-	public Scheduler newRating(boolean NEW_RATING){
+	public HeuristicScheduler newRating(boolean NEW_RATING){
 		NEW_RATING_ESTIMATOR=NEW_RATING;
 		tl_offset=0;	//allow the new metric to violoate time limit constraints
 		return this;
@@ -88,6 +99,8 @@ public abstract class HeuristicScheduler extends Scheduler{
 		return schedule_decision_limit;
 	}
 	
+	
+	
 	/**
 	 * 
 	 * covers the heuristics for time impairing to follow long term plans.
@@ -101,7 +114,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 		//when there is a long term plan to follow
 		if(longTermSP_f_t_n!=null){
 			//initialize prefix sum if not done yet
-			if(prefixSumLongTermSP_f_t == null){
+			if(prefixSumLongTermSP_fid_t == null){
 				boolean success = initializePrefixSum();
 				if(!success) return 0;
 			}
@@ -112,20 +125,22 @@ public abstract class HeuristicScheduler extends Scheduler{
 			if(ADAPTIVE_loc){
 				ref_t = getRefSlot(t, ng.getSlotChange(), f);
 			}
+//			int to_allocate = getPlanned(f, ref_t) + getDropped(f);
+//
+//			int f_id = tg.getFlows().get(f).getId();	//use f_id to identify corresponding flow in plan
+//			//when allocated less than so far planned (+dropped in plan), then impair
+//			int too_many_allocated_tokens= prefix_allocated_f_t[f_id][t] - to_allocate;	
 			
-			int to_allocate = getPlanned(f, ref_t) + getDropped(f);
+			
 
-			int f_id = tg.getFlows().get(f).getId();	//use f_id to identify corresponding flow in plan
-			//when allocated less than so far planned (+dropped in plan), then impair
-			int too_many_allocated_tokens= prefix_allocated_f_t[f_id][t] - to_allocate;	
+//			boolean transmission_in_slot = false;
+//			if(ADAPTIVE_transm)transmission_in_slot=getPlanned(f, ref_t)>getPlanned(f, ref_t-1);
+
 			double h=0;	//no impairing
-
-			boolean transmission_in_slot = false;
-			if(ADAPTIVE_transm)transmission_in_slot=getPlanned(f, ref_t)>getPlanned(f, ref_t-1);
-
 			//impair if allocated equal or more than planned (to allocate)
 			//and no transmission in reference slot
-			if(too_many_allocated_tokens>=0 && !transmission_in_slot){
+//			if(too_many_allocated_tokens>=0 && !transmission_in_slot){
+			if(!moreTokensReleasedThanAllocated(f, t) && !transmissionInSlot(f, t)){
 				double err = 0;
 				if(ADAPTIVE_err){
 					err=Math.min(1,getError(f, ref_t));
@@ -143,6 +158,62 @@ public abstract class HeuristicScheduler extends Scheduler{
 
 		}
 		return 0;
+	}
+	
+	protected int getTokensMaxTp(int f, int t){
+		if(longTermSP_f_t_n!=null){
+			if(!transmissionInSlot(f, t)){
+				//during opportunistic allocation, release only exactly as many as released from function. 
+				return Math.min(tg.getFlows().get(f).getTokensMax(), //upper limit is TokensMax
+						Math.max(0, -getTooManyAllocatedTokens(f, t)));	//lower limit is 0
+			}
+		}
+		//return maximum in default case
+		return tg.getFlows().get(f).getTokensMax();
+	}
+	
+	private boolean moreTokensReleasedThanAllocated(int f, int t){
+//		int ref_t = t;
+//		//heuristic to look up at another point in time, which corresponds to the vehicle location
+//		if(ADAPTIVE_loc){
+//			ref_t = getRefSlot(t, ng.getSlotChange(), f);
+//		}	
+//		int to_allocate = getPlanned(f, ref_t) + getDropped(f) +getAddionallyAllocated(f, t);
+//
+//		int f_id = tg.getFlows().get(f).getId();	//use f_id to identify corresponding flow in plan
+//		//when allocated less than so far planned (+dropped in plan), then impair
+//		int too_many_allocated_tokens= prefix_allocated_f_t[f_id][t] - to_allocate;	
+		
+//		return too_many_allocated_tokens<0;
+		return getTooManyAllocatedTokens(f, t)<0;
+	}
+	
+	private int getTooManyAllocatedTokens(int f, int t){
+		int ref_t = t;
+		//heuristic to look up at another point in time, which corresponds to the vehicle location
+		if(ADAPTIVE_loc){
+			ref_t = getRefSlot(t, ng.getSlotChange(), f);
+		}
+		
+		int to_allocate = getPlanned(f, ref_t) + getDropped(f) +getAddionallyAllocated(f, t);
+
+		int f_id = tg.getFlows().get(f).getId();	//use f_id to identify corresponding flow in plan
+		//when allocated less than so far planned (+dropped in plan), then impair
+		int too_many_allocated_tokens= prefix_allocated_f_t[f_id][t] - to_allocate;	
+		return too_many_allocated_tokens;
+	}
+	
+	private boolean transmissionInSlot(int f, int t){
+		
+		int ref_t = t;
+		//heuristic to look up at another point in time, which corresponds to the vehicle location
+		if(ADAPTIVE_loc){
+			ref_t = getRefSlot(t, ng.getSlotChange(), f);
+		}
+
+		boolean transmission_in_slot = false;
+		if(ADAPTIVE_transm)transmission_in_slot=getPlanned(f, ref_t)>getPlanned(f, ref_t-1);
+		return transmission_in_slot;
 	}
 
 	protected boolean oppScheduleDecision(int f, int n, int t) {
@@ -319,29 +390,6 @@ public abstract class HeuristicScheduler extends Scheduler{
 		return netIDs;
 	}
 	
-//	
-//	/**
-//	 * We use this function only to rate network match. Not time match.
-//	 * @param flow
-//	 * @param network
-//	 * @return estimation of cost for scheduling a token of flow f to network n: negative, if allocation is expected to lead to profit 
-//	 */
-//	protected int calcVio(int f, int n){
-//		if(cs==null){
-//			initCostSeparation();
-//		}
-//		int c=0;
-//			c= cs.getNetworkMatch(f, n) + cs.getStatelessReward(f);		//lcy+jit+stateless+monetary
-////			if(f==5 && (n==1 || n==2 || n==6))
-////				System.out.print("f="+f+", n="+n+", CALC_VIO: net_match = "+cs.getNetworkMatch(f, n)+"   stateless: "+cs.getStatelessReward(f)+"\n");
-//
-//		return c;
-//	}
-//	
-//	protected int getAvMinTp(Flow flow){
-//		//get minimum throughput requirement of flow
-//		return (int) Math.ceil(flow.getTokensMin()/flow.getWindowMin())+1;
-//	}
 	
 	//return the average throughput of the network over active slots (>0)
 	private int getAvCapacity(Network net){
@@ -365,164 +413,6 @@ public abstract class HeuristicScheduler extends Scheduler{
 	*/
 	
 	/**
-	 * 1. Time match heuristic
-	 * 
-	 * Idea: Adapt the attracting forces of the model (throughput+unscheduled) according of the token to schedule to the long term schedule
-	 *  --> decreases attracting forces, when more tokens are scheduled than planned. Move allocation farther away.
-	 * def: planned tokens = in long-term plan
-	 * 		
-	 * 				Max( so far planned tokens - so far scheduled tokens , 0)
-	 * h(f, t) = 	-----------------------------------------------------------	+ bias_time
-	 * 					tokens of the data flow to schedule
-	 * 
-	 * supremum of h(f,t) rises till 1, when more tokens are planned then scheduled	--> no allocation impairing
-	 * infimum of  h(f,t) is 0, when less tokens are scheduled than planned 	--> allocation impairing! foster delay!
-	 * 						 why not negative? would foster allocation in future because it did not happen in past. but it may be better to delay beyond the horizon.
-	 * 
-	 * --> bias in [0, 1]
-	 * 		 --> bias= 0 bias means, that planning to all other beneficial networks is ok as well
-	 * 		---> bias= 0.3 means, that networks with scheduling gain of 70% of current are also ok
-	 * 
-	 * set:
-	 * scheduling_limit = attracting forces * (alpha*h(f,t)
-	 *  
-	 * 	alpha says, how strong this should be.
-	 *  we set it to an error estimation, using SMAPE.
-	 *  
-	 *   When prediction has been good, alpha should be 
-	 */
-
-
-	
-//	/**
-//	 * 
-//	 * impairing forbids the opportunistic approach to allocate tokens that are not planned in the long term plan.
-//	 * 
-//	 * @param f flow index
-//	 * @param t time slot index
-//	 * @param allocated_f number of allocated tokens per flow
-//	 * @return	how much to impair attractive force based on schedules. 1 not at all. 0 strongly.
-//	 * use long term schedule 
-//	 */
-//	protected double getTimeImparing(int f, int t){
-//		if(TIME_IMPAIRING_WEIGHT==0) return 1;
-//		if(isnewFlow(f)) return 0;	//schedule new flows opportunistically
-//		if(t>=ng.getTimeslots())return 0;
-//		
-//		//in case of continued flow, f_id might differ from f. 
-//		//Then use f for actual and f_id for predicted. They identify the same flow, but split
-//		int f_id = tg.getFlows().get(f).getId();	
-//		
-//		//initialize prefix sum if not done yet
-//		if(prefixSumLongTermSP_f_t == null){
-//			boolean success = initializePrefixSum();
-//			if(!success) return 1.0;
-//		}
-//		
-////		if(f>=tgPred.getFlows().size()) return 1.0;		//if flow was added, do not impair
-//		t=Math.min(t,longTermSP_f_t_n[0].length-1);			//restrict t to array size.
-//		
-//		//use reference time slot t_ref to refer to plan. Location dependent
-//		int t_ref = t;
-//		if(ADAPTIVE_loc) t_ref=getRefSlot(t, ng.getSlotChange(), f);
-//		
-//		
-//		double impairing =0;
-//		
-//		//h_time is 0 when scheduling follows plan. Goes up to 1 when more tokens scheduled then planned
-//		//allocated_f is set in the allocate method of the "Scheduler" class
-//		
-//		//a value of 0 leads to opportunistic, a value of 1 forbids transmission in order to follow the plan.
-//		double alpha = getTimeImpairingWeight(f,t);
-////		System.out.println("Heuristic:airing(f="+f+",n="+t+") alpha ="+alpha);
-//		int win =1;//getWindow(f,t);
-//		//window of 5 timeslots length.
-//		int t_min = 0;//Math.max(0, t-win);
-//		int t_min_ref = 0;//Math.min(ng.getTimeslots()-1, Math.max(0, t_ref-win));
-////		t_min=0;		//TODO check!
-//		int t_max= Math.min(ng.getTimeslots()-1, Math.max(0, t_ref+win-1));
-//		updatePrefixAllocated(t, f);
-//
-//		int alloc_dif= prefix_allocated_f_t[f][t]- prefix_allocated_f_t[f][t_min];
-//		int planned_dif= prefixSumLongTermSP_f_t[f_id][t_max] - prefixSumLongTermSP_f_t[f_id][t_min_ref];
-////		System.out.println("Alloc= "+Arrays.deepToString(prefix_allocated_f_t));
-//		
-//		double h_time;// = ((double)Math.max(0, alloc_dif-planned_dif))/Math.max(1,alloc_dif);
-//		
-//		
-//		//update dropped allocated: tokens that have been dropped 
-//		//in the plan but allocated in the opportunistic approach
-//		if(t>0){
-//			dropped_allocated_f[f_id]=Math.min(dropped_f[f_id], Math.max(dropped_allocated_f[f_id], //max of dropped and 
-//					prefix_allocated_f_t[f][t-1]-prefixSumLongTermSP_f_t[f_id][t-1])); //diff of allocated and planned
-//		}
-////		System.out.println("HEURISTIC_TIME_IMPAIRING: t="+t+", f= "+f+", h_time="+h_time+",\t sum_LTSP = "+ prefixSumLongTermSP_f_t[f][t]
-////				+",\t alloc="+allocated_f[f] + "\t alpha="+alpha);
-//		
-//		int sum=Math.max(0, planned_dif+dropped_f[f_id]-dropped_allocated_f[f_id]-alloc_dif);
-//		for(int n = 0; n<ng.getNetworks().size(); n++){
-//			sum+=longTermSP_f_t_n[f_id][t][n];
-//		}
-//		
-//		if(sum>0)
-//			h_time=0;	//sched TODO: make a function based on t difference and win
-////			h_time = Math.abs(t-)
-//		else
-//			h_time=1;	//not sched
-////		if(f==3)System.out.println("Heuristics: getairing: prefixSum="+planned_dif+", alloc "+alloc_dif+"; h= "+(1-h_time));		
-//		impairing = alpha*h_time;
-////		if(f==3)System.out.println("HEURISTIC_TIME_IMPAIRING: t="+t+", f= "+f+", h_time="+h_time+", impairing = "+impairing);
-//		
-//		return impairing;
-//	}
-
-	/**
-	 * @param f
-	 * @param t
-	 * @return	the window (+/-) for which it is checked if the flow f was planned to be transmitted
-	 */
-	private int getWindow(int f, int t){
-		if(WINDOW>0) return WINDOW;		//if fixed window is set, use it
-		
-		//if not set (-1), use adaptive approach and calculate automatically
-		Flow flow= tg.getFlows().get(f);
-		
-		
-		int win_tp_min =Math.min(flow.getWindowMin(),(int) (1+flow.getWindowMin()*getError(f, t)));
-//		win_tp_min = Math.min(win_tp_min, ng.getTimeslots()/10);
-//		System.out.println("Heuristic win="+win_tp_min);
-		return win_tp_min;
-		
-//		double err= getError(t);	//error between 0 and 2
-//		return (int) (1+err*20);			//TODO: how to select the parameter or function to calculate the window???
-	}
-
-	
-	private double getTimeImpairingWeight(int f, int t){
-		double alpha = TIME_IMPAIRING_WEIGHT;
-		double err = Math.min(1,getError(f, t));
-		
-//		System.out.println("Heuristic: timeImpairingWeight: f="+f+", t="+t+", alpha="+alpha+", err="+err);
-		return (1-err)*alpha;
-	}
-
-	
-	
-	// ######################  AUXILLARY ######################
-
-	
-	
-//	/**
-//	 * 
-//	 * @param f index of flow in tg
-//	 * @return identify from ID if flow is new.
-//	 */
-//	private boolean isnewFlow(int f){
-//		return tg.getFlows().get(f).getId()>=tgPred.getFlows().size();
-//	}
-//	
-	
-	/**
 	 * prefix sum counts the sum over all networks and over all previous time slots
 	 * @return false if calculation failed (long term plan does not exist) 
 	 */
@@ -530,7 +420,8 @@ public abstract class HeuristicScheduler extends Scheduler{
 //		System.out.println("HeuristicS: longTermSP="+showSchedule(longTermSP_f_t_n));
 		if(longTermSP_f_t_n==null) return false;
 
-		prefixSumLongTermSP_f_t=new int[longTermSP_f_t_n.length][longTermSP_f_t_n[0].length];
+		prefixSumLongTermSP_fid_t=new int[longTermSP_f_t_n.length][longTermSP_f_t_n[0].length];
+		additionallyAllocated_f_t=new int[tg.getFlows().size()][ng.getTimeslots()];
 				
 		for(int f=0; f<longTermSP_f_t_n.length; f++){
 			//prefix sum counts the sum over all networks and over all previous time slots
@@ -541,10 +432,34 @@ public abstract class HeuristicScheduler extends Scheduler{
 					prefixSumOverNets+=longTermSP_f_t_n[f][t][n];
 				}
 				//after summing over networks, apply to the time slot
-				prefixSumLongTermSP_f_t[f][t]=prefixSumOverNets;
+				prefixSumLongTermSP_fid_t[f][t]=prefixSumOverNets;
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * 
+	 * @param f
+	 * @param t0
+	 * @param tokens
+	 */
+	protected void addAdditionallyAllocated(int f, int t, int tokens){
+		if(ADAPTIVE_add && additionallyAllocated_f_t!=null){
+			//if there are no more tokens released than allocated, the transmission would be forbidden
+			//if in this case transmission in time slot triggers transmission, then this is additional data,
+			//which is out of the plan
+			
+			if(!moreTokensReleasedThanAllocated(f, t) && transmissionInSlot(f, t))
+			for(int t0=t; t0<additionallyAllocated_f_t[0].length;t0++){
+				additionallyAllocated_f_t[f][t0]+=tokens;
+			}
+		}
+	}
+	
+	private int getAddionallyAllocated(int f, int t){
+		if(additionallyAllocated_f_t==null) return 0;
+		return additionallyAllocated_f_t[f][t];
 	}
 
 	int getStartTime(Flow f){
@@ -567,6 +482,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 		if(new File(logfile).exists()){
 			this.longTermSP_f_t_n = LogMatlabFormat.load3DFromLogfile("schedule_f_t_n", logfile);
 			initDropped();
+			initializePrefixSum();
 		}
 	}
 	
@@ -594,7 +510,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 		t=Math.max(0, Math.min(t, ng.getTimeslots()-1));
 		Flow flow = tg.getFlows().get(f);
 		if(flow.getId()<dropped_f.length){
-			return prefixSumLongTermSP_f_t[flow.getId()][t];
+			return prefixSumLongTermSP_fid_t[flow.getId()][t];
 		}else{
 			return 0;
 		}
@@ -634,14 +550,14 @@ public abstract class HeuristicScheduler extends Scheduler{
 		
 		int t_min = Math.max(0, t-win);		//how to select the observer window of 10?
 		
-		double err_move =ng.getPositionError(ng.getSlotChange(), t);
-		double err_net = ng.getNetworkError(ngPred.getNetworks(), t_min, t);
+//		double err_move =ng.getPositionError(ng.getSlotChange(), t);
+//		double err_net = ng.getNetworkError(ngPred.getNetworks(), t_min, t);
 		
 		UncertaintyErrorCalculation uec = new UncertaintyErrorCalculation(tgPred.getFlows(), tg.getFlows(), ng.getTimeslots());
-		double err_flow= uec.getFlowUncertaintyError2(f,t_min, t)+uec.getFlowUncertaintyError(t_min, t)/2;
-		
-		double sum_err = err_net+2*err_flow;
-		double err=Math.pow(sum_err,2); //TODO : define better function of move, net and flow error
+//		double err_flow= uec.getFlowUncertaintyError2(f,t_min, t)+uec.getFlowUncertaintyError(t_min, t)/2;
+//		
+//		double sum_err = err_net+2*err_flow;
+//		double err=Math.pow(sum_err,2); //TODO : define better function of move, net and flow error
 //		System.out.println("Heuristic: getError: f="+f+", t="+t+", win="+win+", err="+uec.getFlowUncertaintyError2(f,t_min, t));
 		return uec.getFlowUncertaintyError2(f,t_min, t);
 //		return err;
@@ -666,22 +582,45 @@ public abstract class HeuristicScheduler extends Scheduler{
 			return t+range;	
 		}else{
 			//vehicle moved slower. release less tokens
-			//TODO: might create problems with (1) deadlines (2) standing vehicle: method does not release new tokens.
 			return t-range;
 		}
 		
 	}
 	
+	protected String getTypeExt(){
+		String ext = typeExt;
+		if(ADAPTIVE_err) ext+="_err";
+		if(ADAPTIVE_loc) ext+="_loc";
+//		if(ADAPTIVE_transm) ext+="_tr";
+		if(ADAPTIVE_add) ext+="_add";
+		return ext;
+	}
+	
+	/**
+	 * location reference of transmission plan.
+	 * Instead of refering to the tp in time dimension, refer to it in spacial dimension. 
+	 * Thus, look up the time which corresponds to the current location of the vehicle
+	 * @param adapt "true" activates mechanism
+	 * @return	this scheduler
+	 */
 	public HeuristicScheduler adapt_location(boolean adapt){
+		ADAPTIVE_transm = adapt;	//combine these two. do not use separately
 		ADAPTIVE_loc = adapt;
 		return this;
 	}
+	
+	/**
+	 * react on flow prediction error. Decrease threshold of opportunistic decision.
+	 * @param adapt
+	 * @return
+	 */
 	public HeuristicScheduler adapt_err(boolean adapt){
 		ADAPTIVE_err = adapt;
 		return this;
 	}
-	public HeuristicScheduler adapt_transm(boolean adapt){
-		ADAPTIVE_transm = adapt;
+
+	public HeuristicScheduler adapt_add(boolean adapt){		//seems to be not beneficial
+		ADAPTIVE_add = adapt;
 		return this;
 	}
 }

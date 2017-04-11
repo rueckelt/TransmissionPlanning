@@ -71,40 +71,20 @@ public class Combination {
 //		updatePart();
 		setResult(new int[comb.length]);
 	}
-//	public Combination(int[] combVar) {
-//
-//		resultGlobal = new int[getConfig().getFlowNum()];
-//		combGlobal = new int[getConfig().getFlowNum()];
-//		int[] activeFlow = new int[getConfig().getActiveFlowNum()];
-//		int[] activeComb = new int[getConfig().getActiveFlowNum()];
-//		// set those inactive networks to 0
-//		for (int i = 0, aF = 0; i < combVar.length && aF < getConfig().getActiveFlowNum(); i++) {
-//			if (getConfig().getActiveFlowBool()[i] > 0) {
-//				activeFlow[aF] = i;
-//				////Printer.printInt("comb", combVar);
-//				//////////System.out.println("i: " + i + " - " + combVar[i]);
-//				if (combVar[i] < 1 || combVar[i] > getConfig().getActiveNetworkBool().length || getConfig().getActiveNetworkBool()[combVar[i] - 1] < 1) {
-//					activeComb[aF] = 0;
-//				} else {
-//					activeComb[aF] = combVar[i];
-//				}
-//				aF++;
-//			}
-//		}
-//		setComb(activeComb);
-//		updatePart();
-//		setResult(new int[comb.length]);
-//	}
+
 
 	public Combination() {
-		// TODO Auto-generated constructor stub
 		//////System.out.println("flowNum: " + config.getFlowNum());
 		comb = new int[getConfig().getActiveFlowNum()];
 		setResult(new int[comb.length]);
 //		updatePart();
 	}
 
-	public double run() {
+	/**
+	 * evaluate the combination
+	 * @return the cost of the combination
+	 */
+	public double getCost() {
 		int t = getConfig().getTime();
 		setCombCost(0);
 		int step = 1;
@@ -176,16 +156,12 @@ public class Combination {
 
 	//is called only for the fittest individual after finishing and updates stateful reward of cs
 	public void updateState() {
-		// bug - no should be good
 		for (int f : getConfig().getActiveFlow()) {
 			getConfig().getCs().updateStatefulReward(f, getConfig().getTime(), getResultGlobal()[f]);
 		}
 
 	}
-//
-//	public static void assignResult(int[] result, int[] subResult) {
-//		// for (int i = 0; i < )
-//	}
+
 	
 	/**
 	 * for each network
@@ -240,12 +216,6 @@ public class Combination {
 
 	public int[] getCombGlobal() {
 		return combGlobal;
-	}
-
-
-
-	public void setCombGlobal(int[] combGlobal) {
-		this.combGlobal = combGlobal;
 	}
 
 	public double getCombCost() {

@@ -112,15 +112,17 @@ public class EvaluationScenarioCreator {
 		boolean restricted = false;
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 
-//		if(!restricted)schedulers.add(new OptimizationScheduler(ng, fg));
-		if(!restricted)schedulers.add(new GreedyOnlineScheduler(ng, fg));
-		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
 		Scheduler gs = new GreedyScheduler(ng, fg);
-		if(!restricted)schedulers.add(gs);				
-
 		//execution of jtp schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
-//		schedulers.add(new ExecutionScheduler(ng, fg, path, "_JTP"));
+
+		if(!restricted)schedulers.add(new ExecutionScheduler(ng, fg, path, "_JTP"));
+//		if(!restricted)
+//			schedulers.add(new OptimizationScheduler(ng, fg));
+//		if(!restricted)schedulers.add(new GreedyOnlineScheduler(ng, fg));
+		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
+		if(!restricted)schedulers.add(gs);				
+
 		
 		//execution from opt
 		OptimizationScheduler os=new OptimizationScheduler(ng, fg);
@@ -143,40 +145,15 @@ public class EvaluationScenarioCreator {
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt, "opt"));
 		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp"));
 		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
-		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_transm(true));
 
-		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
-		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_transm(true).adapt_err(true));
-//		schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
-		
-//		GreedyOnlineOppportunisticScheduler opp = new GreedyOnlineOppportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp");
-//		opp.adapt_err(true);
-//		opp.adapt_location(true);
-//		schedulers.add(opp);
-		
-		
-//		for(double alpha =0; alpha<=1; alpha=alpha+0.2){
-//			double alpha2=(double)(Math.round(10*alpha))/10.0;
-//			for(int window = 1; window <=16; window=window*2){
-//				schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, alpha2, window, path));
-//			}	
-//		}
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 0.4, path));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 0.6, path));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 0.8, path));
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1, path));
-		
-		
-		
-//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, path));
-		
-//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(5)).newRating(newRating));
-//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(8)).newRating(newRating));
-//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(10)).newRating(newRating));
-//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(15)).newRating(newRating));
-//		schedulers.add(((GreedyScheduler) new GreedyScheduler(ng, fg).setScheduleDecisionLimit(20)).newRating(newRating));
-		
-		if(!restricted)schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
+//		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
+		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_err(true));
+
+//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path).setDecide(false));
+//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path));
+//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path).adapt_location(true).adapt_transm(true).adapt_err(true));
+//		
+//		if(!restricted)schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
 		
 	return schedulers;
 	}

@@ -64,7 +64,7 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
     
     [~, len]=size(counter);
     values = zeros(nof_values, nof_schedulers,len, rep_max);
-    avail = zeros(nof_values, nof_schedulers,len, rep_max);
+    avail =  zeros(nof_values, nof_schedulers,len, rep_max);
 
     
     [nof_values, nof_schedulers, f_max, t_max, n_max,rep_max]
@@ -94,26 +94,33 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
                        %store values to matrix[value scheduler, var, repetition]
                        for val=1:nof_values    %skip non-existing values
                            try
-
+                                
                                 values(val,s,i,rep) = eval(varnames{val});
                                 avail(val,s,i,rep) = 1;
+                                [fname '  cost = ' long2str(values(val,s,i,rep))]
 
                            catch
     %                                    values(val, s,f,t,n,rep) = 0;
     %                                    ['failed to read: ' fname ': ' varnames{val}]
                            end
                        end
-                       if values(1,1,i,rep)>values(1,s,i,rep)   %total cost of opt is higher?
+                       if s==8 && values(1,3,i,rep)<values(1,8,i,rep)   %total cost of opt is higher?
                            %rmdir(in_path, 's');
-                           [in_path scheduler_logs{1} ' worse than ' scheduler_logs{s} ' : '...
-                               int2str(values(1,1,i,rep)) ' > '  int2str(values(1,s,i,rep)) ];
+                           [in_path scheduler_logs{3} ' better than ' scheduler_logs{8} ' : '...
+                               int2str(values(1,3,i,rep)) ' < '  int2str(values(1,8,i,rep)) ' by '...
+                               int2str(values(1,3,i,rep)-values(1,8,i,rep))]
                        end
                    else
                        err=['file not found' fname]
+                      % rmdir(in_path, 's');
+                       %[in_path scheduler_logs{1} ' worse than ' scheduler_logs{s} ' : '...
+                       %    int2str(values(1,1,i,rep)) ' > '  int2str(values(1,s,i,rep)) ]
                    end
                    clearvars -except in_path path_prefix path_suffix i select values avail varnames counter c rep t_max n_max f_max rep_max scheduler_logs nof_values nof_schedulers in_folder
                 end
                rmpath(in_path);
+           else
+               ['PATH does not exist: ' in_path]
            end
         end 
     i=i+1;

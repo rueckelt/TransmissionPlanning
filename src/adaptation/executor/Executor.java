@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ToolSet.JsonLogger;
+import schedulers.Scheduler;
 import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
@@ -16,16 +17,18 @@ public class Executor {
 	private int[][][] schedulePlan;
 	private NetworkGenerator ng;
 	private FlowGenerator fg;
-	private int[][][] executedPlan;
+//	private int[][][] executedPlan;
+	private Scheduler scheduler;
 	// strategy...
 	
-	public Executor(int[][][] sp, NetworkGenerator ngVar, FlowGenerator fgVar) {
+	public Executor(int[][][] sp, NetworkGenerator ngVar, FlowGenerator fgVar, Scheduler scheduler) {
 		setSchedulePlan(sp);
 		setNg(ngVar);
 		setFg(fgVar);
 //		int flowLen = Math.max(fgVar.getFlows().size(), sp.length);
 //		int netLen = Math.max(ngVar.getNetworks().size(), sp[0][0].length);
-		setExecutedPlan(new int[fgVar.getFlows().size()][ngVar.getTimeslots()][ngVar.getNetworks().size()]);	
+//		setExecutedPlan(new int[fgVar.getFlows().size()][ngVar.getTimeslots()][ngVar.getNetworks().size()]);	
+		this.scheduler=scheduler;
 	}
 	public void run(boolean plotBool) {
 		
@@ -119,13 +122,12 @@ public class Executor {
 						dataIdItr++;
 					}
 				}
-		
 				//if amount of data scheduled smaller equal current network capacity, 
 				//then assign to executed, limited by the maximum flow capacity
 				if (sumNetTp <= cap) {
 					for (int f = 0; f < num_of_flows; f++) {
-						getExecutedPlan()[f][t][n] = Math.min(schedulePlan[f][t][n], restData.get(f));
-						restData.set(f, Math.max(restData.get(f) - getExecutedPlan()[f][t][n], 0));
+						int allocated = scheduler.allocate(f,t,n,Math.min(schedulePlan[f][t][n], restData.get(f)));
+						restData.set(f, Math.max(restData.get(f) - allocated, 0));
 					}
 				//if there is more data than available space in the network
 				//then assign in round robin fashion. also schedule data of paused ones
@@ -135,108 +137,16 @@ public class Executor {
 					
 					for (int f = 0; f < dataToSent.length; f++) {
 						int fId = dataId[f];
-						getExecutedPlan()[fId][t][n] = executed[f];
-						restData.set(fId, Math.max(restData.get(f) - getExecutedPlan()[f][t][n], 0));
-					}
+						int allocated = scheduler.allocate(f,t,n, executed[f]);						
+						restData.set(fId, Math.max(restData.get(f) - allocated, 0));
+					}	
 				}
 			}
 		}
-
-		////////System.out.println("planed tp: " + Simulation.calcTP(schedulePlan).toString());
-		////////System.out.println("real tp: " + Simulation.calcTP(getExecutedPlan()).toString());
-		////////System.out.println("total: " + total);
 		
 		if (plotBool) {
 //			Plot plot2 = new Plot(new VisualizationPack(ng, fg, getExecutedPlan()));
 		}
-		
-	}
-	/*
-	public void run() {
-		int total = 0;
-		ArrayList<Integer> restData = new ArrayList<Integer>();
-		for (int f = 0; f < schedulePlan.length ; f++) {
-			if (f >= getFg().getFlows().size())  {
-				restData.add(0);
-			} else {
-				////////System.out.println("f: " + f);
-				restData.add(getFg().getFlows().get(f).getTokens());
-			}
-		}
-		for (int t = 0; t < schedulePlan[0].length; t++) {
-			for (int n = 0; n < schedulePlan[0][0].length; n++) {
-				int cap = 0;
-				if (n > getNg().getNetworks().size()) {
-					cap = 0;
-				} else {
-					cap = getNg().getNetworks().get(n).getCapacity().get(t);
-				}
-				total += cap;
-				int sumNetTp = 0;
-				int fNum = 0;
-
-				int len = Math.min(schedulePlan.length, getFg().getFlows().size());
-				for (int f = 0; f < len; f++) {
-					sumNetTp += schedulePlan[f][t][n];
-					//restData.add(getFg().getFlows().get(f).getTokens());
-					if (schedulePlan[f][t][n] != 0) {
-						fNum++;
-					}
-				}
-				////////System.out.println("sumNet: " + sumNetTp + " " + "cap: " + cap);
-				if (sumNetTp <= cap) {
-					//int len = Math.min(schedulePlan.length, getFg().getFlows().size());
-					for (int f = 0; f < len; f++) {
-						getExecutedPlan()[f][t][n] = Math.min(schedulePlan[f][t][n], restData.get(f));
-						restData.set(f, Math.max(restData.get(f) - getExecutedPlan()[f][t][n], 0));
-					}
-				} else {
-					//1400
-					int rest = cap;
-					for (int f = 0; f < schedulePlan.length ; f++) {
-						if (schedulePlan[f][t][n] != 0 && schedulePlan[f][t][n] <= (cap / fNum)) {
-							////////System.out.println("f: " + f + " restData.size(): " + restData.size());
-							if (f < fg.getFlows().size()) {
-								getExecutedPlan()[f][t][n] = Math.min(schedulePlan[f][t][n], restData.get(f));
-								restData.set(f, Math.max(restData.get(f) - getExecutedPlan()[f][t][n], 0));
-								rest -= getExecutedPlan()[f][t][n];
-								fNum--;
-							}
-
-						}
-					}
-					int average = fNum == 0? 0 : rest / fNum;
-					for (int f = 0; f < schedulePlan.length && f < getFg().getFlows().size() && fNum > 0; f++) {
-						if (schedulePlan[f][t][n] != 0) {
-							if (schedulePlan[f][t][n] > average) {
-							
-								getExecutedPlan()[f][t][n] = Math.min(average, restData.get(f));
-								restData.set(f, Math.max(restData.get(f) - getExecutedPlan()[f][t][n], 0));
-								rest -= getExecutedPlan()[f][t][n];
-								fNum--;
-							average = fNum == 0? 0 : rest / fNum;
-							} else {
-								getExecutedPlan()[f][t][n] = Math.min(schedulePlan[f][t][n], restData.get(f));
-								restData.set(f, Math.max(restData.get(f) - getExecutedPlan()[f][t][n], 0));
-								rest -= getExecutedPlan()[f][t][n];
-								fNum--;
-								average = fNum == 0? 0 : rest / fNum;
-							}
-						}
-					}
-					
-				}
-			}
-		}
-
-		////////System.out.println("planed tp: " + Simulation.calcTP(schedulePlan).toString());
-		////////System.out.println("real tp: " + Simulation.calcTP(getExecutedPlan()).toString());
-		////////System.out.println("total: " + total);
-		Plot plot2 = new Plot(new VisualizationPack(ng, fg, getExecutedPlan()));
-		
-	}
-	*/
-	public void roundRobin() {
 		
 	}
 
@@ -264,57 +174,5 @@ public class Executor {
 		this.fg = fg;
 	}
 
-	public int[][][] getExecutedPlan() {
-		return executedPlan;
-	}
-
-	public void setExecutedPlan(int[][][] executedPlan) {
-		this.executedPlan = executedPlan;
-	}
-	
-//	public void equalAllocate(int cap, List<Integer> restData, int t, int n, int fNum) {
-//		int rest = cap;
-//		for (int f = 0; f < schedulePlan.length ; f++) {
-//			if (schedulePlan[f][t][n] != 0 && schedulePlan[f][t][n] <= (cap / fNum)) {
-//				////////System.out.println("f: " + f + " restData.size(): " + restData.size());
-//				if (f < fg.getFlows().size()) {
-//					getExecutedPlan()[f][t][n] = Math.min(schedulePlan[f][t][n], restData.get(f));
-//					restData.set(f, Math.max(restData.get(f) - getExecutedPlan()[f][t][n], 0));
-//					rest -= getExecutedPlan()[f][t][n];
-//					fNum--;
-//				}
-//
-//			}
-//		}
-//		int average = fNum == 0? 0 : rest / fNum;
-//		for (int f = 0; f < schedulePlan.length && f < getFg().getFlows().size() && fNum > 0; f++) {
-//			if (schedulePlan[f][t][n] != 0 && schedulePlan[f][t][n] > average) {
-//				getExecutedPlan()[f][t][n] = Math.min(average, restData.get(f));
-//				restData.set(f, Math.max(restData.get(f) - getExecutedPlan()[f][t][n], 0));
-//				rest -= getExecutedPlan()[f][t][n];
-//				fNum--;
-//				average = fNum == 0? 0 : rest / fNum;
-//			} 
-//		}
-//	}
-	
-
-	
-	public class Pair implements Comparable<Pair> {
-	    public final int index;
-	    public final int value;
-
-	    public Pair(int index, int value) {
-	        this.index = index;
-	        this.value = value;
-	    }
-
-	    @Override
-	    public int compareTo(Pair other) {
-	        //multiplied to -1 as the author need descending sort order
-	        return -1 * Integer.valueOf(this.value).compareTo(other.value);
-	    }
-	}
-	
 
 }

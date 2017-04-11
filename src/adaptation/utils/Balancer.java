@@ -40,8 +40,6 @@ public class Balancer {
 	private double cost;
 	private double degree;
 	private int step; // the step of decreasing resource
-	private static boolean sc = false;
-	private static int time = -1; // time slot
 	private Config config;
 	
 	
@@ -108,11 +106,15 @@ public class Balancer {
 //				System.out.println("schedule flow with cost= "+flowSchedulingCost.get(f0));
 				int f = flow_order.get(f0);		//f should be the active flow index, to be used for the arrays
 				
-				int remaining_tokens = adaptSched.getDataSize().get(flowId[f]) - adaptSched.getThroughput().get(flowId[f]);
-				int max_tokens_to_assign = Math.min(remaining_tokens, max[f]);
-				int tokens_to_assign = Math.min(max_tokens_to_assign, remaining_capacity);
-				result[f]=tokens_to_assign;
-				remaining_capacity-=tokens_to_assign;
+				if(!adaptSched.isDecide() || adaptSched.scheduleDecision(f, n, t)){
+					int remaining_tokens = adaptSched.getDataSize().get(flowId[f]) - adaptSched.getThroughput().get(flowId[f]);
+					int max_tokens_to_assign = Math.min(remaining_tokens, max[f]);
+					int tokens_to_assign = Math.min(max_tokens_to_assign, remaining_capacity);
+					result[f]=tokens_to_assign;
+					remaining_capacity-=tokens_to_assign;
+				}else{
+					System.out.println("Balancer: rejected allocation from heuristic scheduleDecision f="+f+", n="+n+", t="+t);
+				}
 			}
 		}
 	}
@@ -263,17 +265,11 @@ public class Balancer {
 		//int[] prevGlobal = CopyOfSimulation.getPrevious().getCombGlobal();
 //		int[] prevGlobal = Simulation.getPrevious().getCombGlobal();
 
-		int switchCost = 0;
-		int monetaryCost = 0;
-		sc = false; // take switch_cost into consideration or not
-//		if (prevGlobal[f] != 0) {
-//			if (prevGlobal[f] != (n + 1) && sc) {
-//				switchCost = 2*1000;
-//			}
-//		}
+		int switchCost = 0;	//not considered
+
 		Flow flow = config.getFg().getFlows().get(f);
 		Network net = config.getNg().getNetworks().get(n);
-		monetaryCost = net.getCost() * config.getNg().getCostImportance();
+		int monetaryCost = net.getCost() * config.getNg().getCostImportance();
 		double rating = config.getCs().getNetworkMatch(f, n) + config.getCs().getStatelessReward(f)+	//stateless reward + network match
 				config.getCs().getStatefulReward(f, t) * Math.max(1, flow.getTokensMin() / flow.getWindowMin()) +
 				config.getCs().getTimeMatch(f, t) /getAvMinTp(config.getCs().getTg().getFlows().get(f)) + switchCost;
@@ -342,7 +338,7 @@ public class Balancer {
 	}
 	
 	
-	public static int sum(int[] req) {
+	public  int sum(int[] req) {
 		int sum = 0;
 		for (int i = 0; i < req.length; i++) {
 			sum += req[i];
@@ -553,12 +549,4 @@ public class Balancer {
 		this.flowId = flowId;
 	}
 
-	public static boolean isSc() {
-		return sc;
-	}
-
-	public static void setSc(boolean sc) {
-		Balancer.sc = sc;
-	}
-	
 }

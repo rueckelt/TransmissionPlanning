@@ -54,9 +54,9 @@ public class EvaluationScenarioExecutionWorker implements Callable<Boolean>{
 		} else {
 
 			for (Scheduler scheduler : schedulers) {
-				Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				String date = formatter.format(Calendar.getInstance().getTime());
-				System.out.println(" "+scheduler.getType()+",\t"+folder + ",\tstarting at "+date);
+//				Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//				String date = formatter.format(Calendar.getInstance().getTime());
+//				System.out.println(" "+scheduler.getType()+",\t"+folder + ",\tstarting at "+date);
 
 				scheduler.calculateInstance(folder, recalc); //or when overwrite
 

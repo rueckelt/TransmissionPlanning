@@ -223,6 +223,7 @@ public class FlowGenerator implements Serializable{
 		
 		float probAddCancel=error;
 		float adapt =1;
+		float counter =0;
 		do{
 			Flow.setNextId(new AtomicInteger(0));	
 			probAddCancel = (float) (probAddCancel*(0.85+0.15*adapt));
@@ -240,11 +241,11 @@ public class FlowGenerator implements Serializable{
 			
 			
 			adapt = Math.min(2, error/act_error);	//upper limit for adaption step. Uncertainty may have huge random influence which lead to giant (unwanted) adaption.
+			counter++;
 			
-			
-//			System.out.println("act_error = "+act_error+", adapt = "+adapt+", probAddCancel = "+ probAddCancel);
-		}while(adapt<(1-ALLOWED_ERROR_OFFSET) || 
-				adapt>(1+ALLOWED_ERROR_OFFSET));
+			System.out.println("act_error = "+act_error+", adapt = "+adapt+", probAddCancel = "+ probAddCancel);
+		}while(adapt<(1-(ALLOWED_ERROR_OFFSET+counter/5000.0)) || 
+				adapt>(1+(ALLOWED_ERROR_OFFSET+counter/5000.0)));
 	}
 
 	//cancel flows with certain probability 

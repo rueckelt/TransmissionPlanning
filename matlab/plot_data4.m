@@ -7,7 +7,7 @@
 %####################################################
 function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
 
-[nof_vartypes, nof_schedulers, ~, nof_repetitions] = size(data);
+[nof_vartypes, nof_schedulers, nof_val, nof_repetitions] = size(data);
     %what to plot?
     % use tikz_out(out_folder, data, plot_var_ftn, my_xlabel, my_ylabel, bound_hi, bound_lo, logscale)
         %out folder should contain subfolder for scheduler and subfolder for
@@ -25,7 +25,13 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
     elseif(select==2)
         my_xlabel = 'Time Slots';
         fname_part = 'time';
-        my_xTickLabels = {'','25','50','100','200','400',''};
+        my_xTickLabels = {'','25','50','100','200','400','800','1600',''};
+        slots=[25,50,100,200,400, 800, 1600];
+        for v=1:nof_val
+        %normalize time to time slots
+            data(2,1:2,v,:)=data(2,1:2,v,:)./slots(v);
+            data(2,4:end,v,:)=data(2,4:end,v,:)./slots(v);
+        end
     elseif(select==3)
         my_xlabel = 'Networks';
         fname_part = 'networks';
@@ -109,20 +115,21 @@ for v=1:nof_vartypes
         filename = [out_folder filesep 'vary_' fname_part '_NRS_' vartypes{v} '.tikz'];
 
         my_ylabel={sprintf('Normalized Rating Score (NRS) and\nRelative Optimization Potential (ROP)')};
-        legend_names = scale_s(1:end-1)
+        legend_names = scale_s(1:end-1);
         legend_names(1) = {'ROP'};
         %tikz_out_errorbar(filename, data_score, my_ylabel,my_xlabel, my_xTickLabels, scale_s(2:end-1),1, 0,0);
         tikz_out_errorbar(filename, data_score, my_ylabel,my_xlabel, my_xTickLabels, legend_names,0, 0,0);
        if(v==1) 
-            nrs_jtp = squeeze(data_score(3,:,:))';   %3 = jtp, 2= ons, 1 = ns. 
-            nrs_ons = squeeze(data_score(2,:,:))';   %3 = jtp, 2= ons, 1 = ns.  
-            nrs_ns = squeeze(data_score(1,:,:))';   %3 = jtp, 2= ons, 1 = ns.
-            [h p] =ttest2(nrs_jtp, nrs_ons);
-            labels{v}
-            h
-            p
-            gain_ons = median(nrs_jtp)-median(nrs_ons)
-            gain_ns  = median(nrs_jtp)-median(nrs_ns)
+           
+             nrs_jtp = squeeze(data_score(3,:,:))';   %3 = jtp, 2= ons, 1 = ns. 
+             nrs_ons = squeeze(data_score(2,:,:))';   %3 = jtp, 2= ons, 1 = ns.  
+             nrs_ada = squeeze(data_score(1,:,:))';   %3 = jtp, 2= ons, 1 = ns.
+%             [h p] =ttest2(nrs_jtp, nrs_ons);
+%             labels{v}
+%             h
+%             p
+%             gain_ons = median(nrs_jtp)-median(nrs_ons)
+%             gain_ns  = median(nrs_jtp)-median(nrs_ns)
        end
     end
 end

@@ -10,10 +10,11 @@ import schedulingIOModel.Flow;
 import schedulingIOModel.FlowGenerator;
 import schedulingIOModel.Network;
 import schedulingIOModel.NetworkGenerator;
+import schedulingIOModel.UncertaintyErrorCalculation;
 import ToolSet.CostSeparation;
 import ToolSet.JsonLogger;
 import ToolSet.LogMatlabFormat;
-import adaptation.geneticAlgo.CCP_Ga;
+import adaptation.geneticAlgo.GeneticAlgo;
 import adaptation.geneticAlgo.Individual;
 import adaptation.utils.Combination;
 import adaptation.utils.Config;
@@ -28,6 +29,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	
 	//config parameters
 	private boolean advancedInitialization=false;
+	private boolean decide=true;	//use heuristic decision limit at all?
 		
 	
 //	public AdaptationScheduler(NetworkGenerator ng, FlowGenerator tg) {
@@ -53,12 +55,13 @@ public class AdaptationScheduler extends HeuristicScheduler{
 
 	@Override
 	public String getType() {
-		return "GA" + (advancedInitialization? "_loc":"");
+		return "GA" + (advancedInitialization? "_init":"")+(isDecide()?"_bene":"")+getTypeExt();
 	}
 
 	
 	@Override
 	protected void calculateInstance_internal(String logfile) {
+		super.calculateInstance_internal(logfile);	//initializes some stuff
 		//reset indices of networks and flows. Required for GA.
 		tg.setFlowIndices();
 		int i_n=0;
@@ -66,8 +69,8 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			n.setId(i_n);
 			i_n++;
 		}
-		initCostSeparation();
-		System.out.println(showSchedule(longTermSP_f_t_n));
+//		initCostSeparation();	//is done in Heuristic Scheduler
+//		System.out.println(showSchedule(longTermSP_f_t_n));
 		//adapt
 		run(false, 1.0, true);
 		
@@ -91,7 +94,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 		
 		// time slot loop
 		for (int t = 0; t < ng.getTimeslots(); t++) {
-			System.out.println("AdaptationScheduler starting time slot t="+t);
+//			System.out.println("AdaptationScheduler starting time slot t="+t);
 			config.setTime(t);
 
 			//***********************//
@@ -120,7 +123,8 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			updateMax();
 			//**********************//
 			/**********************************/
-			Individual result = CCP_Ga.run(pctg, config); // 
+			GeneticAlgo ga = new GeneticAlgo();
+			Individual result = ga.run(pctg, config); // 
 			/**********************************/
 
 			setPrevious(result.getComb());
@@ -134,8 +138,12 @@ public class AdaptationScheduler extends HeuristicScheduler{
 						//continue;
 					} else {
 						adapted[f][t][netIndex - 1] = resource;
+						
 						getThroughput().set(f, getThroughput().get(f) + resource);
-						cs.updateStatefulReward(f, netIndex-1, resource);
+//						cs.updateStatefulReward(f, netIndex-1, resource);
+						
+						//use the allocate method to update everything and check constraints.
+						allocate(f, t, netIndex-1, resource);	
 					}
 
 				}
@@ -146,7 +154,10 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			
 		}
 
-		setSchedule(adapted);
+//		if(!Arrays.deepEquals(adapted, getSchedule())){
+//			System.out.println("AdaptationScheduler: result is not equal to allocated.");
+//		}
+//		setSchedule(adapted);
 	}
 	
 	/**
@@ -163,14 +174,40 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	}
 
 
+	/**
+	 * activate only those flows and networks for GA optimization which are active and beneficial
+	 * @param t
+	 */
+	public void updateFlowNetFlag(int t){
+		if(!decide){
+			//use old model
+			updateFlowNetFlag(t, true);
+		}else{
+			//use new model: only activate flows for which it is beneficial and tokens are released
+			int t_additional_range=3;
+			UncertaintyErrorCalculation unc = new UncertaintyErrorCalculation(tgPred.getFlows(), tg.getFlows(), ng.getTimeslots());
+
+			for(int f=0; f<tg.getFlows().size();f++){
+				if(unc.flowIsOrShouldBeActiveWithinTimeFrame(tg.getFlows().get(f).getId(), t-t_additional_range, t+t_additional_range)){
+					for (int n = 0;n<ng.getNetworks().size(); n++){
+						if(scheduleDecision(f, n, t)){
+							config.getFlowNetFlag()[f][n]=1;
+						}
+					}
+				}
+			}
+			
+		}
+	}
 	//flags all network/flow matches that have been seen in the long-term plan.
 	//This is a heuristic to preserve time selection
 	//TODO: make it more efficient by keeping the state and updating just for current time slot? Use special case t=0 to init.
 	public void updateFlowNetFlag(int t, boolean lookahead) {
 				
 		config.setFlowNetFlag(new int[tg.getFlows().size()][ng.getNetworks().size()]);		//set all flags to zero
-		int range = 2;
+		int range = ng.getTimeslots()/20;
 		if (lookahead) {
+			
 			//if range covers all remaining time horizon, set all flags
 			if (t + range >= ng.getTimeslots()) {
 				for (int i = 0; i < config.getFlowNetFlag().length; i++) {
@@ -312,7 +349,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	public void initEnvConfig() {
 		// f - minReq
 		config = new Config(ng, tg);
-		CostSeparation cs = new CostSeparation(tg, ng);
+//		CostSeparation cs = new CostSeparation(tg, ng);	//done in heuristicScheduler
 		config.setCs(cs);
 		//Simulation.setPrevious(new Combination());
 		config.setAdaptScheduler(this);
@@ -327,8 +364,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 		// f - priority
 		for (Flow f : tg.getFlows()) {
 			////////System.out.println("id: " + f.getIndex() + " - " + f.getImpUser());
-			// TODO 
-			config.getPrior()[f.getIndex()] = 1; //f.getImpUser();
+			config.getPrior()[f.getIndex()] = 1; //do not use this
 		}
 		
 		setDataSize(new ArrayList<Integer>());
@@ -485,6 +521,17 @@ public class AdaptationScheduler extends HeuristicScheduler{
 
 	public void setLocationCorrection(boolean locationCorrection) {
 		this.advancedInitialization = locationCorrection;
+	}
+
+
+	public boolean isDecide() {
+		return decide;
+	}
+
+
+	public HeuristicScheduler setDecide(boolean decide) {
+		this.decide = decide;
+		return this;
 	}
 
 }

@@ -41,14 +41,14 @@ public class RRB {
 //		Printer.printInt(executed);
 //		System.out.println("\n_______________");
 	}
-	public static void main(String[] args) {
-		int[] minTp = {10, 5, 1, 10, 15, 15, 15};
-		int[] executed = new int[minTp.length];
-		int cap = 24;
-		RRB x = new RRB();		
-		x.rrb(cap, minTp, executed, minTp.length);
-		System.out.println("\n****************");
-		Printer.printInt("final minTp: ", minTp);
-		Printer.printInt("final exec: ", executed);
-	}
+//	public static void main(String[] args) {
+//		int[] minTp = {10, 5, 1, 10, 15, 15, 15};
+//		int[] executed = new int[minTp.length];
+//		int cap = 24;
+//		RRB x = new RRB();		
+//		x.rrb(cap, minTp, executed, minTp.length);
+//		System.out.println("\n****************");
+//		Printer.printInt("final minTp: ", minTp);
+//		Printer.printInt("final exec: ", executed);
+//	}
 }

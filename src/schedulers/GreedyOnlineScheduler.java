@@ -30,9 +30,8 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 	
 	@Override
 	protected void calculateInstance_internal(String logfile) {
-		if(NEW_RATING_ESTIMATOR){
-			initCostSeparation();
-		}
+		super.calculateInstance_internal(logfile);
+
 		//initialize network preference vector
 		Vector<Vector<Integer>> flowsToNets = new Vector<Vector<Integer>>();
 		//initialize counter for remaining tokens of flows
@@ -50,7 +49,6 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 			for(int f0=0;f0<flow_order.size();f0++){
 				int f=flow_order.get(f0);
 				Flow flow= tg.getFlows().get(f);
-				int chunksMaxTp = flow.getTokensMax();//(int)(flow.getTokensMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
 				//assign only within preferred time frame of flow
 				if(getStartTime(flow)<=t && getDeadline(flow)>t){
 					int n0=0;					
@@ -61,16 +59,20 @@ public class GreedyOnlineScheduler extends HeuristicScheduler {
 						int n=flowsToNets.get(f).get(n0);
 						//opportunistic scheduling: use benefit estimation to decide whether to use network or not
 						if(scheduleDecision(f, n, t)){
-							if(chunksToAllocate.get(f)<chunksMaxTp){
+							int tokensMaxTp = //getTokensMaxTp(f,t); //
+										flow.getTokensMax();//(int)(flow.getTokensMax()/flow.getWindowMax());	//get average maximum throughput for later allocation
+							
+							if(chunksToAllocate.get(f)<tokensMaxTp){
 								allocated=allocate(f, t, n, chunksToAllocate.get(f)); //do not allocate more chunks than required
 							}else{
-								allocated=allocate(f, t, n, chunksMaxTp);
+								allocated=allocate(f, t, n, tokensMaxTp);
 							}
 							if(allocated>0){
 								chunksToAllocate.set(f, chunksToAllocate.get(f)-allocated);
 								if(NEW_RATING_ESTIMATOR){
 									cs.updateStatefulReward(f0, t, allocated);
 								}
+								addAdditionallyAllocated(f, t, allocated);
 							}
 						}
 						n0++; //Try next preferred if allocation failed. 

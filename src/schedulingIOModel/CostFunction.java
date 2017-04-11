@@ -145,6 +145,7 @@ public class CostFunction {
 	
 	public int vioSt_f_t_n(int[][][] schedule, int f, int t, int n){
 		Flow flow = tg.getFlows().get(f);
+		if (f>schedule.length)return 0;
 		return (int) Math.pow(flow.getStartTime()-(t+1),2)*schedule[f][t][n]*flow.getImpStartTime();
 	}
 	

@@ -2,29 +2,13 @@ package adaptation.geneticAlgo;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 
-import adaptation.geneticAlgo.Fitness;
 import adaptation.utils.Combination;
 import adaptation.utils.Config;
-import adaptation.utils.Hasher;
-import adaptation.utils.Printer;
-import ToolSet.CostSeparation;
-import ToolSet.JsonLogger;
-import ToolSet.LogMatlabFormat;
-
 //import org.apache.commons.math3.distribution.NormalDistribution;
-
-import schedulingIOModel.CostFunction;
-import schedulingIOModel.Flow;
-import schedulingIOModel.FlowGenerator;
-import schedulingIOModel.Network;
-import schedulingIOModel.NetworkGenerator;
-import visualization.Plot;
-import visualization.VisualizationPack;
 
 public class Individual extends Thread {
     private Combination comb;
@@ -139,7 +123,7 @@ public class Individual extends Thread {
     		if (assignedNets[f] == net) continue;	//do nothing if same network is assigned
     		if (netTypes[assignedNets[f] - 1] == netType) {	//when network types match, assign this net
     			////Printer.printInt("type: ", genetype);
-    			System.out.println("Individual: obeyConstraint: " + "f_" + f + ", orig_" + assignedNets[f] + ", replace_" + net);
+//    			System.out.println("Individual: obeyConstraint: " + "f_" + f + ", orig_" + assignedNets[f] + ", replace_" + net);
     			assignedNets[f] = net;
     		}
     	}
@@ -155,9 +139,11 @@ public class Individual extends Thread {
     }
 
     public double getFitness() {
-        fitness = Fitness.getFitness(this);
-       
-        return fitness;
+    	getComb().updatePart();
+    	double combcost = getComb().getCombCost();
+    	if(combcost>=0) return combcost;
+    	return getComb().getCost();
+
     }
     
 	public Combination getComb() {
@@ -170,7 +156,7 @@ public class Individual extends Thread {
 
 	public int getRandomGene() {
 		// In real life, the Random object should be rather more shared than this		
-		
+		if(config.getAvailableNetworks().size()==0) return 0;
 		int index = config.getAvailableNetworks().size() == 0? 0 : new Random().nextInt(config.getAvailableNetworks().size()); 
 		return config.getAvailableNetworks().get(index);
 //		int i = 0;

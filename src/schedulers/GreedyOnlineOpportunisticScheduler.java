@@ -24,29 +24,19 @@ public class GreedyOnlineOpportunisticScheduler extends GreedyOnlineScheduler {
 		this.TIME_IMPAIRING_WEIGHT=alpha;	//if !=0 this activates time impairing. requires other schedule.
 		this.WINDOW=window;
 		spLogPath=longTermSpPath;
-		this.name_extention="_"+name_extention;
+		this.typeExt="_"+name_extention;
 	}
-
-	private String name_extention="";
 	
 	@Override
 	public boolean scheduleDecision(int f, int n, int t) {
 //		schedule_decision_limit=1000;
 		return oppScheduleDecision(f, n, t);
 	}
-	
-	protected void calculateInstance_internal(String logfile) {
-		if(spLogPath!=null) loadLongTermSp(spLogPath);
-		super.calculateInstance_internal(logfile);
-	}
+
 
 	@Override
 	public String getType() {
-		String ext = "";
-		if(ADAPTIVE_err) ext+="_err";
-		if(ADAPTIVE_loc) ext+="_loc";
-		if(ADAPTIVE_transm) ext+="_tr";
-		return new String("ONS"+name_extention+ext).replace("-", "m").replace('.', '_');	
+		return new String("ONS"+getTypeExt()).replace("-", "m").replace('.', '_');	
 
 	}
 

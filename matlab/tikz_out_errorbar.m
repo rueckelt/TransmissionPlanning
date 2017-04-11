@@ -16,21 +16,21 @@ p = 25;
 % Create figure
 figure1 = figure('visible', 'on');
 linestyles = {'-','--',':'};
-linecolors = {'black','cyan','magenta','green','red','blue','yellow'};
+linecolors = {'black','cyan','magenta','green','red','yellow'};
 %colors = [0,0,0; 0,0,1; 0,1,0; 0,1,1; 1,0,0; 1,0,1; 1,1,0]; %same colors in rgb
 % Create axes
 
     %A=size(data);
 
-    YMatrix1=median(data, 3)'%mean(data,3)';
+    YMatrix1=median(data, 3)';%mean(data,3)';
     EMatrix1bot=-(prctile(data, p,3)' -YMatrix1 );%std(data,1,3)';
     EMatrix1top=-(YMatrix1-prctile(data, 100-p,3)' );%std(data,1,3)'
   
     
-    [dim1, dim2]=size(YMatrix1)
-    x=repmat(1:dim1, dim2, 1)'  
-       
-%     %sort out non-available
+    [dim1, dim2]=size(YMatrix1);
+    x=repmat(1:dim1, dim2, 1)'  ;
+%        
+% %     %sort out non-available
 %     if(~isnan(avail))
 %         for d1 = 1:dim1
 %            for d2 = 1:dim2
@@ -63,7 +63,7 @@ errorbar1 = errorbar(x,YMatrix1,EMatrix1bot, EMatrix1top,'LineWidth',1.5);
 %errorbar1(1)
 for i=1:dim2
     set(errorbar1(i),'DisplayName',legendlabels{i},'LineStyle',linestyles{mod(i-1+style_skip,3)+1},...)
-        'Color',linecolors{mod(i-1+style_skip,7)+1});
+        'Color',linecolors{mod(i-1+style_skip,6)+1});
 end
 
 if logscale>0
