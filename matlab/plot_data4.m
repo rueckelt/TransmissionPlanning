@@ -29,8 +29,8 @@ function [] = plot_data4(out_folder, data, avail, vartypes, schedulers, select)
         slots=[25,50,100,200,400, 800, 1600];
         for v=1:nof_val
         %normalize time to time slots
-            data(2,1:2,v,:)=data(2,1:2,v,:)./slots(v);
-            data(2,4:end,v,:)=data(2,4:end,v,:)./slots(v);
+%             data(2,1:2,v,:)=data(2,1:2,v,:)./slots(v);
+%             data(2,4:end,v,:)=data(2,4:end,v,:)./slots(v);
         end
     elseif(select==3)
         my_xlabel = 'Networks';

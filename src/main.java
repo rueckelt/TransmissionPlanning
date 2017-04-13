@@ -40,8 +40,8 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"test_exec_ga";
 
 //		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;//f=5;
-		String logpath= "my_logs"+File.separator+"vary_time2"; t=6;
-//		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
+//		String logpath= "my_logs"+File.separator+"vary_time2"; t=4;
+		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
 //		String logpath= "my_logs"+File.separator+"vary_load"; 
 //		String logpath= "my_logs"+File.separator+"vary_cost";
 //		String logpath= "my_logs"+File.separator+"vary_time_test"; t=0;
@@ -63,7 +63,7 @@ public class main {
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 
 //			eval.visualize();
-			eval.recalc();
+//			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
@@ -73,8 +73,8 @@ public class main {
 //			eval.evaluateTop();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
-			eval.evaluateTimeVariation();	
-//			eval.evaluateNetworkVariation();
+//			eval.evaluateTimeVariation();	
+			eval.evaluateNetworkVariation();
 //			eval.evaluateFlowVariation();
 //			eval.evaluateMonetaryWeight();
 //			eval.evaluateTrafficLoad();

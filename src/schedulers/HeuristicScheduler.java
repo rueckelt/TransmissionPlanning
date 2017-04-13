@@ -335,6 +335,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	}
 	
 	/**
+	 * makes a copy of each network and rates it the match once with and once without throughput
 	 * rates for the flow and the remaining capacity of the networks, which networks fit best
 	 * @param flow 
 	 */
