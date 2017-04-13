@@ -12,7 +12,6 @@ import adaptation.utils.Config;
 
 public class Individual extends Thread {
     private Combination comb;
-    private double fitness = Double.MAX_VALUE;
     Config config;
 
     
@@ -32,8 +31,7 @@ public class Individual extends Thread {
      * 
      * newMutationStrategy:
      * for each flow, assign a random network with a proability of
-     * (x+1) / population size.
-     * hereby, x is the log10 of the repetition try (maximum 100 tries, see above)
+     * amp / population size.
      * 
      */
     public void mutate(double amplifier, boolean force) {
@@ -182,6 +180,21 @@ public class Individual extends Thread {
 	 public void run() {
 		 getFitness();
 	}
+	 
+	 
+	 /**
+	  * 
+	  * @param distance between 0 and x. influences mutation rate. each gene is replaced by random with distance/chromosome_length
+	  * @return new mutated individual
+	  */
+	 public Individual getNeighbor(double distance){
+		 Individual ind = new Individual(config);
+		 for(int i=0; i<getComb().getComb().length; i++){
+			 ind.getComb().getComb()[i]=new Integer(getComb().getComb()[i]);
+		 }
+		 ind.mutate(distance, true);
+		 return ind;
+	 }
 
 	public String toString(){
 		return "Individual "+Arrays.toString(comb.getComb())+", Fitness="+getFitness();

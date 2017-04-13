@@ -9,6 +9,8 @@ import java.util.Random;
 
 
 
+import java.util.Vector;
+
 import adaptation.geneticAlgo.Individual;
 import adaptation.utils.Combination;
 import adaptation.utils.Config;
@@ -18,7 +20,7 @@ public class Population {
 	
 	private final int NOF_TRIES_INIT_MUTATE=10;
 
-    private Individual[] individuals;
+    private Vector<Individual> individuals;
  //   private int[] seed = new int[Individual.defaultGeneLength]; // the long-term subplan
     private int populationSize;
     private Config config;
@@ -33,12 +35,12 @@ public class Population {
     	this.config= config;
     	this.amp=amp;
     	populationSize=size;
-    	individuals = new Individual[size];
+    	individuals = new Vector<Individual>();//new Individual[size];
     	
     	if(size<1) return;
     	
     	if(initialize){
-        	individuals[0] = new Individual(config);	//first unchanged
+        	individuals.add(new Individual(config));	//first unchanged
 //        	individuals[0].obeyConstraint(net);
     		for(int i = 1; i<size; i++){
     			Individual newIndividual = new Individual(config);
@@ -47,7 +49,7 @@ public class Population {
     				newIndividual.mutate(1.0, true);	//enforce a change
     				tries++;
     			}
-    			individuals[i]=newIndividual;
+    			individuals.add(newIndividual);
 //    			System.out.println("Population: craeted individual "+ newIndividual.toString());
 //    			if(tries==NOF_TRIES_INIT_MUTATE)System.out.println("Population: failed to init novel individual "+i);
     		}
@@ -73,14 +75,15 @@ public class Population {
 
     /* Getters */
     public Individual getIndividual(int index) {
-        return getIndividuals()[index];
+        return getIndividuals().get(index);
     }
 
     public Individual getFittest() {
-        Individual fittest = getIndividuals()[0];
+        Individual fittest=null;// = getIndividuals().get(0);
         // Loop through individuals to find fittest
-        for (int i = 0; i < getPopulationSize(); i++) {
-            if (fittest.getFitness() >= getIndividual(i).getFitness()) {
+//        for (int i = 0; i < getPopulationSize(); i++) {
+        for(int i=0; i<individuals.size(); i++){
+            if (fittest==null || fittest.getFitness() >= getIndividual(i).getFitness()) {
                 fittest = getIndividual(i);
             	//fittest.setIndivId(i);
             	//fittest.run();
@@ -99,14 +102,15 @@ public class Population {
     // Save individual
     public void saveIndividual(int index, Individual indiv) {
 //    	if(index<populationSize)
-    		getIndividuals()[index] = indiv;
+//    	getIndividuals().set(index,indiv);
+    	getIndividuals().add(indiv);
 //    	else{
 //    		System.out.println("Population: size is "+populationSize);
 //    	}
     }
     
     public void print() {
-    	for (int i = 0; i < getIndividuals().length; i++) {
+    	for (int i = 0; i < getIndividuals().size(); i++) {
     		System.out.print("i: " + i + " - ");
     		//Printer.printInt(getIndividuals()[i].getComb().getComb());
     		////////System.out.println("i: " + i + " - " + Fitness.getFitness(getIndividuals()[i]));
@@ -114,7 +118,7 @@ public class Population {
     	}
     }
 
-	public Individual[] getIndividuals() {
+	public Vector<Individual> getIndividuals() {
 		return individuals;
 	}
 	

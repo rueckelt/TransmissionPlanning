@@ -1,5 +1,7 @@
 package adaptation.utils;
 
+import ilog.cplex.cppimpl.intArray;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
 
 
 
@@ -236,70 +239,6 @@ public class Combination {
 		this.combCost = combCost;
 	}
 
-	/**
-	 * The following override methods are for Tabu-search, not necessary
-	 */
-	/*
-	@Override
-	public Double getValue() {	
-		//if (run() < 0) return Double.MAX_VALUE;
-		return run();
-	}
-
-	
-	@Override
-	public List<Solution> getNeighbors() {
-		// TODO Auto-generated method stub
-		List<Solution> neigh = new ArrayList<Solution>();
-		Random random = new Random();
-		Integer neighborsCount = random.nextInt(7) + 3; 
-		Set<Integer> genePool = config.getAvailableNetworks();
-		for (int j = 0; j < neighborsCount; j++) { 
-		    int[] comb = this.getComb().clone();
-		    if (j < comb.length) {
-		    	int net = getRandomGene();
-		    	comb[j] = net;
-		    	obeyConstraint(net, comb);
-		    	neigh.add(new Combination(comb));
-		    }
-		} 
-		return neigh;
-	}
-*/	
-//	public int getRandomGene() {
-//		Set<Integer> genePool = getConfig().getAvailableNetworks();
-//
-//		int item = genePool.size() == 0? 0 : new Random().nextInt(genePool.size()); // In real life, the Random object should be rather more shared than this
-//		int i = 0;
-//		for(Integer gene : genePool) {
-//		    if (i == item)
-//		        return gene;
-//		    i = i + 1;
-//		}
-//		return 1;
-//	}
-	
-//	//unused
-//    public void obeyConstraint(int net, int[] com) {
-//    	//HashMap<Integer, Set<Integer>> netTypeSet = getGeneType();
-//    	int[] genetype = getConfig().getNetworkType().clone();
-//    	int nt = 0;
-//    	if (net - 1 < genetype.length && net - 1 >= 0) {
-//    		nt =  genetype[net - 1];
-//    	} else {
-//    		return;
-//    	}
-//    	
-//    	for (int i = 0; i < com.length; i++) {
-//    		if (com[i] - 1 < 0) continue;
-//    		if (com[i] == net) continue;
-//    		if (genetype[com[i] - 1] == nt) {
-//    			////Printer.printInt("type: ", genetype);
-//    			////////System.out.println("obeyConstraint: " + "f_" + i + "orig_" + com[i] + "replace_" + net);
-//    			com[i] = net;
-//    		}
-//    	}   	
-//    }
 	public Config getConfig() {
 		return config;
 	}
