@@ -15,6 +15,7 @@ import schedulers.GreedyScheduler;
 import schedulers.GreedyOnlineOpportunisticScheduler;
 import schedulers.GreedyOnlineScheduler;
 import schedulers.GreedyScheduler_s;
+import schedulers.GreedyWifiPref;
 //import schedulers.GreedyScheduler_sk;
 import schedulers.OptimizationScheduler;
 import schedulers.RandomScheduler;
@@ -110,19 +111,24 @@ public class EvaluationScenarioCreator {
 	 */
 	public Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator fg){
 		boolean restricted = false;
+		boolean restrictedAda = true;
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 
 		Scheduler gs = new GreedyScheduler(ng, fg);
 		//execution of jtp schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
 
-		if(!restricted)schedulers.add(new ExecutionScheduler(ng, fg, path, "_JTP"));
-//		if(!restricted)
-//			schedulers.add(new OptimizationScheduler(ng, fg));
-//		if(!restricted)schedulers.add(new GreedyOnlineScheduler(ng, fg));
-		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
-		if(!restricted)schedulers.add(gs);				
-
+		if(!restrictedAda)schedulers.add(new ExecutionScheduler(ng, fg, path, "(JTP)"));
+		if(!restricted)
+			schedulers.add(new OptimizationScheduler(ng, fg));
+		if(!restricted)
+			schedulers.add(new GreedyOnlineScheduler(ng, fg));
+		if(!restricted)
+			schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
+		if(!restricted)
+			schedulers.add(gs);	
+		
+		schedulers.add(new GreedyWifiPref(ng, fg));
 		
 		//execution from opt
 		OptimizationScheduler os=new OptimizationScheduler(ng, fg);
@@ -143,17 +149,18 @@ public class EvaluationScenarioCreator {
 //		ng2.addMovementUncertainty((float) 0.5);
 		NetworkGenerator ngPred = getNetworkGenerator(log_run_path, false, 0, 0, (float) 0.0, (float) 0.0);	//load from file
 //		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt, "opt"));
-		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp"));
-		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
+		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp"));
+		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
 
 //		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
-		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_err(true));
+		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_err(true));
 
 //		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path).setDecide(false));
 //		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path));
 //		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path).adapt_location(true).adapt_transm(true).adapt_err(true));
 //		
-//		if(!restricted)schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
+		if(!restricted)
+			schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
 		
 	return schedulers;
 	}
