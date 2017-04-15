@@ -33,6 +33,7 @@ public abstract class Scheduler {
 	private int[][][] schedule_f_t_n;			//holds verified schedules only
 	private int[][][] schedule_f_t_n_temp;		//may be used during calculation of a schedule
 	protected int[][] allocated_f_t;
+	protected int[] remaining_tokens_f;
 	protected int[][] prefix_allocated_f_t;
 	
 	
@@ -51,6 +52,10 @@ public abstract class Scheduler {
 			allocated_f_t=new int[tg.getFlows().size()*2][ng.getTimeslots()];
 			prefix_allocated_f_t=new int[tg.getFlows().size()*2][ng.getTimeslots()];
 			cf=new CostFunction(ng, tg, logger);
+			remaining_tokens_f=new int[tg.getFlows().size()];
+			for(Flow flow: tg.getFlows()){
+				remaining_tokens_f[flow.getIndex()]=flow.getTokens();
+			}
 		}
 	}
 	
@@ -131,7 +136,8 @@ public abstract class Scheduler {
 			schedule_f_t_n=schedule_f_t_n_temp;	//store to schedule_f_t_n if constraints hold
 
 			date = formatter.format(Calendar.getInstance().getTime());
-			if(!getLogfileName(path).contains("Random")) System.out.println(getLogfileName(path) + " FINISHED "+ date + " duration: "+ duration/1000000000 +"s");
+			if(!getLogfileName(path).contains("Random")) System.out.println(getLogfileName(path) + " FINISHED "+ date + " duration: "+ duration/1000000 +"ms"+
+					"result = "+cf.costTotal(schedule_f_t_n));
 			logInstance(path, duration);
 
 //			if(DEBUG) System.err.println(getType()+": \t"
@@ -433,6 +439,7 @@ public abstract class Scheduler {
 		int remaining_net_cap=getRemainingNetCap(network, time);
 //		int s[][][]=schedule_f_t_n_temp.clone();
 		int scheduled = Math.min(tokens, remaining_net_cap);
+		scheduled = Math.min(scheduled, remaining_tokens_f[flow]);
 //		System.out.println("Scheduler::allocate. f,t,n "+flow+","+time+","+network+" tokens: "+tokens+
 //				"; remaining cap = "+remaining_net_cap+"; scheduled = "+scheduled);
 
@@ -446,6 +453,7 @@ public abstract class Scheduler {
 				int f_id= tg.getFlows().get(flow).getId();	
 				allocated_f_t[f_id][time]+=scheduled;
 				updatePrefixAllocated(Math.min(ng.getTimeslots()-1, ng.getTimeslots()), flow);
+				remaining_tokens_f[flow]-=scheduled;
 //				if(flow==0)System.out.println("prefix_alloc "+Arrays.deepToString(prefix_allocated_f_t));
 				return scheduled;
 			}else{
@@ -600,4 +608,5 @@ public abstract class Scheduler {
 	public FlowGenerator getFlowGenerator() {
 		return tg;
 	}
+
 }

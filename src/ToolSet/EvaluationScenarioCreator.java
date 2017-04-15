@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import adaptation.tabusearch.Tabu;
 import schedulers.AdaptationScheduler;
 import schedulers.DummyScheduler;
 import schedulers.ExecutionScheduler;
@@ -110,8 +111,9 @@ public class EvaluationScenarioCreator {
 	 * @return list of schedulers
 	 */
 	public Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator fg){
-		boolean restricted = false;
+		boolean restricted = true;
 		boolean restrictedAda = true;
+		boolean restrictedGA = true;
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
 
 		Scheduler gs = new GreedyScheduler(ng, fg);
@@ -119,16 +121,18 @@ public class EvaluationScenarioCreator {
 		String path = gs.getLogfileName(log_run_path);
 
 		if(!restrictedAda)schedulers.add(new ExecutionScheduler(ng, fg, path, "(JTP)"));
+
 		if(!restricted)
-			schedulers.add(new OptimizationScheduler(ng, fg));
+			schedulers.add(new OptimizationScheduler(ng, fg));		
+		if(!restricted)
+				schedulers.add(new GreedyWifiPref(ng, fg));
 		if(!restricted)
 			schedulers.add(new GreedyOnlineScheduler(ng, fg));
-		if(!restricted)
+//		if(!restricted)
 			schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
-		if(!restricted)
+//		if(!restricted)
 			schedulers.add(gs);	
-		
-		schedulers.add(new GreedyWifiPref(ng, fg));
+
 		
 		//execution from opt
 		OptimizationScheduler os=new OptimizationScheduler(ng, fg);
@@ -154,13 +158,16 @@ public class EvaluationScenarioCreator {
 
 //		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
 		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_err(true));
-
-//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path).setDecide(false));
-//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path));
-//		schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path).adapt_location(true).adapt_transm(true).adapt_err(true));
+		
+		if(!restrictedGA)schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path));
+//		if(!restrictedGA)schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path).activateAdvancedAdaptation(false));
+		if(!restrictedGA)schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path));
+//		if(!restrictedGA)schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path).adapt_location(true).adapt_err(true));
 //		
 		if(!restricted)
 			schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
+		schedulers.add(new Tabu(ng, fg, ngPred, fgPred, path,""));
+		schedulers.add(new Tabu(ng, fg, ngPred, fgPred, path, "adapt").adapt_location(true).adapt_err(true));
 		
 	return schedulers;
 	}

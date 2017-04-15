@@ -43,6 +43,28 @@ public class CostSeparation {
 	}
 	
 	
+	private CostSeparation(CostSeparation costSeparation) {
+		networkMatch=costSeparation.networkMatch;
+		timeMatch=costSeparation.timeMatch;
+		flowReward = costSeparation.flowReward;
+		statefulReward = deepCopy(costSeparation.statefulReward);
+		tg=costSeparation.tg;
+		ng=costSeparation.ng;
+	}
+	
+	private int[][] deepCopy(int[][] original) {
+	    if (original == null) {
+	        return null;
+	    }
+
+	    final int[][] result = new int[original.length][];
+	    for (int i = 0; i < original.length; i++) {
+	        result[i] = Arrays.copyOf(original[i], original[i].length);
+	    }
+	    return result;
+	}
+
+
 	//pre-calculate cost from network choice per flow and per network
 	private void setNetworkMatch() {
 		int f=0;
@@ -189,6 +211,10 @@ public class CostSeparation {
 		return -flowReward[f];	//the equation contains user^2
 	}
 	
+	public CostSeparation clone(){
+		CostSeparation cs = new CostSeparation(this);
+		return cs;
+	}
 
 	public FlowGenerator getTg(){
 		return tg;

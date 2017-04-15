@@ -119,7 +119,7 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			// each time slot - update network capacity
 			updateNetworkConfig(true);
 			updateNetCap(t);	//read out network capacities
-			updateFlowAvl(t, dependence);	//read out flow availabilties
+			updateFlowAvl(t, dependence);	//read out flow availabilities
 			updateMax();
 			//**********************//
 			/**********************************/
@@ -154,10 +154,6 @@ public class AdaptationScheduler extends HeuristicScheduler{
 			
 		}
 
-//		if(!Arrays.deepEquals(adapted, getSchedule())){
-//			System.out.println("AdaptationScheduler: result is not equal to allocated.");
-//		}
-//		setSchedule(adapted);
 	}
 	
 	/**
@@ -419,27 +415,6 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	}
 	
 
-
-	
-	public void updateFlowAvl(int ts) {
-		for (Flow f : tg.getFlows()) {
-	//		////////System.out.println("f-id: " + f.getId() + " - " + f.getStartTime());
-			if (f.getStartTime() <= ts) {
-				activateFlow(f.getIndex(), true);
-			}
-			int tp = getThroughput().get(f.getIndex());
-			int ds = getDataSize().get(f.getIndex());
-			if (ts > f.getDeadline() && f.getIndex() % 4 != 1) {
-				activateFlow(f.getIndex(), false);	
-			}
-			if (tp > 0 && tp >= ds) {
-				activateFlow(f.getIndex(), false);
-			}
-		}
-//		//Printer.printInt("activeFlow: ", comb.getActiveFlowBool());		
-	}
-	
-
 	
 	public void updateMax() {
 		int fId = 0;
@@ -529,7 +504,8 @@ public class AdaptationScheduler extends HeuristicScheduler{
 	}
 
 
-	public HeuristicScheduler setDecide(boolean decide) {
+	
+	public HeuristicScheduler activateAdvancedAdaptation(boolean decide) {
 		this.decide = decide;
 		return this;
 	}

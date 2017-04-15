@@ -355,6 +355,10 @@ public class Network implements Serializable, Cloneable{
 		}  
 	} 
 	
+	public boolean isActive(int t){
+		return capacity.get(t)>0;
+	}
+	
 	private Vector<Integer> deepCopy(Vector<Integer> v){
 		Vector<Integer> copy= new Vector<Integer>();
 		for(int i:v){

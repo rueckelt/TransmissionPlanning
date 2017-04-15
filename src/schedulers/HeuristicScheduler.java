@@ -36,6 +36,13 @@ public abstract class HeuristicScheduler extends Scheduler{
 		spLogPath=longTermSchedule_logfile;
 	}
 	
+	public HeuristicScheduler(NetworkGenerator ng, FlowGenerator tg, NetworkGenerator ngPred, 
+			FlowGenerator tgPred, String longTermSchedule_logfile, String type_ext){
+		this(ng,tg,ngPred,tgPred,longTermSchedule_logfile);
+		this.typeExt=type_ext;
+	}
+		
+	
 	
 	protected NetworkGenerator ng_tmp; //remove scheduled chunks from this ng
 	protected int schedule_decision_limit =0;		//clim cost limit. positive fosters allocation. negative impairs allocation.
@@ -86,6 +93,9 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected void initCostSeparation(){
 		cs= new CostSeparation(tg, ng);
 	}
+	protected CostSeparation getCostSeparation(){
+		return cs;
+	}
 	
 	public boolean scheduleDecision(int f, int n, int t) {
 		return oppScheduleDecision(f, n, t);
@@ -125,16 +135,6 @@ public abstract class HeuristicScheduler extends Scheduler{
 			if(ADAPTIVE_loc){
 				ref_t = getRefSlot(t, ng.getSlotChange(), f);
 			}
-//			int to_allocate = getPlanned(f, ref_t) + getDropped(f);
-//
-//			int f_id = tg.getFlows().get(f).getId();	//use f_id to identify corresponding flow in plan
-//			//when allocated less than so far planned (+dropped in plan), then impair
-//			int too_many_allocated_tokens= prefix_allocated_f_t[f_id][t] - to_allocate;	
-			
-			
-
-//			boolean transmission_in_slot = false;
-//			if(ADAPTIVE_transm)transmission_in_slot=getPlanned(f, ref_t)>getPlanned(f, ref_t-1);
 
 			double h=0;	//no impairing
 			//impair if allocated equal or more than planned (to allocate)
@@ -160,31 +160,19 @@ public abstract class HeuristicScheduler extends Scheduler{
 		return 0;
 	}
 	
-	protected int getTokensMaxTp(int f, int t){
-		if(longTermSP_f_t_n!=null){
-			if(!transmissionInSlot(f, t)){
-				//during opportunistic allocation, release only exactly as many as released from function. 
-				return Math.min(tg.getFlows().get(f).getTokensMax(), //upper limit is TokensMax
-						Math.max(0, -getTooManyAllocatedTokens(f, t)));	//lower limit is 0
-			}
-		}
-		//return maximum in default case
-		return tg.getFlows().get(f).getTokensMax();
-	}
+//	protected int getTokensMaxTp(int f, int t){
+//		if(longTermSP_f_t_n!=null){
+//			if(!transmissionInSlot(f, t)){
+//				//during opportunistic allocation, release only exactly as many as released from function. 
+//				return Math.min(tg.getFlows().get(f).getTokensMax(), //upper limit is TokensMax
+//						Math.max(0, -getTooManyAllocatedTokens(f, t)));	//lower limit is 0
+//			}
+//		}
+//		//return maximum in default case
+//		return tg.getFlows().get(f).getTokensMax();
+//	}
 	
 	private boolean moreTokensReleasedThanAllocated(int f, int t){
-//		int ref_t = t;
-//		//heuristic to look up at another point in time, which corresponds to the vehicle location
-//		if(ADAPTIVE_loc){
-//			ref_t = getRefSlot(t, ng.getSlotChange(), f);
-//		}	
-//		int to_allocate = getPlanned(f, ref_t) + getDropped(f) +getAddionallyAllocated(f, t);
-//
-//		int f_id = tg.getFlows().get(f).getId();	//use f_id to identify corresponding flow in plan
-//		//when allocated less than so far planned (+dropped in plan), then impair
-//		int too_many_allocated_tokens= prefix_allocated_f_t[f_id][t] - to_allocate;	
-		
-//		return too_many_allocated_tokens<0;
 		return getTooManyAllocatedTokens(f, t)<0;
 	}
 	

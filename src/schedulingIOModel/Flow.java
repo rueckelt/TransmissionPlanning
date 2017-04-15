@@ -238,6 +238,9 @@ public class Flow implements Serializable, Cloneable{
 		this.impUser = impUser;
 	}
 
+	public boolean isActive(int t){
+		return t>=startTime && t<=deadline;
+	}
 
 	/**
 	 * Creates data flow with high minimum throughput importance

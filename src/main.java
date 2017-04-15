@@ -1,5 +1,8 @@
 import java.io.File;
+import java.util.HashMap;
 import java.util.Vector;
+
+import org.apache.commons.collections4.map.HashedMap;
 
 import schedulers.GreedyScheduler;
 import schedulers.Scheduler;
@@ -62,13 +65,13 @@ public class main {
 
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 
-//			eval.visualize();
+			eval.visualize();
 			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
 //			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
-			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
+//			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
 
 			eval.evaluateTop();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
@@ -82,8 +85,6 @@ public class main {
 			eval.parallel(1);
 
 			eval.start(Integer.MAX_VALUE);
-
-		
 
 
 //		//testing uncertainty models
