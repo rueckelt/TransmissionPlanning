@@ -73,7 +73,7 @@ public class main {
 //			eval.addUncertainty((float)0.0, (float)0.0, (float)0.5);	//flow
 //			eval.addUncertainty((float)0.5, (float)0.5, (float)0.5);	//combined
 
-			eval.evaluateTop();
+//			eval.evaluateTop();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
 //			eval.evaluateTimeVariation();	
@@ -81,7 +81,7 @@ public class main {
 //			eval.evaluateFlowVariation();
 //			eval.evaluateMonetaryWeight();
 //			eval.evaluateTrafficLoad();
-//			eval.evaluateThisInstance();
+			eval.evaluateThisInstance();
 			eval.parallel(1);
 
 			eval.start(Integer.MAX_VALUE);

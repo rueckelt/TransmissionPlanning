@@ -26,6 +26,8 @@ public class FitnessEvaluator extends HeuristicScheduler {
 	}
 	
 	public int getFitness(Map<Flow,Network> assignments, int t){
+		int cost_before = cf.costTotal(getTempSchedule());
+		
 		cs=s.getCostSeparation().clone();
 		setTempSchedule(deepCopy(s.getTempSchedule()));
 		allocated_f_t=deepCopy(s.allocated_f_t);
@@ -38,17 +40,34 @@ public class FitnessEvaluator extends HeuristicScheduler {
 		
 		List<Integer> flowOrder =sortByFlowCriticality();
 		
+		int fitness=0;
+		
+
+		int cost_before_flow=cf.costTotal(getTempSchedule());
+		
 		for(int f_index: flowOrder){
+			int allocated =0;
 			Flow flow = tg.getFlows().get(f_index);
 			if(assignments.get(flow)!=null){	//if flow active and a network assigned
 				if(oppScheduleDecision(flow.getIndex(), assignments.get(flow).getId(), t)){		//apply adaptation heuristic
-					allocate(f_index, t, assignments.get(flow).getId(), flow.getTokensMax());
+
+					allocated += allocate(f_index, t, assignments.get(flow).getId(), flow.getTokensMax());
+
+					if(allocated!=0){
+						int actual_cost =cf.costTotal(getTempSchedule());
+						fitness += (actual_cost-cost_before_flow)/allocated;
+						actual_cost=cost_before_flow;
+					}
 				}
 			}
 		}
 		//set hysteresis back to normal
 		ng.setHysteresis(hys_bu);
-		return cf.costTotal(getTempSchedule());
+		
+		//fitness = cost benefit gained divided by number of tokens
+//		if(allocated<=0)return 0;
+//		int fitness = (cf.costTotal(getTempSchedule()) - cost_before)/allocated;
+		return fitness;
 	}
 
 	@Override
