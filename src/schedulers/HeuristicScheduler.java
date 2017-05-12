@@ -260,6 +260,8 @@ public abstract class HeuristicScheduler extends Scheduler{
 					}
 				});	 //highest priority first
 //				System.out.println(flow_order);
+
+				tg.setFlowIndices();
 		return flow_order;
 	}
 	
@@ -498,7 +500,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	private int getPlanned(int f, int t){
 		t=Math.max(0, Math.min(t, ng.getTimeslots()-1));
 		Flow flow = tg.getFlows().get(f);
-		if(flow.getId()<dropped_f.length){
+		if(flow.getId()<dropped_f.length){	//for new new flow, return 0 
 			return prefixSumLongTermSP_fid_t[flow.getId()][t];
 		}else{
 			return 0;

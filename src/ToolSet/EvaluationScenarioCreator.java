@@ -166,7 +166,8 @@ public class EvaluationScenarioCreator {
 //		
 		if(!restricted)
 			schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
-		schedulers.add(new Tabu(ng, fg, ngPred, fgPred, path,""));
+		schedulers.add(new Tabu(ng, fg));
+		schedulers.add(new Tabu(ng, fg, ngPred, fgPred, path,"_test4"));
 		schedulers.add(new Tabu(ng, fg, ngPred, fgPred, path, "adapt").adapt_location(true).adapt_err(true));
 		
 	return schedulers;

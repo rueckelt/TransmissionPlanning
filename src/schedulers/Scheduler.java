@@ -590,15 +590,20 @@ public abstract class Scheduler {
 				return 0;
 	}
 	
+	//calculate the prefix sum of allocated tokens
 	protected void updatePrefixAllocated(int t_max, int f){
 		int f_id = tg.getFlows().get(f).getId();
 
+		//set to value of previous for t=0 (no previous exists)
 		prefix_allocated_f_t[f_id][0]=allocated_f_t[f_id][0];
-		int prev =0;
-		if(t_max>0){
-			prev=prefix_allocated_f_t[f_id][t_max-1];
+
+		for(int t=0;t<=t_max;t++){
+			int prev =0;
+			if(t>0){
+				prev=prefix_allocated_f_t[f_id][t-1];
+			}
+			prefix_allocated_f_t[f_id][t]=+allocated_f_t[f_id][t]+prev;
 		}
-		prefix_allocated_f_t[f_id][t_max]=+allocated_f_t[f_id][t_max]+prev;
 	}
 	
 	public NetworkGenerator getNetworkGenerator(){

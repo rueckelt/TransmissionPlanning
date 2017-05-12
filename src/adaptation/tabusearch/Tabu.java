@@ -34,7 +34,7 @@ import schedulingIOModel.NetworkGenerator;
 
 public class Tabu extends HeuristicScheduler{
 
-	private final int MAX_ROUNDS= 10;
+	private final int MAX_ROUNDS= 15;
 	private final int neighborhoodSize= 10;
 	
 	private Set<Individual2> tabuList = new HashSet<Individual2>();
@@ -45,22 +45,26 @@ public class Tabu extends HeuristicScheduler{
 		this.typeExt=typeExt;
 	}
 	
+	public Tabu(NetworkGenerator ng, FlowGenerator tg){
+		super(ng, tg);
+	}
+	
 	
 	protected void calculateInstance_internal(String logfile) {
 		super.calculateInstance_internal(logfile);	//initialize long term plan and cost separation.
-		
+		Individual2 fittest = null;
 		for (int t = 0; t<ng.getTimeslots(); t++){
 			//1. load network assignment from plan
-			Individual2 initial = new Individual2(getActiveNetworks(t), getPlannedAssignment(t));
+			Individual2 initial = new Individual2(getActiveNetworks(t), getPlannedAssignment(t, fittest));
 			
 			//2. do taboSearch
-			Individual2 fittest = tabuRun(initial, t);
+			 fittest= tabuRun(initial, t);
 			
 			allocateIndividual(fittest, t);
 		}
 	}
 	
-	
+	Individual2 fittest_bu;
 	
 	private Individual2 tabuRun(Individual2 initial, int t){
 		if(initial.getSize()<=0) return initial;	//skip for empty ones
@@ -70,8 +74,8 @@ public class Tabu extends HeuristicScheduler{
 		//used as initial individual for next neighborhood exploration
 		Individual2 anchor = initial; 	
 		
-		int round=100;
-		int change = 10;
+		int round=MAX_ROUNDS;		//run at most n rounds
+		int change = 5; 	//stop running after m rounds without a change
 		
 		while(anchor!=null && round>0 && change>0){
 		//create n neighbors and get fittest
@@ -96,12 +100,15 @@ public class Tabu extends HeuristicScheduler{
 		return fittest;
 	}
 	
+	//allocate individual in actual plan
 	private void allocateIndividual(Individual2 ind, int t){
 		List<Integer> flowOrder =sortByFlowCriticality();
 		for(int f_index: flowOrder){
 			Flow flow = tg.getFlows().get(f_index);
 			if(ind.getAssignment().get(flow)!=null){ //if flow active and a network assigned
-				allocate(f_index, t, ind.getAssignment().get(flow).getId(), flow.getTokensMax());
+//				if(oppScheduleDecision(flow.getIndex(), ind.getAssignment().get(flow).getId(), t)){
+					allocate(f_index, t, ind.getAssignment().get(flow).getId(), flow.getTokensMax());
+//				}
 			}
 		}
 	}
@@ -114,7 +121,8 @@ public class Tabu extends HeuristicScheduler{
 	private Vector<Individual2> getNeighbors(Individual2 anchor){
 		Vector<Individual2> neighbors = new Vector<Individual2>();
 		
-		while(neighbors.size()<anchor.getSize()){
+		//neighbor size depends on problem size = number of active data flows
+		while(neighbors.size()<anchor.getSize()){	
 			Individual2 neighbor = anchor.mutate(1, true);	//TODO adapt rate??
 			if(!tabuList.contains(neighbor)){
 				neighbors.add(neighbor);
@@ -175,14 +183,17 @@ public class Tabu extends HeuristicScheduler{
 	 * extracts the assignment from the long-term plan
 	 * and cleans invalid assignments. add new flows with network null
 	 * @param t time slot
+	 * @param backup assignment is used (if available) for flows without an assignment.
 	 * @return map of assignments Flow -> Network
 	 */
-	private Map<Flow,Network> getPlannedAssignment(int t){
+	private Map<Flow,Network> getPlannedAssignment(int t, Individual2 backup_assignment){
 		Map<Flow,Network> assignment = new HashMap<Flow,Network>();
+
 		//check only valid assignment: for active flows and active networks
 		for(Flow flow : getActiveFlows(t)){
 			for(Network net : getActiveNetworks(t)){
-				if(flow.getId()<tgPred.getFlows().size()){//if flow is not new 
+				if(net!=null && flow !=null && tgPred!=null &&
+						flow.getId()<tgPred.getFlows().size()){//if flow is not new 
 					if(longTermSP_f_t_n[flow.getId()][t][net.getId()]>0){	//and data assigned
 						assignment.put(flow, net);	//then add assignmentW
 					}else{
@@ -190,6 +201,10 @@ public class Tabu extends HeuristicScheduler{
 					}
 				}else{
 					assignment.put(flow, null);	//add new flows to assignment list without network
+					//if backup assignment has an assignment of the flow, then use it instead of using none
+					if(backup_assignment!=null && backup_assignment.getAssignment().containsKey(flow)){
+						assignment.put(flow, backup_assignment.getAssignment().get(flow));
+					}
 				}
 			}
 		}
@@ -200,7 +215,7 @@ public class Tabu extends HeuristicScheduler{
 	@Override
 	public String getType() {
 		// TODO Auto-generated method stub
-		return "AdaTabu";
+		return "AdaTabu"+getTypeExt();
 	}
 	
 }
