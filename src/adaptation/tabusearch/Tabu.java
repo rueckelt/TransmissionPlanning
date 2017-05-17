@@ -87,8 +87,8 @@ public class Tabu extends HeuristicScheduler{
 			if(anchor!=null && 
 					anchor.getFitnessCache(this, t) < fittest.getFitnessCache(this, t)){
 				fittest=anchor;
-				change=10;
-				System.out.println("Tabu: tabuRun: t="+t+", fitness has changed in round "+round+" to "+fittest.getFitnessCache(this, t));
+				change=5;
+//				System.out.println("Tabu: tabuRun: t="+t+", fitness has changed in round "+round+" to "+fittest.getFitnessCache(this, t));
 			}
 		//4. clean tabuList if full
 			

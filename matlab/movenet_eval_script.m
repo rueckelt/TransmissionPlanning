@@ -48,17 +48,17 @@ end
 
 %##################################################
 state='calculate and plot'
-if(false)
+if(true)
 app_name = {'TCP CN->MA', 'TCP MA->CN', 'UDP CN->MA', 'UDP MA->CN'};
 %rtt
 for app=1:N_apps
     out_name=[output_folder filesep 'rtt_' num2str(app) '.tikz'];
-  %  cdfPrint(out_name,[app_name{app} ': RTT/s'], rtt, app, prot_names);
+    cdfPrint(out_name,[app_name{app} ': RTT/s'], rtt, app, prot_names);
 end
 %Handover delay
 for app=1:N_apps
     out_name=[output_folder filesep 'HO_' num2str(app) '.tikz'];
-   % cdfPrint(out_name,[app_name{app} ': HO delay/s'], HO_delay, app, prot_names);
+    cdfPrint(out_name,[app_name{app} ': HO delay/s'], HO_delay, app, prot_names);
 end
 %packet numbers
 for app=1:N_apps
@@ -85,9 +85,11 @@ factor_mh=median_mip/median_mh
 
 
 %comparison without piggbigacking UDP CN->MA
-HO_delay_m_np=HO_delay{3,2};
-HO_delay_mh_np=HO_delay{3,3};
-HO_delay_mip_np=HO_delay{3,1};
+a=3;
+app_name{a}
+HO_delay_m_np=HO_delay{a,2};
+HO_delay_mh_np=HO_delay{a,3};
+HO_delay_mip_np=HO_delay{a,1};
 
 median_mip_np=median(HO_delay_mip_np)
 median_m_np=median(HO_delay_m_np)

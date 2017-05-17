@@ -134,7 +134,7 @@ for v=1:nof_vartypes
     end
 end
 
-if 1==0
+if 1==1 %plot deactivation if not equal
      %detail plots
      for s=2:(nof_schedulers-1)
          %Relative Detail Score (RDS) of criterion v

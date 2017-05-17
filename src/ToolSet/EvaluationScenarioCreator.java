@@ -111,7 +111,7 @@ public class EvaluationScenarioCreator {
 	 * @return list of schedulers
 	 */
 	public Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator fg){
-		boolean restricted = true;
+		boolean restricted = false;
 		boolean restrictedAda = true;
 		boolean restrictedGA = true;
 		Vector<Scheduler> schedulers = new Vector<Scheduler>();	
@@ -128,9 +128,9 @@ public class EvaluationScenarioCreator {
 				schedulers.add(new GreedyWifiPref(ng, fg));
 		if(!restricted)
 			schedulers.add(new GreedyOnlineScheduler(ng, fg));
-//		if(!restricted)
+		if(!restricted)
 			schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
-//		if(!restricted)
+		if(!restricted)
 			schedulers.add(gs);	
 
 		
@@ -166,9 +166,9 @@ public class EvaluationScenarioCreator {
 //		
 		if(!restricted)
 			schedulers.add(new RandomScheduler(ng, fg, 100));	//100 random runs of this scheduler. Returns average duration and cost
-		schedulers.add(new Tabu(ng, fg));
-		schedulers.add(new Tabu(ng, fg, ngPred, fgPred, path,"_test4"));
-		schedulers.add(new Tabu(ng, fg, ngPred, fgPred, path, "adapt").adapt_location(true).adapt_err(true));
+//		schedulers.add(new Tabu(ng, fg));
+//		schedulers.add(new Tabu(ng, fg, ngPred, fgPred, path,"_JTP"));
+//		schedulers.add(new Tabu(ng, fg, ngPred, fgPred, path, "_JTP").adapt_location(true).adapt_err(true));
 		
 	return schedulers;
 	}

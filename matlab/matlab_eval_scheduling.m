@@ -7,15 +7,15 @@
 %select data to read from files: select =   1=flows, 2=time, 3=net, 4=load, 5=monetary
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_flows']; select= 1; 
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_time2']; select=2; 
-in_folder = ['..' filesep 'my_logs' filesep 'vary_nets']; select= 3;
+%in_folder = ['..' filesep 'my_logs' filesep 'vary_nets']; select= 3;
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_load_notime']; select= 4;
-%in_folder = ['..' filesep 'my_logs' filesep 'vary_cost']; select= 5;
+in_folder = ['..' filesep 'my_logs' filesep 'vary_cost']; select= 5;
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 6; %movement prediction error
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 7; %flow prediction error
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 8; %network prediction error
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 9; %combined prediction error
 
-out_folder = [in_folder filesep 'eval'];
+out_folder = [in_folder filesep 'eval_dwo'];
 
 
 force_read_data = 1;
@@ -60,7 +60,7 @@ state='gathered data'
 
 plot_data4(out_folder, raw_values(1:7,:,:,:), avail,valuenames, schedulers, select); 
 
-%plot_data_dr(out_folder, raw_values, avail, valuenames, schedulers, select);
+plot_data_dr(out_folder, raw_values, avail, valuenames, schedulers, select);
  
 state='done'
 

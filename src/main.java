@@ -31,7 +31,7 @@ public class main {
 
 		//load			default	= 2;	(1=low, 2=medium, 3=high)
 		//cost weight 	default = 2; 	(1=low, 2=medium, 3=high)
-		int rep=1;
+		int rep=50;
 		
 //		String logpath= "my_logs"+File.separator+"short_test";
 //		String logpath= "my_logs"+File.separator+"test";
@@ -43,9 +43,9 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"test_exec_ga";
 
 //		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;//f=5;
-//		String logpath= "my_logs"+File.separator+"vary_time2"; t=6;
+//		String logpath= "my_logs"+File.separator+"vary_time2"; t=4;
 //		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
-//		String logpath= "my_logs"+File.separator+"vary_load"; 
+		String logpath= "my_logs"+File.separator+"vary_load_notime"; 
 //		String logpath= "my_logs"+File.separator+"vary_cost";
 //		String logpath= "my_logs"+File.separator+"vary_time_test"; t=0;
 		 
@@ -56,7 +56,7 @@ public class main {
 
 //		String logpath= "my_logs"+File.separator+"vary_pe_all2";
 
-		String logpath= "my_logs"+File.separator+"test_GA";
+//		String logpath= "my_logs"+File.separator+"test_GA";
 		
 		
 		//if overwrite, then delete everything in folder, create scenario new and calculate
@@ -65,7 +65,7 @@ public class main {
 
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 
-			eval.visualize();
+//			eval.visualize();
 //			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
@@ -76,13 +76,13 @@ public class main {
 //			eval.evaluateTop();
 //			eval.overwrite();	//overwrite does not work in current state. EvalScneario creator needs update. Delete logs or use other path instead!
 //			eval.evaluateAll();
+//			eval.evaluateFlowVariation();
 //			eval.evaluateTimeVariation();	
 //			eval.evaluateNetworkVariation();
-//			eval.evaluateFlowVariation();
+			eval.evaluateTrafficLoad();
 //			eval.evaluateMonetaryWeight();
-//			eval.evaluateTrafficLoad();
-			eval.evaluateThisInstance();
-			eval.parallel(1);
+//			eval.evaluateThisInstance();
+			eval.parallel(15);
 
 			eval.start(Integer.MAX_VALUE);
 
