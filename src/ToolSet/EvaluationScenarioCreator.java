@@ -111,6 +111,7 @@ public class EvaluationScenarioCreator {
 	 * @return list of schedulers
 	 */
 	public Vector<Scheduler> initSchedulers(NetworkGenerator ng, FlowGenerator fg){
+		boolean restrictedOS = true;
 		boolean restricted = false;
 		boolean restrictedAda = true;
 		boolean restrictedGA = true;
@@ -120,23 +121,24 @@ public class EvaluationScenarioCreator {
 		//execution of jtp schedule from erroneous prediction
 		String path = gs.getLogfileName(log_run_path);
 
-		if(!restrictedAda)schedulers.add(new ExecutionScheduler(ng, fg, path, "(JTP)"));
-
-		if(!restricted)
-			schedulers.add(new OptimizationScheduler(ng, fg));		
+		OptimizationScheduler os=new OptimizationScheduler(ng, fg);
+		String path_opt = os.getLogfileName(log_run_path);
+		if(!restrictedOS)
+			schedulers.add(os);	//Opt	
+		if(!restrictedAda)
+			schedulers.add(new ExecutionScheduler(ng, fg, path, "(JTP)"));	//exec
 		if(!restricted)
 				schedulers.add(new GreedyWifiPref(ng, fg));
 		if(!restricted)
 			schedulers.add(new GreedyOnlineScheduler(ng, fg));
 		if(!restricted)
-			schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));
+			schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg));	//ONS
 		if(!restricted)
-			schedulers.add(gs);	
+			schedulers.add(gs);	//JTP
 
 		
 		//execution from opt
-		OptimizationScheduler os=new OptimizationScheduler(ng, fg);
-		String path_opt = os.getLogfileName(log_run_path);
+
 //		schedulers.add(new ExecutionScheduler(ng, fg, path_opt, "_Opt"));
 		
 		//Adaptation of schedule under prediction errors
@@ -152,12 +154,15 @@ public class EvaluationScenarioCreator {
 //		NetworkGenerator ng2= ng.clone();
 //		ng2.addMovementUncertainty((float) 0.5);
 		NetworkGenerator ngPred = getNetworkGenerator(log_run_path, false, 0, 0, (float) 0.0, (float) 0.0);	//load from file
-//		schedulers.add(new GreedyOnlineOpppertunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt, "opt"));
+
+
 		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp"));
 		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true));
-
-//		if(!restricted)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_err(true));
 		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path, "jtp").adapt_location(true).adapt_err(true));
+//		
+//		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path_opt, "opt3"));
+//		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg2, ngPred, fgPred, 1.0, path_opt, "opt3").adapt_location(true));
+//		if(!restrictedAda)schedulers.add(new GreedyOnlineOpportunisticScheduler(ng, fg, ngPred, fgPred, 1.0, path_opt, "opt3").adapt_location(true).adapt_err(true));
 		
 		if(!restrictedGA)schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path));
 //		if(!restrictedGA)schedulers.add(new AdaptationScheduler(ng, fg, fgPred, ngPred, path).activateAdvancedAdaptation(false));

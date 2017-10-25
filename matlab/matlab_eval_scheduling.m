@@ -2,7 +2,8 @@
 
 %stores results.mat file in in_folder for extracted log matrices
 %delete this file to read logs from raw files
-
+close all
+clear all
 
 %select data to read from files: select =   1=flows, 2=time, 3=net, 4=load, 5=monetary
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_flows']; select= 1; 
@@ -15,7 +16,7 @@ in_folder = ['..' filesep 'my_logs' filesep 'vary_cost']; select= 5;
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 8; %network prediction error
 %in_folder = ['..' filesep 'my_logs' filesep 'vary_pe_all2']; select= 9; %combined prediction error
 
-out_folder = [in_folder filesep 'eval_dwo'];
+out_folder = [in_folder filesep 'eval_10_06'];
 
 
 force_read_data = 1;

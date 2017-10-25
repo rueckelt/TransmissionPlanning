@@ -88,7 +88,7 @@ function [values, avail] = readValuesFromFiles( in_folder, varnames, f_max, t_ma
                addpath(in_path);    %make path accessible
 
                 for s=1:nof_schedulers
-                   fname = [in_path scheduler_logs{s}];
+                   fname = [in_path scheduler_logs{s}]
                    if exist(fname, 'file') == 2 %skip non-existing files
                        run(fname);  %run script to get values
                        %store values to matrix[value scheduler, var, repetition]
