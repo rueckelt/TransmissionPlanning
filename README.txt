@@ -1,10 +1,17 @@
-Scheduling Framework by Tobias Rückelt v0.1
+Transmission Planning Framework by Tobias Rückelt v0.2
 ==============================================
 
 Problem to solve:
+==Transmission Planning== 
 Mobile clients can use different wireless networks to transmit data. When moving, availability of these networks changes over time because networks might not be reachable everywhere or connection quality changes. Knowing the track of the mobile client, e.g. from vehicle navigation system, the a network prediction over time can be made.
 Moreover, applications have individual requirements on data transmissions. Those requirements include network aspects, like latency and throughput, and also time aspects, like deadlines. To satisfy those requirements, appropriate network and transmission time for each data transmission should be chosen. This is the goal of scheduling.
 
+==Adaptation==
+Transmission Planning is often based on predicted inputs. The framework can analyze the impact of prediction errors on the transmission performance.
+In additon, an adaptation algorithm modifies the transmission as initially planned according to recognized environmental changes. It uses an opportunistic algorithm as base.
+The approach can maintain major share of the benefits from transmission planning approaches.
+
+Papers are attached in the repository.
 
 ==========================================	
 
@@ -32,17 +39,24 @@ Schedule quality is rated by data flow requirement satisfaction. Therefore we mo
 ==========================================	
 
 Schedulers:
-- Optimization:
-	Minimizes the cost function using IBM CPLEX solver. Finds optimal schedule in exponential time (slow!). Is used as reference for quality assessment, providing upper quality bound.
-	IBM library oplall.jar is required.
-	
-- Random:
-	Assigns tokens of data flows between start time and deadline to a random network. We let it run X times and average schedule quality and execution time. It is used as reference for quality assessment, providing a quality bound that should be lower than any reasonable scheduler result. We don't want any scheduler which is worse than random.
-	
-- Greedy (simple heuristic without any trade-off criteria)
-	Orders data flows according to their attracting forces and starts with highest. Scheduling of those data flows will reduce the attracting forces, therefore also the sum and decrease schedule tension.
-	For each flow, it orders networks according to their match to the flow. It assigns tokens to the list of networks, as far as attracting forces are higher than repelling forces.
-	Token assignment is done only between start time and deadline.
+For evaluation:
+	- Optimization:
+		Minimizes the cost function using IBM CPLEX solver. Finds optimal schedule in exponential time (slow!). Is used as reference for quality assessment, providing upper quality bound.
+		IBM library oplall.jar is required.
+		
+	- Random:
+		Assigns tokens of data flows between start time and deadline to a random network. We let it run X times and average schedule quality and execution time. It is used as reference for quality assessment, providing a quality bound that should be lower than any reasonable scheduler result. We don't want any scheduler which is worse than random.
+
+Derived from related work:	
+	- Network Selection: Prioritize data flows according to their attracting forces. For each time slot (one after another), allocate data to the *best matching* currltly available network.
+
+	- Opportunistic Network Selection: Extends Network Selection by the option to pause transmission, whenever an estimated benefit via the currently available networks is rated too low (repelling forces > attracting forces).
+
+	- Delayed WiFi Offloading: Considers predicted networks within a certain planning time horizon. It uses a WiFi-preferred strategy and selects the transmission time (within the planning time horizon and data flow deadline) in a way that as much data as possible is transmitted via WiFi networks. Considers no further network-matching.
+
+Own approach:
+	Joint Transmission Planning with time-network selection: Plans transmission to the best-matching networks within a planning time horizon. Uses an opportunistic component to delay data transfer beyond the planning time horizon.
+
 
 ==========================================	
 
@@ -62,7 +76,7 @@ Setup:
 		#did not work for me.. therefore add to java runtime environment:
 
 		#Right-click on project/Properties/Run-Debug Settings/
-		#choose main(1) and klick edit
+		#choose main(1) and click edit
 		#select Environment / New..
 		#Name: LD_LIBRARY_PATH
 		#Value: /opt/ibm/ILOG/CPLEX_Studio126/opl/bin/x86-64_linux
