@@ -66,6 +66,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	protected FlowGenerator tgPred;
 	protected NetworkGenerator ngPred;
 	private int[][] prefixSumLongTermSP_fid_t;
+	private boolean[][][] longTermSP_network_association_fid_t_n;
 	private int dropped_f[];
 	private int additionallyAllocated_f_t[][];
 	protected String typeExt = "";
@@ -119,7 +120,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 	 * @param t
 	 * @return limit for opportunistic scheduling
 	 */
-	public int getScheduleDecisionLimit(int f, int t){
+	public int getScheduleDecisionLimit(int f, int t, int n){
 		
 		//when there is a long term plan to follow
 		if(longTermSP_f_t_n!=null){
@@ -139,11 +140,18 @@ public abstract class HeuristicScheduler extends Scheduler{
 			double h=0;	//no impairing
 			//impair if allocated equal or more than planned (to allocate)
 			//and no transmission in reference slot
-//			if(too_many_allocated_tokens>=0 && !transmission_in_slot){
-			if(!moreTokensReleasedThanAllocated(f, t) && !transmissionInSlot(f, t)){
+			//or if it is the wrong network
+			if((!moreTokensReleasedThanAllocated(f, t) && !transmissionInSlot(f, t))){// || wrongNetwork(f,t,n)){
 				double err = 0;
 				if(ADAPTIVE_err){
 					err=Math.min(1,getError(f, ref_t));
+//					double err_net=0;
+//					if(ref_t>0 && ref_t <ng.getTimeslots())
+//						err_net=Math.min(1, 2*ng.getNetworkError(ngPred.getNetworks(), ref_t-1, ref_t));
+//					if(err_net>0.5){
+//						int i=0;
+//					}
+//					err=Math.max(err, err_net);
 				}
 
 				int attr_force = cs.getStatefulReward(f, t)+cs.getStatelessReward(f);
@@ -158,6 +166,13 @@ public abstract class HeuristicScheduler extends Scheduler{
 
 		}
 		return 0;
+	}
+	
+	
+	private boolean wrongNetwork(int f, int t, int n){
+		int f_id = tg.getFlows().get(f).getId();
+		return longTermSP_f_t_n.length>f_id && 		//flow is planned and
+				!longTermSP_network_association_fid_t_n[f_id][t][n]; 	//but not yet to this network
 	}
 	
 //	protected int getTokensMaxTp(int f, int t){
@@ -209,7 +224,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 		if(t>=ng.getTimeslots() || n>=ng.getNetworks().size() || f>=tg.getFlows().size()) return false;
 		
 		int sum = getEstimatedSchedulingCost(f, n, t);
-		int limit = getScheduleDecisionLimit(f, t);
+		int limit = getScheduleDecisionLimit(f, t, n);
 //		if(f==0)System.out.println("Heuristic: oppScheduleDecision: f="+f+", n="+n+", t="+t+", sum"+sum+", limit="+limit);
 
 		return  sum	< limit;
@@ -412,6 +427,7 @@ public abstract class HeuristicScheduler extends Scheduler{
 		if(longTermSP_f_t_n==null) return false;
 
 		prefixSumLongTermSP_fid_t=new int[longTermSP_f_t_n.length][longTermSP_f_t_n[0].length];
+		longTermSP_network_association_fid_t_n=new boolean[longTermSP_f_t_n.length][longTermSP_f_t_n[0].length][longTermSP_f_t_n[0][0].length];
 		additionallyAllocated_f_t=new int[tg.getFlows().size()][ng.getTimeslots()];
 				
 		for(int f=0; f<longTermSP_f_t_n.length; f++){
@@ -421,6 +437,11 @@ public abstract class HeuristicScheduler extends Scheduler{
 				//over networks
 				for(int n=0; n<longTermSP_f_t_n[0][0].length; n++){
 					prefixSumOverNets+=longTermSP_f_t_n[f][t][n];
+					//an array determining, if there was already an allocation of this flow (fid) to this network in the plan
+					longTermSP_network_association_fid_t_n[f][t][n]=
+							longTermSP_f_t_n[f][t][n]>0 ||		//true if this allocation is in plan
+							(t>0 && longTermSP_network_association_fid_t_n[f][t-1][n]); //or was in plan before
+					
 				}
 				//after summing over networks, apply to the time slot
 				prefixSumLongTermSP_fid_t[f][t]=prefixSumOverNets;

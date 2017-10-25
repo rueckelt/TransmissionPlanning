@@ -45,8 +45,8 @@ public class main {
 //		String logpath= "my_logs"+File.separator+"vary_flows"; f=4;//f=5;
 //		String logpath= "my_logs"+File.separator+"vary_time2"; t=4;
 //		String logpath= "my_logs"+File.separator+"vary_nets"; n=5;
-		String logpath= "my_logs"+File.separator+"vary_load_notime"; 
-//		String logpath= "my_logs"+File.separator+"vary_cost";
+//		String logpath= "my_logs"+File.separator+"vary_load_notime"; 
+		String logpath= "my_logs"+File.separator+"vary_cost";
 //		String logpath= "my_logs"+File.separator+"vary_time_test"; t=0;
 		 
 //		String logpath= "my_logs"+File.separator+"vary_pe_move";
@@ -66,7 +66,7 @@ public class main {
 			EvaluationScenarioCreator eval = new EvaluationScenarioCreator(t,n,f,rep,logpath);
 
 //			eval.visualize();
-//			eval.recalc();
+			eval.recalc();
 //			eval.addUncertainty((float)0.3, (float)0.3, (float)0.3);
 //			eval.addUncertainty((float)0.5, (float)0.0, (float)0.0);	//move
 //			eval.addUncertainty((float)0.0, (float)0.5, (float)0.0);	//net
@@ -79,10 +79,10 @@ public class main {
 //			eval.evaluateFlowVariation();
 //			eval.evaluateTimeVariation();	
 //			eval.evaluateNetworkVariation();
-			eval.evaluateTrafficLoad();
-//			eval.evaluateMonetaryWeight();
+//			eval.evaluateTrafficLoad();
+			eval.evaluateMonetaryWeight();
 //			eval.evaluateThisInstance();
-			eval.parallel(15);
+			eval.parallel(20);
 
 			eval.start(Integer.MAX_VALUE);
 

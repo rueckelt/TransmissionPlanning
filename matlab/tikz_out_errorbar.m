@@ -15,8 +15,8 @@ p = 25;
 %neg=YMatrix1-EMatrix1
 % Create figure
 figure1 = figure('visible', 'on');
-linestyles = {'-','-.','--',':'};
-linecolors = {'black','blue','cyan','magenta','green','red','yellow'};
+linestyles = {'-','--',':','-','--',':','-','-.'};
+linecolors = {'black','cyan','magenta','green','red','blue','black','yellow', 'cyan','magenta','green','red','blue'};
 %linecolors = {'black','cyan','magenta','green','red','yellow'};
 %colors = [0,0,0; 0,0,1; 0,1,0; 0,1,1; 1,0,0; 1,0,1; 1,1,0]; %same colors in rgb
 % Create axes
@@ -63,8 +63,8 @@ hold(axes1,'on');
 errorbar1 = errorbar(x,YMatrix1,EMatrix1bot, EMatrix1top,'LineWidth',1.5);
 %errorbar1(1)
 for i=1:dim2
-    set(errorbar1(i),'DisplayName',legendlabels{i},'LineStyle',linestyles{mod(i-1+style_skip,4)+1},...)
-        'Color',linecolors{mod(i-1+style_skip,7)+1});
+    set(errorbar1(i),'DisplayName',legendlabels{i},'LineStyle',linestyles{mod(i-1+style_skip,8)+1},...)
+        'Color',linecolors{mod(i-1+style_skip,13)+1});
 end
 
 if logscale>0
